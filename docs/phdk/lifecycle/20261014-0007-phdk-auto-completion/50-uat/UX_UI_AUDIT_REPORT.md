@@ -1,5 +1,9 @@
 # UX/UI UAT audit — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.6 — public mobile header/menu target sizes (UAT-125/126)
+
+Production UAT-125/126 on the anonymous homepage in Portuguese/dark measured the expanded navigation and visible header controls at 320×720 and 375×812. After PR #240/#241, all measured public targets (brand link, diagnostics/cache buttons, menu button, navigation links, theme/language selectors and sign-in/create-account links) are at least 44px high. No horizontal overflow was measured; screenshots were visually inspected. Evidence: `evidence/uat-125-production-mobile-menu-targets-retest-2026-10-17.json` and `evidence/uat-126-production-mobile-brand-target-retest-2026-10-17.json`. This closes only the sampled public mobile target-size findings. Focus/screen-reader behavior, other routes, other locale/theme combinations, authentication/RBAC, zoom and audio/device flows remain unaccepted.
+
 ## Candidate 5.1.61 — public navigation layout
 
 UAT-052 observed and fixed the desktop overlap between Landing's fixed navigation preference controls and hero disclaimer. At 1280×900 the production-built page exposes theme and language selectors without overlap; at 390×844 the expandable mobile navigation keeps both labeled selectors reachable. The Web and Landing Navbars share this responsive structure. Evidence: `docs/phdk/evidence/uat-landing-navbar-5.1.61.json` and desktop/mobile screenshots. The observation is scoped to the public page; it does not establish screen-reader, all-route, or broad responsive/localization acceptance. No P0/P1 remains in this tested journey.

@@ -1,12 +1,12 @@
-# Current PHDK Auto continuation — KELEDON 5.2.4 / PHDK 2.53.1
+# Current PHDK Auto continuation — KELEDON 5.2.6 / PHDK 2.53.1
 
 Continue the owner-confirmed fronts in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 tenant-specific voice→Cloud→Browser→CRM, and CMT-004 administration/permissions. The Admin/Coordinator TeamInterface selector is source-implemented and the owner approved tenant-scoped assignment.
 
-At this readback, remote `main` is `d3f27ef137939c1acbbb313dd7f95b525c735dc7`. PRs #234–#236 reconcile the ADM-IF PIA, production UAT-121 boundary, and UAT-122 asset/version readback. Product remains 5.2.4; installed PHDK 2.53.1 matches upstream `94f583635d295ae0f227726718904d952cadb8ab`, with static coherence 64/64. Railway Web/API report SUCCESS for `main` at this SHA. Fresh production GETs confirm `/` and `/login` serve the same 5.2.4 bundle. CMT-002 remains partial; CMT-003A lease/idempotency and CMT-003B DNS/CIDR egress remain implementation-not-started; authenticated ADM-IF acceptance remains blocked on authorized synthetic identity/data/cleanup.
+At this readback, remote `main` is `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. PRs #240/#241 deliver the PHDK 44px mobile header/menu remediation; Web/API deployments report SUCCESS and production UAT-125/126 passes its scoped public 320/375px target checks. Product roots and Browser renderer align at 5.2.6; PHDK 2.53.1 static coherence is 64/64. CMT-002 remains partial; CMT-003A lease/idempotency and CMT-003B DNS/CIDR egress remain implementation-not-started; authenticated ADM-IF acceptance remains blocked on authorized synthetic identity/data/cleanup.
 
 No local application tests or builds are run. Production acceptance stays within approved, read-only anonymous checks until authorized synthetic fixtures exist. Never treat the whole Auto as complete based on a scoped delivery.
 
-SIGUIENTE PASO: continue the public production acceptance for CMT-002, then implement the provider-independent CMT-003 security work with safe deployment gates; resume authenticated CMT-004 acceptance only with approved synthetic fixtures.
+SIGUIENTE PASO: implement CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR controls; resume authenticated CMT-004 acceptance only with approved synthetic fixtures.
 
 ---
 

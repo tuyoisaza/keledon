@@ -1,0 +1,73 @@
+{
+  "case": "UAT-126",
+  "phase": "production-retest-after-PR-241",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:29:27Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-126-retest=20261017",
+  "deployedVersion": "5.2.6",
+  "sourceCommit": "e7257a7d0c66c8b34e6bbb7028c30be092f33102",
+  "webDeploymentId": "874b29df-7c7d-4e3b-a41d-8ec7339bfde8",
+  "webDeploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "locale": "pt",
+  "theme": "dark",
+  "viewportsCssPx": [
+    {
+      "width": 320,
+      "height": 720,
+      "clientWidth": 305,
+      "documentScrollWidth": 305,
+      "bodyScrollWidth": 305,
+      "horizontalOverflow": false,
+      "targets": [
+        {"control": "KELEDON home link", "width": 113, "height": 44},
+        {"control": "Copy diagnostics", "width": 44, "height": 44},
+        {"control": "Clear application cache", "width": 44, "height": 44},
+        {"control": "Close navigation", "width": 44, "height": 44},
+        {"control": "Resources", "width": 289, "height": 44},
+        {"control": "Architecture", "width": 289, "height": 44},
+        {"control": "Use cases", "width": 289, "height": 44},
+        {"control": "Theme selector", "width": 93, "height": 44},
+        {"control": "Language selector", "width": 109, "height": 44},
+        {"control": "Sign in", "width": 289, "height": 44},
+        {"control": "Create account", "width": 289, "height": 44}
+      ],
+      "allTargetsWithinClientWidth": true
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "clientWidth": 360,
+      "documentScrollWidth": 360,
+      "bodyScrollWidth": 360,
+      "horizontalOverflow": false,
+      "targets": [
+        {"control": "KELEDON home link", "width": 113, "height": 44},
+        {"control": "Copy diagnostics", "width": 44, "height": 44},
+        {"control": "Clear application cache", "width": 44, "height": 44},
+        {"control": "Close navigation", "width": 44, "height": 44},
+        {"control": "Resources", "width": 344, "height": 44},
+        {"control": "Architecture", "width": 344, "height": 44},
+        {"control": "Use cases", "width": 344, "height": 44},
+        {"control": "Theme selector", "width": 93, "height": 44},
+        {"control": "Language selector", "width": 109, "height": 44},
+        {"control": "Sign in", "width": 344, "height": 44},
+        {"control": "Create account", "width": 344, "height": 44}
+      ],
+      "allTargetsWithinClientWidth": true
+    }
+  ],
+  "result": "PASS_ALL_MEASURED_PUBLIC_MOBILE_HEADER_TARGETS_44PX",
+  "actions": [
+    "Opened a fresh anonymous production page and confirmed the visible v5.2.6 marker.",
+    "Opened the public mobile menu at 320x720 and 375x812, measured all visible header and menu interactive targets, and inspected the 375px screenshot.",
+    "Confirmed every measured target is at least 44x44 CSS px and remains within client width with no horizontal overflow.",
+    "Closed the menu and reset the temporary viewport override."
+  ],
+  "limitations": [
+    "One public homepage in Portuguese/dark on the Web production service at two mobile widths.",
+    "This does not prove authenticated menu actions, other routes, locales/themes, browser engines, zoom, screen reader or complete WCAG conformance.",
+    "Links, selectors and action buttons were measured but not activated; no login/account form, clipboard/cache action, API mutation, customer data or local application test/build was used."
+  ]
+}

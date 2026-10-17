@@ -1,5 +1,23 @@
 # PHDK Lifecycle Handoff — Delivery
 
+## Current scoped delivery — 5.2.6 mobile target remediation (2026-10-17)
+
+Status: **DELIVERED FOR THIS SLICE; WHOLE AUTO PARTIALLY DELIVERED**
+
+Remote `main`: `e7257a7d0c66c8b34e6bbb7028c30be092f33102`
+
+PRs: [#240](https://github.com/tuyoisaza/keledon/pull/240), [#241](https://github.com/tuyoisaza/keledon/pull/241)
+
+- Production Web v5.2.6 and API deployment for the same SHA report `SUCCESS`.
+- UAT-125/126 passes the scoped public mobile menu/header target-size checks at 320×720 and 375×812; all measured targets are at least 44px high and no horizontal overflow exists.
+- PHDK coherence is 64/64 static, app version roots are 15/15 at 5.2.6, four UAT JSON records parse, and `git diff --check` passes. No local application tests/builds were run per owner instruction.
+- Inspect `DELIVERY_REPORT-5.2.6-mobile-targets.md`, `70-check/PHDK_CHECK_REPORT-5.2.6-mobile-targets.md`, the CMT-002 PIA, and frozen UAT snapshot `50-uat/snapshots/production-uat-125-126-mobile-targets-20261017/`.
+- CMT-002 broad accessibility/RBAC/audio, CMT-003A/B implementation and CMT-004 authenticated persistence/cross-tenant acceptance remain open. This slice is not whole-Auto completion.
+
+SIGUIENTE PASO: continue CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR work under their PIAs.
+
+---
+
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `90-delivery`
 Status: **PARTIALLY DELIVERED / ACCEPTANCE BLOCKED**

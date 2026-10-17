@@ -1,13 +1,13 @@
 # PHDK Auto — estado de cartera al 2026-10-17
 
-PHDK **2.53.1** · KELEDON **5.2.4** · Run `20261014-0007-phdk-auto-completion` · Estado global: **PARCIALMENTE ENTREGADO**.
+PHDK **2.53.1** · KELEDON **5.2.6** · Run `20261014-0007-phdk-auto-completion` · Estado global: **PARCIALMENTE ENTREGADO**.
 
-Último readback: `main` `d3f27ef137939c1acbbb313dd7f95b525c735dc7`; PR #236. Railway Web `0aa895bc-8a83-4c9a-b7db-26171927042a` y API `3c80fa85-8b3f-4386-a961-f071d8b1dd70` están SUCCESS para ese SHA. PHDK coherence 64/64. UAT-122 confirma solo que homepage/login sirven el bundle 5.2.4; UAT-121 confirma solo el límite de acceso anónimo del selector.
+Último readback: remote `main` `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #241, sobre #240. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` y API `da84fde5-06fd-4bc8-be2f-2cafe409d979` reportan SUCCESS para ese SHA. Cinco package/lock roots y Browser renderer alineados en 5.2.6; PHDK coherence 64/64. UAT-125/126 pasan sus alcances limitados de target-size móvil en producción; UAT-126 mide todos los controles de header/menú incluidos logo, selectores y acciones a 44px en 320/375.
 
 | Orden | Compromiso | Estado | Evidencia vigente | Pendiente / gate |
 |---|---|---|---|---|
-| 1 | CMT-001 — baseline/versiones/PR | **COMPLETADO para corte 5.2.4** | Cinco raíces 5.2.4, PHDK 2.53.1 64/64, PRs #234–#236 integrados y producción Web/API SUCCESS. | Reconciliar en cada entrega; despliegue no equivale a aceptación funcional. |
-| 2 | CMT-002 — widget/diagnóstico | **ACTIVE / PARTIAL** | UAT-112–122 en producción dentro de alcances limitados; UAT-122 reconcilia el asset actual. | A11y integral/lector, diagnóstico RBAC y audio/dispositivo. |
+| 1 | CMT-001 — baseline/versiones/PR | **COMPLETADO para corte 5.2.6** | Cinco raíces 5.2.6, Browser renderer sincronizado, PHDK 2.53.1 64/64, PR #240/#241 integrados y producción Web/API SUCCESS. | Reconciliar en cada entrega; despliegue no equivale a aceptación funcional. |
+| 2 | CMT-002 — widget/diagnóstico | **ACTIVE / PARTIAL** | UAT-112–126 en producción dentro de alcances limitados; UAT-125/126 validan targets móviles de menú/encabezado a 44px en 320/375 sin overflow. | A11y integral/lector, diagnóstico RBAC y audio/dispositivo; amplio cruce de rutas/temas/locales. |
 | 3 | CMT-003 — runtime por tenant | **ACTIVE / PARTIAL** | Integración configurable por cliente; PIAs CMT-003A y 003B. | Implementar lease/idempotencia y política DNS/CIDR por tenant antes de aceptación con sandbox sintético. |
 | 4 | CMT-004 — administración/permisos | **ACTIVE / PARTIAL** | Política de mínimo privilegio y selector por tenant en fuente; UAT-121 anónimo limitado. | Aceptación autenticada/persistencia/cross-tenant y catálogo con fixture sintético autorizado y limpieza. |
 

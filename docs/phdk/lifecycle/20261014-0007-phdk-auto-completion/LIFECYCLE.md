@@ -1,4 +1,27 @@
-## Current continuation — 5.2.4 / PHDK 2.53.1 (2026-10-17)
+## Current continuation — 5.2.6 / PHDK 2.53.1 (2026-10-17)
+
+PR #240 merged as `fb2e4b4c5c4c869ae2962c2eadb49a4673fffdbe`; PR #241 merged as verified remote `main` `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Five package/lock roots and the Browser renderer align at 5.2.6. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 records the mobile menu/home-link target-size remediation at 320/375px with no horizontal overflow. The production retest is scoped to the anonymous public Web header; authenticated controls and broad accessibility remain open.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | PHDK v2.53.1 installed; coherence 64/64 static. |
+| Capture | REUSED | Four owner-confirmed ordered commitments and earlier security decisions remain current. |
+| Plan | REUSED / UPDATED | CMT-002 PIA and UAT-125/126; CMT-003A/B implementation PIAs retained. |
+| PMO / Workstreams | ACTIVE / PARTIAL | CMT-001 complete for 5.2.6 cut; CMT-002 advances; CMT-003/004 remain open. |
+| Integration Review | PASS FOR UI SLICE | Web/Landing navbar and shared preference controls have aligned 44px targets; app versions and Browser renderer are synchronized. |
+| UAT Prep | PARTIAL / BLOCKED | Synthetic identity and device fixtures remain unavailable for authenticated/audio gates. |
+| UAT / UAT Fix | PASS SCOPED | Production UAT-125/126 pass the measured anonymous mobile header/menu scope at 320/375. |
+| SEO / AEO-GEO | NOT AFFECTED FOR THIS SLICE | Only target geometry changed; public content, routes, metadata and structured data did not. |
+| Check | PASS FOR 5.2.6 SLICE | See `70-check/PHDK_CHECK_REPORT-5.2.6-mobile-targets.md`: PHDK coherence 64/64, 15/15 version roots, four JSON records, and `git diff --check`. No local app tests/builds per owner instruction; full Auto Check remains pending. |
+| Delivery | PASS FOR 5.2.6 SLICE | PRs #240/#241 merged to main and Web/API deployments `SUCCESS`; production UAT passed. |
+
+The Auto goal remains **PARTIALLY DELIVERED**: CMT-001 is complete for the current cut; CMT-002 still needs broad accessibility, diagnostics RBAC and audio/device evidence; CMT-003A/B implementation is next; CMT-004 authenticated tenant persistence and cross-tenant proof remain gated by synthetic fixtures. No customer CRM, private target, account or customer data was used. No local application tests or builds were run.
+
+SIGUIENTE PASO: continue CMT-003A lease/idempotency implementation and CMT-003B tenant DNS/CIDR enforcement, then prepare production acceptance with tenant-owned synthetic endpoints; keep authenticated/device UAT behind authorized fixtures.
+
+---
+
+## Historical readback — 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
 UAT-121 reentry in this continuation: production v5.2.4 redirected anonymous `/management/teams` to `/login`; only the anonymous boundary passes. Owner-approved ADM-IF tenant assignment has a dedicated PIA, while authenticated assignment and persistence remain blocked for lack of authorized synthetic production identities/dataset/cleanup. CMT-003A/B remain implementation-not-started. The active worktree is a documentation branch from verified main; no application code or tests/builds changed.
 

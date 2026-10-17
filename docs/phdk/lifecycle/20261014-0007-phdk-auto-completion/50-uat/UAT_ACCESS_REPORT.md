@@ -1,5 +1,14 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Browser Readiness — UAT-125/126 production mobile acceptance (2026-10-17)
+
+- Permission: current owner instruction requires acceptance on production; browser scope is active for this Auto UAT. Actual CUA in-app browser access was verified and the named public production origin loaded successfully.
+- Target/source: `https://keledon.tuyoisaza.com/`; UAT-125 baseline v5.2.4, retest v5.2.5; UAT-126 retest v5.2.6 at deployed Web source `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8`, `SUCCESS`).
+- Identity/data: anonymous public homepage only. No login, credentials, customer data, API mutation, CRM, provider endpoint or account action.
+- Spend: `NO_NEW_SPEND`; no paid provider or external customer endpoint was contacted.
+- Executed: production mobile menu and header geometry/screenshots at 320×720 and 375×812; all measured visible targets are at least 44px high, client/document/body widths match, and temporary viewport override was reset. Web page visibly reports v5.2.6.
+- Remaining gates: authenticated navigation/RBAC, other routes, locales/themes, screen reader, zoom, other browser engines and device/audio remain outside this anonymous mobile sample; synthetic production identities/device fixtures are still required for those journeys.
+
 ## Browser Readiness — Auto UAT-095, candidate 5.1.85
 
 - Permission: `ACTIVE_UAT_EXCEPTION`; actual browser capability: `AVAILABLE_VERIFIED`.

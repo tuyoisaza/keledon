@@ -1,8 +1,8 @@
-## Verified current readback — KELEDON 5.2.4 / 2026-10-17
+## Verified current readback — KELEDON 5.2.6 / 2026-10-17
 
-This readback supersedes earlier 5.2.1–5.2.3 candidate summaries below; those remain historical. PR #232 merged at `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`. Five package/lock roots and Browser renderer align at 5.2.4; PHDK 2.53.1 coherence is 64/64 static. Railway Web deployment `228369da-23e8-49e0-8345-2469f9fd4863` and API deployment `367eb4ae-a101-448a-ac0a-361e7efee620` both report `SUCCESS` on `6715ea9`; production `/login` serves asset `index-COWg4nKb.js`. UAT-120 confirms `<html lang>` matches visible ES/EN/PT; initial Portuguese preference was restored. UAT-117 confirmed copy status/source hostname withholding; UAT-118 sampled public keyboard/focus; UAT-119 sampled login keyboard order and detected the now-fixed language mismatch. Clipboard was not read; no autofill value was captured. Successful deployment does not accept API behavior. Overall Auto remains PARTIALLY DELIVERED.
+This readback supersedes earlier summaries below; those remain historical. PR #240/#241 merged and remote `main` is `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Five package/lock roots and Browser renderer align at 5.2.6; PHDK 2.53.1 coherence is 64/64 static. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 passes the scoped anonymous mobile menu/header target-size checks at 320/375px; the baseline failures are retained in evidence. CMT-001 is complete for this cut; CMT-002 remains partial for broad accessibility, diagnostic RBAC and audio; CMT-003A/B are implementation-not-started; CMT-004 authenticated persistence/cross-tenant proof remains blocked by synthetic fixtures. Overall Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: continue CMT-002’s route/focus/a11y coverage and prepare API behavior acceptance only with authorized synthetic fixtures. Authenticated/audio UAT remains gated on synthetic identities and a test device.
+SIGUIENTE PASO: start CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR source implementation; prepare synthetic production acceptance inputs without contacting customer CRM targets.
 
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 

@@ -1,5 +1,18 @@
 # PHDK Lifecycle Handoff — UAT
 
+## Production re-entry — UAT-125/126 mobile targets (2026-10-17)
+
+Stage: `50-uat` · Candidate: KELEDON 5.2.6 · Result: **PASS FOR SCOPED ANONYMOUS PUBLIC HEADER/MENU TARGET SIZE**.
+
+- Production v5.2.4 baseline identified undersized mobile menu links/selectors in UAT-125. PR #240 raised the expanded menu controls to 44px; production v5.2.5 retest passed at 320×720 and 375×812 without horizontal overflow.
+- That retest identified the logo/home link at 113×32px (UAT-126 baseline). PR #241 raised it to a 44px minimum; production v5.2.6 retest passes at both widths.
+- Final remote main: `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` are `SUCCESS`.
+- Browser readiness was verified and production anonymous scope was used. No account, preferences, cache, diagnostics, API mutation or customer data was touched. Viewport override was reset. No local application tests/builds were run.
+- Canonical evidence: `evidence/uat-125-production-mobile-menu-targets-baseline-2026-10-17.json`, `evidence/uat-125-production-mobile-menu-targets-retest-2026-10-17.json`, `evidence/uat-126-production-mobile-brand-target-baseline-2026-10-17.json`, `evidence/uat-126-production-mobile-brand-target-retest-2026-10-17.json`.
+- Historical stage package: `snapshots/production-uat-125-126-mobile-targets-20261017/` (journey inputs, PIA/PMO ledger, reports and evidence frozen for this transition).
+
+UAT exit: scoped UAT-125/126 evidence passes; authenticated menu/RBAC, complete routes/themes/locales, screen reader, zoom and audio remain open. Next stage: scoped Check/Delivery readback for this slice; the full Auto remains PARTIALLY DELIVERED. **SIGUIENTE PASO:** continue CMT-003A/B source implementation after recording this UAT handoff.
+
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `50-uat`
 Status: `PARTIAL / ACCEPTANCE INCOMPLETE`
