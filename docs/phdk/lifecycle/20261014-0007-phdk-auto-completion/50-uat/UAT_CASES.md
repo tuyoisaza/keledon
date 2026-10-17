@@ -1,3 +1,9 @@
+## Candidate 5.2.1 — UAT-102 production release-target readiness
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-102 | CMT-001/ADM-004 / anonymous observer and release reviewer | Open the public production homepage read-only; compare the visible version to the exact open PR head and check-run state. Do not log in, activate diagnostics, or send application requests. | Confirm whether the credential-remediation candidate is actually deployed and whether hosted checks exist; do not treat an older deployment as acceptance. | Production browser accessibility tree plus read-only GitHub PR metadata | **PASS (scoped readiness check):** production shows v5.1.85; PR #210 is OPEN at `fd7af3b963505fd7756c78ecfa7d8469096a9d84` with no checks. Candidate 5.2.1 is not deployed, so UAT-101 cannot run. Evidence: `evidence/uat-102-production-release-readiness-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-101 ManagedInterface secret storage (production, pending)
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -60,4 +60,5 @@ En producción solo se realizaron comprobaciones anónimas de lectura: portada y
 - Casos/evidencia: `UAT_STORIES.md`, `UAT_JOURNEY_MAP.md`, `UAT_CASES.md`, `UAT_ACCESS_REPORT.md`, `UAT_REPORT.md`, `UX_UI_AUDIT_REPORT.md`.
 - Check de candidato vigente: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` (ADM-001…006 y límites de evidencia).
 - Evidencia UAT-100 y reingreso de solo lectura: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json` y `50-uat/snapshots/production-widget-20261017/HANDOFF.md`.
+- Readiness UAT-102: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-102-production-release-readiness-2026-10-17.json`; production still serves 5.1.85.
 - Estado de continuación: **PARTIAL**. Siguiente paso técnico: revisar el diff de cifrado API/Cloud y preparar su aceptación de producción para el candidato exacto; después continuar ADM-002/003. Sin aceptación del sitio, no marcar ADM-004 como cerrado.

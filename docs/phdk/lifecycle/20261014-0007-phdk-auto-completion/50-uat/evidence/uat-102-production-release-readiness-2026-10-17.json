@@ -1,0 +1,38 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-102",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T16:53:39Z",
+  "candidate": {
+    "version": "5.2.1",
+    "branch": "feature/tenant-interface-selector-5.2.0",
+    "commit": "fd7af3b963505fd7756c78ecfa7d8469096a9d84",
+    "pr": 210,
+    "state": "OPEN",
+    "checks": [],
+    "acceptanceTargetMatch": false
+  },
+  "target": {
+    "environment": "production",
+    "url": "https://keledon.tuyoisaza.com/",
+    "versionObserved": "5.1.85",
+    "observed": [
+      "public landing page rendered",
+      "text v5.1.85",
+      "button Copiar diagnóstico completo",
+      "button Limpar cache do aplicativo"
+    ]
+  },
+  "channel": "connected in-app browser accessibility tree and read-only GitHub PR metadata",
+  "identity": "anonymous",
+  "actions": "opened the production landing page and observed accessibility tree; did not activate widget actions, log in, send requests, or change external state",
+  "result": "BLOCKED_FOR_CANDIDATE_ACCEPTANCE: production remains on v5.1.85 and PR #210 candidate 5.2.1 is open without CI checks",
+  "notProven": [
+    "candidate 5.2.1 deployment",
+    "managed-interface encryption behavior",
+    "audit redaction runtime behavior",
+    "authenticated role/tenant persistence"
+  ],
+  "spend": "NO_NEW_SPEND",
+  "redaction": "No credentials, customer data, tokens, identifiers, or private diagnostics collected."
+}
