@@ -1,0 +1,56 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; reconcile and record verified 5.1.74 source delivery while retaining partial portfolio status",
+  "target_branch": "main",
+  "expected_version": "5.1.74",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "1266d2c728391800a8615b78013f60cee6da985e",
+  "tested_candidate_tree": "dc0eb9e08bea909fa05de472353112cd56ff6f62",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/192",
+  "merged_commit_sha": "d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a",
+  "remote_main_tree": "dc0eb9e08bea909fa05de472353112cd56ff6f62",
+  "remote_main_verified_at": "2026-10-17T06:51:15Z",
+  "git_ls_remote_matches": true,
+  "github": {
+    "state": "MERGED",
+    "main_branch_protected": false,
+    "number": 192,
+    "review_decision": "",
+    "hosted_checks": [],
+    "merge_method": "squash"
+  },
+  "versions": {
+    "manifest_mappings": "61/61",
+    "web": "5.1.74",
+    "api": "5.1.74",
+    "browser": "5.1.74",
+    "cloud": "5.1.74",
+    "browser_renderer": "5.1.74",
+    "landing": "5.1.74",
+    "phdk": "2.51.5"
+  },
+  "checks": {
+    "theme": "static scan PASS, 0 findings",
+    "web": "production build/typecheck; UAT 7/7 plus admin/theme/AI-admin targeted UAT",
+    "api": "build + regression 42/42; ESLint 0 errors/0 warnings",
+    "agent": "theme runtime 2/2; extension build/validation",
+    "phdk": "coherence PASS, 61/61",
+    "browser": "build; offline tests 43/43; lint clean",
+    "audit": "query/redaction 4/4; denied-attribution/interceptor 10/10",
+    "landing": "typecheck/build; SEO 1/1",
+    "cloud": "build + regression 18/18; ESLint clean"
+  },
+  "whole_auto_acceptance": {
+    "crud_matrix": "396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS",
+    "status": "PARTIALLY DELIVERED",
+    "uat": "85 PASS, 0 BLOCKED, 1 MANUAL",
+    "commitments": "CMT-001 source slice delivered; CMT-002–004 remain active/partial"
+  },
+  "limitations": [
+    "GitHub returned no hosted checks or review decision; main has no branch protection.",
+    "No deployment or live customer integration was run.",
+    "Disposable PostgreSQL migration/restart acceptance, native device/audio, broad accessibility/locale/route coverage, Cloud legacy LLM parity, CRUD matrix cases and per-customer live call/CRM acceptance remain open.",
+    "AI pricing remains decision-required; FlowRunEvidence remains dormant pending an explicit retention decision."
+  ]
+}

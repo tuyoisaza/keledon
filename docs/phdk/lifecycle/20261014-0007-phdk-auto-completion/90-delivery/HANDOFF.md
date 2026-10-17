@@ -1,8 +1,8 @@
-## Candidate 5.1.74 — local verification pass; delivery pending (2026-10-17)
+## Candidate 5.1.74 — source delivered; portfolio acceptance remains partial (2026-10-17)
 
-Candidate `5.1.74` is on `fix/phdk-auto-uat-082` from verified main `0dd405d930c518537ecea17ca363e95a5b99a9fd`. All six version reads (five package/lock roots and Browser renderer) match. API build/regression/lint pass 42/42, 0 errors/0 warnings; Cloud build/regression/lint pass 18/18, 0 errors; Browser build/offline tests 43/43/lint; Agent theme 2/2/build/validation; Web typecheck/build/UAT 7/7 plus standalone admin-settings/theme-template/AI-admin; Landing typecheck/build/SEO 1/1; audit contracts 4/4 and 10/10; PHDK coherence 61/61; theme static audit PASS. API/Cloud audit migrations are additive but have not been applied to a database. No candidate commit, PR, merge or deployment exists yet. Whole Auto remains PARTIALLY DELIVERED (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS).
+Candidate `5.1.74` source commit `1266d2c728391800a8615b78013f60cee6da985e` was delivered from `fix/phdk-auto-uat-082` by PR [#192](https://github.com/tuyoisaza/keledon/pull/192). Verified remote main merge commit is `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a`, tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`; all six version reads match.
 
-SIGUIENTE PASO: run the five-field delivery gate against the version-prefixed commit/PR, respect observed GitHub controls, merge only through the normal PR method if allowed, and independently verify exact remote `main` SHA/tree/version. Keep the whole portfolio partial.
+Validation: API build/regression 42/42 and lint 0/0; Cloud build/regression 18/18 and lint clean; Web production build/typecheck and UAT 7/7 plus focused admin/theme/AI UAT; Browser build/offline 43/43/lint; Agent theme 2/2/build/extension validation; Landing build/typecheck/SEO 1/1; audit contracts 4/4 and 10/10; PHDK coherence 61/61. GitHub returned no hosted checks/review decision; `main` has no branch protection. No deployment was performed. Whole Auto remains partial (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS).
 
 ---
 
