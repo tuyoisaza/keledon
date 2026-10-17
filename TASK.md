@@ -4,7 +4,7 @@ This is the active continuation of the user-confirmed four-front portfolio, in o
 
 PHDK was synchronized to v2.53.1 from upstream `94f583635d295ae0f227726718904d952cadb8ab`. Static coherence passes 64/64 and the root managed block matches canonical. A PIA (Paquete de Implementación y Aceptación) now maps the code, requirements, test cases and gates in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
 
-The user requested production-only testing. The public production homepage was opened read-only and shows v5.1.85; it is not the 5.2.1 candidate. No real accounts/data or production writes were used. UAT-098 is PASS only for anonymous public-page smoke; authenticated tenant selector UAT-096/097 remain BLOCKED pending a safe matching candidate and isolated synthetic identity/database path. No application tests were run locally in this continuation.
+The user requested production-site testing. Read-only anonymous UAT-098/099 shows the homepage and `/management/teams` redirect on deployed v5.1.85; this is not candidate 5.2.1 acceptance. No login or production writes were used. Candidate UAT-096/097 remain BLOCKED. Source review confirms a superadmin-only `POST /api/crud/interfaces` provision path with company ownership, but the migration has no backfill for existing rows; do not infer ownership. No application tests were run locally in this continuation.
 
 SIGUIENTE PASO: keep PR #210 open until safe synthetic role/persistence acceptance can run on a target matching 5.2.1; do not mutate production data.
 

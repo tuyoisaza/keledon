@@ -1,3 +1,9 @@
+## Current Auto ledger — candidate 5.2.1 / PHDK 2.53.1 (2026-10-17)
+
+The user's four confirmed commitments remain unchanged and in order: CMT-001 baseline/version/PR; CMT-002 widget/safe diagnostics; CMT-003 customer-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Status is 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. PR #210 is open; production is v5.1.85. UAT-098/099 are anonymous smoke only. The 5.2.1 TeamInterface source review found nullable company ownership with no legacy-row backfill; a superadmin provision route exists but no production inventory or customer ownership was inspected. Keep tenant provisioning, authenticated persistence/cross-tenant acceptance, and the other portfolio gates open.
+
+---
+
 ## Current PHDK Auto — 5.1.85 delivered; portfolio partial (2026-10-17)
 
 ## Current continuation — PHDK 2.53.0 Prep and tenant interface assignment (2026-10-17)

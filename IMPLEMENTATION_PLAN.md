@@ -1,3 +1,13 @@
+## Current Auto reconciliation — candidate 5.2.1 / PHDK 2.53.1 (2026-10-17)
+
+The four owner-confirmed requirements remain in their agreed order. Product source contains the Admin/Coordinator tenant-scoped TeamInterface selector, API/Cloud authorization and stale-request protection. The candidate is on open PR [#210](https://github.com/tuyoisaza/keledon/pull/210); production v5.1.85 has only anonymous read-only UAT-098/099, not candidate acceptance. The source review confirms tenant and team scoping, credential redaction and API/Cloud parity for the reviewed routes.
+
+Newly reconciled provisioning constraint: `ManagedInterface.companyId` is nullable and the migration does not backfill existing rows. A superadmin-only CRUD creation route accepts company ownership, but no tenant-interface inventory or ownership mapping has been verified. Do not expose null-company entries or infer historical ownership. Candidate UI/authorization behavior, migration persistence, native device/audio, broad accessibility, and customer-selected runtime acceptance remain incomplete. No code change is justified without verified ownership/configuration or exact-candidate acceptance evidence.
+
+Delivery state: PR #210 remains OPEN, without checks or review decision. Maintain PHDK 2.53.1 and 64/64 static coherence. Continue in-scope source reconciliation and record precise blockers; do not treat production smoke or documentation as whole-product completion.
+
+---
+
 ## Active integrated continuation — PHDK Auto source 5.1.72 merged; portfolio partial
 
 Revalidated for the current owner request on 2026-10-15. The four confirmed fronts remain active and ordered. PR [#177](https://github.com/tuyoisaza/keledon/pull/177) merged the tested 5.1.72 source at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; tree/version readback matches. The selected Web changes improve WCAG contrast, and UAT-066 validates the core disposable-PostgreSQL scope. PHDK v2.51.2 coherence passes 56/56. Whole Auto remains partial.

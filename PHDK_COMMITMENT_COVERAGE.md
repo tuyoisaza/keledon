@@ -1,13 +1,13 @@
 ## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
 
-PHDK 2.53.1; candidate product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; branch head `c0d33b355cbdaaff14203aeb49e9c5a4f400149d`; PR #210 is OPEN, not merged. Production public smoke shows v5.1.85 and is not candidate acceptance.
+PHDK 2.53.1; product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is OPEN, not merged. Production is v5.1.85. UAT-098/099 are anonymous read-only smoke checks only. The source review confirmed tenant filtering and credential redaction; `ManagedInterface.companyId` remains nullable with no backfill. Superadmin provisioning route exists, but production ownership/configuration was not inspected.
 
 | Commitment | Current continuation evidence | Open gate |
 |---|---|---|
-| CMT-001 | Standards updated, branch/version facts recorded, public deployment observed at 5.1.85. | 5.2.1 PR/review/merge/main/deployment verification. |
-| CMT-002 | Prior scoped source and UAT records remain; not rerun here. | Native hardware/audio, broad accessibility/localization. |
-| CMT-003 | Prior provider-neutral source records remain; no client system selected for this generic change. | Per-client configured call/CRM sandbox acceptance. |
-| CMT-004 | 5.2.1 selector source and focused race regression; UAT-098 public smoke only. | Isolated roles/DB, persistence, foreign-tenant denials, remaining CRUD and full product acceptance. |
+| CMT-001 | Standards updated; PHDK coherence 64/64; PR #210 open without checks/review. | Required acceptance, review, merge, exact `main` and deployment verification. |
+| CMT-002 | Prior scoped source/UAT records retained at their original revisions. | Native hardware/audio and broad accessibility/localization. |
+| CMT-003 | Provider-neutral tenant contracts retained; no client stack selected. | Per-client configured call/CRM sandbox acceptance. |
+| CMT-004 | Selector, stale-response handling and API/Cloud tenant contracts reviewed. | Verify interface provisioning/ownership, migration persistence, role sessions and cross-tenant denial; remaining CRUD. |
 
 Totals remain **4 confirmed / 0 done / 4 active-partial / 0 deferred / 0 cancelled**. No confirmed commitment is removed or newly deferred.
 

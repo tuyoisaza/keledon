@@ -4,11 +4,11 @@
 
 | WS | Current status | Open gate |
 |---|---|---|
-| WS-001 / CMT-001 | PHDK v2.53.0 installed; candidate 5.2.0 version reconciled; API/Cloud regressions and build checks pass. | Run final candidate coherence/diff review, then normal versioned PR delivery. |
+| WS-001 / CMT-001 | PHDK v2.53.1 installed; candidate 5.2.1 source is on PR #210, open and unmerged; coherence 64/64. | Complete acceptance/review controls, then verify main and deployment. |
 | WS-002 / CMT-002 | Prior 5.1.85 widget evidence remains scoped. | Authenticated populated-card and screen-reader evidence remains MANUAL. |
 | WS-003 / CMT-003 | Provider-neutral client-specific contracts remain intact. | Live call/CRM acceptance awaits each client's chosen stack. |
-| WS-004 / CMT-004 | Owner-approved company-specific Admin/Coordinator interface selector implemented across API/Cloud/Web with catalog migrations and masked projections. | Run database migration, seeded-role permission tests and browser UAT; local PostgreSQL launch is blocked by Windows Application Control. |
-| WS-X | Stage 45 UAT Prep seeder and safe target policy implemented. | Real isolated seed/login/Test-as/cleanup run blocked; no production/provider action. |
+| WS-004 / CMT-004 | Owner-approved tenant selector implemented across API/Cloud/Web; tenant guards and secret projections reviewed. Migration adds nullable company ownership with no backfill. | Confirm superadmin provisioning and ownership for existing interfaces; run migration, seeded-role permission checks and candidate browser UAT. |
+| WS-X | Stage 45 UAT Prep seeder rejects production. | A safe isolated database/persona target is unavailable; no production identity/data mutation. |
 
 The approval changes the former TeamInterface selector decision. Global catalog entries remain hidden from tenant roles; each tenant sees only its own catalog and no credential values. Whole Auto remains partial.
 ## Active integrated portfolio — 20261014-0007-phdk-auto-completion

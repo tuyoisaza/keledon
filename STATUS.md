@@ -1,10 +1,10 @@
-# Current PHDK Auto — candidate 5.2.0; portfolio partial
+# Current PHDK Auto — candidate 5.2.1 / PHDK 2.53.1; portfolio partial
 
-Remote `main` is `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`; candidate branch `feature/tenant-interface-selector-5.2.0` is based on it. The 5.2.0 change implements the owner-approved tenant-scoped Admin/Coordinator interface selector and guarded Company Co UAT Prep seeder. API/Cloud regressions pass 45/45 and 21/21; backend builds/typechecks, Prisma validation/generation, Web/Landing lint/build/typecheck and Browser build/lint/focused tests pass. PHDK v2.53.0 coherence is 64/64.
+The four owner-confirmed fronts remain active in order. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) carries product source 5.2.1 on `feature/tenant-interface-selector-5.2.0`; it is open, unmerged, and GitHub reports no checks or review decision. Production still displays v5.1.85.
 
-UAT Prep remains PARTIAL/BLOCKED: no isolated PostgreSQL listener is available and Windows Application Control blocked local PostgreSQL startup. Database-backed provisioning/login/role/Test-as/cleanup and browser UAT have not run. Whole Auto remains PARTIALLY DELIVERED (0/4 commitments complete; prior UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 29 PASS / 406 BLOCKED / 122 N/A / 3 DECISION NEEDED). Candidate source commit and PR delivery remain pending.
+PHDK coherence passes 64/64. Read-only production UAT-098/099 verifies only the public homepage and anonymous redirect to login. The selector source has tenant guards and stale-response handling; the migration adds nullable interface ownership without backfilling old rows. A superadmin-only provision route exists, but persisted data/ownership is not verified. All four commitments remain active/partial.
 
-SIGUIENTE PASO: complete normal versioned PR delivery for 5.2.0 while carrying forward the blocked database and browser acceptance gates.
+SIGUIENTE PASO: reconcile each confirmed front with current product source and acceptance evidence; keep PR #210 open pending required UAT and delivery controls.
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered
 
