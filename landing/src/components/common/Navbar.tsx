@@ -128,7 +128,7 @@ export const Navbar = () => {
                             aria-expanded={isOpen}
                             aria-controls="public-mobile-menu"
                             aria-label={isOpen ? t('landing.closeMenu') : t('landing.openMenu')}
-                            className="text-muted-foreground hover:text-foreground"
+                            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         >
                             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
