@@ -1,0 +1,45 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-116",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:35:54Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261017=116",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.2",
+  "deployedSourceCommit": "9f8df3cc8316bffd51c69900816170b819e28d8c",
+  "deploymentId": "413a409b-5356-4f1c-a023-62ea0d15b15d",
+  "assetsObserved": ["/assets/index-Dz87iSCz.js", "/assets/index-CV49ph3H.css"],
+  "channel": "production in-app browser; anonymous accessibility tree, read-only DOM geometry, visual screenshot",
+  "context": {
+    "route": "/",
+    "locale": "es",
+    "theme": "corporate",
+    "identity": "anonymous",
+    "viewportCssPixels": "375x812"
+  },
+  "result": "PASS_FOR_SPANISH_CORPORATE_RESPONSIVE_SAMPLE",
+  "observations": {
+    "versionVisible": true,
+    "demoDisclosure": "Interfaz ilustrativa; no muestra sesiones ni métricas de servicio en vivo.",
+    "menuAccessibleName": "Abrir menú de navegación",
+    "noHorizontalOverflow": true,
+    "documentClientWidth": 360,
+    "documentScrollWidth": 360,
+    "bodyScrollWidth": 360,
+    "demoDisclosureBounds": {"x": 16, "right": 344, "y": 112, "width": 328, "height": 32},
+    "heroTitleBounds": {"x": 16, "right": 344, "y": 213, "width": 328, "height": 240},
+    "menuTarget": {"x": 300, "y": 26, "width": 44, "height": 44},
+    "visiblePrimaryCtaBounds": {"x": 16, "y": 629, "right": 344, "bottom": 677, "width": 328, "height": 48},
+    "visibleSecondaryCtaBounds": {"x": 16, "y": 693, "right": 344, "bottom": 743, "width": 328, "height": 49},
+    "screenshotInspected": true,
+    "themeAndLocaleRestored": true,
+    "viewportReset": true
+  },
+  "privacy": "Anonymous public route only; no links, diagnostic/cache controls, forms, credentials, customer data, clipboard, audio permission, or backend state were accessed or changed.",
+  "notProven": [
+    "contrast ratios or WCAG conformance for all page text",
+    "other locales, themes, routes, zoom levels or viewport sizes",
+    "screen-reader speech and announcement quality",
+    "authenticated diagnostics/RBAC or audio/device behavior"
+  ]
+}
