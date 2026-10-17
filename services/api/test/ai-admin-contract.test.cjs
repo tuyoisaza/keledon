@@ -24,6 +24,7 @@ function fixture() {
     aiPromptRevision: {
       create: async ({data}) => { revisions.push(structuredClone(data)); return data; },
       findFirst: async ({where}) => structuredClone(revisions.find(row => row.promptId === where.promptId && row.toRevision === where.toRevision) ?? null),
+      updateMany: async ({where,data}) => { const row=revisions.find(item=>item.promptId===where.promptId&&item.toRevision===where.toRevision&&(where.publishedAt===undefined||(where.publishedAt===null?!item.publishedAt:item.publishedAt===where.publishedAt))); if(!row)return {count:0}; Object.assign(row,data); return {count:1}; },
     },
     aiCallUsage: { create: async ({data}) => { usage.push(data); return data; }, findMany: async ({take}) => usage.slice(-take) },
     $transaction: async fn => fn(db),
@@ -54,7 +55,24 @@ test('updates validate fields and schema, audit revisions and reject stale concu
   await assert.rejects(service.updatePrompt('owner','brain-chat',{expectedRevision:1,name:'Overwrite'}),/reload/);
   await assert.rejects(service.updatePrompt('owner','brain-chat',{expectedRevision:2,providerSecret:'forbidden'}),/allowed fields/);
   await assert.rejects(service.updatePrompt('owner','brain-chat',{expectedRevision:2,outputSchemaJson:{type:'object',properties:{x:{$ref:'https://example.invalid/schema'}}}}),/Unsupported/);
+  assert.equal((await service.prepare('brain-chat')).revision,1);
+  const published=await service.publishPrompt('owner','brain-chat',2);
+  assert.equal(published.publishedRevision,2);
+  assert.equal(revisions.at(-1).publishedBy,'owner');
   assert.equal((await service.prepare('brain-chat')).revision,2);
+});
+test('runtime stays on the published definition until a draft is explicitly published', async () => {
+  const {service,prompts}=fixture();
+  const initial=await service.prepare('brain-chat');
+  await service.updatePrompt('owner','brain-chat',{expectedRevision:1,name:'Draft only'});
+  assert.equal((await service.prepare('brain-chat')).revision,1);
+  assert.equal((await service.prepare('brain-chat')).name,initial.name);
+  await assert.rejects(service.publishPrompt('admin','brain-chat',2),/access denied/);
+  await service.publishPrompt('owner','brain-chat',2);
+  assert.equal((await service.prepare('brain-chat')).revision,2);
+  assert.equal((await service.prepare('brain-chat')).name,'Draft only');
+  await assert.rejects(service.publishPrompt('owner','brain-chat',1),/reload before publishing/);
+  assert.equal(prompts.get('brain-chat').publishedRevision,2);
 });
 test('workflow metadata validates registered hops, rejects cycles, and rollback creates a new revision', async () => {
   const {service}=fixture(); await service.listPrompts('owner');
@@ -97,6 +115,7 @@ test('runtime AI inputs are validated against the active definition before provi
     expectedRevision:1,
     inputSchemaJson:{type:'object',additionalProperties:false,required:['context'],properties:{context:{type:'string',maxLength:3,source:'authenticated product request',sensitivity:'user-content'}}},
   });
+  await service.publishPrompt('owner','brain-chat',2);
   const constrained=await service.prepare('brain-chat');
   assert.throws(()=>service.validateInput(constrained,{context:'longer'}),/field limit/);
   await assert.rejects(service.updatePrompt('owner','brain-chat',{
@@ -146,7 +165,9 @@ test('structured outputs fail closed: no text coercion or action-field omission'
   assert.deepEqual(service.validateOutput(decision,{type:'stop'}),{type:'stop'});
 });
 test('disabled workflows and unavailable persistence block before provider execution', async () => {
-  const {service,prompts}=fixture(); await service.listPrompts('owner'); prompts.get('voice-reply').enabled=false;
+  const {service}=fixture(); await service.listPrompts('owner');
+  await service.updatePrompt('owner','voice-reply',{expectedRevision:1,enabled:false});
+  await service.publishPrompt('owner','voice-reply',2);
   await assert.rejects(service.prepare('voice-reply'),/disabled/);
   const {service:offline,db}=fixture();db.aiPromptDefinition.upsert=async()=>{throw Error('missing table');};
   await assert.rejects(offline.prepare('brain-chat'),/migration/);

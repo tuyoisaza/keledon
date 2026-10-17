@@ -14,11 +14,26 @@ export interface ManagedPrompt {
   outputDestination: string;
   nextHops: Array<{ agentId: string; inputMapping?: Record<string, unknown>; condition?: string; maxHops?: number }>;
   revision: number;
-  revisions?: Array<{ toRevision: number; changedFields: unknown }>;
+  publishedRevision: number;
+  revisions?: Array<{ toRevision: number; changedFields: unknown; publishedAt?: string | null; publishedBy?: string | null }>;
   updatedBy?: string;
   createdAt?: string;
   updatedAt?: string;
 }
+export type ManagedPromptSummary = Pick<
+  ManagedPrompt,
+  | "id"
+  | "name"
+  | "purpose"
+  | "owningFeature"
+  | "callsite"
+  | "enabled"
+  | "outputDestination"
+  | "nextHops"
+  | "revision"
+  | "publishedRevision"
+  | "updatedAt"
+>;
 export class AiAdminError extends Error {
   status: number;
   constructor(status: number) {

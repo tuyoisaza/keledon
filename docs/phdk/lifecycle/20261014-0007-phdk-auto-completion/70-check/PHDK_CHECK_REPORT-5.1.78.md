@@ -13,6 +13,7 @@ Run `20261014-0007-phdk-auto-completion`; source candidate `93c83bc3789f5fe5269f
 - Browser security/runtime and synthetic call lifecycle regressions: 22/22; Landing SEO source test: 1/1.
 - Prisma schema validate and generate with a placeholder local-only URL; no database connection was made.
 - Five package/lock roots and Browser renderer align at 5.1.78; `git diff --check` passes; PHDK coherence 63/63.
+- Follow-up AI-admin publish gate: API contract 10/10 and Cloud managed-runtime Jest 7/7 pass; API/Cloud schemas validate and clients generate with placeholder local URLs. Built-Web UAT confirms a save remains staged until the superadmin publishes; no provider call is made. API/Cloud migration files are byte-identical and additive. No database migration was applied.
 
 ## Automation and Cost Hygiene
 
@@ -26,7 +27,7 @@ Overall automation status: **ALIGNMENT INCOMPLETE** because Railway root-directo
 ## Open and limited checks
 
 - Full API Jest excluding the database-dependent e2e case passes 48/48. The e2e requiring `DATABASE_URL`/disposable PostgreSQL remains BLOCKED. The broader API regression runner passes 42/42 suites. No full database-suite pass is claimed.
-- Prisma migrations were not applied and restart persistence was not tested.
+- Prisma migrations, including the new staged/published AI revision migration, were not applied and restart persistence was not tested.
 - `cloud/` is the legacy/source parity runtime, not the production Railway API service.
 - Repository still has 396 BLOCKED CRUD rows, 132 N/A, 3 decision-needed and 29 previous PASS; do not treat this backend slice as closing them.
 - Local Web journeys were exercised against synthetic fixtures; they do not replace a packaged Browser/Electron journey. No live AI provider, customer call/CRM, private endpoint or candidate production deployment was used. Read-only Railway deployment/config metadata and GitHub workflow inventory were inspected; billing trends remain unavailable.
@@ -39,4 +40,4 @@ The stale `RolesGuard` test expectation was corrected. The subsequent auth revie
 
 ## Delivery
 
-PR #198 is open and `CLEAN`/mergeable; GitHub reports no hosted checks or reviews, and the repository has no active workflow. The PR branch is synchronized; `main` remains at fetched base `383fd84f2fd1c7218882dc840db7e5be1957246a`. Merge and remote-main verification remain pending the Railway external root/config correction and successful Web build. Portfolio remains **0/4 commitments DONE; 4/4 ACTIVE/PARTIAL**.
+PR #198 is open; GitHub reports no hosted checks or reviews, and the repository has no active workflow. The PR branch is synchronized; `main` remains at fetched base `383fd84f2fd1c7218882dc840db7e5be1957246a`. Merge and remote-main verification remain pending the Railway external root/config correction and successful Web build. Portfolio remains **0/4 commitments DONE; 4/4 ACTIVE/PARTIAL**.

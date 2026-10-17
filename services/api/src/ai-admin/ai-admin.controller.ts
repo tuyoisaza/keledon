@@ -34,6 +34,14 @@ export class AiAdminController {
       body?.expectedRevision,
     );
   }
+  @Post('prompts/:id/publish')
+  publish(@Req() req: any, @Param('id') id: string, @Body() body: any) {
+    return this.service.publishPrompt(
+      req.user?.userId,
+      id,
+      body?.expectedRevision,
+    );
+  }
   @Get('consumption')
   consumption(@Req() req: any, @Query('limit') limit?: string) {
     return this.service.consumption(req.user?.userId, limit);

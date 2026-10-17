@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-17T09:42:08.151Z",
+  "date": "2026-10-17T09:53:10.257Z",
   "target": "isolated local built React SPA + synthetic Company Co API routes",
   "result": "PASS",
   "cases": [
@@ -9,7 +9,8 @@
     "invalid JSON/object schema prevents API write",
     "409 preserves draft",
     "explicit reload/revision update",
-    "successful save revision",
+    "saved revision remains staged until explicit publish",
+    "publish activates the selected revision",
     "usage provider/model/tokens",
     "null cost/tokens remain Unknown",
     "real empty state",

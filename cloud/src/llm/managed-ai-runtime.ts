@@ -27,6 +27,8 @@ export interface ManagedAiDefinition {
   inputSchemaJson: unknown;
   outputSchemaJson: unknown;
   revision: number;
+  publishedRevision?: number;
+  publishedDefinition?: unknown;
   enabled: boolean;
 }
 
@@ -178,12 +180,20 @@ export class ManagedAiRuntime {
               ...definition,
               enabled: true,
               revision: 1,
+              publishedRevision: 1,
+              publishedDefinition: {
+                ...definition,
+                enabled: true,
+                revision: 1,
+              },
               updatedBy: 'system:bootstrap',
               revisions: {
                 create: {
                   fromRevision: 0,
                   toRevision: 1,
                   actorId: 'system:bootstrap',
+                  publishedAt: new Date(),
+                  publishedBy: 'system:bootstrap',
                   changedFields: [
                     'name',
                     'personalityPrompt',
@@ -242,6 +252,24 @@ export class ManagedAiRuntime {
     }
     if (!definition)
       throw new ServiceUnavailableException('Managed AI definition is missing');
+    if (
+      definition.publishedRevision !== undefined &&
+      definition.publishedRevision !== definition.revision
+    ) {
+      const published = definition.publishedDefinition;
+      if (
+        !published ||
+        typeof published !== 'object' ||
+        Array.isArray(published) ||
+        (published as ManagedAiDefinition).id !== feature ||
+        (published as ManagedAiDefinition).revision !==
+          definition.publishedRevision
+      )
+        throw new ServiceUnavailableException(
+          'Published AI workflow snapshot is unavailable',
+        );
+      definition = published as ManagedAiDefinition;
+    }
     if (!definition.enabled)
       throw new ForbiddenException('Managed AI workflow is disabled');
 

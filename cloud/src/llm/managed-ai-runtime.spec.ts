@@ -102,6 +102,31 @@ describe('managed Cloud AI runtime', () => {
     ).rejects.toThrow(/Unknown managed AI feature/);
   });
 
+  it('runs the published snapshot while a newer revision remains a draft', async () => {
+    const row = {
+      ...definition,
+      revision: 4,
+      publishedRevision: 3,
+      publishedDefinition: {
+        ...definition,
+        name: 'Published definition',
+        revision: 3,
+      },
+    };
+    const runtime = new ManagedAiRuntime({
+      aiPromptDefinition: {
+        upsert: jest.fn().mockResolvedValue(row),
+        findUnique: jest.fn().mockResolvedValue(row),
+      },
+      aiCallUsage: { create: jest.fn() },
+    } as unknown as PrismaService);
+    const prepared = await runtime.prepare('brain-chat', {
+      context: 'request',
+    });
+    expect(prepared.definition.name).toBe('Published definition');
+    expect(prepared.definition.revision).toBe(3);
+  });
+
   it('enforces the registered decision-engine output schema', async () => {
     const decisionDefinition = AI_DEFAULTS.find(
       (entry) => entry.id === 'decision-engine',
