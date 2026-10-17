@@ -1,5 +1,13 @@
 # UAT Fixture Manifest — KELEDON
 
+## Production authorization scope — 2026-10-17 / candidate 5.2.7
+
+- Source: `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PHDK 2.53.1; documentation main entering this record `7c9ad9accd74a11c6049949fa9f0d52927e6a34c`.
+- Owner-approved planned scope from `PIA-CMT-003C`: two temporary isolated synthetic tenants, one ordinary non-privileged user and device per tenant, one no-PII flow. Intended prefix: `phdk-auto-uat-20261017`; cleanup immediately after acceptance, with 24 hours as a proposed hard maximum.
+- Status: **AUTHORIZED SCOPE / NOT PROVISIONED**. No production records, users, devices, flows or secrets were created. A first-party audited production provision/cleanup path and authenticated admin session are unavailable/unverified.
+- Excluded: superadmin/admin/coordinator fixtures, role elevation, invitations/email, real customer data, customer/provider calls, CRM credentials, private destinations and cloud metadata. Egress-positive UAT also requires a separately controlled synthetic DNS/CRM sandbox.
+- The historical local fixture list below describes development-only seeder design and does not authorize production provisioning. The seeder remains restricted to loopback `keledon_phdk_uat` in development/test.
+
 ## Current candidate 5.2.1 revalidation (2026-10-17)
 
 - Candidate revision: `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PHDK 2.53.1.

@@ -1,5 +1,16 @@
 # UAT role matrix — run 20261014-0007-phdk-auto-completion
 
+## Production UAT-Prep authorization — v5.2.7 / 2026-10-17
+
+| Persona | Production fixture authority | Current readiness |
+|---|---|---|
+| Ordinary `user` in synthetic tenant A | Owner authorized as part of the temporary non-privileged fixture scope. | BLOCKED: no audited production provisioning/session/cleanup path verified. |
+| Ordinary `user` in synthetic tenant B | Owner authorized as part of the temporary non-privileged fixture scope for tenant-denial cases. | BLOCKED: same missing path; no tenant data created. |
+| `admin`, `coordinator`, `superadmin` | Not authorized as production test identities by the current scope; no role elevation. | BLOCKED / EXCLUDED until a compliant approved route exists. |
+| Anonymous visitor | Public unauthenticated acceptance only. | UAT-132 PASS for scoped `/login` locale/theme AX states and one keyboard sample; no authenticated identity proof. |
+
+No account, tenant, device or flow fixture was provisioned. This section supersedes earlier candidate rows only for current production authorization; historical local test personas remain non-production evidence.
+
 ## Current candidate 5.2.1 — role readiness revalidation (2026-10-17)
 
 Candidate branch: `feature/tenant-interface-selector-5.2.0`, source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PHDK 2.53.1. The role expectations below remain source-backed, but no account is READY for this candidate: Production displays 5.1.85, and no isolated PostgreSQL seeding/login was available. Admin/coordinator selector, positive same-tenant assignment, negative foreign-tenant direct access, stale-response handling under real sessions, and persisted readback are BLOCKED pending an isolated current-candidate target. No role session was opened in production.
