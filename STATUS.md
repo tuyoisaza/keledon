@@ -1,6 +1,6 @@
-## Current PHDK Auto — 5.1.74 delivered; portfolio partial
+## Current PHDK Auto — 5.1.75 accessibility candidate; portfolio partial
 
-PR #192 squash-merged the candidate to main at d1b95cd0; its tree matched the tested candidate. The source aligns admin settings routes with the approved role hierarchy, fixes UAT-081 superadmin legacy-assignment transition and includes UAT-083 HTTP coverage. API and Cloud each passed 24 persisted flow-configuration assertions over loopback; four superadmin API matrix rows move to PASS. PHDK v2.51.5 coherence is 61/61. Candidate 5.1.74 verification passes API 42/42, Cloud 18/18, Web 7/7 UAT suites plus standalone admin-settings/theme-template/AI-admin; audit query/redaction 4/4 and denied-attribution/interceptor 10/10. UAT: 85 PASS, 0 BLOCKED, 1 MANUAL. The 560-row CRUD matrix is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 29 PASS. Whole Auto remains PARTIALLY DELIVERED: CMT-001 source delivery is complete, other commitments and external gates remain open. No deployment is claimed.
+PR #192 delivered source 5.1.74. The active 5.1.75 candidate improves Team Settings accessible names, keyboard focus, 44px targets, save announcements, and en/es/pt labels. Web typecheck/build and UAT 7/7 pass; focused UAT passes 53 assertions including five-field WCAG AA contrast in the light theme. PHDK 2.51.5 coherence is 61/61. Portfolio remains PARTIALLY DELIVERED (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS). Candidate 5.1.75 still needs commit/PR/remote readback; screen-reader and wider environment-bound gates remain open.
 
 SIGUIENTE PASO: continue the remaining four-front acceptance; keep the whole portfolio partial.
 

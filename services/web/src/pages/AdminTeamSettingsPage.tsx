@@ -3,6 +3,7 @@ import { Settings, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getCompanies, type Company } from '@/lib/crud-api';
 import { apiFetch } from '@/lib/api-fetch';
+import { useTranslation } from '@/context/I18nContext';
 
 interface TeamConfig {
     teamId: string;
@@ -14,6 +15,7 @@ interface TeamConfig {
 }
 
 export default function AdminSettingsPage() {
+    const { t } = useTranslation();
     const [companies, setCompanies] = useState<Company[]>([]);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [loading, setLoading] = useState(true);
@@ -47,7 +49,7 @@ export default function AdminSettingsPage() {
             } else {
                 setTeamConfig({
                     teamId: companyId,
-                    teamName: companies.find(c => c.id === companyId)?.name || 'Team',
+                    teamName: companies.find(c => c.id === companyId)?.name || t('teamSettings.team'),
                     sttProvider: 'vosk',
                     ttsProvider: 'elevenlabs',
                     voskServerUrl: '',
@@ -58,14 +60,14 @@ export default function AdminSettingsPage() {
             console.error('Failed to fetch team config:', error);
             setTeamConfig({
                 teamId: companyId,
-                teamName: companies.find(c => c.id === companyId)?.name || 'Team',
+                teamName: companies.find(c => c.id === companyId)?.name || t('teamSettings.team'),
                 sttProvider: 'vosk',
                 ttsProvider: 'elevenlabs',
                 voskServerUrl: '',
                 voskModel: 'vosk-model-en-us'
             });
         }
-    }, [companies]);
+    }, [companies, t]);
 
     useEffect(() => {
         if (selectedCompany) {
@@ -91,12 +93,12 @@ export default function AdminSettingsPage() {
             });
 
             if (response.ok) {
-                setConfigMessage({ type: 'success', text: 'Settings saved successfully!' });
+                setConfigMessage({ type: 'success', text: t('teamSettings.saveSuccess') });
             } else {
-                setConfigMessage({ type: 'error', text: 'Failed to save settings' });
+                setConfigMessage({ type: 'error', text: t('teamSettings.saveFailed') });
             }
         } catch (_error) {
-            setConfigMessage({ type: 'error', text: 'Error saving settings' });
+            setConfigMessage({ type: 'error', text: t('teamSettings.saveError') });
         } finally {
             setSavingConfig(false);
         }
@@ -104,8 +106,9 @@ export default function AdminSettingsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
+                <Loader2 className="w-8 h-8 text-primary animate-spin" aria-hidden="true" />
+                <span className="sr-only">{t('teamSettings.loading')}</span>
             </div>
         );
     }
@@ -113,16 +116,17 @@ export default function AdminSettingsPage() {
     return (
         <div className="space-y-8">
             <div className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-primary" />
-                <h1 className="text-2xl font-bold text-foreground">Team Settings</h1>
+                <Settings className="w-5 h-5 text-primary" aria-hidden="true" />
+                <h1 className="text-2xl font-bold text-foreground">{t('teamSettings.title')}</h1>
             </div>
 
             <div className="mb-6 p-6 rounded-xl bg-card border border-border">
-                <h3 className="font-semibold text-lg text-foreground mb-4">Select Company</h3>
+                <label htmlFor="team-settings-company" className="block font-semibold text-lg text-foreground mb-4">{t('teamSettings.selectCompany')}</label>
                 <select
+                    id="team-settings-company"
                     value={selectedCompany}
                     onChange={(e) => setSelectedCompany(e.target.value)}
-                    className="w-full md:w-64 px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="min-h-11 w-full md:w-64 px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                 >
                     {companies.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
@@ -131,81 +135,86 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="p-6 rounded-xl bg-card border border-border">
-                <h3 className="font-semibold text-lg text-foreground mb-4">STT/TTS Provider Configuration</h3>
+                <h3 className="font-semibold text-lg text-foreground mb-4">{t('teamSettings.configurationTitle')}</h3>
 
                 {teamConfig ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">
-                                Speech-to-Text (STT) Provider
+                            <label htmlFor="team-settings-stt-provider" className="block text-sm font-medium text-foreground mb-2">
+                                {t('teamSettings.sttProvider')}
                             </label>
                             <select
+                                id="team-settings-stt-provider"
                                 value={teamConfig.sttProvider}
                                 onChange={(e) => setTeamConfig({...teamConfig, sttProvider: e.target.value})}
-                                className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                className="min-h-11 w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                             >
-                                <option value="vosk">VOSK (Local - Recommended)</option>
-                                <option value="deepgram">Deepgram (Cloud)</option>
-                                <option value="webspeech">Web Speech API (Browser)</option>
+                                <option value="vosk">{t('teamSettings.sttVosk')}</option>
+                                <option value="deepgram">{t('teamSettings.sttDeepgram')}</option>
+                                <option value="webspeech">{t('teamSettings.sttWebSpeech')}</option>
                             </select>
                             <p className="text-xs text-muted-foreground mt-1">
-                                VOSK runs locally for free. Deepgram is cloud-based.
+                                {t('teamSettings.sttProviderHelp')}
                             </p>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">
-                                Text-to-Speech (TTS) Provider
+                            <label htmlFor="team-settings-tts-provider" className="block text-sm font-medium text-foreground mb-2">
+                                {t('teamSettings.ttsProvider')}
                             </label>
                             <select
+                                id="team-settings-tts-provider"
                                 value={teamConfig.ttsProvider}
                                 onChange={(e) => setTeamConfig({...teamConfig, ttsProvider: e.target.value})}
-                                className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                className="min-h-11 w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                             >
-                                <option value="elevenlabs">ElevenLabs (Recommended)</option>
-                                <option value="webspeech">Web Speech API (Browser)</option>
+                                <option value="elevenlabs">{t('teamSettings.ttsElevenLabs')}</option>
+                                <option value="webspeech">{t('teamSettings.ttsWebSpeech')}</option>
                             </select>
                         </div>
 
                         {teamConfig.sttProvider === 'vosk' && (
                             <>
                                 <div>
-                                    <label className="block text-sm font-medium text-foreground mb-2">
-                                        VOSK Server URL
+                                    <label htmlFor="team-settings-vosk-server-url" className="block text-sm font-medium text-foreground mb-2">
+                                        {t('teamSettings.voskServerUrl')}
                                     </label>
                                     <input
+                                        id="team-settings-vosk-server-url"
+                                        aria-describedby="team-settings-vosk-server-url-help"
                                         type="text"
                                         value={teamConfig.voskServerUrl || ''}
                                         onChange={(e) => setTeamConfig({...teamConfig, voskServerUrl: e.target.value})}
                                         placeholder="wss://your-vosk-server.railway.app"
-                                        className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        className="min-h-11 w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                                     />
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        Enter the URL of your VOSK server (e.g., wss://keledon-vosk.railway.app)
+                                    <p id="team-settings-vosk-server-url-help" className="text-xs text-muted-foreground mt-1">
+                                        {t('teamSettings.voskServerUrlHelp')}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-foreground mb-2">
-                                        VOSK Model
+                                    <label htmlFor="team-settings-vosk-model" className="block text-sm font-medium text-foreground mb-2">
+                                        {t('teamSettings.voskModel')}
                                     </label>
                                     <select
+                                        id="team-settings-vosk-model"
                                         value={teamConfig.voskModel || 'vosk-model-en-us'}
                                         onChange={(e) => setTeamConfig({...teamConfig, voskModel: e.target.value})}
-                                        className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        className="min-h-11 w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                                     >
-                                        <option value="vosk-model-en-us">English (US) - Recommended</option>
-                                        <option value="vosk-model-en-us-0.22">English (US) v0.22</option>
-                                        <option value="vosk-model-en-gb">English (GB)</option>
-                                        <option value="vosk-model-de">German</option>
-                                        <option value="vosk-model-fr">French</option>
-                                        <option value="vosk-model-es">Spanish</option>
-                                        <option value="vosk-model-cn">Chinese</option>
-                                        <option value="vosk-model-ru">Russian</option>
-                                        <option value="vosk-model-small-en-us">English (US) - Small</option>
+                                        <option value="vosk-model-en-us">{t('teamSettings.modelEnUsRecommended')}</option>
+                                        <option value="vosk-model-en-us-0.22">{t('teamSettings.modelEnUsV022')}</option>
+                                        <option value="vosk-model-en-gb">{t('teamSettings.modelEnGb')}</option>
+                                        <option value="vosk-model-de">{t('teamSettings.modelGerman')}</option>
+                                        <option value="vosk-model-fr">{t('teamSettings.modelFrench')}</option>
+                                        <option value="vosk-model-es">{t('teamSettings.modelSpanish')}</option>
+                                        <option value="vosk-model-cn">{t('teamSettings.modelChinese')}</option>
+                                        <option value="vosk-model-ru">{t('teamSettings.modelRussian')}</option>
+                                        <option value="vosk-model-small-en-us">{t('teamSettings.modelEnUsSmall')}</option>
                                     </select>
                                     <p className="text-xs text-muted-foreground mt-1">
-                                        Select the VOSK model for speech recognition
+                                        {t('teamSettings.voskModelHelp')}
                                     </p>
                                 </div>
                             </>
@@ -215,18 +224,19 @@ export default function AdminSettingsPage() {
                             <button
                                 onClick={saveTeamConfig}
                                 disabled={savingConfig}
-                                className="flex items-center gap-2 px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                                aria-busy={savingConfig}
+                                className="min-h-11 flex items-center gap-2 px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                             >
                                 {savingConfig ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                                 ) : (
-                                    <Save className="w-4 h-4" />
+                                    <Save className="w-4 h-4" aria-hidden="true" />
                                 )}
-                                Save Settings
+                                {t(savingConfig ? 'teamSettings.saving' : 'teamSettings.saveSettings')}
                             </button>
 
                             {configMessage && (
-                                <span className={cn(
+                                <span role={configMessage.type === 'error' ? 'alert' : 'status'} aria-live={configMessage.type === 'error' ? 'assertive' : 'polite'} aria-atomic="true" className={cn(
                                     "text-sm",
                                     configMessage.type === 'success' ? "text-green-500" : "text-red-500"
                                 )}>
@@ -236,7 +246,7 @@ export default function AdminSettingsPage() {
                         </div>
                     </div>
                 ) : (
-                    <p className="text-muted-foreground">Loading team configuration...</p>
+                    <p className="text-muted-foreground">{t('teamSettings.loadingConfiguration')}</p>
                 )}
             </div>
         </div>

@@ -1,6 +1,6 @@
-## Current PHDK Auto — 5.1.74 source delivered; acceptance remains partial (2026-10-17)
+## Current PHDK Auto — 5.1.75 accessibility candidate; portfolio partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; source branch `fix/phdk-auto-uat-082`; PR #192 delivered candidate 5.1.74 and merged at `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a` (tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`). Canonical PHDK `main` is v2.51.5 at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61 manifest mappings; updater `CURRENT`, coherence `PASS`. CHK-001–005 remain partial; CHK-006 pricing is decision-required. CMT-001 source delivery is complete; overall Auto remains partial and no deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; active candidate branch `fix/web-team-settings-accessibility-5-1-75`, based on main `85d83a130da506607972c868f3a4dd83d85b018b`. Prior 5.1.74 source delivery is verified by PR #192. Candidate 5.1.75 improves Team Settings labels, keyboard focus, touch targets, status announcements and en/es/pt copy; Web build/typecheck, 7/7 UAT suites and 53 focused accessibility assertions pass. Canonical PHDK remains 2.51.5 with 61/61 mappings. CMT-001 candidate delivery is pending; CMT-002–004 and overall acceptance remain partial. No deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -14,7 +14,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; source
 | AEO/GEO | REUSED / CURRENT | Public answers/claims unchanged; source review remains applicable; external citations and visibility remain unmeasured. |
 | Check | IN PROGRESS | Recheck records remaining source gaps plus static and live automation-hygiene evidence. |
 | Remediation | IN PROGRESS | CHK-001–005 advanced but remain partial; CHK-006 excluded pending owner pricing decision. |
-| Delivery | SOURCE SLICE DELIVERED | PR #192 squash-merged; remote main SHA/tree and six version reads verified. No deployment is claimed. |
+| Delivery | PENDING FOR 5.1.75 | Prior source slice 5.1.74 is delivered in PR #192; current accessibility/localization candidate still requires its versioned commit, normal PR, and remote readback. |
 
 Next: complete final source/automation review, rerun relevant checks, resolve any remaining authorized source findings, then update delivery evidence if the candidate meets its gates.
 

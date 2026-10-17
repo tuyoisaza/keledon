@@ -169,7 +169,7 @@ test('superadmin flow configuration switches tenant scope and safely assigns leg
     assert.equal(disabledPermission.payload[0].isEnabled, false);
 
     await companyScope.selectOption('__legacy__');
-    await page.getByRole('button', { name: /^Unassigned legacy flow/ }).waitFor();
+    await page.getByRole('button', { name: /Unassigned legacy flow/ }).waitFor();
     await page.getByRole('button', { name: 'Edit' }).click();
     const owner = page.getByLabel('Assign to company');
     await owner.selectOption('company-a');
