@@ -1,4 +1,21 @@
-# PMO Status — candidate 5.2.1 / PHDK 2.53.1; portfolio partial
+# PMO Status — 5.2.1 PIA continuation / PHDK 2.53.1; portfolio partial
+
+## Current continuation — 2026-10-17
+
+The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. A read-only production browser observation (UAT-105) saw version 5.2.1, a public demo disclaimer, named copy-diagnostic and cache-clear buttons, and theme/language selectors in the pt locale. No buttons were activated. This does not prove action behavior, accessibility quality, authorization or private diagnostics. The current branch `docs/phdk-auto-pias` starts from `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; PIA docs are not yet delivered.
+
+| Commitment | Status | Next executable gate |
+|---|---|---|
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | Deliver PIA docs through PR; preserve main/version/deployment readback per each source PR. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL — CURRENT | UAT isolated production browser profile across locale/theme/viewport; validate keyboard, focus and copy action. Cache clear requires disposable profile. Then address any reproducible P1 before widening to authenticated/audio UAT. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Map actual source contract; end-to-end acceptance waits for a customer-chosen sandbox. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Keep `KELEDON_VENDOR_KEY` and synthetic tenant/catalog prerequisites; no inferred legacy ownership. |
+
+Overall: **4 confirmed / 0 complete / 4 active-partial**. Continue in the owner's established order; do not mark a PIA or public smoke as product acceptance.
+
+SIGUIENTE PASO: execute the non-destructive CMT-002 UAT cases in a dedicated production browser profile, then correct only evidenced candidate gaps.
+
+---
 
 ## Current Auto continuation — 2026-10-17
 

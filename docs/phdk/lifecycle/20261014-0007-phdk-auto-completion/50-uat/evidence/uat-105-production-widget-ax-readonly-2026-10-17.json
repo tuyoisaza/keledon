@@ -1,0 +1,34 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-105",
+  "stage": "50-uat",
+  "timestampLocal": "2026-10-17",
+  "target": "https://keledon.tuyoisaza.com/",
+  "environment": "production",
+  "channel": "read-only Chrome accessibility-tree observation",
+  "identity": "anonymous",
+  "candidateVersionObserved": "5.2.1",
+  "localeObserved": "pt",
+  "observations": {
+    "pageTitle": "KELEDON | Cloud-governed contact center runtime",
+    "diagnosticCopyButtonPresentAndNamed": true,
+    "applicationCacheClearButtonPresentAndNamed": true,
+    "themeSelectorPresentAndNamed": true,
+    "languageSelectorPresentAndNamed": true,
+    "publicDemoDisclaimerPresent": true,
+    "illustrativeDemoHasRealSessionData": false,
+    "publicNavigationAndContentPresent": true
+  },
+  "result": "PASS_FOR_PUBLIC_ACCESSIBILITY_TREE_PRESENCE_ONLY",
+  "notProven": [
+    "keyboard/focus behavior",
+    "screen-reader announcement quality",
+    "button action success or clipboard contents",
+    "cache-clearing behavior",
+    "other locales/themes/viewports",
+    "authenticated role-gated diagnostics",
+    "audio capture or native device behavior"
+  ],
+  "actions": "Opened the public homepage and read its accessibility tree. Did not activate buttons, log in, submit data, access application records, or modify browser cache/settings.",
+  "privacy": "No clipboard, cookies, tokens, customer data, private diagnostics, or screenshots were collected."
+}

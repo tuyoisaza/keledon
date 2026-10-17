@@ -6,15 +6,21 @@ Este PIA reúne el alcance implementado y la evidencia necesaria para continuar 
 
 Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los cuatro frentes confirmados: (1) baseline/versiones/PR; (2) widget y diagnóstico seguro; (3) voz→Cloud→Browser→CRM según configuración de cada cliente; (4) administración y permisos. Se mantienen las decisiones aprobadas: usuarios nuevos con rol mínimo, elevación administrada por superadmin existente, aislamiento por tenant, credenciales nunca devueltas en respuestas ordinarias, y destinos privados de CRM permitidos solo con validación y allowlist por tenant. Admin/Coordinator reciben asignaciones Web de interfaces limitadas a sus equipos y tenant.
 
-## Candidato y estado
+## Candidato y estado (reconciliado tras merge)
 
 - Repositorio: `tuyoisaza/keledon`.
-- Rama: `feature/tenant-interface-selector-5.2.0`.
-- Candidato de producto: 5.2.1; commit de código revisado: `ef6fe6dbf7eca04708c7200615e7538812751f7e`. Ver el handoff de entrega para el head actual del PR, que también incluye evidencia y documentación PHDK.
-- Base `main` registrada: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
+- Rama de producto: `feature/tenant-interface-selector-5.2.0`; PR [#210](https://github.com/tuyoisaza/keledon/pull/210) mergeado.
+- Merge de producto: `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; versión KELEDON 5.2.1; PR de documentación post-merge #211 mergeado después en `main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`.
+- El PIA histórico conserva evidencia del candidato. El target actual se verifica desde `origin/main` al preparar cada PR/aceptación; no se usa el antiguo base `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50` como HEAD.
 - PHDK actualizado: 2.53.1 desde upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64.
 - Fuentes relevantes: `services/web/src/pages/ManagementTeamsPage.tsx`, `services/web/src/lib/request-sequence.ts`, guards y servicios API/Cloud de asignación tenant/equipo, y la regresión `services/web/test/team-interface-request-sequence.test.cjs`.
-- El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto, no fusionado; producción continúa en v5.1.85.
+- El selector tenant/equipo y la protección contra respuestas asíncronas obsoletas fueron entregados por PR [#210](https://github.com/tuyoisaza/keledon/pull/210), ahora mergeado. La preparación de fixtures rechaza targets productivos. El smoke UAT-104 observa producción en 5.2.1.
+
+Estado corregido: PR #210 está mergeado y el smoke UAT-104 observa 5.2.1 público en producción. La descripción de código/aceptación que sigue se conserva; el estado de aceptación autenticada permanece bloqueado y se desglosa en los PIAs actuales de `20-plan/pias/`.
+
+## PIAs de continuación
+
+El plan ejecutable vigente y desglosado por compromiso se encuentra en [`pias/README.md`](pias/README.md), con un PIA dedicado para CMT-001 a CMT-004. Estos paquetes precisan aceptación productiva, restricciones de datos, dependencias y criterios de cierre; no reducen el alcance ni convierten documentación en aceptación de producto.
 
 ## Mapa de implementación a aceptación
 
