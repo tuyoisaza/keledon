@@ -1,6 +1,10 @@
-# PHDK Check report — current 5.1.79 candidate
+# PHDK Check report — 5.1.79 source delivered; overall Auto partial
 
-Run 20261014-0007-phdk-auto-completion; branch fix/phdk-auto-continuation-5-1-78; base origin/main 383fd84f2fd1c7218882dc840db7e5be1957246a. PHDK 2.52.2 coherence 63/63; all five roots and Browser renderer are 5.1.79.
+## Candidate 5.1.80 check re-entry — UAT-091 integration telemetry (2026-10-17)
+
+Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` keeps unmeasured API/Cloud provider health and connection metrics unknown and updates Web/Landing to show neutral “Not measured” status. UAT-091 service contracts pass 2/2 in API and Cloud; shared health-model tests pass 2/2. API/Cloud regressions pass 42/42 and 19/19; API/Cloud/Web/Landing/Browser builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. Latest full Web UAT is 7/8 because a flow-editor test timed out; both implicated flow tests pass individually. No live provider/customer call was made. Versioned evidence: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json`. Delivery remains pending and whole Auto remains PARTIALLY DELIVERED.
+
+Run 20261014-0007-phdk-auto-completion; PR #198 squash-merged to `main` at `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. Remote version is 5.1.79; PHDK 2.52.2 coherence 63/63; all five roots and Browser renderer align. API, Cloud, Web, Landing and Browser builds/typechecks and scoped regressions pass. Railway post-merge auto-deploy reports API SUCCESS and Web FAILED: build context `/services/web` lacks `/shared`, which the configured Dockerfile copies. No Railway configuration change was made. The source slice is delivered; overall Auto remains PARTIALLY DELIVERED.
 
 ## Check/remediation re-entry — UAT-090 truthful dashboard health (2026-10-17)
 

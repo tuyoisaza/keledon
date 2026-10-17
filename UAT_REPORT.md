@@ -1,5 +1,11 @@
 # UAT report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.80 — UAT-091 unmeasured integrations stay unknown (2026-10-17)
+
+The Integration Hub previously initialized every default provider at 100% uptime, 0% errors and 0ms response, and synthesized a current sync/check time despite having no configured customer adapter. API and Cloud now leave `lastCheck` and `lastSync` absent until a check runs and start telemetry counters at zero. The shared display model returns `unknown` until at least one request and a check timestamp exist; Web and Landing show “Not measured” and neutral unknown status instead of green health metrics. API/Cloud service contracts pass 2/2 each, shared health-model tests pass 2/2, targeted lint passes, API/Cloud regressions pass 42/42 and 19/19, all five builds and Web/Landing typechecks pass. The latest full local Web UAT run passed 7/8; its only failure was a flow-editor timeout, and both flow-editor tests passed when rerun individually. Exact-source evidence: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json`. No live customer adapter or provider probe was used.
+
+UAT tally advances to **88 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**; database acceptance, native device/audio, broad accessibility, deployed Web and customer-selected integrations remain open.
+
 ## Candidate 5.1.79 — UAT-090 truthful dependency health (2026-10-17)
 
 Exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` passes UAT-090: API and Cloud return `unknown` for unprobed TTS/STT/AI dependencies and aggregate health; dashboard socket connectivity is reported separately and does not imply subsystem readiness. Web and Landing initialize their dashboard status as unknown until a server event arrives. API/Cloud service contract suites pass 2 assertions each; full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin; Web/Landing typechecks and production builds pass. Evidence: `docs/phdk/workstreams/AGENT-HEALTH-UAT.json`. This is scoped source/UAT evidence, not a live dependency-health probe.

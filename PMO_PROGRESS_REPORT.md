@@ -1,6 +1,10 @@
-## Current PMO progress — 5.1.79 dashboard health remediation; whole portfolio partial (2026-10-17)
+## Current PMO progress — 5.1.79 source delivered; whole portfolio partial (2026-10-17)
 
-The branch `fix/phdk-auto-continuation-5-1-78` is based on verified `origin/main` 5.1.77 `383fd84f2fd1c7218882dc840db7e5be1957246a`; PR #198 is open. PHDK v2.52.2 is current and coherence passes 63/63. The 5.1.79 remediation removes fabricated TTS/STT/AI `ready` states and separates actual socket connectivity from unprobed aggregate health; paired service-contract tests pass, and Web/Landing typechecks/builds pass. UAT-089 remains exact-source evidence for 12 audit-console checks. Portfolio is 87 PASS, 0 BLOCKED, 1 MANUAL; 560 CRUD rows remain 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL, Railway, native and customer-selected acceptance remain open; no deployment is claimed.
+## Candidate 5.1.80 — integration telemetry truthfulness
+
+Source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` removes fabricated green health and zero-valued telemetry until an actual provider check runs. UAT-091 API/Cloud contracts pass 2/2 each, shared model tests 2/2; API/Cloud regressions pass 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. The latest full Web UAT is 7/8; its isolated flow-editor timeout passes when rerun alone. Candidate delivery is pending. UAT tally is 88 PASS, 0 BLOCKED, 1 MANUAL; four commitments remain active/partial. No customer adapter was configured or called.
+
+PR #198 delivered version 5.1.79 to verified `origin/main` `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. PHDK v2.52.2 is current and coherence passes 63/63. The 5.1.79 remediation removes fabricated TTS/STT/AI `ready` states and separates actual socket connectivity from unprobed aggregate health; paired service-contract tests pass, and Web/Landing typechecks/builds pass. UAT-089 remains exact-source evidence for 12 audit-console checks. Railway auto-deploy reported API SUCCESS and Web FAILED on this commit: root `/services/web` excludes the shared build input `/shared`. Portfolio is 87 PASS, 0 BLOCKED, 1 MANUAL; 560 CRUD rows remain 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL, Railway, native and customer-selected acceptance remain open; deployed Web health is not claimed.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|

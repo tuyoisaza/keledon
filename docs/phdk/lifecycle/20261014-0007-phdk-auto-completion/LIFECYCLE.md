@@ -1,4 +1,24 @@
-## Current Auto continuation — candidate 5.1.74, PHDK 2.51.5 (2026-10-17)
+## Current Auto continuation — candidate 5.1.80, PHDK 2.52.2 (2026-10-17)
+
+Source candidate `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` is on branch `fix/integration-health-unknown-5-1-80`, based on verified main `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. All five package/lock roots and Browser renderer are 5.1.80; PHDK coherence is 63/63. API/Cloud integration-health contracts pass 2/2 each, shared health model 2/2; API/Cloud regressions 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and three standalone admin/theme/AI UATs pass. Latest full Web UAT is 7/8 because the superadmin flow editor test times out in the combined run; it passes 1/1 in isolation. SEO and AEO/GEO are not applicable to this private UI/backend diff and existing project reviews are preserved in candidate snapshots. Delivery remains pending. Whole Auto is PARTIALLY DELIVERED; all four commitments remain open/partial, UAT is 88 PASS, 0 BLOCKED, 1 MANUAL, and CRUD remains 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REVALIDATED | PHDK 2.52.2; coherence 63/63; five product roots aligned at 5.1.80. |
+| Capture / Plan | REUSED | Four confirmed fronts and approved role/tenant/private-origin policies remain active. |
+| PMO / Workstreams | ACTIVE / PARTIAL | 0/4 commitments closed; current slice advances CMT-002. |
+| Integration Review | COMPLETED FOR UAT-091 | API/Cloud defaults, metric contract, shared UI classification and all five version roots reconciled. |
+| UAT / UAT Fix | SOURCE CONTRACT PASS; FULL WEB SUITE INTERMITTENT | API/Cloud 2/2 each; shared 2/2; full Web 7/8; isolated flow-editor tests pass. No customer/provider call. |
+| SEO | NOT APPLICABLE TO CANDIDATE DIFF | Authenticated UI/backend only; existing project audit copied to `65-seo/snapshots/candidate-5.1.80/`. |
+| AEO/GEO | NOT APPLICABLE TO CANDIDATE DIFF | Public answer content unchanged; existing project review copied to `67-aeo-geo/snapshots/candidate-5.1.80/`. |
+| Check / Remediation | CHECKS PASS WITH UAT FLAKE RECORDED | PHDK 63/63, regressions, builds, targeted lint and diff check pass; exact Web UAT limitation remains. |
+| Delivery | PENDING | Rename branch, final diff/security review, commit documentation/evidence, open PR and verify merge/deployment separately. |
+
+SIGUIENTE PASO: finalize candidate review and normal PR delivery while retaining the full-suite UAT limitation and PARTIALLY DELIVERED status.
+
+---
+
+## Historical Auto continuation — candidate 5.1.74, PHDK 2.51.5 (2026-10-17)
 
 Run `20261014-0007-phdk-auto-completion`; branch `fix/phdk-auto-uat-082`, based on current remote `main` `0dd405d930c518537ecea17ca363e95a5b99a9fd`; candidate is locally uncommitted. PHDK 2.51.5 is current and coherent 61/61. All six candidate version reads are 5.1.74. API build/regression/lint pass 42/42, 0 errors/0 warnings; Cloud build/regression/lint pass 18/18, 0 errors; Browser 43/43/build/lint; Agent theme 2/2/build/validation; Web typecheck/build/UAT 7/7 plus standalone admin-settings/theme-template/AI-admin; Landing typecheck/build/SEO 1/1. Audit contracts pass 4/4 and 10/10; theme scanner STATIC_PASS. Whole Auto remains PARTIALLY DELIVERED: 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS; all four commitments remain active. PostgreSQL audit migration/restart, client-specific live calls/CRM, native device/audio and broad accessibility remain open. No production writes or deployment are claimed.
 

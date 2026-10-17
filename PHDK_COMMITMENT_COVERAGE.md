@@ -1,6 +1,10 @@
-## Current commitment coverage — 5.1.78 candidate; whole portfolio partial
+## Current commitment coverage — 5.1.79 source merged; whole portfolio partial
 
-Base `origin/main` is `383fd84f2fd1c7218882dc840db7e5be1957246a`; candidate branch `fix/phdk-auto-continuation-5-1-78` is synchronized with open/mergeable PR #198, without reviews or hosted checks. PHDK v2.52.2 coherence is 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate is not merged or deployed.
+## 5.1.80 checked candidate (2026-10-17)
+
+Source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` removes fabricated Integration Hub telemetry before a provider check. UAT-091 API/Cloud contracts and the shared display model pass 2/2 each; API/Cloud regressions pass 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. The latest full Web UAT is 7/8 after a flow-editor timeout; both flow-editor cases pass individually. PR delivery remains pending. Four commitments remain active/partial; no provider or customer service was contacted.
+
+PR #198 delivered 5.1.79 at verified remote `main` SHA `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. GitHub reported no hosted checks or review submissions; `main` is unprotected. Railway auto-deploy passed for API and failed for Web because root `/services/web` omits `/shared` from the build context. PHDK v2.52.2 coherence is 63/63. UAT tally is 87 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS.
 
 | Commitment | Candidate evidence | Open acceptance |
 |---|---|---|
@@ -9,7 +13,7 @@ Base `origin/main` is `383fd84f2fd1c7218882dc840db7e5be1957246a`; candidate bran
 | CMT-003 voice→Cloud→Browser→CRM | Cloud uses revisioned managed workflow contracts, DB-derived actor/team and safe usage attribution; 19 parity regressions pass; Browser synthetic call lifecycle tests pass. Client provider/CRM choice remains tenant-specific. | Migrations/runtime restart, native call path, each client's configured call/CRM sandbox. |
 | CMT-004 administration and permissions | API/Cloud managed-AI contracts pass; protected requests resolve current DB role/email; Google bearer token is no longer returned in a URL; OAuth replay/expiry tests pass; AI prompt edits require explicit revision publish for runtime activation. | Disposable PostgreSQL migration/restart acceptance, 396 blocked CRUD rows, audit/export/retention, synthetic AI trace and remaining admin workflows. |
 
-Current portfolio: 0/4 DONE; 4/4 ACTIVE/PARTIAL; 0 deferred; 0 cancelled. Source slice is pending delivery; whole Auto is PARTIALLY DELIVERED.
+Current portfolio: 0/4 DONE; 4/4 ACTIVE/PARTIAL; 0 deferred; 0 cancelled. The scoped source slice is delivered; whole Auto is PARTIALLY DELIVERED.
 
 ---
 

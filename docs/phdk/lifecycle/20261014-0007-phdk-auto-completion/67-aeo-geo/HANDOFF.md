@@ -111,3 +111,8 @@ Verified author/contact provenance and public market/language policy remain unre
 
 ## Next stage
 Stage: 70-check. Verify current UAT, Plan/PMO/Integration, SEO and AEO/GEO handoffs, then audit the complete integrated repository candidate; remediate fixable in-scope findings.
+## Candidate 5.1.80 applicability reuse (2026-10-17)
+
+For source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df`, the AEO/GEO stage is NOT APPLICABLE to this candidate diff: no public answer content, entities, claims, routes, headings or structured data changed. The existing project-wide 15-control answerability review is preserved in `snapshots/candidate-5.1.80/`. No live host, crawler, answer engine or paid query was used; deployed visibility remains unmeasured. Exact candidate note: `snapshots/candidate-5.1.80/CANDIDATE_SCOPE.md`.
+
+Next: integrated Check with public discovery limits retained.

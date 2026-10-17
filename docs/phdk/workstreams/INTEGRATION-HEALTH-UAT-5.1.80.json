@@ -1,0 +1,48 @@
+{
+  "candidate": {
+    "version": "5.1.80",
+    "revision": "4b7c9cd1c340739ab5404cf13c23f1f86156c3df"
+  },
+  "runAt": "2026-10-17",
+  "case": "UAT-091",
+  "result": "PASS_WITH_UNRELATED_UAT_FLAKE",
+  "scope": "default provider telemetry and shared UI health classification before and after an isolated provider check",
+  "assertions": {
+    "apiIntegrationHealthService": { "passed": 2, "failed": 0 },
+    "cloudIntegrationHealthService": { "passed": 2, "failed": 0 },
+    "sharedIntegrationHealthModel": { "passed": 2, "failed": 0 },
+    "apiRegressionSuites": { "passed": 42, "failed": 0 },
+    "cloudRegressionSuites": { "passed": 19, "failed": 0 },
+    "apiAndCloudProductionBuilds": "PASS",
+    "webAndLandingTypechecks": "PASS",
+    "webAndLandingProductionBuilds": "PASS",
+    "browserBuildAndRendererVersionSync": "PASS",
+    "targetedLint": "PASS",
+    "standaloneAdminSettingsUat": "PASS",
+    "standaloneThemeTemplatesUat": "PASS",
+    "standaloneAiAdminUat": "PASS",
+    "webUatFullSuiteLatestRun": { "passed": 7, "failed": 1 },
+    "webUatTransientFailures": [
+      {
+        "test": "tenant flow definition editor uses company-scoped API contracts",
+        "combinedRun": "failed with HTTP response error",
+        "isolatedRerun": "PASS 1/1"
+      },
+      {
+        "test": "superadmin flow configuration switches tenant scope and safely assigns legacy definitions",
+        "combinedRun": "timed out waiting for the unassigned legacy flow control",
+        "isolatedRerun": "PASS 1/1"
+      }
+    ],
+    "noLiveProviderOrCustomerRequest": true
+  },
+  "observedBehavior": {
+    "beforeProviderCheck": "lastCheck and lastSync absent; fabricated request, data, error, uptime and response metrics omitted; UI classification unknown",
+    "afterProviderCheck": "check timestamp and request counters reflect the actual check; errors are measured and UI classification is derived from recorded data"
+  },
+  "limits": [
+    "No customer adapter or live provider was configured or contacted.",
+    "The complete Web UAT command was intermittent; two flow tests passed when rerun individually.",
+    "This source slice does not close the wider PHDK Auto acceptance gates."
+  ]
+}

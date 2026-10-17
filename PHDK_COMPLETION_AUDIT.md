@@ -1,4 +1,16 @@
-## Current PHDK Auto continuation — 5.1.77 candidate checked; delivery pending; portfolio partial
+## PHDK Auto completion audit — candidate 5.1.80 (2026-10-17)
+
+Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances the five product roots and Browser renderer to 5.1.80. UAT-091 closes one scoped source/UAT case for truthful unmeasured integration health. Candidate delivery is pending; the latest full Web UAT passed 7/8 and needs a stable complete run. PHDK coherence passes 63/63. Overall Auto remains **PARTIALLY DELIVERED**, with 0/4 commitments fully closed and PostgreSQL, full CRUD, native/accessibility, deployed Web and customer-selected integration acceptance still open.
+
+## Current PHDK Auto continuation — source 5.1.79 delivered; portfolio partial (2026-10-17)
+
+PR #198 merged to `main` at `8deb6d7ff71d42a628e966bcf64d340b4f10e337`; remote version 5.1.79 and PHDK 2.52.2 coherence 63/63 are verified. Scoped API/Cloud/Web/Landing/Browser checks and exact-source UAT-090 pass. GitHub reported no hosted checks or review submissions; `main` is unprotected. Railway auto-deploy passed API but failed Web at the merged SHA because live root `/services/web` cannot provide Docker context `/shared`. PostgreSQL migration/restart, most of the CRUD matrix, native device/audio, broad accessibility/localization, deployed discovery and tenant-selected live call/CRM acceptance remain open. All four confirmed commitments are ACTIVE/PARTIAL (0/4 DONE); Auto is **PARTIALLY DELIVERED**. Delivery evidence: PR [#198](https://github.com/tuyoisaza/keledon/pull/198), merge SHA above, exact-source JSON `docs/phdk/workstreams/AGENT-HEALTH-UAT.json`.
+
+SIGUIENTE PASO: continue the four confirmed workstreams from verified main. Railway's owner/provider configuration must expose the repository-root context and select the Web Dockerfile; database-backed migration/restart and broad acceptance also remain open.
+
+---
+
+## Historical PHDK Auto continuation — 5.1.77 candidate checked; delivery pending; portfolio partial
 
 Date: 2026-10-17. Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. Candidate source commit `0da085bddbb7157453ddca3951960209a94c9e9b` on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. Web/Landing/Browser widget spacing, all five version roots, Web and Browser tests, production Web UAT, Landing desktop/mobile UAT, builds, typechecks, SEO source checks, targeted ESLint and PHDK coherence are documented in `INTEGRATION_REPORT-5.1.77.md`, `UAT_REPORT.md` and `PHDK_CHECK_REPORT-5.1.77.md`. PR and remote-main delivery are still pending. Whole Auto remains partial: UAT 85 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. No deployment is claimed.
 

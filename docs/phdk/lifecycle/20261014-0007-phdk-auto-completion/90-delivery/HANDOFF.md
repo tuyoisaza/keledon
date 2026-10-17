@@ -469,7 +469,17 @@ The candidate now removes duplicate API/Cloud DebugMode service classes that wer
 Version-prefixed candidate source is prepared on `fix/phdk-navbar-overlap-5-1-61`, based on verified `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`. UAT-052 and the full focused Web suite pass; all five app builds, API/Cloud regressions 37/37 and 17/17, Browser 15/15, Web diagnostics 19/19, both SEO source checks, applicable lint/typechecks, exact 5.1.61 alignment and PHDK coherence 52/52 pass. Check report: `../70-check/PHDK_CHECK_REPORT-5.1.61.md`; evidence snapshot: `../50-uat/snapshots/candidate-5.1.61/`.
 
 Delivery actions remaining: create PR from the verified candidate diff, merge through normal PR flow, fetch and independently compare merge SHA/tree/package versions, update post-merge evidence and run `phdk_completion_gate.py`. Until these are verified, report **PARTIALLY DELIVERED**. Whole Auto remains partial after the scoped delivery for exhaustive persisted operations/concurrency, native device/audio, broad accessibility/localization, deployed discovery and tenant-selected live call/CRM acceptance.
-## Candidate 5.1.78 — PR #198 open; delivery incomplete
+## Current delivery handoff — PR #198 merged; PHDK Auto partial (2026-10-17)
+
+PR [#198](https://github.com/tuyoisaza/keledon/pull/198) delivered 5.1.79 to `main` by squash at `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. Fresh `origin/main`, service version and PHDK v2.52.2 coherence 63/63 pass. Source contract tests, API/Cloud regression, builds, Web/Landing typecheck and build, Browser build/tests, and exact-source UAT-090 pass. GitHub reports no hosted checks or review submissions; `main` is unprotected.
+
+Post-merge Railway readback: API auto-deploy `SUCCESS`; Web deployment `ec501578-e123-422e-b1f4-2ecb6f7a4984` `FAILED` at the merged SHA. The service's live root is `/services/web`, builder `RAILPACK`; Docker build cannot find `/shared` when processing `COPY shared/ /shared/`. No Railway setting was changed. This requires owner/provider configuration of repository-root build context and Web Dockerfile before a successful Web deploy can be claimed.
+
+Outcome: **source delivery complete for this slice; PHDK Auto PARTIALLY DELIVERED**. All four confirmed commitments remain ACTIVE/PARTIAL. PostgreSQL migration/restart, broad CRUD, native device/audio, broad accessibility/localization and tenant-specific live voice/CRM acceptance remain open. Continue the authorized source-checkable work from the merged 5.1.79 base; preserve the live Railway blocker and do not imply deployment success.
+
+---
+
+## Historical candidate 5.1.78 — PR #198 open; delivery incomplete
 
 PR #198 is open, based on verified `main` `383fd84f2fd1c7218882dc840db7e5be1957246a`. GitHub currently reports merge state UNKNOWN, with no hosted checks or reviews. Do not record merged delivery or completion evidence yet.
 
