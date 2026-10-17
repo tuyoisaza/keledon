@@ -1,0 +1,88 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; deliver and verify truthful integration health in the scoped 5.1.80 source slice while retaining incomplete portfolio status",
+  "target_branch": "main",
+  "expected_version": "5.1.80",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_candidate_sha": "4b7c9cd1c340739ab5404cf13c23f1f86156c3df",
+  "source_candidate_tree": "ed8773bb5545c3e16702d3bd8a983bd03266ffcb",
+  "merged_commit_sha": "64026d229419459beb6c80c0bb0c5f3499bde742",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/199",
+  "remote_main_verified_at": "2026-10-17T11:20:56Z",
+  "github": {
+    "state": "MERGED",
+    "merge_method": "squash",
+    "hosted_checks": [],
+    "review_submissions": [],
+    "main_branch_protection": false
+  },
+  "checks": {
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Fresh origin/main readback is 64026d229419459beb6c80c0bb0c5f3499bde742; its tree matches the exact candidate tree. API, Web, Cloud, Landing and Browser package roots are 5.1.80 and Browser renderer is v5.1.80. PHDK v2.52.2 coherence passes 63/63."
+    },
+    "commit_prefix": {
+      "status": "PASS",
+      "evidence": "Candidate commit is v5.1.80 fix(integrations): keep unmeasured health unknown; squash merge is v5.1.80 fix(integrations): keep unmeasured health unknown."
+    },
+    "push_and_pr": {
+      "status": "PASS",
+      "evidence": "Feature branch was pushed and PR #199 targeted main; GitHub reports MERGED. No hosted checks or review submissions were reported."
+    },
+    "remote_main": {
+      "status": "PASS",
+      "evidence": "Fresh fetch confirms origin/main SHA 64026d229419459beb6c80c0bb0c5f3499bde742 and candidate tree ed8773bb5545c3e16702d3bd8a983bd03266ffcb. Five package roots read 5.1.80 and Browser renderer reads v5.1.80."
+    },
+    "lint": {
+      "status": "PASS",
+      "evidence": "Focused ESLint for API, Cloud, Web and Landing changed code passes."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API/Cloud builds compile TypeScript; Web and Landing npm run typecheck pass."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "API, Cloud, Web, Landing and Browser production builds pass; Browser renderer version sync writes v5.1.80. Railway API deployment for merged SHA reports SUCCESS."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "API/Cloud integration-health service contracts pass 2/2 each; shared integration-health model tests pass 2/2; API regression passes 42/42 and Cloud 19/19; standalone admin-settings, theme-template and AI-admin UAT each pass."
+    },
+    "uat": {
+      "status": "BLOCKED",
+      "evidence": "Latest full production-built Web UAT passed 7/8. The superadmin flow-editor test timed out only in the combined suite and passed 1/1 when run alone; other seven cases passed. UAT-091's exact API/Cloud/shared contracts pass 2/2 each. Full suite evidence and limitation are in docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json."
+    },
+    "scoped_uat": {
+      "status": "PASS",
+      "evidence": "UAT-091 validates absent check/sync times and fabricated metrics before a provider check, followed by actual check values and measured status; no customer adapter/provider call was made."
+    },
+    "scope_reconciliation": {
+      "status": "PASS",
+      "evidence": "All four owner-confirmed commitments remain ACTIVE/PARTIAL (0/4 DONE); whole PHDK Auto is PARTIALLY DELIVERED. CRUD matrix remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS."
+    }
+  },
+  "portfolio_status": "PARTIALLY DELIVERED",
+  "portfolio_remaining": [
+    "Railway Web deployment; 5.1.80 Web build failed because live root /services/web excludes required /shared context",
+    "PostgreSQL migration, restart and persistence acceptance",
+    "396 blocked CRUD rows and broader admin operation coverage",
+    "Native device/audio and broad accessibility/localization acceptance",
+    "Customer-selected live voice and CRM acceptance"
+  ],
+  "deployment": {
+    "api": "SUCCESS",
+    "api_deployment_id": "57cd8eee-defe-4593-9b05-645f54cd5eca",
+    "web": "FAILED",
+    "web_deployment_id": "1bfc2fdc-8d5c-4319-b076-17654dd7d7fd",
+    "merged_sha": "64026d229419459beb6c80c0bb0c5f3499bde742",
+    "web_root_directory": "/services/web",
+    "web_builder": "RAILPACK",
+    "web_failure": "Docker COPY shared/ /shared/ fails because /shared is absent from the configured /services/web build context.",
+    "provider_settings_changed": false
+  },
+  "database_used": false,
+  "provider_calls": 0,
+  "customer_data_used": false
+}

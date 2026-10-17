@@ -1,8 +1,14 @@
 # PHDK Check report — 5.1.79 source delivered; overall Auto partial
 
-## Candidate 5.1.80 check re-entry — UAT-091 integration telemetry (2026-10-17)
+# Current 5.1.81 Check — exact Web UAT is green; portfolio gaps remain
 
-Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` keeps unmeasured API/Cloud provider health and connection metrics unknown and updates Web/Landing to show neutral “Not measured” status. UAT-091 service contracts pass 2/2 in API and Cloud; shared health-model tests pass 2/2. API/Cloud regressions pass 42/42 and 19/19; API/Cloud/Web/Landing/Browser builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. Latest full Web UAT is 7/8 because a flow-editor test timed out; both implicated flow tests pass individually. No live provider/customer call was made. Versioned evidence: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json`. Delivery remains pending and whole Auto remains PARTIALLY DELIVERED.
+The 5.1.81 candidate fixes an async tenant-scope race in the superadmin flow editor. Refreshes now resolve against the selected company at request time and stale responses are ignored. Production Web typecheck/build pass; the delayed-response regression UAT passes, full Web UAT passes 8/8 plus standalone admin-settings/theme-template/AI-admin, and PHDK v2.52.2 coherence passes 63/63. All five package/lock roots and Browser renderer are 5.1.81. This scoped Check is ready for normal PR delivery; hosted checks/review and remote-main readback remain pending. Whole Check remains GAPS FOUND and Auto PARTIALLY DELIVERED: PostgreSQL/restart, 396 blocked CRUD rows, native/accessibility, Railway Web root and client-selected call/CRM acceptance remain open.
+
+SIGUIENTE PASO: finish exact-candidate review and deliver 5.1.81 through the normal PR path; keep the whole portfolio partial until its four commitments close.
+
+## 5.1.80 delivery readback — UAT-091 integration telemetry (2026-10-17)
+
+PR #199 is merged as remote main `64026d229419459beb6c80c0bb0c5f3499bde742` (5.1.80). Scoped source checks pass: API/Cloud contracts 2/2 each; shared model 2/2; API/Cloud regressions 42/42 and 19/19; builds, typechecks, focused lint and PHDK 63/63. Latest full Web UAT passed 7/8 due to a flow-editor timeout; the isolated superadmin flow-editor test passes. Railway API is SUCCESS; Web FAILED at `COPY shared/ /shared/` because service root `/services/web` omits `/shared`. The completion gate correctly returns BLOCKED for full UAT. Exact records: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json` and post-merge `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.80-post-merge-199.json`. Whole Auto remains PARTIALLY DELIVERED.
 
 Run 20261014-0007-phdk-auto-completion; PR #198 squash-merged to `main` at `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. Remote version is 5.1.79; PHDK 2.52.2 coherence 63/63; all five roots and Browser renderer align. API, Cloud, Web, Landing and Browser builds/typechecks and scoped regressions pass. Railway post-merge auto-deploy reports API SUCCESS and Web FAILED: build context `/services/web` lacks `/shared`, which the configured Dockerfile copies. No Railway configuration change was made. The source slice is delivered; overall Auto remains PARTIALLY DELIVERED.
 

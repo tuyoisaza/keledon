@@ -1,3 +1,15 @@
+## v5.1.81 — keep flow editor data aligned with the selected tenant
+
+- Resolve each flow refresh against the currently selected company, including refreshes resumed after an in-flight write.
+- Ignore responses from older refreshes so delayed tenant data cannot replace the active company or legacy view.
+- Add a production-built Web UAT race case that delays a Tenant B response while switching to unassigned legacy flows.
+- Align all five package/lock roots and Browser renderer at 5.1.81.
+
+### Verification
+- Web typecheck and production build pass; the targeted superadmin flow UAT passes repeatedly with the delayed-response race enabled.
+- Full production-built Web UAT passes 8/8; standalone admin-settings, theme-template and AI-admin UAT pass.
+- PHDK 2.52.2 coherence passes 63/63. Exact candidate delivery/readback is pending.
+
 ## v5.1.80 — report integration health only after a real check
 
 - Initialize default integration telemetry without a check timestamp, successful requests, a false 100% uptime claim, or synthetic zero-valued connection metrics; preserve missing last-sync time.

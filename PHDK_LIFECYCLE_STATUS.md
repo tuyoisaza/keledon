@@ -1,6 +1,23 @@
-## Current PHDK Auto — 5.1.80 candidate checked; delivery pending; portfolio partial (2026-10-17)
+## Current PHDK Auto — 5.1.81 UAT Fix verified; PR pending
 
-Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; PR #198 remains merged at `8deb6d7ff71d42a628e966bcf64d340b4f10e337` (5.1.79). New source candidate commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances all five package/lock roots and Browser renderer to 5.1.80 and removes fabricated healthy Integration Hub metrics before a real provider check. UAT-091 passes API/Cloud contracts 2/2 each and shared health-model tests 2/2. Builds, Web/Landing typechecks, targeted lint, API/Cloud regressions, and PHDK v2.52.2 coherence (63/63) pass. Latest full Web UAT run is 7/8 due to one flow-editor timeout; both affected flow tests pass individually. Candidate PR delivery is pending. Railway API auto-deploy succeeded for 5.1.79 but Web failed because `/services/web` cannot provide the Dockerfile's root-level `/shared` context. PostgreSQL migration/restart and broader portfolio acceptance remain open.
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | PHDK 2.52.2, static coherence 63/63; all five package/lock roots and Browser renderer 5.1.81. |
+| Capture / Plan | REUSED | Four owner-confirmed commitments and approved tenant/role/private-origin policy remain current. |
+| PMO / Workstreams | ACTIVE / PARTIAL | The Web flow-editor repair advances CMT-002; all four commitments remain 0/4 closed. |
+| Integration Review | COMPLETED FOR FLOW-EDITOR RACE | Delayed action refresh now uses selected tenant; older responses cannot replace current scope. |
+| UAT / UAT Fix | PASS FOR 5.1.81 WEB SLICE | Full Web UAT 8/8, forced delayed-response regression, plus three standalone admin/theme/AI UATs. |
+| SEO / AEO-GEO | NOT AFFECTED BY CANDIDATE | Authenticated management UI only; public routes and answer content unchanged. |
+| Check / Remediation | PASS FOR SCOPED SOURCE; PORTFOLIO GAPS FOUND | Typecheck/build, 63/63 coherence, exact-version Web UAT; remaining acceptance is recorded below. |
+| Delivery | PENDING | Prepare normal PR, review/check readback, merge and verify remote main/version. |
+
+Overall PHDK Auto remains PARTIALLY DELIVERED. PostgreSQL/restart acceptance, 396 blocked CRUD rows, native device/audio, broad accessibility, Railway Web build context and customer-selected call/CRM runs remain open. UAT portfolio tally is 89 PASS, 0 BLOCKED, 1 MANUAL; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS.
+
+SIGUIENTE PASO: deliver the checked 5.1.81 candidate by PR and verify merged `main`; continue the four open commitments.
+
+## Current PHDK Auto — 5.1.80 source delivered; portfolio partial (2026-10-17)
+
+Run 20261014-0007-phdk-auto-completion; PR #199 merged to `main` at `64026d229419459beb6c80c0bb0c5f3499bde742`; all five version roots and Browser renderer are 5.1.80. The change removes fabricated healthy Integration Hub metrics before a real provider check. UAT-091 passes API/Cloud contracts 2/2 each and shared health-model tests 2/2. Builds, Web/Landing typechecks, targeted lint, API/Cloud regressions and PHDK v2.52.2 coherence (63/63) pass. Latest full Web UAT is 7/8 due to a superadmin flow-editor timeout that passes in isolation. Railway API deployment succeeded; Web failed because `/services/web` cannot provide `/shared` in its Docker context. PostgreSQL migration/restart and broader portfolio acceptance remain open. Post-merge evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/DELIVERY_REPORT-5.1.80.md`.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -14,7 +31,7 @@ Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; PR #198 rem
 | AEO/GEO | REUSED / NOT AFFECTED | No public claim or answer content changes. |
 | Check | COMPLETED FOR 5.1.80 SOURCE SLICE; DELIVERY PENDING | PHDK coherence 63/63; API/Cloud regressions 42/42 and 19/19, exact service/shared contracts, builds, targeted lint, UI builds/typechecks and Browser version build pass. Latest whole Web UAT is intermittent at 7/8; source-slice contract is green. |
 | Remediation | COMPLETED FOR VERIFIED SOURCE FINDING | Removes hard-coded healthy values where no TTS/STT/AI probes exist; paired contract tests pass. Other source-checkable gaps remain under review. |
-| Delivery | PR #199 OPEN / MERGEABLE; WEB DEPLOY BLOCKED | Versioned source and evidence are pushed to `fix/integration-health-unknown-5-1-80`; no hosted checks/reviews, `main` unprotected. Merge readback remains. Railway Web root `/services/web` omits `/shared` from Docker build context. |
+| Delivery | SOURCE SLICE MERGED; PORTFOLIO PARTIAL | PR #199 merged, remote main/tree/version read back. API deployment succeeded; Web failed due to `/services/web` root omitting `/shared`. No hosted checks/reviews; main is unprotected. |
 
 Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally is 88 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed for 5.1.80.
 

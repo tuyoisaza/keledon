@@ -1,6 +1,10 @@
+## Current candidate 5.1.81 — scoped remediation verified; overall Auto partial
+
+The 5.1.80 Web UAT flow-editor timeout exposed a real stale refresh race. Candidate 5.1.81 fixes it and reproduces the former failure with a deliberately delayed Tenant B response. Web typecheck/build and exact-version full Web UAT pass (8/8); admin-settings, theme-template and AI-admin UAT pass; PHDK coherence is 63/63. PR and remote delivery are pending. The full portfolio is not complete: all four commitments remain active/partial and the 560-row CRUD matrix remains 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS; database, native, Web deploy configuration, broad accessibility and tenant-selected call/CRM acceptance remain open.
+
 ## PHDK Auto completion audit — candidate 5.1.80 (2026-10-17)
 
-Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances the five product roots and Browser renderer to 5.1.80. UAT-091 closes one scoped source/UAT case for truthful unmeasured integration health. PR #199 is open and mergeable; hosted checks and reviews are absent. The latest full Web UAT passed 7/8; its superadmin flow-editor timeout passes 1/1 in isolation. PHDK coherence passes 63/63. Overall Auto remains **PARTIALLY DELIVERED**, with 0/4 commitments fully closed and PostgreSQL, full CRUD, native/accessibility, deployed Web and customer-selected integration acceptance still open.
+Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances the five product roots and Browser renderer to 5.1.80, delivered by PR #199 at remote main `64026d229419459beb6c80c0bb0c5f3499bde742`. UAT-091 closes one scoped source/UAT case for truthful unmeasured integration health. Hosted checks/reviews are absent. The latest full Web UAT passed 7/8; its superadmin flow-editor timeout passes 1/1 in isolation. The completion gate returns BLOCKED because full UAT did not pass; PHDK coherence passes 63/63. Overall Auto remains **PARTIALLY DELIVERED**, with 0/4 commitments fully closed and Railway Web, PostgreSQL, full CRUD, native/accessibility and customer-selected integration acceptance still open.
 
 ## Current PHDK Auto continuation — source 5.1.79 delivered; portfolio partial (2026-10-17)
 
