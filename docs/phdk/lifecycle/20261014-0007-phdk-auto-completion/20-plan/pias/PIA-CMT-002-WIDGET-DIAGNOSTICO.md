@@ -68,3 +68,8 @@ PR #241 merged as `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; Railway Web `874b2
 ## Revalidación UAT-127 — producción 5.2.6 (2026-10-17)
 
 UAT-127 confirma presencia de los elementos semánticos públicos en el árbol accesible de la portada desplegada: versión, landmark principal, aviso de demo, acciones públicas nombradas, selectores, navegación, encabezados y enlaces. Es una muestra de árbol, sin lector de pantalla/voz. Se registró una primera navegación con Cloudflare 502 y una segunda carga exitosa; el estado Railway mostró Web/API Online, despliegues SUCCESS y sin fallas recientes, pero no se determinó la causa del primer 502. Evidencia: `50-uat/evidence/uat-127-production-public-ax-presence-2026-10-17.json`. No cierra accesibilidad integral, autenticación, RBAC ni audio.
+
+
+## Revalidación UAT-128 — post-merge producción 5.2.6 (2026-10-17)
+
+Tras el merge documental #244 y despliegues Web/API SUCCESS, una sesión anónima nueva volvió a exponer versión, landmark principal, aviso ilustrativo y controles/enlaces nombrados. La primera navegación cargó correctamente. Esto confirma presencia AX únicamente; no cubre voz de lector, interacción, WCAG completa ni rutas autenticadas. Evidencia: `50-uat/evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`.

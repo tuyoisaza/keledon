@@ -1,3 +1,7 @@
+## UAT-128 — production public AX re-entry (2026-10-17)
+
+The post-merge anonymous tree exposes the v5.2.6 title/version, main landmark, demo disclosure and named public controls/links. This is a presence-only pass; no screen-reader, keyboard or full WCAG claim. Evidence: `evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`.
+
 # UX/UI UAT audit — run 20261014-0007-phdk-auto-completion
 
 ## Production v5.2.6 — public accessibility-tree presence (UAT-127)

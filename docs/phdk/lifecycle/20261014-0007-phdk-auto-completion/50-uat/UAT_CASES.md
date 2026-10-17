@@ -1,3 +1,9 @@
+## Production v5.2.6 — UAT-128 post-merge public accessibility-tree presence
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-128 | CMT-002 / anonymous public visitor | After PR #244 autodeploys settle, open a fresh anonymous production `/` in pt/dark and inspect only the accessibility tree. | Current product version/title, main landmark, demo disclosure, named diagnostic/theme/language controls, public navigation and headings are exposed. | Production browser accessibility tree | **PASS for presence only:** fresh page exposed v5.2.6 and the expected named elements. Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` and API `27dba245-5425-47d4-a1cf-cdc3aee2f480` report SUCCESS for docs-only deployment commit `870e6db`; product source remains `e7257a7`. No control was activated. Evidence: `evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`. |
+
 ## Production v5.2.6 — UAT-127 public accessibility-tree presence
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,3 +1,24 @@
+## Current continuation — UAT-128 post-merge / PHDK 2.53.1 (2026-10-17)
+
+PR #244 merged at remote `main` `870e6db73b5706d8469b2d9a49e575bf735a9a3f`. It changed documentation/evidence only; the production product remains KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Railway Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` and API `27dba245-5425-47d4-a1cf-cdc3aee2f480` report SUCCESS.
+
+UAT-128 passes public accessibility-tree presence only after the post-merge deploy settled. The tree exposed current version/title, main landmark, demo disclosure, named diagnostic/theme/language controls, navigation and headings. No controls were activated. UAT-127's first 502 remains recorded separately; UAT-128 loaded successfully.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | PASS | PHDK 2.53.1 coherence 64/64 static. |
+| Plan / PMO | ACTIVE / PARTIAL | Four ordered commitments remain; CMT-003C fixture/cleanup gate blocks authenticated production UAT. |
+| Integration | REVALIDATED FOR SOURCE | CMT-003A non-expiring/non-atomic claims; CMT-003B origin-only egress checks remain open. |
+| UAT | PASS SCOPED | UAT-127/128 public AX presence; UAT-128 is post-merge on settled Web/API deployments. |
+| Check | PASS FOR DOCS | Evidence JSON and diff hygiene; no local app tests/builds. |
+| Delivery | IN PROGRESS | PR #244 merged/read back; this follow-up evidence candidate pending normal PR delivery. |
+
+Overall Auto remains **PARTIALLY DELIVERED**. Broader accessibility, auth/RBAC, persistence, safe synthetic fixture provisioning/cleanup, DNS/CIDR egress enforcement and audio/device validation remain open.
+
+SIGUIENTE PASO: deliver this post-merge readback and proceed with the next safe PHDK Auto gate; authenticated integration UAT remains behind the CMT-003C fixture/cleanup mechanism.
+
+---
+
 ## Current continuation — UAT-127 / PHDK 2.53.1 (2026-10-17)
 
 Product candidate remains KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. PR #243 merged documentation/PIA updates at remote `main` `5c9393851389a3b7291597acf3d01678251449de`; it did not change product source. Railway Web `546bedfd-c6b4-deb8-bfd8-0511351d0437` and API `2ff4cdde-e05f-4ab3-af72-d489cb3fa142` report `SUCCESS` for the same product candidate.
