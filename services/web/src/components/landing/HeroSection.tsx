@@ -5,16 +5,16 @@ import { useTranslation } from '@/context/I18nContext';
 export const HeroSection = () => {
     const { t } = useTranslation();
     return (
-        <section aria-labelledby="landing-title" className="relative min-h-screen flex items-center overflow-hidden pt-16">
+        <section aria-labelledby="landing-title" className="relative min-h-screen flex items-center overflow-hidden pt-28 lg:pt-16">
             {/* Background Gradients */}
             <div className="absolute inset-0 bg-background">
                 <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
                 <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-purple-500/10 blur-[100px]" />
             </div>
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16 z-10">
+            <div className="relative w-full min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 z-10">
                 {/* Left: Copy */}
-                <div className="lg:w-1/2">
+                <div className="w-full min-w-0 lg:w-1/2">
                     <p className="text-xs text-muted-foreground mb-2">{t('landing.disclaimer')}</p>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -42,25 +42,25 @@ export const HeroSection = () => {
                     </div>
 
                     {/* Stats */}
-                    <div className="flex gap-12 mt-12 pt-8 border-t border-border/10">
+                    <div className="grid w-full min-w-0 grid-cols-3 gap-3 sm:gap-6 lg:gap-12 mt-12 pt-8 border-t border-border/10">
                         <div>
-                            <p className="text-3xl font-bold text-foreground">Cloud</p>
-                            <p className="text-sm text-muted-foreground">{t('landing.policyDecisions')}</p>
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Cloud</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">{t('landing.policyDecisions')}</p>
                         </div>
                         <div>
-                            <p className="text-3xl font-bold text-foreground">Browser</p>
-                            <p className="text-sm text-muted-foreground">{t('landing.deterministicExecution')}</p>
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Browser</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">{t('landing.deterministicExecution')}</p>
                         </div>
                         <div>
-                            <p className="text-3xl font-bold text-foreground">Client</p>
-                            <p className="text-sm text-muted-foreground">{t('landing.configuredInterfaces')}</p>
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Client</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">{t('landing.configuredInterfaces')}</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Right: Session Preview */}
-                <div className="lg:w-1/2">
-                    <div className="relative rounded-2xl border border-border/10 bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+                <div className="w-full min-w-0 lg:w-1/2">
+                    <div className="relative w-full min-w-0 rounded-2xl border border-border/10 bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden">
                         {/* Window Chrome */}
                         <div className="flex items-center gap-2 px-4 py-3 border-b border-border/10 bg-background/40">
                             <div className="flex gap-1.5">
