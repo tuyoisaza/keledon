@@ -10,10 +10,10 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 
 - Repositorio: `tuyoisaza/keledon`.
 - Rama: `feature/tenant-interface-selector-5.2.0`.
-- Candidato de producto: 5.2.1; HEAD documentado: `ef6fe6dbf7eca04708c7200615e7538812751f7e`.
+- Candidato de producto: 5.2.1; commit de código revisado: `ef6fe6dbf7eca04708c7200615e7538812751f7e`. Ver el handoff de entrega para el head actual del PR, que también incluye evidencia y documentación PHDK.
 - Base `main` registrada: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
 - PHDK actualizado: 2.53.1 desde upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64.
-- Fuentes relevantes: `services/web/src/components/teams/TeamInterfaces*.tsx`, la capa API/Cloud de asignación tenant/equipo y regresión `services/web/test/team-interface-request-sequence.test.cjs`.
+- Fuentes relevantes: `services/web/src/pages/ManagementTeamsPage.tsx`, `services/web/src/lib/request-sequence.ts`, guards y servicios API/Cloud de asignación tenant/equipo, y la regresión `services/web/test/team-interface-request-sequence.test.cjs`.
 - El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto, no fusionado; producción continúa en v5.1.85.
 
 ## Mapa de implementación a aceptación
@@ -21,6 +21,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 | Necesidad | Implementación/evidencia disponible | Aceptación pendiente |
 |---|---|---|
 | Admin/Coordinator eligen interfaces de su tenant/equipo | Selector de equipo, filtro de catálogo, asociación protegida por servidor y corrección de cargas/guardados obsoletos; fuente versionada en la rama | Sesión real por rol, lectura/escritura persistida, negativas cross-tenant y UI del candidato exacto |
+| Interfaces existentes y provisión tenant | La migración agrega `ManagedInterface.companyId` nullable, FK e índice; la API y Cloud filtran por empresa y omiten valores de credenciales | No hay backfill: las filas previas quedan sin empresa y no salen en el selector. Confirmar el origen/provisión de cada interfaz tenant y mapear filas antiguas solo con ownership verificado antes de aceptar el flujo |
 | Las respuestas viejas no pisan el equipo seleccionado | Regresión de secuencia HTTP enfocada; Web typecheck/lint/build reportados PASS | Repetir con usuario/tenant reales únicamente en target aislado y candidato 5.2.1 |
 | Provisionamiento de identidades sintéticas | Seeder idempotente, validación de host/db y rechazo de producción; artefactos de fixture ya existen | Ejecución con PostgreSQL dedicado de UAT, login normal por rol, Test-as y cleanup |
 | Prueba en el sitio solicitado | UAT-098 cargó la página pública; UAT-099 redirigió `/management/teams` sin sesión a `/login`. Ambos muestran versión 5.1.85 y son de solo lectura | Producción no sirve el candidato 5.2.1; por ello no prueba ni acepta el selector de la rama ni sus roles por tenant |
@@ -36,7 +37,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 
 ## Condiciones de seguridad y bloqueo
 
-La única revisión realizada en producción fue abrir la página pública de inicio, sin login, clics mutantes, uso de datos, solicitudes API hechas a mano ni acciones de tenant. Producción informa v5.1.85; la rama candidata es 5.2.1. Las pruebas autenticadas y de persistencia no pueden trasladarse a producción porque requieren identidades y registros sintéticos y el seeder impone explícitamente un destino no productivo. El UAT queda parcial hasta contar con un PostgreSQL aislado permitido y un despliegue exacto del candidato para la validación visual. No se inventa un formato PIA externo: este paquete enlaza los artefactos canónicos de PHDK y deja trazabilidad para la siguiente sesión.
+En producción solo se realizaron comprobaciones anónimas de lectura: portada y redirección de la ruta de administración a login, ambas en v5.1.85. No se inició sesión, no se enviaron solicitudes API manuales ni se tocaron datos. La rama candidata es 5.2.1. El candidato no está desplegado, y la migración añade una columna de ownership sin backfill. Antes de asignar roles o probar persistencia, verificar el provisionamiento y el ownership de las interfaces en un destino seguro con el candidato exacto; no inferir propiedad de filas antiguas. Este paquete enlaza los artefactos canónicos de PHDK y deja trazabilidad para continuar.
 
 ## Artefactos canónicos
 
