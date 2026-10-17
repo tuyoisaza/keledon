@@ -46,6 +46,12 @@
 |---|---|---|---|---|---|
 | UAT-115 | CMT-002 / anonymous public visitor | On production `/` in Portuguese/dark theme, inspect responsive geometry at 320×720, 375×812 and 768×1024 CSS px; visually inspect the 320px screenshot. Do not activate links or buttons. | No horizontal overflow; demo disclosure and hero heading stay within the document viewport; mobile menu target is at least 44×44px. | Production UI / isolated anonymous browser / read-only DOM geometry and screenshot | **PASS FOR SAMPLED RESPONSIVE LAYOUT:** document/body scroll widths equal client widths at all three sizes; disclosure and title remain in bounds; menu target measures 44×44px at 320/375/768. The 320px screenshot shows the disclosure below the navigation and readable hero copy. Other viewport content, themes/locales, zoom, screen reader and full WCAG conformance remain open. Evidence: `evidence/uat-115-production-responsive-layout-2026-10-17.json`. |
 
+## Candidate 5.2.2 — UAT-116 Spanish/corporate mobile landing sample
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-116 | CMT-002 / anonymous public visitor | On current production deployment, select Spanish and corporate theme; inspect `/` at 375×812 CSS px using accessibility tree, DOM geometry and screenshot. Do not activate links or buttons. Restore Portuguese/dark and default viewport afterward. | Spanish demo disclosure and named navigation control; no horizontal overflow; hero, disclosure and primary/secondary actions remain in bounds; menu target at least 44×44px. | Production UI / anonymous browser / read-only tree, geometry and screenshot | **PASS FOR THIS SPANISH/CORPORATE MOBILE SAMPLE:** v5.2.2 deployment `413a409b-5356-4f1c-a023-62ea0d15b15d`, source `9f8df3cc8316bffd51c69900816170b819e28d8c`; disclosure, title and CTAs stayed inside the 360px client width; document/body width 360px; menu target 44×44px. Screenshot inspected. No contrast ratios were measured. Locale, theme and viewport were restored. Evidence: `evidence/uat-116-production-spanish-corporate-mobile-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-109 sampled contrast in production themes
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
