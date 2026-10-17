@@ -298,3 +298,13 @@ Portfolio remains **86 PASS, 0 BLOCKED, 1 MANUAL**; the 560-row CRUD matrix rema
 SIGUIENTE PASO: continue Check/remediation on source-verifiable gaps; retain database, native and external acceptance gates as open.
 
 ---
+
+## Current UAT-090 — dependency health stays unknown until measured (2026-10-17)
+
+API and Cloud service tests each pass 2/2 assertions: unprobed TTS/STT/AI and aggregate health stay unknown; explicitly registering a socket changes only the WebSocket state. Web/Landing initial hooks also start unknown. Full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin journeys; no live health provider or database was used. Evidence is recorded in `UAT_CASES.md`, `UAT_REPORT.md`, `UAT_ACCESS_REPORT.md` and the versioned Web regression artifacts.
+
+UAT is **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; CRUD is unchanged at **560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**.
+
+SIGUIENTE PASO: Check the integrated 5.1.79 candidate; retain live dependency, database and external acceptance as unverified.
+
+---

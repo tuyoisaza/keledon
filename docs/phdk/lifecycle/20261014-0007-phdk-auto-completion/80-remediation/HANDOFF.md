@@ -8,6 +8,16 @@ SIGUIENTE PASO: deliver this source slice on PR #198 and continue independent fi
 
 ---
 
+## Current remediation — candidate 5.1.79 truthful health diagnostics (2026-10-17)
+
+Replaced unconditional `ready` values in both API and Cloud monitoring with `unknown` until TTS/STT/AI health probes exist. Aggregate health is no longer inferred from socket count; actual tracked WebSocket state remains its own field. Web/Landing start from unknown and render it in the muted semantic color. This closes the source-verifiable fake-health finding without inventing a provider probe.
+
+Verification: API/Cloud health tests 2/2 each, API regression 42/42, Cloud regression 19/19, targeted lint, backend builds, Web/Landing typecheck/build, full Web UAT and Browser renderer checks pass. No database, migration, customer endpoint, paid provider or deployment was used. Portfolio is **87 PASS, 0 BLOCKED, 1 MANUAL**; CRUD acceptance remains partial.
+
+SIGUIENTE PASO: complete final Check and normal PR delivery; run true service-health and persistence acceptance when the required isolated target exists.
+
+---
+
 ## Historical remediation continuation — candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
 
 Closed source audit coverage for role denials and successful mutation/auth events: API and Cloud role guards record a minimal append-only `ACCESS_DENIED` event for known actors, snapshot the actor's tenant, and still reject access if event persistence fails. API and Cloud interceptors capture the actor tenant before mutation/auth handlers run. The new nullable, non-relational `AuditLog.companyId` is paired across both Prisma schemas and additive migrations; audit filtering prefers event-time tenant attribution while retaining a fallback for historical rows. No request body, IP or user-agent is copied into role-denial events.

@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.79 — UAT-090 truthful dependency health status
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-090 | CMT-002 / authenticated dashboard observer | On exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9`, request system health from API and Cloud monitoring services before dependency-specific health probes exist; repeat after registering a dashboard socket. | TTS, STT, AI and aggregate health remain `unknown`; measured WebSocket connectivity may report connected independently and never promotes aggregate or dependency health to healthy/ready. Web and Landing initialize the displayed values as unknown before a server event. | API/Cloud service contract tests; Web/Landing typecheck and production builds | PASS: 2 assertions per backend; full Web UAT 8/8 plus standalone admin/theme/AI UAT; typecheck/build pass. No live service probe, database, provider or customer data. |
+
 ## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,5 +1,9 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Service contract UAT-090 — no browser target required (2026-10-17)
+
+Exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` was exercised with isolated API and Cloud service instances and fake socket objects. The tests verify unprobed TTS/STT/AI and aggregate status report `unknown`, while explicit socket registration reports only WebSocket connectivity. Full Web UAT also passed 8/8 plus the standalone admin-settings/theme-template/AI-admin journeys; Web and Landing typecheck/build cover the displayed initial state. No live dependency probe, database, provider or customer endpoint was accessed.
+
 ## Browser Readiness — UAT-089 admin audit accessibility (2026-10-17)
 
 - Stage/run/revision: Auto UAT re-entry; run `20261014-0007-phdk-auto-completion`; candidate `9f4cf79a53f81a95e64f60d18aecf06e746dff04`, version 5.1.78; run at `2026-10-17T10:19:08.656Z`.

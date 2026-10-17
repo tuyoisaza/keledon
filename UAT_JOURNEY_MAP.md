@@ -1,5 +1,11 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.79 — UAT-090 honest system-health reporting
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Authenticated dashboard observer | CMT-002 / truthful diagnostics | UAT-090 / Inspect system health | Read initial service health → register a socket → compare socket and dependency fields → inspect Web/Landing initial hook state | PASS: API/Cloud report TTS, STT, AI and aggregate health as `unknown` without probes; socket connectivity stays an independent measured field. Web/Landing initialize as unknown. Four backend assertions plus app typecheck/build; no live runtime probe. |
+
 ## Candidate 5.1.78 — UAT-089 audit console
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

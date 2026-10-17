@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-17T09:57:07.500Z",
-  "candidate": "5.1.78",
+  "date": "2026-10-17T10:37:54.334Z",
+  "candidate": "5.1.79",
   "target": "production-built Web SPA with synthetic identity API",
   "result": "PASS_SCOPED",
   "assertions": 53,

@@ -1,0 +1,69 @@
+{
+  "candidate": {
+    "version": "5.1.79",
+    "revision": "79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9"
+  },
+  "runAt": "2026-10-17T10:38:42.955Z",
+  "case": "UAT-090",
+  "result": "PASS",
+  "target": "isolated service instances, fake Socket objects, and local production-built Web UAT with synthetic APIs",
+  "assertions": {
+    "apiMonitoringService": {
+      "passed": 2,
+      "failed": 0
+    },
+    "cloudMonitoringService": {
+      "passed": 2,
+      "failed": 0
+    },
+    "webProductionUatSuites": {
+      "passed": 8,
+      "failed": 0
+    },
+    "standaloneWebJourneys": {
+      "adminSettings": "PASS",
+      "themeTemplates": "PASS",
+      "aiAdmin": "PASS"
+    },
+    "apiRegressionSuites": {
+      "passed": 42,
+      "failed": 0
+    },
+    "cloudRegressionSuites": {
+      "passed": 19,
+      "failed": 0
+    },
+    "browserRendererTests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "productionBuildsAndTypechecks": {
+      "api": "PASS",
+      "cloud": "PASS",
+      "web": "PASS",
+      "landing": "PASS",
+      "browser": "PASS"
+    }
+  },
+  "contract": {
+    "unprobedDependencies": [
+      "tts",
+      "stt",
+      "ai"
+    ],
+    "dependencyState": "unknown",
+    "aggregateState": "unknown",
+    "socketConnectivityIsSeparate": true,
+    "frontendInitialState": "unknown"
+  },
+  "outboundNetwork": "external requests blocked in browser harness; service tests use in-memory fake sockets",
+  "database": "not used",
+  "providerCalls": 0,
+  "customerData": "not used",
+  "liveHealthProbe": "not performed; no dependency probe is wired",
+  "limitations": [
+    "no persisted health measurement",
+    "no deployed runtime or provider availability claim",
+    "screen-reader behavior not evaluated"
+  ]
+}

@@ -79,3 +79,11 @@ Portfolio remains partial at **86 PASS, 0 BLOCKED, 1 MANUAL**. Voice-profile det
 SIGUIENTE PASO: re-run Check on the exact candidate; proceed through normal PR review and delivery while retaining PostgreSQL and Railway gates.
 
 ---
+
+## Current UAT-090 remediation — remove fabricated ready states (2026-10-17)
+
+The new health-contract case found no post-fix failure. Existing hard-coded dependency readiness has been removed in API and Cloud; Web and Landing now display unknown until real health evidence arrives. Paired service tests pass 2/2 per backend; Web/Landing typecheck and production build, API/Cloud lint and builds, and full Web regression UAT pass. The status remains unknown because a real provider health probe is outside this slice.
+
+SIGUIENTE PASO: complete whole-candidate Check, reconcile the current PR, and deliver through the normal main-target flow.
+
+---

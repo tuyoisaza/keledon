@@ -1,6 +1,6 @@
-## Current PMO progress — 5.1.78 audit UAT continuation; whole portfolio partial (2026-10-17)
+## Current PMO progress — 5.1.79 dashboard health remediation; whole portfolio partial (2026-10-17)
 
-The branch `fix/phdk-auto-continuation-5-1-78` is based on verified `origin/main` 5.1.77 `383fd84f2fd1c7218882dc840db7e5be1957246a`; PR #198 is open. PHDK v2.52.2 is current and coherence passes 63/63. The latest source fix raises audit-page controls to 44px, adds visible keyboard focus, and records voice-profile API detail truthfully in the CRUD matrix. UAT-089 passes 12 browser checks on a production-built local SPA with synthetic APIs: mobile 390×844 has no page overflow; keyboard scrolling reveals the final nav link; bounded export requests are recorded before download; audit-write failure blocks download; tenant admin is denied before data is read. Evidence and screenshots are in `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json` and `50-uat/evidence/`. Web typecheck/build/ESLint pass. Portfolio advances to 86 PASS, 0 BLOCKED, 1 MANUAL; 560 CRUD rows remain 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL, Railway, native and customer-selected acceptance remain open; no deployment is claimed.
+The branch `fix/phdk-auto-continuation-5-1-78` is based on verified `origin/main` 5.1.77 `383fd84f2fd1c7218882dc840db7e5be1957246a`; PR #198 is open. PHDK v2.52.2 is current and coherence passes 63/63. The 5.1.79 remediation removes fabricated TTS/STT/AI `ready` states and separates actual socket connectivity from unprobed aggregate health; paired service-contract tests pass, and Web/Landing typechecks/builds pass. UAT-089 remains exact-source evidence for 12 audit-console checks. Portfolio is 87 PASS, 0 BLOCKED, 1 MANUAL; 560 CRUD rows remain 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL, Railway, native and customer-selected acceptance remain open; no deployment is claimed.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|
@@ -9,7 +9,7 @@ The branch `fix/phdk-auto-continuation-5-1-78` is based on verified `origin/main
 | CMT-003 voice→Cloud→Browser→CRM | Managed Cloud parity, tenant-scoped voice-profile detail and private-origin contracts are evidenced. | Integrated runtime and each customer's selected provider/CRM acceptance. |
 | CMT-004 administration/permissions | UAT-089 accessibility/export; voice-profile detail is now accurately classified as source-implemented and safe. | DB migration/restart, 396 blocked rows, denial-path/retention coverage. |
 
-SIGUIENTE PASO: continue safe Check/remediation work while retaining Railway and PostgreSQL as external gates; re-read PR checks/review/main before delivery.
+SIGUIENTE PASO: finish the integrated 5.1.79 Check, push the versioned candidate, and complete normal PR delivery; track Railway and PostgreSQL acceptance independently.
 
 ---
 

@@ -1,5 +1,11 @@
 # UAT report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.79 — UAT-090 truthful dependency health (2026-10-17)
+
+Exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` passes UAT-090: API and Cloud return `unknown` for unprobed TTS/STT/AI dependencies and aggregate health; dashboard socket connectivity is reported separately and does not imply subsystem readiness. Web and Landing initialize their dashboard status as unknown until a server event arrives. API/Cloud service contract suites pass 2 assertions each; full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin; Web/Landing typechecks and production builds pass. Evidence: `docs/phdk/workstreams/AGENT-HEALTH-UAT.json`. This is scoped source/UAT evidence, not a live dependency-health probe.
+
+UAT tally advances to **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**; PostgreSQL acceptance, native device/audio, broad accessibility, deployed discovery and customer-selected integrations remain open.
+
 ## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity (2026-10-17)
 
 The exact production-built Web candidate passes the superadmin audit journey with synthetic, redacted rows. All 12 visible controls meet the 44px minimum; keyboard tab navigation exposes a visible focus indicator; the 390×844 layout has no page-level horizontal overflow; and keyboard navigation scrolls the mobile navigation strip to its final link with visible focus. CSV export records bounded metadata before download; audit-write failure prevents the download. Tenant-admin access is denied before audit data is requested. Browser Readiness is recorded in `UAT_ACCESS_REPORT.md`; machine evidence and desktop/mobile screenshots are under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/`. Persistence is a fixture only; no database or customer/provider service was contacted.
