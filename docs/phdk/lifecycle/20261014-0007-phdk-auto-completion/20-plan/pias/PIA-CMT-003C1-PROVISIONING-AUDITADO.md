@@ -32,8 +32,8 @@ Referencias de fuente verificadas: `services/web/src/pages/ManagementCompaniesPa
 
 Permitir, mediante el flujo administrativo first-party normal y solo a un superadmin ya existente, crear y retirar fixtures de aceptación identificados por `runId`, sin abrir un seeder público ni habilitar test-as en producción. El run autorizado por [PIA-CMT-003C](PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md) queda limitado a:
 
-- Dos tenants temporales y aislados, cada uno con un único usuario de rol `user` y un Browser device sintético.
-- Un flow inerte sin PII ni destinos externos.
+- Dos tenants temporales y aislados, cada uno con una Brand y un Team estructural, un usuario de rol `user` y un Browser device sintético.
+- Un único flow inerte sin PII ni destinos externos, ligado al Team A; no se aprovisiona un segundo flow sin autorización de alcance adicional.
 - Sin usuarios sintéticos admin/coordinator/superadmin; sin elevación; sin invitación/email; sin CRM, llamada, audio ni acceso a clientes.
 - TTL máximo 24 horas, cleanup inmediato al terminar y retención únicamente de la auditoría mínima aprobada.
 
