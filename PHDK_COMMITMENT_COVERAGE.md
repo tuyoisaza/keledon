@@ -1,6 +1,6 @@
 ## Current commitment coverage — 5.1.78 candidate; whole portfolio partial
 
-Base origin/main is 383fd84f2fd1c7218882dc840db7e5be1957246a; candidate branch `fix/phdk-auto-continuation-5-1-78` has pushed head `d868f5dc7b250c227192d9f43588b4bc518415d4` and PR #198 is open/mergeable, without reviews or hosted checks. PHDK v2.52.2 coherence is 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate is not merged or deployed.
+Base `origin/main` is `383fd84f2fd1c7218882dc840db7e5be1957246a`; candidate branch `fix/phdk-auto-continuation-5-1-78` is synchronized with open/mergeable PR #198, without reviews or hosted checks. PHDK v2.52.2 coherence is 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate is not merged or deployed.
 
 | Commitment | Candidate evidence | Open acceptance |
 |---|---|---|

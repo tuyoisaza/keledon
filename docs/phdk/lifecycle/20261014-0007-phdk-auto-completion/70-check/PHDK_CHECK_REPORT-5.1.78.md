@@ -1,6 +1,6 @@
 # PHDK Check — 5.1.78 candidate
 
-Run `20261014-0007-phdk-auto-completion`; source candidate `93c83bc3789f5fe5269f5dabd2c9f4557404c3e8` and pushed documentation/evidence tip `d868f5dc7b250c227192d9f43588b4bc518415d4` on branch `fix/phdk-auto-continuation-5-1-78`; fetched base `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a`; product version 5.1.78; installed PHDK 2.52.2, coherence 63/63.
+Run `20261014-0007-phdk-auto-completion`; source candidate `93c83bc3789f5fe5269f5dabd2c9f4557404c3e8` on branch `fix/phdk-auto-continuation-5-1-78`; subsequent status and UAT evidence updates are pushed to the same PR branch. Fetched base `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a`; product version 5.1.78; installed PHDK 2.52.2, coherence 63/63.
 
 ## Checks passed
 
@@ -39,4 +39,4 @@ The stale `RolesGuard` test expectation was corrected. The subsequent auth revie
 
 ## Delivery
 
-PR #198 is open and `CLEAN`/mergeable; GitHub reports no hosted checks or reviews, and the repository has no active workflow. Its pushed head `d868f5dc7b250c227192d9f43588b4bc518415d4` matches local; `main` remains `383fd84f2fd1c7218882dc840db7e5be1957246a`. Merge and remote-main verification remain pending the Railway external root/config correction and successful Web build. Portfolio remains **0/4 commitments DONE; 4/4 ACTIVE/PARTIAL**.
+PR #198 is open and `CLEAN`/mergeable; GitHub reports no hosted checks or reviews, and the repository has no active workflow. The PR branch is synchronized; `main` remains at fetched base `383fd84f2fd1c7218882dc840db7e5be1957246a`. Merge and remote-main verification remain pending the Railway external root/config correction and successful Web build. Portfolio remains **0/4 commitments DONE; 4/4 ACTIVE/PARTIAL**.

@@ -1,6 +1,6 @@
 ## Current PMO board — 5.1.78 managed Cloud AI; whole Auto partial
 
-Candidate `fix/phdk-auto-continuation-5-1-78` is based on fetched `origin/main` 5.1.77 SHA `383fd84f2fd1c7218882dc840db7e5be1957246a`. PHDK 2.52.2 coherence is 63/63. All five package roots and Browser renderer align at 5.1.78. Managed Cloud AI contract 6/6, Cloud regressions 19/19, API managed AI 9/9, API regression 42/42 suites, auth guard/OAuth regressions, Web UAT 8/8 plus standalone admin/theme/AI UAT, and API/Web builds pass. PR #198 is open/mergeable at pushed head `d868f5dc7b250c227192d9f43588b4bc518415d4`; reviews and hosted checks are absent. Railway Web root/config correction remains external/manual before verified deployment and merge.
+Candidate `fix/phdk-auto-continuation-5-1-78` is based on fetched `origin/main` 5.1.77 SHA `383fd84f2fd1c7218882dc840db7e5be1957246a`. PHDK 2.52.2 coherence is 63/63. All five package roots and Browser renderer align at 5.1.78. Managed Cloud AI contract 6/6, Cloud regressions 19/19, API managed AI 9/9, API regression 42/42 suites, auth guard/OAuth regressions, Web UAT 8/8 plus standalone admin/theme/AI UAT, Browser security/runtime 22/22 and Landing SEO 1/1 pass. PR #198 is open/mergeable with its branch synchronized; reviews and hosted checks are absent. Railway Web root/config correction remains external/manual before verified deployment and merge.
 
 | Commitment | Status | Progress and remaining acceptance |
 |---|---|---|
