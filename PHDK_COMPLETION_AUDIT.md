@@ -1,12 +1,12 @@
-## Current PHDK Auto audit — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
+# Current PHDK Auto audit — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
-Remote `main` is verified at `26e1fe1452cffb97164d65917b3c9a4308bdbdc2` after PR #233. Five package/lock roots and the Browser renderer align at 5.2.4. PHDK coherence is 64/64 static. Railway Web `be95247a-bd0e-49d9-bcb6-4166a4222746` and API `0c31ee86-59f5-4943-82d6-902ec0d6b6dc` report SUCCESS for that SHA. Production browser displayed v5.2.4; UAT-121 passes only the anonymous `/management/teams` redirect to login.
+Remote `main` at this audit is `d3f27ef137939c1acbbb313dd7f95b525c735dc7` after PR #236. Product package/lock roots and Browser renderer remain 5.2.4. PHDK upstream is `94f583635d295ae0f227726718904d952cadb8ab`; static coherence is 64/64. Railway production Web `0aa895bc-8a83-4c9a-b7db-26171927042a` and API `3c80fa85-8b3f-4386-a961-f071d8b1dd70` report SUCCESS for this SHA.
 
-The owner-confirmed portfolio remains ordered CMT-001..004. CMT-001 is complete for this version cut. CMT-002 has scoped public browser evidence but broad accessibility and authenticated diagnostics remain open. CMT-003A/B lease/idempotency and DNS/IP pinning are not implemented. CMT-004 has a merged tenant-scoped selector and new ADM-IF PIA; authenticated tenant filtering, persistence, cross-tenant deny and cleanup remain BLOCKED without an authorized synthetic production identity/dataset. No customer CRM, private host, account, or production write was used.
+PR #234 created the tenant-interface assignment PIA and UAT-121, whose only product acceptance is anonymous redirect to login. PR #236 added UAT-122: fresh production HTTPS GETs confirm `/` and `/login` share a 5.2.4 bundle, HTTP 200, SHA-256 `c887bae8f955bc79c08ace8431ace643c855015fac08aec80c4d0797a6c6fae6`. This is version evidence only.
 
-This re-entry made documentation/evidence changes only. No local application tests or builds were run. JSON evidence parsing, `git diff --check`, and the static PHDK checker passed. Full Auto remains **PARTIALLY DELIVERED**; no commitment is silently closed by documentation or UAT-121.
+No local application tests/builds were run. No production login, account, database mutation, customer CRM, private host, paid call or external submission was used. CMT-002 remains partial; CMT-003A/B security controls are unimplemented; authenticated CMT-004 persistence/cross-tenant UAT remains blocked pending an authorized synthetic identity, fixture and cleanup path. **Whole PHDK Auto remains PARTIALLY DELIVERED.**
 
-SIGUIENTE PASO: deliver the ADM-IF PIA/UAT evidence through the normal PR flow; continue CMT-002 public production coverage, then implement CMT-003A/B before any private CRM acceptance.
+SIGUIENTE PASO: continue production-safe CMT-002 public acceptance and implement the CMT-003 PIAs; do not claim tenant security until deployed enforcement and the required synthetic UAT pass.
 
 ---
 
