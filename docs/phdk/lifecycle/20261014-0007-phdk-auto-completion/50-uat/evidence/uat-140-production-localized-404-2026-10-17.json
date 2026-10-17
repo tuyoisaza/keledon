@@ -1,0 +1,57 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-140",
+  "candidate": {
+    "productVersion": "5.2.10",
+    "mainSha": "fd429298a85bdcf3b5c20791f9b1598c132aabcb",
+    "pr": 255
+  },
+  "environment": "production",
+  "target": "https://keledon.tuyoisaza.com",
+  "observedAt": "2026-10-17T22:10:28Z",
+  "deployment": {
+    "provider": "Railway",
+    "web": { "id": "15f47990-5368-4462-aeba-0d508c388262", "status": "SUCCESS", "replicas": "1/1" },
+    "api": { "id": "1b391751-bfc4-4d88-8131-ae239a3c5a07", "status": "SUCCESS", "replicas": "1/1" },
+    "webBuild": "Vite build completed in 4.12s in the production deployment; a >500 kB chunk advisory remains."
+  },
+  "http": {
+    "path": "/phdk-uat-unknown-140",
+    "status": 404,
+    "robotsHeader": "noindex, nofollow",
+    "robotsMeta": true,
+    "canonical": null,
+    "initialEnglishFallbackTitle": "Page not found | KELEDON",
+    "localizedScript": { "path": "/404.js", "status": 200, "sameOriginCsp": true }
+  },
+  "browser": {
+    "permission": "ACTIVE_UAT_EXCEPTION",
+    "runtime": "AVAILABLE_VERIFIED",
+    "channel": "Codex in-app browser accessibility tree",
+    "version": "v5.2.10 confirmed on the production homepage",
+    "localePreference": "Visible KELEDON selector changed from English back to Portuguese; Portuguese was selected before loading the synthetic unknown path.",
+    "unknownPath": "/phdk-uat-unknown-140",
+    "finalUrlRetained": true,
+    "localizedTitle": "Página não encontrada | KELEDON",
+    "localizedHeading": "Página não encontrada",
+    "localizedDescription": "A página solicitada não existe.",
+    "localizedReturnLink": "Voltar ao início",
+    "documentLanguage": "Portuguese localization script sets document.documentElement.lang to pt before updating title and visible copy; direct attribute inspection is not exposed in the available accessibility tree."
+  },
+  "result": "PASS_SCOPED",
+  "safety": {
+    "credentialsEntered": false,
+    "customerDataAccessed": false,
+    "formsSubmitted": false,
+    "writesPerformed": false,
+    "clipboardRead": false,
+    "privateEndpointsContacted": false,
+    "newSpend": false,
+    "onlyAnonymousPublicProductionRoutes": true
+  },
+  "limits": [
+    "Acceptance covers the public unknown-path 404 contract and saved Portuguese locale only.",
+    "It does not establish crawler indexing, ranking, citations, full accessibility conformance or other locale fallback branches.",
+    "Production browser accessibility observation confirms localized output; the HTML lang property is supported by the deployed script assignment but was not independently exposed by the browser accessibility interface."
+  ]
+}
