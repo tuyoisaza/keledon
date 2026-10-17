@@ -152,7 +152,9 @@ for (const [runtime, file] of [
     const request = {
       method: 'PUT', url: '/api/crud/vendors/vendor-1',
       route: { path: '/api/crud/vendors/:id' }, params: { id: 'vendor-1' },
-      user: { userId: 'actor-1' }, body: { name: 'Changed' }, headers: {},
+      user: { userId: 'actor-1' },
+      body: { name: 'Changed', credentials: 'synthetic-secret-value' },
+      headers: {},
     };
     const result = await interceptor.intercept(httpContext(request), { handle: () => of({ id: 'vendor-1' }) });
     await firstValueFrom(result);
@@ -164,5 +166,10 @@ for (const [runtime, file] of [
     assert.equal(entries[0].companyId, 'tenant-at-request-start');
     assert.equal(entries[0].userId, 'actor-1');
     assert.equal(entries[0].entityId, 'vendor-1');
+    assert.deepEqual(JSON.parse(entries[0].changes), {
+      name: 'Changed',
+      credentials: '[REDACTED]',
+    });
+    assert.doesNotMatch(entries[0].changes, /synthetic-secret-value/);
   });
 }
