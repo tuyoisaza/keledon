@@ -1,0 +1,60 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-115",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:30:52Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261018=114",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.2",
+  "deployedSourceCommit": "28d60bfa00493eb575222cbee279df1e53c60ce0",
+  "deploymentId": "99fb259e-4afe-4a80-a822-656298479166",
+  "channel": "production in-app browser; read-only DOM geometry at 320/375/768 CSS px; screenshot inspected at 320px",
+  "context": {
+    "route": "/",
+    "locale": "pt",
+    "theme": "dark",
+    "identity": "anonymous",
+    "viewportCssPixels": ["320x720", "375x812", "768x1024"]
+  },
+  "result": "PASS_FOR_SAMPLED_RESPONSIVE_LAYOUT_AND_MENU_TARGET",
+  "measurements": [
+    {
+      "viewport": "320x720",
+      "documentClientWidth": 305,
+      "documentScrollWidth": 305,
+      "bodyScrollWidth": 305,
+      "demoDisclosure": {"x": 16, "right": 289, "y": 112, "width": 273, "height": 32},
+      "landingTitle": {"x": 16, "right": 289, "y": 233, "width": 273, "height": 240},
+      "menuTarget": {"x": 245, "y": 26, "width": 44, "height": 44},
+      "screenshotInspected": true
+    },
+    {
+      "viewport": "375x812",
+      "documentClientWidth": 360,
+      "documentScrollWidth": 360,
+      "bodyScrollWidth": 360,
+      "demoDisclosure": {"x": 16, "right": 344, "y": 112, "width": 328, "height": 32},
+      "landingTitle": {"x": 16, "right": 344, "y": 213, "width": 328, "height": 240},
+      "menuTarget": {"x": 300, "y": 26, "width": 44, "height": 44},
+      "screenshotInspected": false
+    },
+    {
+      "viewport": "768x1024",
+      "documentClientWidth": 753,
+      "documentScrollWidth": 753,
+      "bodyScrollWidth": 753,
+      "demoDisclosure": {"x": 24, "right": 729, "y": 112, "width": 705, "height": 16},
+      "landingTitle": {"x": 24, "right": 729, "y": 197, "width": 705, "height": 150},
+      "menuTarget": {"x": 685, "y": 26, "width": 44, "height": 44},
+      "screenshotInspected": false
+    }
+  ],
+  "privacy": "Anonymous public route only; no control was activated and no account, customer data, clipboard, cache, audio permission, or backend state was accessed or changed.",
+  "notProven": [
+    "desktop layout at this deployment",
+    "other routes, locales, themes, zoom levels or dynamic content states",
+    "full-page contrast, screen-reader output or comprehensive WCAG conformance",
+    "authenticated diagnostics/RBAC or audio/device behavior"
+  ],
+  "restoration": {"viewportOverride": "reset to browser default", "theme": "dark", "locale": "pt"}
+}
