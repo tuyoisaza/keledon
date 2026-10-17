@@ -196,6 +196,37 @@ export class AiAdminService {
       throw new ForbiddenException('AI administration access denied');
     return actor.id;
   }
+  private promptAdminSelect() {
+    return {
+      id: true,
+      name: true,
+      personalityPrompt: true,
+      executionPrompt: true,
+      outputSchemaJson: true,
+      enabled: true,
+      purpose: true,
+      owningFeature: true,
+      callsite: true,
+      inputSchemaJson: true,
+      outputDestination: true,
+      nextHops: true,
+      revision: true,
+      publishedRevision: true,
+      updatedBy: true,
+      createdAt: true,
+      updatedAt: true,
+      revisions: {
+        orderBy: { toRevision: 'desc' as const },
+        take: 50,
+        select: {
+          toRevision: true,
+          changedFields: true,
+          publishedAt: true,
+          publishedBy: true,
+        },
+      },
+    };
+  }
   private async ensureDefaults() {
     if (this.bootstrap === undefined)
       this.bootstrap = (async () => {
@@ -208,12 +239,20 @@ export class AiAdminService {
               ...definition,
               enabled: true,
               revision: 1,
+              publishedRevision: 1,
+              publishedDefinition: {
+                ...definition,
+                enabled: true,
+                revision: 1,
+              },
               updatedBy: 'system:bootstrap',
               revisions: {
                 create: {
                   fromRevision: 0,
                   toRevision: 1,
                   actorId: 'system:bootstrap',
+                  publishedAt: new Date(),
+                  publishedBy: 'system:bootstrap',
                   changedFields: [...mutable],
                   definitionSnapshot: {
                     ...definition,
@@ -242,7 +281,22 @@ export class AiAdminService {
   async listPrompts(actorId: string) {
     await this.requireSuperadmin(actorId);
     await this.ensureDefaults();
-    return this.db.aiPromptDefinition.findMany({ orderBy: { id: 'asc' } });
+    return this.db.aiPromptDefinition.findMany({
+      orderBy: { id: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        purpose: true,
+        owningFeature: true,
+        callsite: true,
+        enabled: true,
+        outputDestination: true,
+        nextHops: true,
+        revision: true,
+        publishedRevision: true,
+        updatedAt: true,
+      },
+    });
   }
   async getPrompt(actorId: string, id: string) {
     await this.requireSuperadmin(actorId);
@@ -250,7 +304,7 @@ export class AiAdminService {
     await this.ensureDefaults();
     const record = await this.db.aiPromptDefinition.findUnique({
       where: { id },
-      include: { revisions: { orderBy: { toRevision: 'desc' }, take: 50 } },
+      select: this.promptAdminSelect(),
     });
     if (!record) throw new NotFoundException('AI definition not found');
     return record;
@@ -353,7 +407,10 @@ export class AiAdminService {
           },
         },
       });
-      return tx.aiPromptDefinition.findUnique({ where: { id } });
+      return tx.aiPromptDefinition.findUnique({
+        where: { id },
+        select: this.promptAdminSelect(),
+      });
     });
   }
   async rollbackPrompt(
@@ -423,7 +480,66 @@ export class AiAdminService {
           },
         },
       });
-      return tx.aiPromptDefinition.findUnique({ where: { id } });
+      return tx.aiPromptDefinition.findUnique({
+        where: { id },
+        select: this.promptAdminSelect(),
+      });
+    });
+  }
+  async publishPrompt(actorId: string, id: string, expectedRevision: unknown) {
+    const actor = await this.requireSuperadmin(actorId);
+    this.assertFeature(id);
+    if (!Number.isInteger(expectedRevision) || Number(expectedRevision) < 1)
+      throw new BadRequestException('Invalid publish revision');
+    await this.ensureDefaults();
+    return this.db.$transaction(async (tx: any) => {
+      const current = await tx.aiPromptDefinition.findUnique({
+        where: { id },
+      });
+      if (!current || current.revision !== expectedRevision)
+        throw new ConflictException(
+          'Definition changed; reload before publishing',
+        );
+      if (current.publishedRevision === current.revision) return current;
+      validateInputSchema(current.inputSchemaJson);
+      compileManagedSchema(current.outputSchemaJson);
+      await this.validateGraph(id, current, {}, tx);
+      const publishedAt = new Date();
+      const snapshot = Object.fromEntries(
+        mutable.map((key) => [key, current[key]]),
+      );
+      const updated = await tx.aiPromptDefinition.updateMany({
+        where: { id, revision: current.revision },
+        data: {
+          publishedRevision: current.revision,
+          publishedDefinition: {
+            ...snapshot,
+            id,
+            revision: current.revision,
+            updatedBy: current.updatedBy,
+          },
+        },
+      });
+      if (updated.count !== 1)
+        throw new ConflictException(
+          'Definition changed; reload before publishing',
+        );
+      const marked = await tx.aiPromptRevision.updateMany({
+        where: {
+          promptId: id,
+          toRevision: current.revision,
+          publishedAt: null,
+        },
+        data: { publishedAt, publishedBy: actor },
+      });
+      if (marked.count !== 1)
+        throw new ConflictException(
+          'Revision history changed; reload before publishing',
+        );
+      return tx.aiPromptDefinition.findUnique({
+        where: { id },
+        select: this.promptAdminSelect(),
+      });
     });
   }
   private validateNextHops(
@@ -566,11 +682,30 @@ export class AiAdminService {
     const record = await this.db.aiPromptDefinition.findUnique({
       where: { id: feature },
     });
-    if (!record || !record.enabled)
+    if (!record) {
+      throw new ForbiddenException('AI workflow is unavailable');
+    }
+    let active = record;
+    if (record.publishedRevision !== record.revision) {
+      const published = record.publishedDefinition as Record<
+        string,
+        unknown
+      > | null;
+      if (
+        !published ||
+        published.revision !== record.publishedRevision ||
+        published.id !== feature
+      )
+        throw new ServiceUnavailableException(
+          'Published AI workflow snapshot unavailable',
+        );
+      active = published;
+    }
+    if (!active.enabled)
       throw new ForbiddenException('AI workflow is disabled');
-    validateInputSchema(record.inputSchemaJson);
-    compileManagedSchema(record.outputSchemaJson);
-    return record;
+    validateInputSchema(active.inputSchemaJson);
+    compileManagedSchema(active.outputSchemaJson);
+    return active;
   }
   validateOutput(prepared: PreparedAiPrompt, output: unknown): unknown {
     let serialized: string;

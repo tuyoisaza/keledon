@@ -1,12 +1,16 @@
 # Debug widget readiness — 2026-10-17 current candidate revalidation
 
-Base candidate: KELEDON main `5811f1033ea6880ec582ab40dbe35dd8125284a6`, product 5.1.76; current source commit `0da085bddbb7157453ddca3951960209a94c9e9b`, product 5.1.77. `services/web` diagnostics component suite passed 19/19 before changes and after the shared Web/Landing spacing correction. Browser widget plus renderer-boundary tests pass 4/4 at 5.1.77. Production-built Landing geometry evidence is `docs/phdk/evidence/uat-landing-5.1.77-navbar.json`, with desktop/mobile screenshots beside it; full production Web UAT evidence is `docs/phdk/evidence/uat-local-web.json`.
+Current candidate: product 5.1.78, source commit `ad127fe02525754b781dfc1d2a1df09ced571989` on `fix/phdk-auto-continuation-5-1-78`. PHDK v2.52.2 is current. Web diagnostics pass 19/19; Browser widget and renderer-boundary tests pass 5/5. Full production-built Web UAT passes 8/8 journeys plus standalone admin-settings, theme-template, and AI-admin UAT. Evidence is in `docs/phdk/evidence/uat-local-web.json`, `docs/phdk/evidence/uat-landing-5.1.78-navbar.json`, the versioned UAT records, and the paired screenshots.
 
-The recheck found that the 44×44 hit-target buttons centered their 28×28 hover tiles, producing a 20px visible tile gap despite the required 4px gap. The candidate aligns the copy tile to the right and trash tile to the left within their separate 44×44 hit targets. This preserves 14×14 icons, 12px version text, 44×44 pointer targets, and the 4px separation between visible 28×28 tiles. Web, Landing, and Browser use matching geometry. The exact geometry is source/test-backed; packaged Electron visual rendering remains unverified.
+The current production-built Landing UAT measures both visible 28×28 tiles with 14×14 icons, 4px separation, distinct 44×44 pointer targets, no hit-target overlap, and the widget below the brand without hero overlap at 1280px; its 390px mobile check retains the controls. Shared Web component tests cover public, login, authenticated shell and admin mounts, sanitized copy, honest copy/reset outcomes, owned-state clearing, session invalidation, localized accessible labels and live feedback. The source geometry is shared with Landing and mirrored by Browser. Packaged Electron visual rendering remains unverified.
 
-Surfaces and behaviors remain covered by shared widget mounts and diagnostics tests: public, login, authenticated shell and admin; anonymous/debug-off availability; sanitized clipboard report; truthful copy/reset success and failure; app-owned storage/cache reset and session invalidation; localized accessible names and hidden live status. Native OS/device/audio, full screen-reader coverage, and deployed runtime remain open.
+This is local synthetic-API evidence; it does not establish deployed behavior or server/database authorization. Native OS/device/audio, full screen-reader coverage, broader route/localization accessibility, database-backed CRUD, customer-selected live voice/CRM integration, and deployment gates remain open. Whole PHDK Auto is PARTIALLY DELIVERED.
 
-Web/Landing production builds and typechecks pass; Web UAT passes 7/7 suites plus standalone admin-settings, theme-template and AI-admin journeys. Landing visual UAT measures the required 4px spacing at desktop and mobile. Whole PHDK Auto remains PARTIALLY DELIVERED; this evidence does not close the database-backed CRUD matrix, customer-selected live voice/CRM integration, broader route/localization/accessibility or deployment gates.
+---
+
+## Previous candidate revalidation — 5.1.77
+
+The 5.1.77 geometry correction aligned the copy tile right and trash tile left inside separate 44×44 hit areas, preserving 28×28 visible tiles and their 4px gap. Its source evidence is retained in the following historical lifecycle entries.
 
 ---
 

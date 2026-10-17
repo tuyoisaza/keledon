@@ -1,5 +1,15 @@
 # UX/UI audit — scoped candidate
 
+## Candidate 5.1.79 — truthful dashboard health states (2026-10-17)
+
+The dashboard previously displayed `ready` for TTS, STT and AI through a function that never checked those services, and its aggregate status was inferred only from socket count. API/Cloud now report dependency and aggregate health as `unknown` until a real probe exists; measured WebSocket connectivity stays separate. Web and Landing also start in `unknown`, avoiding a transient false-ready display before data arrives. Source contract tests and both production builds/typechecks pass. No screen-reader or deployed runtime result is claimed.
+
+## Candidate 5.1.78 — Admin Audit UAT-089 (2026-10-17)
+
+The new `/admin/audit` page initially used compact controls below the project's 44px interaction target. The page now gives inputs, buttons and disclosure summaries 44px minimum height and adds explicit keyboard focus outlines. Exact production-build Playwright UAT measures all 12 targets at 44px, verifies keyboard-visible focus, and tests a 390×844 viewport with no document overflow. The responsive navigation's clipped strip is intentionally horizontally scrollable; keyboard traversal scrolls the final link into view and retains visible focus. Synthetic API rows show sanitized details; export failure remains visibly announced and prevents download. Evidence: `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json` and `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-*.png`.
+
+No remaining P0/P1 was observed in this focused admin-audit journey. This automated check does not certify screen-reader behavior, all routes/locales/themes, database-backed persistence or whole-application accessibility.
+
 ## Candidate 5.1.66 — tenant flow editor and mobile shell
 
 The editor uses visible/native form labels, semantic buttons/checkboxes, 44px minimum-height primary controls, and the focused production-built browser test can create and approve a version, enable company availability and map an intent using Enter/Space. At 390×844, the first screenshot exposed the fixed desktop sidebar squeezing the form; UAT Fix replaced it on mobile with a compact brand/version/actions header and scrollable primary navigation, while retaining the desktop sidebar at `md` and above. The retest has no page-level horizontal overflow and shows the flow definition card at full phone width. Desktop and mobile evidence is recorded under `50-uat/evidence/uat-web-5.1.66/`.

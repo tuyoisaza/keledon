@@ -1,3 +1,20 @@
+## Current PMO board — 5.1.79 truthful dashboard health; whole Auto partial
+
+Candidate `fix/phdk-auto-continuation-5-1-78` is based on fetched `origin/main` 5.1.77 SHA `383fd84f2fd1c7218882dc840db7e5be1957246a`; PR #198 carries the 5.1.79 health-reporting fix and the exact-source UAT-089 evidence. PHDK 2.52.2 coherence is 63/63. All five package roots and Browser renderer align at 5.1.79. API/Cloud monitoring contracts pass 2/2 each; API/Cloud builds, Web/Landing typechecks and builds, and Browser TypeScript build/version sync pass. Previous AI runtime/auth/audit evidence remains at 5.1.78; UAT-089 passes 12 browser checks. PR #198 remains open with no hosted checks or independent review. Railway Web root/config correction and database migration/restart remain external gates. UAT tally is 87 PASS, 0 BLOCKED, 1 MANUAL; 4/4 commitments remain active/partial.
+
+| Commitment | Status | Progress and remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PHDK force update, version alignment and PR remote-head readback pass; PR delivery, Railway root/config, deploy and main readback remain. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Prior responsive/widget evidence remains; false dependency-ready dashboard states are removed and UAT-090 passes in both backends. Native packaged rendering/audio and broad assistive technology/localization are open. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Managed Cloud runtime parity, tenant-bound allowlist and synthetic Browser call lifecycle tests pass; live acceptance depends on each customer's configured stack. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Current DB-derived role/email, one-use Google handoff, staged/published AI revisions, bounded audit export requests and accessible 44px audit controls pass scoped checks; PostgreSQL migration/restart, other denial paths and 396 CRUD rows remain open. |
+
+Portfolio: 0/4 fully done; 4/4 active/partial; 0 deferred; 0 cancelled. Overall acceptance remains partial.
+
+SIGUIENTE PASO: complete normal PR delivery and remote-main readback for 5.1.79; continue Railway deployment, PostgreSQL, remaining CRUD, native and customer-specific acceptance as separate gates.
+
+---
+
 ## Current PMO board — 5.1.77 widget candidate; whole Auto partial
 
 Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile widget geometry, Browser 4/4 widget/boundary tests, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. Check says scoped PASS; whole Auto remains partial (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS). PR delivery and remote verification are pending; no deployment is claimed.

@@ -6,6 +6,7 @@ import {
   aiAdminRequest,
   parseOutputSchema,
   type ManagedPrompt,
+  type ManagedPromptSummary,
 } from "@/lib/ai-admin";
 
 type Draft = {
@@ -36,7 +37,7 @@ const fromPrompt = (prompt: ManagedPrompt): Draft => ({
 });
 export default function AdminPromptsPage() {
   const { t } = useTranslation();
-  const [items, setItems] = useState<ManagedPrompt[]>([]);
+  const [items, setItems] = useState<ManagedPromptSummary[]>([]);
   const [selected, setSelected] = useState<ManagedPrompt | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +56,7 @@ export default function AdminPromptsPage() {
         : "aiAdmin.failed";
   useEffect(() => {
     const controller = new AbortController();
-    aiAdminRequest<ManagedPrompt[] | { items: ManagedPrompt[] }>("/prompts", {
+    aiAdminRequest<ManagedPromptSummary[] | { items: ManagedPromptSummary[] }>("/prompts", {
       signal: controller.signal,
     })
     .then(async (result) => {
@@ -159,7 +160,7 @@ export default function AdminPromptsPage() {
       setItems((previous) =>
         previous.map((row) => (row.id === item.id ? item : row)),
       );
-      setNotice("aiAdmin.saved");
+      setNotice("aiAdmin.draftSaved");
     } catch (error) {
       setNotice(errorKey(error));
     } finally {
@@ -175,7 +176,16 @@ export default function AdminPromptsPage() {
     setSaving(true); setNotice('');
     try {
       const item = await aiAdminRequest<ManagedPrompt>(`/prompts/${encodeURIComponent(selected.id)}/rollback`, { method: 'POST', body: JSON.stringify({ targetRevision: revision, expectedRevision: selected.revision }) });
-      setSelected(item); setDraft(fromPrompt(item)); setItems(previous => previous.map(row => row.id === item.id ? item : row)); setNotice('aiAdmin.saved');
+      setSelected(item); setDraft(fromPrompt(item)); setItems(previous => previous.map(row => row.id === item.id ? item : row)); setNotice('aiAdmin.draftSaved');
+    } catch (error) { setNotice(errorKey(error)); }
+    finally { setSaving(false); }
+  };
+  const publish = async () => {
+    if (!selected || saving || dirty || selected.revision === selected.publishedRevision || !window.confirm(t('aiAdmin.publishConfirm'))) return;
+    setSaving(true); setNotice('');
+    try {
+      const item = await aiAdminRequest<ManagedPrompt>(`/prompts/${encodeURIComponent(selected.id)}/publish`, { method: 'POST', body: JSON.stringify({ expectedRevision: selected.revision }) });
+      setSelected(item); setDraft(fromPrompt(item)); setItems(previous => previous.map(row => row.id === item.id ? item : row)); setNotice('aiAdmin.published');
     } catch (error) { setNotice(errorKey(error)); }
     finally { setSaving(false); }
   };
@@ -190,7 +200,7 @@ export default function AdminPromptsPage() {
       </header>
       {notice && (
         <p
-          role={notice === "aiAdmin.saved" ? "status" : "alert"}
+          role={["aiAdmin.saved", "aiAdmin.draftSaved", "aiAdmin.published"].includes(notice) ? "status" : "alert"}
           className="rounded-lg border border-border p-3 text-sm"
         >
           {t(notice)}
@@ -235,9 +245,8 @@ export default function AdminPromptsPage() {
               <span>
                 {t("aiAdmin.revision")}: {selected.revision}
               </span>
-              <span role="status">
-                {t(dirty ? "aiAdmin.unsaved" : "aiAdmin.current")}
-              </span>
+              <span>{t('aiAdmin.publishedRevision')}: {selected.publishedRevision}</span>
+              <span role="status">{t(dirty ? "aiAdmin.unsaved" : selected.revision !== selected.publishedRevision ? 'aiAdmin.awaitingPublish' : "aiAdmin.current")}</span>
             </div>
             <label className="block text-sm font-medium">
               {t("aiAdmin.name")}
@@ -296,7 +305,7 @@ export default function AdminPromptsPage() {
             <label className="block text-sm font-medium">{t('aiAdmin.inputSchema')}<textarea disabled={saving || loading} rows={6} value={draft.inputSchema} onChange={e => edit('inputSchema', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3 font-mono text-sm" /></label>
             <label className="block text-sm font-medium">{t('aiAdmin.outputDestination')}<input disabled={saving || loading} maxLength={500} value={draft.outputDestination} onChange={e => edit('outputDestination', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3" /></label>
             <label className="block text-sm font-medium">{t('aiAdmin.nextHops')}<textarea disabled={saving || loading} rows={4} value={draft.nextHops} onChange={e => edit('nextHops', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3 font-mono text-sm" /></label>
-            {selected.revisions?.length ? <section className="rounded-lg border border-border p-3"><h2 className="font-medium">{t('aiAdmin.revision')} history</h2><ul className="mt-2 space-y-2">{selected.revisions.map(item => <li key={item.toRevision} className="flex items-center justify-between gap-3 text-sm"><span>v{item.toRevision}</span><button type="button" disabled={saving || item.toRevision === selected.revision} onClick={() => void rollback(item.toRevision)} className="rounded border border-border px-3 py-1">{t('aiAdmin.rollback')}</button></li>)}</ul></section> : null}
+            {selected.revisions?.length ? <section className="rounded-lg border border-border p-3"><h2 className="font-medium">{t('aiAdmin.revision')} history</h2><ul className="mt-2 space-y-2">{selected.revisions.map(item => <li key={item.toRevision} className="flex items-center justify-between gap-3 text-sm"><span>v{item.toRevision}{item.publishedAt ? ` · ${t('aiAdmin.published')}` : ''}</span><button type="button" disabled={saving || item.toRevision === selected.revision} onClick={() => void rollback(item.toRevision)} className="rounded border border-border px-3 py-1">{t('aiAdmin.rollback')}</button></li>)}</ul></section> : null}
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -315,6 +324,7 @@ export default function AdminPromptsPage() {
                 <Save className="w-4 h-4" aria-hidden="true" />
                 {t(saving ? "aiAdmin.saving" : "aiAdmin.save")}
               </button>
+              {selected.revision !== selected.publishedRevision && <button type="button" disabled={dirty || saving || loading} onClick={() => void publish()} className="rounded-md bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50">{t(saving ? 'aiAdmin.saving' : 'aiAdmin.publish')}</button>}
               <button
                 type="button"
                 disabled={saving || loading}

@@ -1,3 +1,7 @@
+## JWT and synthetic authentication gate
+
+Before authenticated UAT/UAT Fix, read `JWT_STANDARD.md` and prepare `UAT_AUTH_PLAN.md`: map Company Co's fiction-only fixture users to **real provider/server-issued test sessions** for each actual application role, elevated admin/super_admin (tenancy-appropriate) included. Do not request passwords or raw bearer tokens from the owner, forge JWTs, add production backdoors or mistake a seed record for a logged-in identity. Use a dedicated non-production issuer/adapter only when existing app/provider mechanisms do not suffice; repair in UAT Fix/authorized Auto scope and test positive/negative API and browser journeys. Redact state, revoke grants and report evidence or precise remaining blockers.
+
 ## Company Co standard fixture (mandatory evaluation)
 Before preparing UAT datasets, read `USE_COMPANY_CO_INFO_FOR_DEMOS.md` and `UAT_JOURNEY_STANDARD.md`. Use synthetic Company Co staff, 17 leaders/departments, buyer/customer and supplier profiles when applicable. Map the records to the actual schema, seed idempotently, provision scoped test accounts, prove Superadmin test-profile switching, and document all resulting UAT actions/evidence. Do not send bulk emails or use live financial transactions as fixture side effects.
 
@@ -16,12 +20,16 @@ For applicable projects, use `CRUD_STANDARD.md` and `CRUD_MATRIX.md` to exercise
 On UI-applicable projects, follow `PHDK_UX_UI.md` and deliver `UX_UI_AUDIT_REPORT.md` in the UAT handoff. Exercise critical user journeys and relevant state, responsive, keyboard/focus, contrast and interaction checks in the authorized UAT browser scope when available; classify untested browser evidence BLOCKED/MANUAL. P0/P1 confirmed usability/accessibility failures prevent ACCEPTED. Document in-scope repairs in `UX_UI_REMEDIATION_REPORT.md` and retest affected flows. Brownfield redesigns compare baseline vs target and verify preserved behavior. No browser actions outside permitted UAT/UAT Fix environments.
 
 ## Scoped browser exception for UAT and UAT Fix
+### Mandatory browser entry and no-new-spend gate
+
+Before browser-dependent cases, follow `UAT_BROWSER_READINESS_STANDARD.md`: explicitly distinguish scoped phase permission from actual tool availability; verify one harmless browser operation against the authorized candidate; log proof/error, safe target and spend disposition in `UAT_ACCESS_REPORT.md` and `UAT_REPORT.md`. No invented budget ceilings, paid browser/API purchases or approval pauses just for an unavailable browser. Continue independent safe UAT cases; BLOCKED/MANUAL is not PASS. Require only genuine host connection/production authorization.
+
 
 **Only** during explicit `PHDK uat`, `PHDK uat fix`, or the UAT/UAT Fix phases of an authorized `PHDK auto` run, a connected/available browser, browser MCP, Playwright, Cypress or equivalent may be used to exercise real user journeys, UI behavior, responsiveness and accessibility and capture timestamped screenshots/evidence. This narrow exception overrides general browser bans **for these phases only**; it does not activate browser work during Capture, Plan, implementation, generic verification, Check or Delivery. PMO workers do not inherit a standalone browser permission outside their authorized UAT phase.
 
 Use a local or dedicated staging/test environment and non-production test accounts/fixtures by default. Production browsing or production account interactions require separate explicit owner authorization, a read-only/non-destructive test plan, and confirmation of target and risks. Never perform real purchases, send real emails, mutate production data, bypass authentication, extract secrets, expose personal data, modify provider/repository settings, or call paid services without separate authorization. No persistent sessions, unattended monitoring or background jobs. Do not open a browser merely to diagnose deployment status.
 
-For each test record the candidate revision, target environment, case ID, steps, expected/actual result and redacted screenshot or trace reference. Stop or mark BLOCKED when browser access, a safe environment or valid test credentials are unavailable; **never** infer PASS from code inspection or claim browser evidence not collected. Close browser sessions after the active UAT execution. UAT Fix may rerun the impacted browser cases after permitted code repairs.
+For each test record the candidate revision, target environment, case ID, steps, expected/actual result and redacted screenshot or trace reference. After applying `JWT_STANDARD.md`'s supported synthetic provider/session bootstrap options, stop or mark BLOCKED when browser access, a safe environment or legitimate test identity issuance are still unavailable; **never** infer PASS from code inspection or claim browser evidence not collected. Close browser sessions after the active UAT execution. UAT Fix may rerun the impacted browser cases after permitted code repairs.
 
 ## Command and purpose
 

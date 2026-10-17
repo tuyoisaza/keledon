@@ -21,11 +21,11 @@ export interface AgentStatus {
 }
 
 export interface SystemHealth {
-  overall: 'healthy' | 'warning' | 'critical';
+  overall: 'healthy' | 'warning' | 'critical' | 'unknown';
   websocket: 'connected' | 'disconnected' | 'connecting';
-  tts: 'ready' | 'busy' | 'error';
-  stt: 'ready' | 'busy' | 'error';
-  ai: 'ready' | 'busy' | 'error';
+  tts: 'ready' | 'busy' | 'error' | 'unknown';
+  stt: 'ready' | 'busy' | 'error' | 'unknown';
+  ai: 'ready' | 'busy' | 'error' | 'unknown';
 }
 
 @Injectable()
@@ -110,16 +110,14 @@ export class AgentMonitoringService {
     const connectedSocketCount = this.connectedSockets.size;
 
     return {
-      overall: connectedSocketCount > 0 ? 'healthy' : 'warning',
+      // A dashboard/agent socket alone does not prove dependency health.
+      overall: 'unknown',
       websocket: connectedSocketCount > 0 ? 'connected' : 'disconnected',
-      tts: this.randomHealthStatus(),
-      stt: this.randomHealthStatus(),
-      ai: this.randomHealthStatus(),
+      // These dependencies have no health probes in this service yet.
+      tts: 'unknown',
+      stt: 'unknown',
+      ai: 'unknown',
     };
-  }
-
-  private randomHealthStatus(): 'ready' | 'busy' | 'error' {
-    return 'ready';
   }
 
   // Performance monitoring

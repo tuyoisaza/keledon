@@ -1,4 +1,24 @@
-# Remediation continuation — candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
+# Remediation continuation — candidate 5.1.78 / PHDK 2.52.2 (2026-10-17)
+
+Continued CHK-20261016-002 with a bounded audit event for CSV export requests. API and Cloud expose only a dedicated POST route, authorize it from the current DB-derived superadmin actor, validate row count/offset/filter-key bounds, and write `AUDIT_EXPORT_REQUESTED` with actor tenant from the database. General CRUD audit writes remain denied; the interceptor suppresses duplicate logging. The Web now waits for this event before downloading and reports failure without creating the file if audit recording fails. API and Cloud HTTP/service tests, backend builds/regressions and scoped lint pass; Web typecheck/build and admin-audit UAT pass. UAT uses synthetic audit rows; no database persistence or retention policy is claimed.
+
+Current overall Auto remains **PARTIALLY DELIVERED**. Railway's configured Web root, PostgreSQL migrations/restart, audit retention decision, broad CRUD, native/accessibility and customer-selected integrations remain open.
+
+SIGUIENTE PASO: deliver this source slice on PR #198 and continue independent fixable findings while the owner resolves the Railway root/config gate.
+
+---
+
+## Current remediation — candidate 5.1.79 truthful health diagnostics (2026-10-17)
+
+Replaced unconditional `ready` values in both API and Cloud monitoring with `unknown` until TTS/STT/AI health probes exist. Aggregate health is no longer inferred from socket count; actual tracked WebSocket state remains its own field. Web/Landing start from unknown and render it in the muted semantic color. This closes the source-verifiable fake-health finding without inventing a provider probe.
+
+Verification: API/Cloud health tests 2/2 each, API regression 42/42, Cloud regression 19/19, targeted lint, backend builds, Web/Landing typecheck/build, full Web UAT and Browser renderer checks pass. No database, migration, customer endpoint, paid provider or deployment was used. Portfolio is **87 PASS, 0 BLOCKED, 1 MANUAL**; CRUD acceptance remains partial.
+
+SIGUIENTE PASO: complete final Check and normal PR delivery; run true service-health and persistence acceptance when the required isolated target exists.
+
+---
+
+## Historical remediation continuation — candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
 
 Closed source audit coverage for role denials and successful mutation/auth events: API and Cloud role guards record a minimal append-only `ACCESS_DENIED` event for known actors, snapshot the actor's tenant, and still reject access if event persistence fails. API and Cloud interceptors capture the actor tenant before mutation/auth handlers run. The new nullable, non-relational `AuditLog.companyId` is paired across both Prisma schemas and additive migrations; audit filtering prefers event-time tenant attribution while retaining a fallback for historical rows. No request body, IP or user-agent is copied into role-denial events.
 
@@ -94,3 +114,8 @@ UAT-012 PASS: device list responses contain no raw RPA config or CDP URL, and re
 Remediated the sole new fixable finding in this source slice: the public Landing root lacked a semantic H1 and substantive overview in the initial document. Static responsive fallback content and a tested React startup handoff resolve it. Landing SEO contract 1/1, lint, TypeScript, production build and generated HTML inspection pass. No residual fixable issue for this finding remains. Broader acceptance and deployed measurements are not remediated by this slice; see candidate Check/SEO/AEO handoffs. Next: delivery through the normal PR path; whole Auto remains partial.
 
 ---
+
+
+## Candidate 5.1.78 remediation handoff
+
+Cloud managed AI parity and its contract tests are implemented; the stale API RolesGuard test projection was aligned to current DB-derived role/company attribution. Retests pass as recorded in PHDK_REMEDIATION_REPORT-5.1.78.md. No source P0/P1 remains in the tested slice. PostgreSQL, customer integration and native acceptance remain open.

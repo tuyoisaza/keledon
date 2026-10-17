@@ -84,6 +84,12 @@ export class BrainController {
       throw new HttpException('Invalid Brain request', HttpStatus.BAD_REQUEST);
 
     const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
+    const historyLength = history.reduce(
+      (total, item) => total + item.content.length,
+      0,
+    );
+    if (historyLength + message.length > 12000)
+      throw new HttpException('Invalid Brain request', HttpStatus.BAD_REQUEST);
 
     const context = [
       `Company: ${companyName}`,
@@ -98,28 +104,25 @@ export class BrainController {
       )
       .join('\n');
 
-    const prompt = [
-      'You are KELEDON Brain inside the operator dashboard.',
-      'Respond as the live brand brain for the selected company, brand, and team.',
-      'Be concise, practical, and ready for production operations.',
-      'If the user asks for missing context, ask one focused follow-up question.',
-      'Do not mention internal policy unless the user asks.',
-      '',
-      'Selected context:',
-      ...context.map((line) => `- ${line}`),
-      '',
-      conversation ? `Conversation so far:\n${conversation}\n` : '',
-      `Latest user message: ${message}`,
-      '',
-      'Answer as the brain for this brand only. Return the direct reply and nothing else.',
-    ]
-      .filter(Boolean)
-      .join('\n');
+    const prompt = JSON.stringify({
+      companyId,
+      companyName,
+      brandId,
+      brandName,
+      teamId,
+      teamName,
+      language: body.language || 'auto',
+      conversation,
+      message,
+    });
 
     try {
       const response: LLMResponse = await this.llmService.generate({
         prompt,
         context,
+        actorId: actor.id,
+        feature: 'brain-chat',
+        teamId: actor.teamId || undefined,
         maxTokens: 500,
         temperature: 0.35,
       });

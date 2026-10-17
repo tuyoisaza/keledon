@@ -92,7 +92,12 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
               <Icon className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm font-medium">{label}</span>
             </div>
-            <div className={cn("text-xs font-medium", systemHealth[key as keyof typeof systemHealth])}>
+            <div className={cn(
+              "text-xs font-medium",
+              systemHealth[key as keyof typeof systemHealth] === 'unknown'
+                ? 'text-muted-foreground'
+                : systemHealth[key as keyof typeof systemHealth],
+            )}>
               {systemHealth[key as keyof typeof systemHealth]?.toUpperCase()}
             </div>
           </div>

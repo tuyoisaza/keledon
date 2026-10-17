@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-17T09:57:10.963Z",
+  "candidate": "5.1.78",
+  "target": "production-built Web SPA with synthetic role/theme API",
+  "result": "PASS_SCOPED",
+  "assertions": 12,
+  "checks": [
+    "distinct light/dark/corporate real-component previews",
+    "unsaved color preview and cancel restore",
+    "superadmin save revision and stored value",
+    "corporate visibility option removed and active corporate selection falls back to light",
+    "corporate editor remains available after hiding it from users",
+    "reload reads saved configuration",
+    "tenant admin route denial before protected API access"
+  ],
+  "limitations": [
+    "synthetic API persistence only; no database migration or restart persistence",
+    "contrast check is not a full WCAG matrix",
+    "no customer data or external endpoints"
+  ]
+}

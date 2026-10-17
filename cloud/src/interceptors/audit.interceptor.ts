@@ -243,6 +243,10 @@ export class AuditInterceptor implements NestInterceptor {
     ipAddress: string | undefined,
     userAgent: string | undefined,
   ): AuditEntry | null {
+    // This endpoint writes its own minimal append-only event through the trusted
+    // audit service; avoid recording the same request a second time here.
+    if (method === 'POST' && url === '/api/crud/audit-logs/export-page')
+      return null;
     // Extract entity type from URL path
     const parts = url.split('/').filter(Boolean);
     const entityIndex = parts.findIndex((p: string) => p === 'crud') + 1;

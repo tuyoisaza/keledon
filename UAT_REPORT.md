@@ -1,3 +1,25 @@
+# UAT report — run 20261014-0007-phdk-auto-completion
+
+## Candidate 5.1.79 — UAT-090 truthful dependency health (2026-10-17)
+
+Exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` passes UAT-090: API and Cloud return `unknown` for unprobed TTS/STT/AI dependencies and aggregate health; dashboard socket connectivity is reported separately and does not imply subsystem readiness. Web and Landing initialize their dashboard status as unknown until a server event arrives. API/Cloud service contract suites pass 2 assertions each; full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin; Web/Landing typechecks and production builds pass. Evidence: `docs/phdk/workstreams/AGENT-HEALTH-UAT.json`. This is scoped source/UAT evidence, not a live dependency-health probe.
+
+UAT tally advances to **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**; PostgreSQL acceptance, native device/audio, broad accessibility, deployed discovery and customer-selected integrations remain open.
+
+## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity (2026-10-17)
+
+The exact production-built Web candidate passes the superadmin audit journey with synthetic, redacted rows. All 12 visible controls meet the 44px minimum; keyboard tab navigation exposes a visible focus indicator; the 390×844 layout has no page-level horizontal overflow; and keyboard navigation scrolls the mobile navigation strip to its final link with visible focus. CSV export records bounded metadata before download; audit-write failure prevents the download. Tenant-admin access is denied before audit data is requested. Browser Readiness is recorded in `UAT_ACCESS_REPORT.md`; machine evidence and desktop/mobile screenshots are under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/`. Persistence is a fixture only; no database or customer/provider service was contacted.
+
+UAT tally advances to **86 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**; audit migration/restart, broad CRUD, native device/audio and external acceptance remain open.
+
+## Current candidate 5.1.78 — managed Cloud AI parity
+
+UAT-088 candidate scope is the Cloud managed-AI runtime and matching source contracts. Cloud managed runtime 6/6, Cloud cross-backend regression 19/19 and API managed-AI contract 9/9 pass. The 5.1.78 continuation also hardens current-database actor resolution and replaces the Google OAuth access-token query with a one-use exchange code; OAuth abuse regression, API HTTP wiring and local browser exchange UAT pass. See `UAT_AUTH_PLAN.md` and `UAT_ACCESS_REPORT.md` for auth scope and limits. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-cloud-managed-ai-5.1.78.md.
+
+Navegador UAT: permiso de fase ACTIVO; Web local 8/8 más admin-settings, theme-templates y AI-admin pasan. Browser security/runtime y ciclo de llamada sintético pasan 22/22; Landing SEO pasa 1/1. El callback OAuth usa solo código/respuestas sintéticos, APIs interceptadas y tráfico externo bloqueado; no hubo login real. API regression 42/42 suites y los builds API/Web/Browser pasan. No se usó proveedor, base de datos, llamada de cliente ni CRM real. El e2e que requiere PostgreSQL y la migración/reinicio siguen bloqueados por falta de un destino desechable. El inventario global permanece en 85 PASS, 0 BLOCKED, 1 MANUAL y 396 filas CRUD bloqueadas; este candidato no cierra esas puertas.
+
+---
+
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.75 - delivered by PR #194; functional UAT evidence (2026-10-17)

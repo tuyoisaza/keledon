@@ -1,5 +1,17 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.79 — UAT-090 truthful dependency health status
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-090 | CMT-002 / authenticated dashboard observer | On exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9`, request system health from API and Cloud monitoring services before dependency-specific health probes exist; repeat after registering a dashboard socket. | TTS, STT, AI and aggregate health remain `unknown`; measured WebSocket connectivity may report connected independently and never promotes aggregate or dependency health to healthy/ready. Web and Landing initialize the displayed values as unknown before a server event. | API/Cloud service contract tests; Web/Landing typecheck and production builds | PASS: 2 assertions per backend; full Web UAT 8/8 plus standalone admin/theme/AI UAT; typecheck/build pass. No live service probe, database, provider or customer data. |
+
+## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-089 | CHK-005 / synthetic platform superadmin, then tenant admin | Open the exact production-built `/admin/audit` route; inspect sanitized synthetic audit data; measure every input/button/disclosure; tab from Refresh to Export; inspect at 390×844; keyboard through the mobile nav to Management; request visible-page export; force export-audit failure; open as tenant admin. | All 12 interactive targets are at least 44px; keyboard focus is visible; mobile page does not overflow; the horizontally scrollable nav brings its focused final link into view; successful export records only bounded metadata before download; audit failure prevents download; tenant admin is denied before data read. | Local production-built Web SPA, installed Edge via Playwright, intercepted synthetic API, non-loopback HTTP aborted | PASS, 12 scoped checks. Screenshots and exact revision/URL are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-*.png` and `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`. Fixture only; no DB, provider or customer data. |
+
 ## Candidate 5.1.73 — UAT-084 AI workflow catalog and editor retest
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

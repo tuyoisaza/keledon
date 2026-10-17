@@ -1,3 +1,16 @@
+## v5.1.78 — managed Cloud AI runtime parity
+
+- Route Cloud Brain and decision-engine calls through the persisted, revisioned AI workflow catalog; validate bounded inputs and JSON-schema outputs before using results.
+- Resolve the provider and credentials from the database-bound team, attribute usage to the prompt revision, and retain per-actor/runtime AI budget controls.
+- Add the shared managed-AI schema and migration history to Cloud, with cross-backend contract tests.
+- Synchronize the vendored PHDK standards to 2.52.2 and align all five product package/lock roots plus the Browser renderer at 5.1.78.
+- Repair the Web monorepo Docker build context so its canonical shared theme tokens are included; Railway's live root-directory setting still needs an owner change before redeploy can succeed.
+
+### Verification
+- Cloud managed AI contract 6/6, Cloud regression 19/19, typecheck/build, Prisma validation and scoped lint pass.
+- API managed-AI contract 9/9 and regression 42/42; focused persisted-role guard 3/3; Web typecheck and all five package builds pass. Prisma validate/generate used a placeholder URL and did not connect to a database.
+- Runtime migration/restart and provider/customer acceptance remain unverified; whole PHDK Auto remains partial.
+
 ## v5.1.77 — compact diagnostics controls with 4px spacing
 
 - Align the Web, Landing and Browser diagnostics tiles to a visible 4px gap while preserving independent 44×44px hit targets.
@@ -684,3 +697,16 @@
 - API and Cloud builds and regressions pass (API 36/36, Cloud 16/16); all five product builds pass.
 - API full lint, Web and Landing typecheck/lint, Browser lint, Browser offline tests 27/27, diagnostics 19/19, synthetic Web UAT 4/4, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass.
 - Web/Landing production builds complete with the existing large-chunk warning. No customer endpoint, private CRM, database, native device, or deployment was used; whole Auto remains partially delivered.\n
+## v5.1.79 — report unmeasured dependency health truthfully
+
+- Replace unconditional `ready` responses for unprobed TTS, STT and AI health with `unknown` in API and Cloud monitoring, and keep overall health unknown until dependency probes exist.
+- Initialize Web and Landing monitoring state as unknown so the dashboard does not imply readiness before the first server report.
+- Align the five application package/lock roots and Browser renderer at 5.1.79.
+
+### Verification
+- API and Cloud monitoring unit tests pass 2/2 each; full regression runners pass API 42/42 and Cloud 19/19.
+- Targeted API/Cloud ESLint, API/Cloud production builds, Web/Landing typechecks and production builds, full Web UAT (8 suites plus admin-settings/theme-template/AI-admin), Browser build/version sync and Browser renderer tests 4/4 pass.
+- PHDK coherence passes 63/63; all five package/lock roots and Browser renderer align at 5.1.79.
+
+### Migration / limitations
+- TTS/STT/AI health probes remain unimplemented. Their status is intentionally `unknown` until measured; this change does not claim runtime health or persistence acceptance.

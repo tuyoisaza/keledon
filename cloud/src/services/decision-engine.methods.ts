@@ -71,6 +71,12 @@ export class DecisionContextMethods {
         const decision = await this.llmService.generateCommand(
           currentTranscript,
           ragContext,
+          typeof context.metadata.teamId === 'string'
+            ? context.metadata.teamId
+            : undefined,
+          typeof context.metadata.userId === 'string'
+            ? context.metadata.userId
+            : undefined,
         );
         return { ...decision, confidence: decision.confidence ?? confidence };
       } catch (error) {

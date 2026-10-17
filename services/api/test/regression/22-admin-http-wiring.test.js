@@ -53,6 +53,7 @@ const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { TenantFlowConfigService } = require('../../src/mvp/tenant-flow-config.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
+const { CrudAuditService } = require('../../src/crud/crud-audit.service.ts');
 const { LocalAuthController } = require('../../src/auth-local/auth-local.controller.ts');
 const { LocalAuthService } = require('../../src/auth-local/auth-local.service.ts');
 const { AuthAttemptGuard } = require('../../src/guards/auth-attempt.guard.ts');
@@ -81,6 +82,7 @@ async function main() {
     },
   };
   const auditEntries = [];
+  const auditExports = [];
   const prisma = {
     user: {
       findUnique: async ({ where }) => actors[where.id] || null,
@@ -185,6 +187,9 @@ async function main() {
           getAuditLogs: async () => {
             auditReads++;
             return { data: [], pagination: { total: 0 } };
+          },
+          recordAuditPageExport: async (actor, input) => {
+            auditExports.push({ actor, input });
           },
           getUser: async (id) => ({ id }),
           getManagedInterface: async (id) => {
@@ -421,6 +426,25 @@ async function main() {
       .set('Authorization', token('superadmin'))
       .expect(400);
     assert.equal(auditReads, 1, 'malformed audit pagination is rejected before the service call');
+    const exportRequest = {
+      rowCount: 2,
+      offset: 0,
+      filterKeys: ['action'],
+    };
+    await request(http)
+      .post('/api/crud/audit-logs/export-page')
+      .set('Authorization', token('superadmin'))
+      .send(exportRequest)
+      .expect(201, { recorded: true });
+    assert.deepEqual(auditExports, [
+      { actor: actors.superadmin, input: exportRequest },
+    ]);
+    await request(http)
+      .post('/api/crud/audit-logs/export-page')
+      .set('Authorization', token('admin'))
+      .send(exportRequest)
+      .expect(403);
+    assert.equal(auditExports.length, 1);
     await request(http)
       .post('/api/crud/audit-logs')
       .set('Authorization', token('superadmin'))
@@ -527,6 +551,53 @@ async function main() {
       .send({})
       .expect(403);
     assert.equal(writes, 0);
+
+    const exportAuditWrites = [];
+    const exportAuditService = new CrudAuditService({
+      auditLog: {
+        create: async ({ data }) => {
+          exportAuditWrites.push(data);
+          return data;
+        },
+      },
+    });
+    await exportAuditService.recordPageExport(
+      { id: 'superadmin', companyId: null },
+      { rowCount: 2, offset: 50, filterKeys: ['action', 'entity'] },
+    );
+    assert.deepEqual(exportAuditWrites, [
+      {
+        userId: 'superadmin',
+        companyId: null,
+        action: 'AUDIT_EXPORT_REQUESTED',
+        entity: 'audit-logs',
+        changes: JSON.stringify({
+          format: 'csv',
+          scope: 'visible-page',
+          rowCount: 2,
+          offset: 50,
+          filterKeys: ['action', 'entity'],
+        }),
+      },
+    ]);
+    await assert.rejects(
+      exportAuditService.recordPageExport(
+        { id: 'superadmin', companyId: null },
+        { rowCount: 51, offset: 0, filterKeys: [], rawFilter: 'secret' },
+      ),
+      /Invalid audit export request/,
+    );
+    assert.equal(exportAuditWrites.length, 1);
+    const failingExportAuditService = new CrudAuditService({
+      auditLog: { create: async () => { throw new Error('isolated write failure'); } },
+    });
+    await assert.rejects(
+      failingExportAuditService.recordPageExport(
+        { id: 'superadmin', companyId: null },
+        { rowCount: 1, offset: 0, filterKeys: [] },
+      ),
+      /isolated write failure/,
+    );
     await request(http)
       .put('/api/devices/device-a/rpa-config')
       .set('Authorization', token('admin'))
@@ -544,7 +615,7 @@ async function main() {
     await request(http)
       .get('/api/flows/flow-a')
       .set('Authorization', token('deleted-actor'))
-      .expect(403);
+      .expect(401);
     await request(http)
       .get('/api/tts-config')
       .set('Authorization', token('member'))

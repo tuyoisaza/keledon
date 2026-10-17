@@ -1,7 +1,7 @@
 import { ThemeControls } from '@/components/common/ThemeControls';
 import { VersionActions } from '@/components/common/VersionActions';
 import { useState, useEffect } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
@@ -12,25 +12,41 @@ declare const __APP_VERSION__: string;
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { signInWithEmail, loginWithGoogle, email, setEmail, password, setPassword, error, isLoading } = useAuth();
+  const { signInWithEmail, loginWithGoogle, email, setEmail, password, setPassword, error, setError, isLoading } = useAuth();
   const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(false);
 
 useEffect(() => {
-    const token = searchParams.get('token');
-    const userEmail = searchParams.get('email');
-    const userName = searchParams.get('name');
-    
-    if (token) {
-      recordAuthEvent('oauth-callback', 'reached');
-      sessionStorage.setItem('auth_token', token);
-      sessionStorage.setItem('user_email', userEmail || '');
-      sessionStorage.setItem('user_name', userName || '');
-      recordAuthEvent('oauth-callback', 'success');
-      navigate('/dashboard');
-    }
-  }, [searchParams, navigate]);
+    const code = new URLSearchParams(window.location.hash.slice(1)).get('oauth_code');
+    if (!code) return;
+
+    // Remove the one-time code from the address bar before making another request.
+    window.history.replaceState(null, document.title, window.location.pathname);
+    recordAuthEvent('oauth-callback', 'reached');
+
+    void (async () => {
+      try {
+        const response = await fetch('/api/auth/google/exchange', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const result = await response.json();
+        if (!response.ok || !result?.success || !result?.token || !result?.user) {
+          throw new Error('Google sign-in failed');
+        }
+
+        sessionStorage.removeItem('uat_original_superadmin_token');
+        sessionStorage.removeItem('uat_active_profile_session_id');
+        sessionStorage.setItem('auth_token', result.token);
+        recordAuthEvent('oauth-callback', 'success');
+        window.location.replace('/dashboard');
+      } catch {
+        recordAuthEvent('oauth-callback', 'failure');
+        setError(t('auth.googleLoginFailed'));
+      }
+    })();
+  }, [setError, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

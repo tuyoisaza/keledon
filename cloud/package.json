@@ -1,6 +1,6 @@
 {
   "name": "cloud",
-  "version": "5.1.77",
+  "version": "5.1.79",
   "description": "KELEDON Backend",
   "private": true,
   "license": "UNLICENSED",
@@ -48,6 +48,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/os-utils": "^0.0.4",
     "@types/uuid": "^9.0.0",
+    "ajv": "^8.20.0",
     "bcrypt": "^6.0.0",
     "elevenlabs": "^1.59.0",
     "google-auth-library": "^9.15.1",

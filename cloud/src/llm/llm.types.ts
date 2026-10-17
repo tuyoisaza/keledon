@@ -1,5 +1,10 @@
 export interface LLMRequest {
   prompt: string;
+  actorId?: string;
+  feature?: 'brain-chat' | 'decision-engine';
+  requestId?: string;
+  correlationId?: string;
+  teamId?: string;
   context?: string[];
   maxTokens?: number;
   temperature?: number;
@@ -7,6 +12,9 @@ export interface LLMRequest {
 }
 
 export interface LLMResponse {
+  provider?: string;
+  requestedModel?: string;
+  responseModel?: string;
   text: string;
   finishReason: 'stop' | 'length' | 'content_filter';
   usage: {

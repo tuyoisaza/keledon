@@ -19,11 +19,11 @@ interface AgentStatus {
 }
 
 interface SystemHealth {
-  overall: 'healthy' | 'warning' | 'critical';
+  overall: 'healthy' | 'warning' | 'critical' | 'unknown';
   websocket: 'connected' | 'disconnected' | 'connecting';
-  tts: 'ready' | 'busy' | 'error';
-  stt: 'ready' | 'busy' | 'error';
-  ai: 'ready' | 'busy' | 'error' | 'processing';
+  tts: 'ready' | 'busy' | 'error' | 'unknown';
+  stt: 'ready' | 'busy' | 'error' | 'unknown';
+  ai: 'ready' | 'busy' | 'error' | 'processing' | 'unknown';
 }
 
 export function useAgentStatus(socket?: Socket | null) {
@@ -33,11 +33,11 @@ export function useAgentStatus(socket?: Socket | null) {
   const [agents, setAgents] = useState<AgentStatus[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
-    overall: 'healthy',
+    overall: 'unknown',
     websocket: 'disconnected',
-    tts: 'ready',
-    stt: 'ready',
-    ai: 'ready'
+    tts: 'unknown',
+    stt: 'unknown',
+    ai: 'unknown'
   });
   const [loadedSocket, setLoadedSocket] = useState<Socket | null>(null);
   const loading = Boolean(actualSocket && loadedSocket !== actualSocket);

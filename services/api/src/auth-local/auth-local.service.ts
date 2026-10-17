@@ -10,6 +10,7 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class LocalAuthService {
   private readonly authSecret: string;
+  private readonly googleExchangeCodeTtlMs = 60 * 1000;
 
   constructor(private prisma: PrismaService) {
     if (
@@ -127,6 +128,92 @@ export class LocalAuthService {
       role: user.role,
       company_id: user.companyId,
       team_id: user.teamId,
+    };
+  }
+
+  async issueGoogleExchangeCode(userId: string): Promise<string> {
+    const code = crypto.randomBytes(32).toString('base64url');
+    const codeHash = crypto.createHash('sha256').update(code).digest('hex');
+    const expiresAt = Date.now() + this.googleExchangeCodeTtlMs;
+
+    await this.prisma.auditLog.create({
+      data: {
+        userId,
+        action: 'GOOGLE_EXCHANGE_ISSUED',
+        entity: 'GOOGLE_EXCHANGE_CODE',
+        entityId: codeHash,
+        changes: JSON.stringify({ expiresAt }),
+      },
+    });
+
+    return code;
+  }
+
+  async exchangeGoogleCode(code: string) {
+    if (typeof code !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(code)) {
+      throw new UnauthorizedException('Invalid or expired Google code');
+    }
+
+    const codeHash = crypto.createHash('sha256').update(code).digest('hex');
+    const record = await this.prisma.auditLog.findFirst({
+      where: {
+        entity: 'GOOGLE_EXCHANGE_CODE',
+        entityId: codeHash,
+        action: 'GOOGLE_EXCHANGE_ISSUED',
+      },
+      select: { id: true, userId: true, changes: true },
+    });
+    let details: { expiresAt?: number } | null;
+    try {
+      details = JSON.parse(record?.changes || 'null');
+    } catch {
+      throw new UnauthorizedException('Invalid or expired Google code');
+    }
+    if (
+      !record?.userId ||
+      typeof details?.expiresAt !== 'number' ||
+      !Number.isFinite(details.expiresAt) ||
+      Date.now() >= details.expiresAt
+    ) {
+      throw new UnauthorizedException('Invalid or expired Google code');
+    }
+
+    const consumed = await this.prisma.auditLog.updateMany({
+      where: {
+        id: record.id,
+        entity: 'GOOGLE_EXCHANGE_CODE',
+        entityId: codeHash,
+        action: 'GOOGLE_EXCHANGE_ISSUED',
+      },
+      data: { action: 'GOOGLE_EXCHANGE_CONSUMED', changes: null },
+    });
+    if (consumed.count !== 1) {
+      throw new UnauthorizedException('Invalid or expired Google code');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: record.userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        companyId: true,
+        teamId: true,
+      },
+    });
+    if (!user) throw new UnauthorizedException('Google account is unavailable');
+
+    return {
+      token: this.generateToken(user.id, user.email, user.role),
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        companyId: user.companyId,
+        teamId: user.teamId,
+      },
     };
   }
 

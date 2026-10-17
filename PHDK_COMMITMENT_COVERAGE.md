@@ -1,3 +1,18 @@
+## Current commitment coverage — 5.1.78 candidate; whole portfolio partial
+
+Base `origin/main` is `383fd84f2fd1c7218882dc840db7e5be1957246a`; candidate branch `fix/phdk-auto-continuation-5-1-78` is synchronized with open/mergeable PR #198, without reviews or hosted checks. PHDK v2.52.2 coherence is 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate is not merged or deployed.
+
+| Commitment | Candidate evidence | Open acceptance |
+|---|---|---|
+| CMT-001 baseline, versions, PRs | PHDK synced and verified; five product roots and renderer 5.1.78; PR #198 head matches the remote and is mergeable. | Railway Web root/config correction, successful deployment, review/merge and main readback; deployed discovery remains open. |
+| CMT-002 widget and safe diagnostics | Prior 5.1.77 widget geometry/diagnostic evidence reused; current Web UAT 8/8 plus standalone admin/theme/AI UAT and Browser security/runtime 22/22 pass. | Packaged Browser, native audio/device, broad route/role/accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | Cloud uses revisioned managed workflow contracts, DB-derived actor/team and safe usage attribution; 19 parity regressions pass; Browser synthetic call lifecycle tests pass. Client provider/CRM choice remains tenant-specific. | Migrations/runtime restart, native call path, each client's configured call/CRM sandbox. |
+| CMT-004 administration and permissions | API/Cloud managed-AI contracts pass; protected requests resolve current DB role/email; Google bearer token is no longer returned in a URL; OAuth replay/expiry tests pass; AI prompt edits require explicit revision publish for runtime activation. | Disposable PostgreSQL migration/restart acceptance, 396 blocked CRUD rows, audit/export/retention, synthetic AI trace and remaining admin workflows. |
+
+Current portfolio: 0/4 DONE; 4/4 ACTIVE/PARTIAL; 0 deferred; 0 cancelled. Source slice is pending delivery; whole Auto is PARTIALLY DELIVERED.
+
+---
+
 ## Current PHDK Auto — 5.1.77 candidate; portfolio partial (2026-10-17)
 
 PRs #194/#195 remain the latest main deliveries through 5.1.76. Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile widget geometry, Browser widget/boundary 4/4, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.

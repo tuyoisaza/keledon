@@ -284,3 +284,27 @@ UAT-049 passes source-only: API regression 49 confirms unbound DebugMode service
 Production-built Web 5.1.72 passed local synthetic UI UAT 6/6 plus AI-admin UAT. The shared diagnostics widget now has direct browser evidence for accessible names, 44×44px hit targets, keyboard Tab order, visible 2px focus and polite live feedback; copy/redaction/reset and selected responsive/theme journeys also pass. Focused diagnostics pass 19/19. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and its adjacent screenshots/JSON. Whole acceptance is **65 PASS, 0 BLOCKED, 1 MANUAL**; screen-reader and broad route/role/localization acceptance remain open.
 
 ## Candidate 5.1.72 — UAT-066 PASS; PostgreSQL core blocker closed
+
+
+## Candidate 5.1.78 handoff — managed Cloud AI UAT
+
+Managed Cloud AI 6/6, API contract 9/9, cross-backend regressions 19/19, API regressions 42/42 and focused guard 3/3 pass. Browser Readiness is recorded as NOT_NEEDED for this backend-only candidate. Full API Jest still needs disposable PostgreSQL for its e2e test; no migration/restart acceptance is claimed. Evidence: evidence/uat-cloud-managed-ai-5.1.78.md and root UAT_ACCESS_REPORT.md. Next: scoped Check and hygiene review.
+## Current UAT-089 — admin audit accessibility and export integrity PASS (2026-10-17)
+
+Exact production-built Web source revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04` passes 12 scoped checks in installed Edge via Playwright. All 12 interactive targets measure at least 44px; keyboard focus is visible; the page fits a 390×844 viewport; keyboard navigation scrolls the horizontal navigation to its final link; export metadata is bounded and recorded before download; failed audit recording blocks the download; and tenant admin is denied before audit rows are requested. Synthetic API fixtures only; non-loopback HTTP is aborted, with zero provider calls and no database persistence claim. Exact report: `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`; desktop/mobile screenshots are in `evidence/admin-audit-uat-5.1.78-*.png`.
+
+Portfolio remains **86 PASS, 0 BLOCKED, 1 MANUAL**; the 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. This scoped UI acceptance does not close persisted audit retention, PostgreSQL migration/restart, screen-reader, native device/audio, Railway or customer integration gates.
+
+SIGUIENTE PASO: continue Check/remediation on source-verifiable gaps; retain database, native and external acceptance gates as open.
+
+---
+
+## Current UAT-090 — dependency health stays unknown until measured (2026-10-17)
+
+API and Cloud service tests each pass 2/2 assertions: unprobed TTS/STT/AI and aggregate health stay unknown; explicitly registering a socket changes only the WebSocket state. Web/Landing initial hooks also start unknown. Full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin journeys; no live health provider or database was used. Evidence is recorded in `UAT_CASES.md`, `UAT_REPORT.md`, `UAT_ACCESS_REPORT.md` and the versioned Web regression artifacts.
+
+UAT is **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; CRUD is unchanged at **560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**.
+
+SIGUIENTE PASO: Check the integrated 5.1.79 candidate; retain live dependency, database and external acceptance as unverified.
+
+---

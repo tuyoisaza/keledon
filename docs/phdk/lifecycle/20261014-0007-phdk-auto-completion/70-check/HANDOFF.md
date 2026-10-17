@@ -245,3 +245,14 @@ The exact candidate adds API/Cloud regression coverage for nested CompanyCountry
 SIGUIENTE PASO: finish exact-candidate checks and review, then deliver through normal PR and verify remote `main`.
 
 ---
+
+
+## Candidate 5.1.78 Check handoff
+
+Scoped lint/build/typecheck/version/Prisma-schema/coherence checks pass. One database-dependent API e2e case remains unavailable; the focused RolesGuard test mismatch found in this run was fixed and passes 3/3. Full portfolio gates remain partial. Evidence: PHDK_CHECK_REPORT-5.1.78.md. Delivery still requires final Check and remote PR verification.
+
+## Candidate 5.1.79 Check handoff — source slice passes; whole Auto partial
+
+The integrated candidate removes unsupported `ready` claims for TTS/STT/AI and disconnects aggregate health from dashboard socket count. API regression 42/42, Cloud regression 19/19, paired health contracts 2/2 each, API/Cloud builds and targeted lint, Web/Landing typecheck/build, full Web UAT 8/8 plus standalone admin/theme/AI, Browser build and focused tests 4/4, and PHDK coherence 63/63 pass. Full API database e2e, persisted health probes, migrations/restart, broad CRUD, native accessibility, Railway deployment and customer-selected live integration remain unverified. Detailed report: `PHDK_CHECK_REPORT-5.1.79.md`.
+
+SIGUIENTE PASO: deliver the versioned candidate through PR #198, then verify merge and remote `main`; retain deployment and database gates separately.

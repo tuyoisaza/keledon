@@ -22,7 +22,7 @@ describe('RolesGuard diagnostics authorization', () => {
     );
     expect(prisma.user.findUnique).toHaveBeenCalledWith({
       where: { id: 'user-1' },
-      select: { role: true },
+      select: { role: true, companyId: true },
     });
   });
 

@@ -1,22 +1,25 @@
-## Current PHDK Auto — 5.1.77 diagnostics candidate; portfolio partial (2026-10-17)
+## Current PHDK Auto — 5.1.79 truthful dashboard health; portfolio partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. Candidate source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five app roots and Browser renderer are 5.1.77; PHDK 2.51.5 coherence is 61/61. The widget spacing slice passes scoped Check and UAT; PR delivery is pending. CMT-001 through CMT-004 and whole acceptance remain partial. No deployment is claimed.
+Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch `fix/phdk-auto-continuation-5-1-78`, based on fetched and verified `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a` (5.1.77). Versioned source commit `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` removes false TTS/STT/AI readiness, reports unprobed and aggregate health as unknown, and initializes Web/Landing dashboard state as unknown; UAT-090 passes paired API/Cloud contracts. UAT-089 remains bound to exact production-build source revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04`. PHDK v2.52.2 updater is CURRENT at canonical SHA `1feaec98afbc9df10e25c566c993064359d7fa13`, coherence 63/63. All five package/lock roots and Browser renderer are 5.1.79. PR #198 remains open; no hosted checks or independent review are present. PostgreSQL migration/restart, Railway configuration and broader portfolio acceptance remain open.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
-| Preflight | COMPLETED / REVALIDATED | Canonical PHDK main fetched at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; force sync verified 61 manifest destinations at 2.51.5, managed block matched, coherence PASS. |
-| Capture | REUSED | Four confirmed fronts and approved security/tenant/private-origin decisions unchanged. |
-| Plan | REUSED | Brownfield architecture, UX and four-front plan reused. |
-| PMO / Workstreams | IN PROGRESS | Four confirmed commitments remain active. 5.1.77 diagnostics correction is integrated locally; CRUD and client-selected runtime breadth remain open. |
-| Integration Review | PASS FOR 5.1.77 SLICE | Web/Landing/Browser widget tile spacing is corrected and version aligned; API/Cloud policy/runtime contracts are unchanged. Build and cross-source review pass. Legacy `cloud/` parity, audit migration persistence and client-specific execution remain open. |
-| UAT / UAT Fix | PASS FOR 5.1.77 SLICE / PORTFOLIO PARTIAL | Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile geometry, Web diagnostics 19/19 and Browser widget/boundary 4/4 pass. Exact gap is measured 4px with 28×28 tiles and non-overlapping 44×44 hit targets. Overall UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD inventory 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Native device/audio, migration/restart and broader route/accessibility remain open. |
-| SEO | COMPLETED / SOURCE SCOPE | Candidate 5.1.77 Web/Landing SEO tests pass 1/1 each; routes, copy, metadata and indexability unchanged; deployment measurement remains open. |
-| AEO/GEO | REUSED / CURRENT | Candidate 5.1.77 changes no public answer/claim; 15-control source review remains applicable; external citations and visibility remain unmeasured. |
-| Check | PASS FOR 5.1.77 SLICE / PORTFOLIO PARTIAL | No new critical/high gap from widget-only diff; prior CHK-20261016-001–005 remain PARTIAL and CHK-20261016-006 remains decision-required. |
-| Remediation | COMPLETED FOR 5.1.77 SOURCE GAP | UAT found stale `dist` artifacts; rebuilt Web/Landing and reran full UAT successfully. No further in-scope source gap found. |
-| Delivery | PENDING PR / PORTFOLIO PARTIAL | 5.1.77 candidate is versioned and tested locally; normal PR delivery and remote-main readback remain. |
+| Preflight | COMPLETED / REVALIDATED | Fetched main; canonical PHDK force sync completed, 63/63 bytes and managed block verified; no unrelated edits discarded. |
+| Capture | REUSED | Four owner-confirmed commitments and approved least-privilege/private-origin policies remain active. |
+| Plan | REUSED | Existing brownfield plan and tenant architecture remain current. |
+| PMO / Workstreams | IN PROGRESS | CMT-002 dashboard/diagnostics truthfulness and CMT-004 least-privilege admin advance; all four commitments remain 0/4 done and active/partial. |
+| Integration Review | COMPLETED FOR 5.1.79 SOURCE SLICE | API/Cloud health contracts and Web/Landing initial state agree; dependency readiness is unknown without probes and socket connectivity remains separate. |
+| UAT / UAT Fix | COMPLETED FOR SCOPED SOURCE CONTRACTS; PORTFOLIO PARTIAL | UAT-090 paired service contracts pass 2/2 in API and Cloud; Web/Landing typechecks and builds pass. UAT-089 passes 12 browser checks for audit controls, mobile keyboard navigation, export failure and tenant denial. Exact-source JSON/screenshots are versioned. No live health probe or database persistence is claimed. |
+| SEO | REUSED / NOT AFFECTED | No public route, copy, metadata or indexability changes. |
+| AEO/GEO | REUSED / NOT AFFECTED | No public claim or answer content changes. |
+| Check | RUNNING / ALIGNMENT INCOMPLETE | Rechecking the 5.1.79 full candidate, versions and current remote state; 5.1.78 GitHub/Railway observations remain bounded read-only evidence. External root/config, database, restart and billing gates remain unverified. |
+| Remediation | RUNNING | Removes hard-coded healthy values where no TTS/STT/AI probes exist; paired contract tests pass. Other source-checkable gaps remain under review. |
+| Delivery | PENDING FINAL CHECK | PR #198 remains open and mergeable (`CLEAN`) at the last read; hosted checks/review absent. Normal versioned PR delivery to `main` remains pending final Check and integration gate. |
 
-Next: deliver 5.1.77 through a normal PR, verify remote `main`, then continue database/CRUD, native accessibility, customer integration and deployment acceptance without closing partial gates.
+Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally is 87 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed.
+
+SIGUIENTE PASO: finish normal delivery of the verified 5.1.79 source candidate to `main`, then read back the merged SHA/version. Track the Railway root/config/deployment and PostgreSQL gates as separate owner/environment acceptance items; keep Auto partial until all confirmed gates close.
+
 
 ---
 

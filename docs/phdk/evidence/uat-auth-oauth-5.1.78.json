@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-AUTH-GOOGLE-EXCHANGE-5.1.78",
+  "candidateVersion": "5.1.78",
+  "candidateRevision": "93c83bc3789f5fe5269f5dabd2c9f4557404c3e8",
+  "stage": "UAT / UAT Fix",
+  "executedAt": "2026-10-17",
+  "environment": "Local production-built Web SPA served on ephemeral loopback with headless Edge and Playwright; source tree matches candidateRevision.",
+  "identity": {
+    "type": "synthetic",
+    "subject": "companyco-001",
+    "emailDomain": ".invalid",
+    "tenant": "Company Co fixture",
+    "realAccount": false
+  },
+  "mechanism": "Synthetic URL-fragment one-time code, removed before intercepted POST exchange; synthetic response token stored in tab-scoped sessionStorage.",
+  "assertions": [
+    "Fragment is absent before the exchange request is sent.",
+    "Exchange uses POST and contains the synthetic code only in the request body.",
+    "A successful synthetic response establishes the session and returns the SPA to the dashboard.",
+    "No outbound HTTP or WebSocket request is made."
+  ],
+  "result": "PASS",
+  "evidence": {
+    "browserTest": "services/web/test/google-oauth-uat.test.cjs",
+    "browserResult": "1/1 passed",
+    "apiRegression": "services/api/test/regression/23-oauth-abuse.test.js",
+    "apiResult": "passed; concurrent replay permits one redemption; expired, malformed, and replayed codes rejected"
+  },
+  "cleanup": "Browser context and ephemeral HTTP server closed; no credential, cookie, storage state, or customer data persisted.",
+  "limitations": [
+    "No live Google OAuth request, real user account, database, deployed URL, customer data, or CRM was accessed.",
+    "This is browser/API source-contract evidence and does not establish provider SSO or persisted database acceptance."
+  ]
+}

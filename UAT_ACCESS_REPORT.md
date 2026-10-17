@@ -1,5 +1,41 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Service contract UAT-090 — no browser target required (2026-10-17)
+
+Exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` was exercised with isolated API and Cloud service instances and fake socket objects. The tests verify unprobed TTS/STT/AI and aggregate status report `unknown`, while explicit socket registration reports only WebSocket connectivity. Full Web UAT also passed 8/8 plus the standalone admin-settings/theme-template/AI-admin journeys; Web and Landing typecheck/build cover the displayed initial state. No live dependency probe, database, provider or customer endpoint was accessed.
+
+## Browser Readiness — UAT-089 admin audit accessibility (2026-10-17)
+
+- Stage/run/revision: Auto UAT re-entry; run `20261014-0007-phdk-auto-completion`; candidate `9f4cf79a53f81a95e64f60d18aecf06e746dff04`, version 5.1.78; run at `2026-10-17T10:19:08.656Z`.
+- Target URL/environment: `http://127.0.0.1:52181/admin/audit`; ephemeral local production-built Web SPA only.
+- Permission: `ACTIVE_UAT_EXCEPTION`. Browser capability: `AVAILABLE_VERIFIED` through installed Microsoft Edge launched by Playwright; actual page navigation and UI assertions passed.
+- Target/data/roles: intercepted synthetic superadmin and tenant-admin fixtures; synthetic `.invalid` user and redacted event; outbound non-loopback HTTP is aborted. No real login, database, provider, CRM or customer record.
+- Spend: `NO_NEW_SPEND`; billing remains unverified.
+- Cases: UAT-089; 44px target sizing, keyboard-visible focus, 390×844 reflow, keyboard-accessible scrolling to the final mobile nav link, redacted data, bounded CSV audit event before download, fail-closed download and pre-read tenant denial. Result: PASS, 12 scoped checks. Desktop/mobile screenshots and response evidence are versioned under `50-uat/evidence/`.
+- Owner action/retest cue: none for this scoped journey. PostgreSQL-backed export persistence and migrations remain blocked until an isolated disposable database is available; resume with UAT-089 database/restart companion after provisioning it.
+
+## Browser Readiness — candidate 5.1.78 UAT entry
+
+- Stage/run/revision: UAT and UAT Fix; run 20261014-0007-phdk-auto-completion; exact source commit `93c83bc3789f5fe5269f5dabd2c9f4557404c3e8`, version 5.1.78.
+- Target URL/environment: local production-built Web SPA served on loopback by `services/web/test/google-oauth-uat.test.cjs`; no deployed URL or real login target was selected.
+- Timestamp: 2026-10-17 America/Mexico_City.
+- Permission: ACTIVE_UAT_EXCEPTION. Browser capability: USED for the local synthetic OAuth handoff only.
+- Channel/operation: installed headless Edge via Playwright; code arrives as a URL fragment, is removed before POST, and is exchanged against an intercepted synthetic endpoint. Browser outbound HTTP/WebSocket traffic is blocked.
+- Target/data/roles: `.invalid` Company Co user fixture and synthetic exchange/access tokens; API regression uses isolated actor, audit-log and user fixtures. No account, PostgreSQL, customer data, call, Google request or CRM.
+- Spend: NO_NEW_SPEND; billing is UNVERIFIED.
+- Cases: Cloud managed-runtime 6/6, API managed-AI contract 9/9, cross-backend regressions 19/19, API regression 42/42 suites, API build, Web typecheck/build, Web journeys 8/8 plus standalone admin-settings/theme-template/AI-admin, API OAuth exchange replay/expiry and current-database actor tests. Full database e2e remains BLOCKED pending disposable PostgreSQL. Browser OAuth does not prove a real provider login.
+- Owner action/retest cue: provide an isolated disposable PostgreSQL service inside the local environment for the blocked migration/restart and persisted auth cases; the Railway owner action is recorded in the delivery report.
+
+### Authentication evidence — candidate 5.1.78
+
+| Case | Persona / tenant | Mechanism | Result | Cleanup / limit |
+| --- | --- | --- | --- | --- |
+| OAuth callback handoff | Synthetic Company Co user / fixture only | Built local SPA, fragment code removed before intercepted POST; API returns synthetic session token | PASS (browser contract) | Evidence: `docs/phdk/evidence/uat-auth-oauth-5.1.78.json`; no provider call; browser context closed; not real authentication |
+| Exchange replay and expiry | Synthetic user `u-a` / fake audit persistence | In-process `LocalAuthService` fixtures; concurrent redemption | PASS (source regression) | No DB; only one concurrent request succeeds; not database-backed proof |
+| Current actor lookup | Synthetic user `u1`; signed claims carry stale email/forged role | Nest guard regression with isolated user fixture | PASS (source regression) | Deleted actor rejected before bearer expiry; not live account evidence |
+| Google provider login | No configured test tenant | Not run | BLOCKED | Requires authorized non-production provider account/configuration |
+| Persistent tenant personas and migration | Company Co / Other Co | No isolated PostgreSQL target configured | BLOCKED | No DB connection or migration was run |
+
 ## Candidate 5.1.73 — UAT-081 local synthetic superadmin
 
 Target: local production-built Web SPA served on ephemeral loopback by the Playwright harness; role response, two companies and all flow APIs are synthetic in-memory fixtures. A synthetic `superadmin@company-co.invalid` session drives the UI; the browser blocks non-local HTTP and all WebSockets. The test verifies company switching, scoped flow operations and legacy assignment. No real account, test-profile switch, database or external service is accessed; browser/server close in `finally`. This is not live authentication or backend superadmin authorization evidence.

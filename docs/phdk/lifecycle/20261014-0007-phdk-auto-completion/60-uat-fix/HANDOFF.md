@@ -70,3 +70,20 @@ Corrected current status text that said no disposable database existed. Exact-so
 SIGUIENTE PASO: continue only with mapped/implemented database operations; keep native and deployed gates explicit.
 
 ---
+## Current UAT-089 remediation — audit console controls and mobile navigation PASS (2026-10-17)
+
+The accessibility gap found during UAT was repaired in `services/web/src/pages/AdminAuditPage.tsx`: interactive inputs, buttons and disclosure targets now meet the 44px minimum and expose a visible keyboard focus outline. Exact-source UAT on revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04` passes 12 checks, including keyboard scrolling to and focus visibility on the last mobile navigation link at 390×844, export audit success/failure, and tenant denial before data access. Targeted Web typecheck/build, ESLint, and Playwright UAT passed. Synthetic fixtures only; persistence remains unverified.
+
+Portfolio remains partial at **86 PASS, 0 BLOCKED, 1 MANUAL**. Voice-profile detail rows are now truthfully marked implemented at source/API scope, while persisted acceptance remains BLOCKED. No DB migration, provider/customer call, or deployment was performed.
+
+SIGUIENTE PASO: re-run Check on the exact candidate; proceed through normal PR review and delivery while retaining PostgreSQL and Railway gates.
+
+---
+
+## Current UAT-090 remediation — remove fabricated ready states (2026-10-17)
+
+The new health-contract case found no post-fix failure. Existing hard-coded dependency readiness has been removed in API and Cloud; Web and Landing now display unknown until real health evidence arrives. Paired service tests pass 2/2 per backend; Web/Landing typecheck and production build, API/Cloud lint and builds, and full Web regression UAT pass. The status remains unknown because a real provider health probe is outside this slice.
+
+SIGUIENTE PASO: complete whole-candidate Check, reconcile the current PR, and deliver through the normal main-target flow.
+
+---

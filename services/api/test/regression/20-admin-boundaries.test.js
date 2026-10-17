@@ -78,7 +78,11 @@ async function main() {
   if (previousEnv === undefined) delete process.env.NODE_ENV;
   else process.env.NODE_ENV = previousEnv;
   process.env.KELEDON_AUTH_SECRET = 'isolated-test-only-secret';
-  const auth = new AuthGuard({ getAllAndOverride: () => false });
+  let currentActor = { id: 'u1', email: 'current@example.invalid', role: 'user' };
+  const auth = new AuthGuard(
+    { getAllAndOverride: () => false },
+    { user: { findUnique: async ({ where }) => where.id === 'u1' ? currentActor : null } },
+  );
   let lookups = 0;
   const local = new LocalAuthService({
     user: {
@@ -129,10 +133,19 @@ async function main() {
       Denied,
     );
   }
-  const request = { headers: { authorization: `Bearer ${sign(valid)}` } };
+  const forgedRole = { ...valid, email: 'stale@example.invalid', role: 'superadmin' };
+  const request = { headers: { authorization: `Bearer ${sign(forgedRole)}` } };
   assert.equal(await auth.canActivate(context(request)), true);
   assert.equal(request.user.userId, 'u1');
+  assert.equal(request.user.email, 'current@example.invalid');
+  assert.equal(request.user.role, 'user');
   assert.equal((await local.validateToken(sign(valid))).id, 'u1');
+  currentActor = null;
+  await assert.rejects(
+    () => auth.canActivate(context({ headers: { authorization: `Bearer ${sign(valid)}` } })),
+    Denied,
+    'deleted accounts must lose access before token expiry',
+  );
 
   for (const role of [
     'user',
