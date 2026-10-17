@@ -1,3 +1,11 @@
+## Candidate 5.1.77 — UAT-067 widget geometry revalidation
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-067 | CMT-002 / anonymous visitor and synthetic tenant roles | Rebuild Web/Landing 5.1.77; block external traffic and intercept APIs; inspect the widget on Landing at desktop/mobile sizes and Web login/shell flows; exercise keyboard navigation, copy, reset and accessible status. Inspect Browser renderer CSS and run its source contract test. | Each Web hit target is 44×44px and non-overlapping; each visible tile is 28×28px and the two tiles are exactly 4px apart; icon is 14×14px, version text 12px; anonymous/debug-off row, focus, feedback, redaction and app-owned reset remain correct. | Local production-built Web/Landing SPAs with Playwright; Browser source test, outbound app traffic blocked | PASS for Web/Landing synthetic scope. Full Web UAT 7/7 plus admin-settings/theme-template/AI-admin, Web diagnostics 19/19, Browser widget/boundary tests 4/4, Landing geometry evidence at 1280×900 and 390×844. Evidence: `docs/phdk/evidence/uat-local-web.json`, `docs/phdk/evidence/uat-landing-5.1.77-navbar.json`, adjacent desktop/mobile PNGs. Packaged Electron rendering and screen-reader acceptance remain open. |
+
+---
+
 ## Candidate 5.1.73 — UAT-087 superadmin Brand/Team Web CRUD
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

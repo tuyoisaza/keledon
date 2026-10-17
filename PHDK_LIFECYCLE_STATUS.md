@@ -1,22 +1,22 @@
-## Current PHDK Auto - corrective record delivered; portfolio partial (2026-10-17)
+## Current PHDK Auto — 5.1.77 diagnostics candidate; portfolio partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered accessible, localized Team Settings at 5.1.75; PR #195 restored the prior Check handoff at verified main `e3706537a43af58bc97f2b58b0a80b0173342bef`, with all package roots and Browser renderer at 5.1.76. PHDK 2.51.5 coherence is 61/61. CMT-001 delivery is current; CMT-002 through CMT-004 and overall acceptance remain partial. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. Candidate branch `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five app roots and Browser renderer are 5.1.77; PHDK 2.51.5 coherence is 61/61. The widget spacing slice passes scoped Check and UAT; PR delivery is pending. CMT-001 through CMT-004 and whole acceptance remain partial. No deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
 | Preflight | COMPLETED / REVALIDATED | Canonical PHDK main fetched at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; force sync verified 61 manifest destinations at 2.51.5, managed block matched, coherence PASS. |
 | Capture | REUSED | Four confirmed fronts and approved security/tenant/private-origin decisions unchanged. |
 | Plan | REUSED | Brownfield architecture, UX and four-front plan reused. |
-| PMO / Workstreams | IN PROGRESS | Admin/theme/AI source changes continue; CRUD and client-selected runtime breadth remain open. |
-| Integration Review | PARTIAL | API/Web source integration and builds pass; Browser/Agent load shared theme assets and configured-Cloud presets; managed API LLM validates bounded runtime inputs and graph contracts. The legacy `cloud/` LLM still bypasses managed definitions, but Railway production deploys `services/api` only; Cloud source parity remains open. API/Cloud successful mutation/auth and role-denial audit events now snapshot tenant; audit migration persistence remains unverified. |
-| UAT / UAT Fix | PARTIAL | API regression 42/42, Cloud regression 18/18, AI contract 9/9, audit query/redaction 4/4 and denied-attribution/interceptor 10/10; Browser 43/43, Agent theme runtime 2/2/build/validation, theme source 3/3, Web UAT 7/7 plus standalone admin-settings/theme-template/AI-admin UAT, and Landing SEO 1/1 all pass. Admin settings verifies admin/coordinator/superadmin routing, English/Spanish copy and ordinary-user denial. Nine Web rows now pair browser lifecycle/action evidence with separate PostgreSQL API/Cloud acceptance, including tenant-flow definitions, versions, availability and intent routing for admin and superadmin. Audit migration/restart acceptance, live Cloud rendering, broad route coverage and accessibility remain open. CRUD inventory covers 40 models/560 role-surface rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. |
-| SEO | COMPLETED / SOURCE SCOPE | Web/Landing SEO tests pass 1/1 each; public routes, copy, metadata and indexability unchanged; deployment measurement remains open. |
-| AEO/GEO | REUSED / CURRENT | Public answers/claims unchanged; source review remains applicable; external citations and visibility remain unmeasured. |
-| Check | IN PROGRESS | Recheck records remaining source gaps plus static and live automation-hygiene evidence. |
-| Remediation | IN PROGRESS | CHK-001–005 advanced but remain partial; CHK-006 excluded pending owner pricing decision. |
-| Delivery | CURRENT SLICE DELIVERED / PORTFOLIO PARTIAL | PR #194 delivered Team Settings at 5.1.75; PR #195 restored Check history at main `e3706537a43af58bc97f2b58b0a80b0173342bef`, version 5.1.76. | Continue the remaining four-front acceptance; no deployment is claimed. |
+| PMO / Workstreams | IN PROGRESS | Four confirmed commitments remain active. 5.1.77 diagnostics correction is integrated locally; CRUD and client-selected runtime breadth remain open. |
+| Integration Review | PASS FOR 5.1.77 SLICE | Web/Landing/Browser widget tile spacing is corrected and version aligned; API/Cloud policy/runtime contracts are unchanged. Build and cross-source review pass. Legacy `cloud/` parity, audit migration persistence and client-specific execution remain open. |
+| UAT / UAT Fix | PASS FOR 5.1.77 SLICE / PORTFOLIO PARTIAL | Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile geometry, Web diagnostics 19/19 and Browser widget/boundary 4/4 pass. Exact gap is measured 4px with 28×28 tiles and non-overlapping 44×44 hit targets. Overall UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD inventory 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Native device/audio, migration/restart and broader route/accessibility remain open. |
+| SEO | COMPLETED / SOURCE SCOPE | Candidate 5.1.77 Web/Landing SEO tests pass 1/1 each; routes, copy, metadata and indexability unchanged; deployment measurement remains open. |
+| AEO/GEO | REUSED / CURRENT | Candidate 5.1.77 changes no public answer/claim; 15-control source review remains applicable; external citations and visibility remain unmeasured. |
+| Check | PASS FOR 5.1.77 SLICE / PORTFOLIO PARTIAL | No new critical/high gap from widget-only diff; prior CHK-20261016-001–005 remain PARTIAL and CHK-20261016-006 remains decision-required. |
+| Remediation | COMPLETED FOR 5.1.77 SOURCE GAP | UAT found stale `dist` artifacts; rebuilt Web/Landing and reran full UAT successfully. No further in-scope source gap found. |
+| Delivery | PENDING PR / PORTFOLIO PARTIAL | 5.1.77 candidate is versioned and tested locally; normal PR delivery and remote-main readback remain. |
 
-Next: complete final source/automation review, rerun relevant checks, resolve any remaining authorized source findings, then update delivery evidence if the candidate meets its gates.
+Next: deliver 5.1.77 through a normal PR, verify remote `main`, then continue database/CRUD, native accessibility, customer integration and deployment acceptance without closing partial gates.
 
 ---
 

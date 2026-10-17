@@ -1,3 +1,11 @@
+## Candidate 5.1.77 — source AEO/GEO review reused; external visibility unmeasured
+
+The diagnostics spacing and version candidate changes no public answer text, product claims, routes or structured metadata. Existing 15-control source review remains applicable and is preserved under `snapshots/candidate-5.1.75/`. Web/Landing SEO source tests pass 1/1 each. No public host, crawler, answer engine or paid query was used; deployed citation and visibility remain unmeasured.
+
+SIGUIENTE PASO: carry the unchanged-content review and external-visibility limitation into Check.
+
+---
+
 # Candidate 5.1.75 — source AEO/GEO PASS; external visibility unmeasured
 
 The Team Settings accessibility/localization candidate changes no public homepage text, claims, routes, metadata or crawl directives. The existing 15-control public-answer review remains applicable and is snapshotted under `snapshots/candidate-5.1.75/`; Web/Landing source SEO tests pass 1/1 each. No external answer engine, crawler, public host or paid query was used. Citation, retrieval, market/language and deployed visibility remain unmeasured.

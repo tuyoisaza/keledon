@@ -1,15 +1,15 @@
-## Current PMO progress - PR #195 verified on main; whole portfolio partial (2026-10-17)
+## Current PMO progress — 5.1.77 widget candidate; whole portfolio partial (2026-10-17)
 
-PR #194 delivered the Team Settings accessibility/localization change; PR #195 restored Check handoff history at verified main `e3706537a43af58bc97f2b58b0a80b0173342bef`. All five app package/lock roots and Browser renderer read 5.1.76; PHDK coherence 61/61. UAT 7/7 and 53 focused Team Settings assertions pass; API 42/42, Cloud 18/18 and prior flow/persistence evidence remain valid. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No production deployment is claimed.
+The 5.1.77 widget correction is on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five package/lock roots and Browser renderer align. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile geometry, Browser 4/4, diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. Prior API 42/42, Cloud 18/18 and flow/persistence evidence remain valid. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No production deployment is claimed.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | PR #194 and PR #195 delivered; remote main and v5.1.76 verified. | Continue baseline/version/PR gates for the remaining Auto fronts. |
-| CMT-002 widget/diagnostics | Team Settings accessibility and en/es/pt UAT added in 5.1.75; full Web suite 7/7. | Native device/audio, screen-reader, full contrast/themes/routes. |
+| CMT-001 baseline/version/PR | PR #194/#195 delivered through 5.1.76; 5.1.77 is a tested local candidate, not yet delivered. | Complete Check, PR and remote-main verification. |
+| CMT-002 widget/diagnostics | 5.1.77 fixes visible tile gap across Web/Landing/Browser; 28×28 tiles are 4px apart with 44×44 targets; Web UAT 7/7. | Native device/audio, screen-reader, broad contrast/themes/routes/locales. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant flow configuration, URL allowlists and managed API AI input validation covered in source tests. | Cloud legacy AI path, integrated runtime, per-customer stack acceptance. |
 | CMT-004 administration/permissions | API/Cloud audit events preserve event-time tenant; nine Web rows now pair lifecycle/configuration UAT with persisted API evidence. | DB migration/restart acceptance, 396 remaining blocked CRUD rows, other denial paths and audit export/retention. |
 
-SIGUIENTE PASO: continue source review and CRUD coverage while preserving the UAT tally; run paired PostgreSQL migration/restart acceptance when an isolated target is available.
+SIGUIENTE PASO: deliver the checked 5.1.77 diagnostics slice through a normal PR and verify remote `main`; continue source review and CRUD coverage, and run paired PostgreSQL migration/restart acceptance when an isolated target is available.
 
 ---
 

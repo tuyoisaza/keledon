@@ -301,8 +301,8 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await page.goto(origin+'/login');await page.locator('[data-testid="version-actions"]').waitFor();
   const row=page.locator('[data-testid="version-actions"]');assert.equal(await row.count(),1);
   assert.equal((await row.innerText()).trim(),`v${appVersion}`);
-  const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
-  assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,44);assert.equal(b.h,44);assert.equal(b.icon,14);}assert.ok(dims.x<30);
+  const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>{const rect=b.getBoundingClientRect(),visual=getComputedStyle(b,'::before');return {w:rect.width,h:rect.height,icon:b.querySelector('svg').getBoundingClientRect().width,visualWidth:parseFloat(visual.width),visualHeight:parseFloat(visual.height),visualLeft:rect.left+parseFloat(visual.left),visualRight:rect.right-parseFloat(visual.right)}}),x:el.getBoundingClientRect().x}));
+  assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,44);assert.equal(b.h,44);assert.equal(b.icon,14);assert.equal(b.visualWidth,28);assert.equal(b.visualHeight,28);}assert.equal(dims.buttons[1].visualLeft-dims.buttons[0].visualRight,4);assert.ok(dims.x<30);
    const copyButton=row.locator('[data-action="copy"]'),clearButton=row.locator('[data-action="clear"]');
    assert.ok(await copyButton.getAttribute('aria-label'));assert.ok(await clearButton.getAttribute('aria-label'));
    const status=row.locator('[data-action-status="copy"]');assert.equal(await status.getAttribute('role'),'status');assert.equal(await status.getAttribute('aria-live'),'polite');

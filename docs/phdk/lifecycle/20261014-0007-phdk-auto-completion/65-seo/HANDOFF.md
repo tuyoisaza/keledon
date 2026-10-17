@@ -1,3 +1,11 @@
+## Candidate 5.1.77 — source SEO PASS; deployed discovery unmeasured
+
+The candidate changes only diagnostics-widget spacing, package/renderer version metadata, tests and lifecycle documentation. Public routes, copy, metadata, canonical, robots, sitemap and indexation configuration are unchanged. Web and Landing SEO source tests each pass 1/1. Existing source review remains applicable; no public host, crawler, Search Console, TLS or field Core Web Vitals were accessed. Deployed SEO remains unmeasured.
+
+SIGUIENTE PASO: carry the source-only PASS and deployment limitation into AEO/GEO and Check.
+
+---
+
 # Candidate 5.1.75 — source SEO PASS; deployed discovery unmeasured
 
 The 5.1.75 changes are limited to authenticated Team Settings controls, localization keys, version metadata and UAT evidence. Public routes, copy, metadata, canonical, robots, sitemap and indexation configuration are unchanged. Web and Landing SEO source tests both pass 1/1 (`services/web npm run test:seo`, `landing npm run test:seo`). The existing 25-control review is snapshotted under `snapshots/candidate-5.1.75/`. No public host, crawler, Search Console, TLS or field Core Web Vitals were accessed; deployed SEO remains partial/unmeasured.

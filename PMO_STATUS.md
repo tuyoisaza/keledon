@@ -1,15 +1,15 @@
-## Current PMO board - 5.1.76 verified; whole Auto partial
+## Current PMO board — 5.1.77 widget candidate; whole Auto partial
 
-PR #194 delivered 5.1.75 and PR #195 restored Check handoff history at verified remote main `e3706537a43af58bc97f2b58b0a80b0173342bef`. PHDK 2.51.5 coherence is 61/61; app roots and Browser renderer read 5.1.76. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No deployment is claimed.
+Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile widget geometry, Browser 4/4 widget/boundary tests, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. Check says scoped PASS; whole Auto remains partial (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS). PR delivery and remote verification are pending; no deployment is claimed.
 
 | Workstream | Status | Current progress | Open acceptance |
 |---|---|---|---|
-| WS-001 baseline, versions, PRs | ACTIVE / PARTIAL | PHDK 2.51.5 force-synchronized from canonical main SHA `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61/61 mappings verified. PR #194 delivered 5.1.75; PR #195 restored lifecycle history at main `e3706537a43af58bc97f2b58b0a80b0173342bef`, version 5.1.76. | Continue the remaining version, UAT, and portfolio acceptance. |
-| WS-002 widget and safe diagnostics | PARTIAL | Existing widget/diagnostics and selected Web/theme UAT remain valid. | Native device/audio; broad route, role, screen-reader, zoom and localization acceptance. |
+| WS-001 baseline, versions, PRs | ACTIVE / PARTIAL | PHDK 2.51.5 force-synchronized from canonical main SHA `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61/61 mappings verified. PRs #194/#195 delivered through 5.1.76; 5.1.77 candidate is versioned and tested on a branch. | Complete Check, normal PR delivery and main readback; continue remaining Auto gates. |
+| WS-002 widget and safe diagnostics | PARTIAL | 5.1.77 fixes Web/Landing/Browser visual tile spacing; 28×28 tiles with measured 4px gap, separate 44×44 targets; Web UAT 7/7 and Landing desktop/mobile geometry pass. | Native packaged rendering/device/audio; broad routes, roles, screen-reader, zoom and localization acceptance. |
 | WS-003 tenant runtime and CRM | PARTIAL | Tenant flow configuration, private-origin allowlists and API AI input contracts have source/synthetic coverage. Railway production currently deploys `services/api`; the separate `cloud/` LLM source is not deployed there. | Preserve Cloud source parity, complete voice runtime and customer-selected integration acceptance. |
 | WS-004 administration/permissions | PARTIAL | Audit viewer plus role-denial events and successful mutation/auth tenant snapshots in both API and Cloud; nine Web lifecycle/configuration rows now pair browser UAT with persisted API acceptance. | Apply migrations to an authorized disposable DB; 396 blocked CRUD rows, other authorization-denial paths, export/retention and other admin workflows. |
 
-SIGUIENTE PASO: continue source-resolvable CRUD and runtime review; obtain disposable PostgreSQL acceptance before claiming persistence, then reconcile version and prepare normal PR delivery.
+SIGUIENTE PASO: finish Check/remediation and deliver the 5.1.77 diagnostics correction by normal PR; continue source-resolvable CRUD/runtime work and obtain disposable PostgreSQL acceptance before claiming persistence.
 
 ---
 

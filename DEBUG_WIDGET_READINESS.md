@@ -1,3 +1,15 @@
+# Debug widget readiness — 2026-10-17 current candidate revalidation
+
+Base candidate: KELEDON main `5811f1033ea6880ec582ab40dbe35dd8125284a6`, product 5.1.76; current candidate 5.1.77. `services/web` diagnostics component suite passed 19/19 before changes and after the shared Web/Landing spacing correction. Browser widget plus renderer-boundary tests pass 4/4 at 5.1.77. Production-built Landing geometry evidence is `docs/phdk/evidence/uat-landing-5.1.77-navbar.json`, with desktop/mobile screenshots beside it; full production Web UAT evidence is `docs/phdk/evidence/uat-local-web.json`.
+
+The recheck found that the 44×44 hit-target buttons centered their 28×28 hover tiles, producing a 20px visible tile gap despite the required 4px gap. The candidate aligns the copy tile to the right and trash tile to the left within their separate 44×44 hit targets. This preserves 14×14 icons, 12px version text, 44×44 pointer targets, and the 4px separation between visible 28×28 tiles. Web, Landing, and Browser use matching geometry. The exact geometry is source/test-backed; packaged Electron visual rendering remains unverified.
+
+Surfaces and behaviors remain covered by shared widget mounts and diagnostics tests: public, login, authenticated shell and admin; anonymous/debug-off availability; sanitized clipboard report; truthful copy/reset success and failure; app-owned storage/cache reset and session invalidation; localized accessible names and hidden live status. Native OS/device/audio, full screen-reader coverage, and deployed runtime remain open.
+
+Web/Landing production builds and typechecks pass; Web UAT passes 7/7 suites plus standalone admin-settings, theme-template and AI-admin journeys. Landing visual UAT measures the required 4px spacing at desktop and mobile. Whole PHDK Auto remains PARTIALLY DELIVERED; this evidence does not close the database-backed CRUD matrix, customer-selected live voice/CRM integration, broader route/localization/accessibility or deployment gates.
+
+---
+
 ## 2026-10-15 current source revalidation — 5.1.66 candidate
 
 The shared Web `VersionActions` remains mounted on public, login, shell and admin routes; Landing mirrors that contract. API diagnostics require debug enabled and an authenticated admin/developer/superadmin, and the report projection redacts credentials, private URLs, user content and unbounded event details. Reset clears only KELEDON-owned browser state, confirms errors honestly, and routes an authenticated session back through login. Browser renderer continues to mirror version/copy/reset source behavior and is synchronized by its prebuild script.

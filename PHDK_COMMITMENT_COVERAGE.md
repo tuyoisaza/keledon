@@ -1,17 +1,17 @@
-## Current PHDK Auto - PR #195 delivered; portfolio partial (2026-10-17)
+## Current PHDK Auto — 5.1.77 candidate; portfolio partial (2026-10-17)
 
-PR #194 delivered accessible/localized Team Settings at 5.1.75; PR #195 restored the complete prior Check handoff at verified main `e3706537a43af58bc97f2b58b0a80b0173342bef`. Package roots and Browser renderer are 5.1.76; PHDK 2.51.5 coherence is 61/61. Focused Team Settings UAT has 53 assertions and the integrated Web suite has 7/7. UAT tally is 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.
+PRs #194/#195 remain the latest main deliveries through 5.1.76. Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile widget geometry, Browser widget/boundary 4/4, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.
 
 | Commitment | Current progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | PR #194 delivered 5.1.75 and PR #195 delivered the Check-history correction; remote main is `e3706537a43af58bc97f2b58b0a80b0173342bef` at 5.1.76. | Continue CMT-001 for the remaining Auto slices; keep CMT-002 through CMT-004 partial. |
-| CMT-002 widget/diagnostics | Team Settings now has labels in three locales, visible keyboard focus, 44px targets, live save feedback and a light-theme contrast sample; full Web UAT remains green. | Native device/audio, screen-reader session and broader route/theme/localization review. |
+| CMT-001 baseline/version/PR | PR #194 and PR #195 delivered through 5.1.76; the 5.1.77 versioned candidate is tested on a branch, not yet delivered. | Complete Check, normal PR delivery and remote-main readback. |
+| CMT-002 widget/diagnostics | Candidate aligns Web/Landing/Browser 28×28 visible tiles with 4px measured spacing and separate 44×44 hit targets; Web UAT 7/7 and Landing desktop/mobile UAT pass. | Packaged Browser render, device/audio, screen-reader and broader route/theme/localization review. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow configuration, validated per-tenant private-origin allowlists, theme runtime and managed API AI contracts have source/synthetic coverage. Railway production deploys `services/api`; the separate `cloud/` legacy LLM package is not deployed there. | Preserve Cloud source parity and complete runtime integration checks. Live call/CRM acceptance requires each tenant's selected stack and test environment. |
 | CMT-004 administration/permissions | Restricted role policy and tenant boundaries remain; audit history is redacted and paged, role denials and successful API/Cloud mutations preserve tenant snapshots, and nine Web rows for tenant flows and Company/Brand/Team/User pair browser UAT with persisted API acceptance. | Apply and verify both additive PostgreSQL migrations; remaining 396 blocked CRUD rows, other authorization-denial paths, audit export/retention and other admin capabilities remain open. |
 
 The local database runtime is unavailable for migration acceptance. CHK-20261016-006 remains decision-required; no AI pricing was inferred. FlowRunEvidence remains dormant.
 
-SIGUIENTE PASO: completar la revisión integral del candidato y cerrar las verificaciones de runtime/DB y cobertura CRUD que se puedan probar localmente; después reconciliar versión y preparar la entrega normal por PR, manteniendo Auto parcial mientras falten aceptación de cliente y cierres de los cuatro compromisos.
+SIGUIENTE PASO: entregar 5.1.77 por PR normal y verificar `main`; continuar runtime/DB y cobertura CRUD manteniendo Auto parcial mientras falten aceptación de cliente y cierres de los cuatro compromisos.
 
 ---
 
