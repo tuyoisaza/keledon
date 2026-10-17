@@ -1,7 +1,7 @@
 # Integration Review — KELEDON 5.1.78 managed Cloud AI parity
 
-Run: `20261014-0007-phdk-auto-completion`  
-Candidate: `fix/phdk-auto-continuation-5-1-78`, based on fetched `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a` (5.1.77).  
+Run: `20261014-0007-phdk-auto-completion`
+Candidate: `fix/phdk-auto-continuation-5-1-78`, based on fetched `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a` (5.1.77).
 PHDK: 2.52.2; static coherence 63/63.
 
 ## Integrated change
