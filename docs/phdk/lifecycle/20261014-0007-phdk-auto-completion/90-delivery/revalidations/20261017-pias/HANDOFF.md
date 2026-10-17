@@ -4,7 +4,7 @@ Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `90-delivery` (revalidation)
 Status: `PARTIAL — PR OPEN`
 Base: `main` at `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`
-Head: `docs/phdk-auto-pias` at `a8eb9b1eb2510afde609a473879c2e3d596a1e57`
+Head: `docs/phdk-auto-pias` at `38141045c3beb3a0a543c0955ad727727fada54f`
 Date: `2026-10-17`
 
 ## Goal / scope
@@ -15,7 +15,7 @@ Deliver current PHDK PIAs for all four confirmed workstreams and record limited 
 
 - Added four commitment-specific PIAs, a Plan continuation handoff and a PMO revalidation handoff.
 - Reconciled stale 5.2.1 Plan/Check claims, recorded UAT-105 and updated post-merge UAT-103/104 plus machine-readable delivery evidence.
-- Created PR [#212](https://github.com/tuyoisaza/keledon/pull/212), targeting `main`; GitHub reports OPEN and MERGEABLE. Combined status has no hosted checks.
+- Created PR [#212](https://github.com/tuyoisaza/keledon/pull/212), targeting `main`; GitHub reports OPEN. Compare reports three commits ahead/zero behind, and combined status has no hosted checks.
 - No app tests/builds were run locally, no production state was changed, and PR #212 has not been merged.
 
 ## Deliverables

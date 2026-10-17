@@ -14,7 +14,7 @@ Validate PHDK documentation and production read-only evidence added for the four
 
 - PHDK 2.53.1 coherence 64/64.
 - Product PR #210 and post-merge documentation PR #211 are merged; exact current base is `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`.
-- PR #212 targets `main`, is open/mergeable, and points to head `a8eb9b1eb2510afde609a473879c2e3d596a1e57`; combined status is empty.
+- PR #212 targets `main`, is open, and points to head `38141045c3beb3a0a543c0955ad727727fada54f`; compare reports three commits ahead/zero behind; combined status is empty.
 - UAT-103, UAT-104, UAT-105 and delivery evidence JSON parse; `git diff --check` passes.
 
 ## Work performed

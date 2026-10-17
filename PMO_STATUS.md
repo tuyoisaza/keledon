@@ -2,7 +2,7 @@
 
 ## Current continuation — 2026-10-17
 
-The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. A read-only production browser observation (UAT-105) saw version 5.2.1, a public demo disclaimer, named copy-diagnostic and cache-clear buttons, and theme/language selectors in the pt locale. No buttons were activated. This does not prove action behavior, accessibility quality, authorization or private diagnostics. The current branch `docs/phdk-auto-pias` starts from `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; PR #212 is open/mergeable with no hosted checks and awaits repository review.
+The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. A read-only production browser observation (UAT-105) saw version 5.2.1, a public demo disclaimer, named copy-diagnostic and cache-clear buttons, and theme/language selectors in the pt locale. No buttons were activated. This does not prove action behavior, accessibility quality, authorization or private diagnostics. The current branch `docs/phdk-auto-pias` starts from `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; PR #212 is open with no hosted checks and awaits repository review.
 
 | Commitment | Status | Next executable gate |
 |---|---|---|
