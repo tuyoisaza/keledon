@@ -10,6 +10,12 @@
 |---|---|---|---|---|---|
 | UAT-105 | CMT-002 / anonymous public visitor | Open production `/` in a browser and inspect only the accessibility tree; do not click controls, log in, clear storage, copy clipboard or submit data. | Candidate version, truthful illustrative-demo disclaimer, localized named diagnostic/cache controls, theme/language selectors and public navigation are exposed to accessibility APIs. | Production browser read-only tree | **PASS (presence only):** observed version 5.2.1 in pt locale, demo disclaimer, named copy/cache buttons, theme/language selectors and public content. Does not prove interaction, focus, screen-reader announcements or RBAC. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`. |
 
+## Candidate 5.2.1 — UAT-109 sampled contrast in production themes
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-109 | CMT-002 / anonymous public visitor | On the deployed production 5.2.1 page in a disposable anonymous session, read computed CSS token and representative hero/CTA colors in dark, light and corporate themes; calculate relative-luminance contrast. | Sampled text/background pairs reach 4.5:1. Record exact colors and scope; do not treat token samples as full-page WCAG acceptance. | Production UI / isolated anonymous IAB / computed styles | **PASS FOR SAMPLED PAIRS ONLY:** foreground/background 18.68:1 dark, 17.06:1 light, 13.53:1 corporate; hero copy/disclaimer 7.62:1, 7.24:1, 5.62:1; CTA text 7.84:1, 5.47:1, 9.83:1. Does not include gradient compositing, every page element/state or screen-reader acceptance. Evidence: `evidence/uat-109-production-theme-contrast-samples-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-108 post-deploy responsive production revalidation
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

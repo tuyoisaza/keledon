@@ -1,4 +1,8 @@
-## Current re-entry — UAT-108, post-deploy responsive revalidation (2026-10-17)
+## Current re-entry — UAT-109, production theme contrast samples (2026-10-17)
+
+After PR #213 deployed at `5884b80ba4318b2c4beed3e50d94945028b9a311`, computed CSS measurements on production gave foreground/background token ratios of 18.68:1 dark, 17.06:1 light and 13.53:1 corporate. Representative hero text/disclaimer ratios were 7.62:1, 7.24:1 and 5.62:1; CTA label/background ratios were 7.84:1, 5.47:1 and 9.83:1. UAT-109 **passes these sampled pairs only**. The calculation does not cover all composited gradients, translucent panels, component states or every page element; it is not a full WCAG contrast acceptance. Screen-reader and broader accessibility checks remain open. Evidence: `evidence/uat-109-production-theme-contrast-samples-2026-10-17.json`.
+
+## Prior re-entry — UAT-108, post-deploy responsive revalidation (2026-10-17)
 
 After source PR #213 merged at `5884b80ba4318b2c4beed3e50d94945028b9a311`, Railway deployment `05e6bd08-4d52-4ea2-ac42-36d1a1c29ede` reported `SUCCESS`. A disposable anonymous browser initially loaded stale index asset references; after app-cache cleanup and one cache-busting homepage navigation, production served the deployed bundle `index-CsInpJxF.js` and stylesheet `index-B8uXFblK.css`. On that deployed page, UAT-108 **PASSES responsive layout** at 320×720, 375×812, 768×1024 and 1440×900 CSS px. At all four sizes the document width equals the available client width, hero copy and CTA remain in bounds, and the demo disclaimer clears the fixed 96.6px navigation. The mobile menu measures 44×44px at 320/375/768px and is not rendered at the desktop breakpoint. Evidence: `evidence/uat-108-production-mobile-layout-2026-10-17.json`.
 
