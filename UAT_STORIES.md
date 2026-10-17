@@ -44,5 +44,6 @@ US-001..US-006 remain the stable intent-linked stories above. Current evidence r
 |---|---|---|---|---|
 | US-020 | Company admin or coordinator | As an authorized tenant administrator, I want to assign only interfaces approved for my team, so that the call/CRM workflow matches my company's configuration without exposing another tenant or the global catalog. | Confirmed CMT-003/CMT-004 and owner-approved tenant assignment decision. | UAT-096, UAT-097 |
 | US-021 | Anonymous public visitor | As a visitor, I want the public entry page to load and identify the currently served product, so that I can find the public product overview. | Public entry intent and route contract. | UAT-098 |
+| US-022 | Anonymous visitor | As an unauthenticated visitor, I must not see tenant management pages, so that customer configuration remains protected. | CMT-004 least-privilege policy; protected management route contract. | UAT-099 |
 
 US-020 is not accepted by the anonymous production smoke: candidate 5.2.1 is not deployed and role/persistence journeys are blocked. US-021 covers only one observed public-page load.

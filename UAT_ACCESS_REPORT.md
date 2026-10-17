@@ -100,4 +100,5 @@ Actual Nest in-process HTTP test22 exercises real decorators/guards with isolate
 - Data/roles: public anonymous page; no production account, tenant data, credentials, API calls, database access, or CRM/call provider.
 - Spend: `NO_NEW_SPEND`; billing remains UNVERIFIED.
 - Result: production public-entry smoke UAT-098 PASS (narrow scope); sanitized observation: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-098-production-public-smoke-5.2.1.json`. UAT-096/097 BLOCKED because candidate 5.2.1 is not deployed and there is no isolated DB-backed synthetic role target.
+- Additional read-only operation at 2026-10-17 16:22 UTC: anonymous `/management/teams` navigation redirected to `/login` on v5.1.85. UAT-099 PASS for redirect only; sanitized evidence at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-099-production-anonymous-management-redirect.json`. No login or mutation.
 - Next action: obtain a dedicated non-production PostgreSQL test target and a candidate deployment through normal reviewed delivery; then seed only synthetic `.invalid` roles and rerun UAT-096/097.

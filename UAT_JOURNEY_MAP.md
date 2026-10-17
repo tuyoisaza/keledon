@@ -108,3 +108,11 @@ On current source revision `edce7eafbe13ac16ab93274a87e12571e7b04b2e` (Git tree 
 3. Do not sign in, submit forms, call APIs manually or mutate state. No such action was taken.
 
 Journey B does not exercise Journey A or accept candidate 5.2.1.
+
+## Journey C — anonymous access to protected management route
+
+1. Navigate anonymously to `https://keledon.tuyoisaza.com/management/teams`. PASS at 2026-10-17 16:22 UTC: final route is `/login`, visible version 5.1.85.
+2. Confirm no protected management content is shown. PASS for anonymous redirect only.
+3. Do not submit credentials or signup. No credentials/session were used; no mutation occurred.
+
+Journey C verifies the deployed unauthenticated redirect only. It does not prove admin/coordinator tenant isolation or 5.2.1 selector behavior.

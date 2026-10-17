@@ -591,8 +591,10 @@ SIGUIENTE PASO: complete Check and normal PR delivery for 5.1.85; retain manual 
 
 UAT-098 passes only as a public-entry smoke check: the connected browser loaded `https://keledon.tuyoisaza.com/` and the page showed version 5.1.85. The action was read-only and anonymous. Browser readiness was `AVAILABLE_VERIFIED`; the target did not match candidate branch revision `ef6fe6dbf7eca04708c7200615e7538812751f7e` / product 5.2.1. Sanitized observation: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-098-production-public-smoke-5.2.1.json`. No conclusion is drawn about the TeamInterface selector, production auth, persistence, API, or tenant policy.
 
+UAT-099 also passes narrowly: direct anonymous navigation to `/management/teams` redirected to `/login` on production v5.1.85. The login form rendered; no credentials were entered or submitted and no protected content appeared. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-099-production-anonymous-management-redirect.json`. This verifies only the deployed anonymous redirect, not role isolation or candidate 5.2.1 behavior.
+
 ## Candidate acceptance
 
 UAT-096 (tenant filter, assignment, persisted readback, foreign-tenant denial) and UAT-097 (stale response and save behavior with real role sessions) remain BLOCKED. The fixture seeder requires isolated loopback PostgreSQL and explicitly refuses production. No real production user, tenant, DB row, credential, migration or assignment was touched. Focused source regression evidence remains in the prior 5.2.1 Check report; source tests do not replace these cases.
 
-**Candidate result: ACCEPTANCE INCOMPLETE / PARTIALLY BLOCKED.** The one production smoke PASS is outside feature acceptance. Keep the broader portfolio partial (prior counts remain historical, not recalculated by this re-entry).
+**Candidate result: ACCEPTANCE INCOMPLETE / PARTIALLY BLOCKED.** Both production smoke PASS results are outside feature acceptance. Keep the broader portfolio partial (prior counts remain historical, not recalculated by this re-entry).

@@ -10,7 +10,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | PMO / Workstreams | REUSED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; no scope removed. |
 | Integration Review | REUSED / REVALIDATED | 5.2.1 selector and stale-response source fixes are present on branch; source diff reviewed. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
-| UAT | ACCEPTANCE INCOMPLETE | Production anonymous smoke only, version 5.1.85; candidate cases UAT-096/097 blocked. No production writes. |
+| UAT | ACCEPTANCE INCOMPLETE | Production anonymous public-page and protected-route redirect checks UAT-098/099 pass narrowly on v5.1.85; candidate cases UAT-096/097 remain blocked. No production writes. |
 | UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |

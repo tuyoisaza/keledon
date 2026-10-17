@@ -23,7 +23,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 | Admin/Coordinator eligen interfaces de su tenant/equipo | Selector de equipo, filtro de catálogo, asociación protegida por servidor y corrección de cargas/guardados obsoletos; fuente versionada en la rama | Sesión real por rol, lectura/escritura persistida, negativas cross-tenant y UI del candidato exacto |
 | Las respuestas viejas no pisan el equipo seleccionado | Regresión de secuencia HTTP enfocada; Web typecheck/lint/build reportados PASS | Repetir con usuario/tenant reales únicamente en target aislado y candidato 5.2.1 |
 | Provisionamiento de identidades sintéticas | Seeder idempotente, validación de host/db y rechazo de producción; artefactos de fixture ya existen | Ejecución con PostgreSQL dedicado de UAT, login normal por rol, Test-as y cleanup |
-| Prueba en el sitio solicitado | Navegación de solo lectura a `https://keledon.tuyoisaza.com/` mostró la versión pública 5.1.85 | Producción no sirve el candidato 5.2.1; por ello no prueba ni acepta el selector de la rama |
+| Prueba en el sitio solicitado | UAT-098 cargó la página pública; UAT-099 redirigió `/management/teams` sin sesión a `/login`. Ambos muestran versión 5.1.85 y son de solo lectura | Producción no sirve el candidato 5.2.1; por ello no prueba ni acepta el selector de la rama ni sus roles por tenant |
 
 ## Orden ejecutable
 
