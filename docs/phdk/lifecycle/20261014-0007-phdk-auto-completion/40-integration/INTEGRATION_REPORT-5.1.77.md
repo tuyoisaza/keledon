@@ -1,6 +1,6 @@
 # Integration Review — 5.1.77 diagnostics-widget correction
 
-Date: 2026-10-17. Repository: `tuyoisaza/keledon`. Candidate branch: `fix/diagnostics-widget-visual-spacing-5-1-77`; verified base `main` SHA `5811f1033ea6880ec582ab40dbe35dd8125284a6`, product 5.1.76. Product version is aligned at 5.1.77 across all five package/lock roots and the Browser renderer.
+Date: 2026-10-17. Repository: `tuyoisaza/keledon`. Candidate source commit: `0da085bddbb7157453ddca3951960209a94c9e9b` on `fix/diagnostics-widget-visual-spacing-5-1-77`; verified base `main` SHA `5811f1033ea6880ec582ab40dbe35dd8125284a6`, product 5.1.76. Product version is aligned at 5.1.77 across all five package/lock roots and the Browser renderer.
 
 The shared Web/Landing and native Browser diagnostics rows used 44×44 hit-target boxes with centered 28×28 visual tiles. That left a 20px gap between visible tiles despite the required 4px spacing. The candidate aligns the clipboard tile to the right and the trash tile to the left inside their separate 44×44 targets, producing 28×28 tiles with exactly 4px between them. Icon glyphs remain 14×14 and version text remains 12px. Web, Landing and Browser renderer now use the same geometry contract; focused tests assert the implementation, and production-built browser UAT measures the actual rectangles and spacing.
 

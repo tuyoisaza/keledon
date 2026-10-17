@@ -1,6 +1,6 @@
 # PHDK Check — candidate 5.1.77 diagnostics widget correction
 
-Date: 2026-10-17. Base: verified remote `main` `5811f1033ea6880ec582ab40dbe35dd8125284a6`; source branch `fix/diagnostics-widget-visual-spacing-5-1-77`. Product version is aligned across all five package/lock roots and Browser renderer at 5.1.77. PHDK 2.51.5 static coherence passes 61/61.
+Date: 2026-10-17. Candidate source commit: `0da085bddbb7157453ddca3951960209a94c9e9b` on `fix/diagnostics-widget-visual-spacing-5-1-77`; base: verified remote `main` `5811f1033ea6880ec582ab40dbe35dd8125284a6`. Product version is aligned across all five package/lock roots and Browser renderer at 5.1.77. PHDK 2.51.5 static coherence passes 61/61.
 
 ## Candidate review
 

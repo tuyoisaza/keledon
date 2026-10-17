@@ -1,6 +1,6 @@
 ## Current PHDK Auto — 5.1.77 diagnostics candidate; portfolio partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. Candidate branch `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five app roots and Browser renderer are 5.1.77; PHDK 2.51.5 coherence is 61/61. The widget spacing slice passes scoped Check and UAT; PR delivery is pending. CMT-001 through CMT-004 and whole acceptance remain partial. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. Candidate source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five app roots and Browser renderer are 5.1.77; PHDK 2.51.5 coherence is 61/61. The widget spacing slice passes scoped Check and UAT; PR delivery is pending. CMT-001 through CMT-004 and whole acceptance remain partial. No deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|

@@ -1,6 +1,6 @@
 ## Current PMO progress — 5.1.77 widget candidate; whole portfolio partial (2026-10-17)
 
-The 5.1.77 widget correction is on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five package/lock roots and Browser renderer align. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile geometry, Browser 4/4, diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. Prior API 42/42, Cloud 18/18 and flow/persistence evidence remain valid. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No production deployment is claimed.
+The 5.1.77 widget correction is on `fix/diagnostics-widget-visual-spacing-5-1-77` at source commit `0da085bddbb7157453ddca3951960209a94c9e9b`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five package/lock roots and Browser renderer align. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile geometry, Browser 4/4, diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. Prior API 42/42, Cloud 18/18 and flow/persistence evidence remain valid. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No production deployment is claimed.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|

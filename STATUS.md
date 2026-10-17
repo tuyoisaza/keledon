@@ -1,6 +1,6 @@
 # Current PHDK Auto — 5.1.77 diagnostics widget candidate; portfolio partial
 
-Candidate branch `fix/diagnostics-widget-visual-spacing-5-1-77` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. Web/Landing/Browser visible diagnostic tiles are 28×28 with exactly 4px spacing and separate 44×44 hit targets. Web UAT 7/7 plus standalone admin/theme/AI, Browser widget/boundary 4/4, Web diagnostics 19/19, builds/typechecks, SEO 1/1 each and PHDK coherence 61/61 pass. Product roots and Browser renderer are 5.1.77. PR delivery is pending. Whole portfolio remains partial: UAT 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No deployment is claimed.
+Candidate branch `fix/diagnostics-widget-visual-spacing-5-1-77` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; source commit is `0da085bddbb7157453ddca3951960209a94c9e9b`. Web/Landing/Browser visible diagnostic tiles are 28×28 with exactly 4px spacing and separate 44×44 hit targets. Web UAT 7/7 plus standalone admin/theme/AI, Browser widget/boundary 4/4, Web diagnostics 19/19, builds/typechecks, SEO 1/1 each and PHDK coherence 61/61 pass. Product roots and Browser renderer are 5.1.77. PR delivery is pending. Whole portfolio remains partial: UAT 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No deployment is claimed.
 
 SIGUIENTE PASO: finish exact-candidate source Check and deliver 5.1.77 via the normal PR flow; retain all other open Auto gates.
 

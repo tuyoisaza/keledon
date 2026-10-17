@@ -1,6 +1,6 @@
 ## Current PHDK Auto — 5.1.77 candidate; portfolio partial (2026-10-17)
 
-PRs #194/#195 remain the latest main deliveries through 5.1.76. Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile widget geometry, Browser widget/boundary 4/4, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.
+PRs #194/#195 remain the latest main deliveries through 5.1.76. Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile widget geometry, Browser widget/boundary 4/4, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.
 
 | Commitment | Current progress | Remaining acceptance |
 |---|---|---|
