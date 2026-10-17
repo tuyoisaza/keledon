@@ -1,40 +1,26 @@
-## Revalidación CMT-003C — 5.2.6 (2026-10-17)
+# Manifiesto UAT — CMT-003C / KELEDON 5.2.10
 
-**Resultado: NOT PROVISIONED / BLOCKED.** Producto source: `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #244/#245 actualizan solo documentación/evidencia; remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`, producto source 5.2.6 sin cambio. Run propuesto: `20261014-0007-phdk-auto-completion-cmt003c-20261017`.
+Run ID propuesto: `phdk-auto-uat-20261017` · entorno objetivo: producción · estado: **NOT PROVISIONED / BLOCKED**.
 
-| Fixture requerido | Alcance mínimo | Estado |
-|---|---|---|
-| Tenant sintético A/B | Dos empresas aisladas marcadas por el run; sin usuarios/clientes copiados | BLOCKED — vía/owner autorizado de provisioning y cleanup pendiente |
-| Device Browser A/B | Device sintético por tenant; sin audio ni token en evidencia | BLOCKED — no pairings productivos |
-| Flow | Workflow inerte para polling, lease/heartbeat/result | BLOCKED — sin efecto; candidato con cambios aún no desplegado |
-| DNS/CRM sandbox | Host/port/schema/CIDR exacto y controlado, con respuestas y redirects sintéticos | BLOCKED — owner y sandbox no seleccionados |
-| Credenciales/tokens | Secretos solo en ruta segura existente | Ninguno solicitado, creado o registrado |
+Baseline: producto source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PHDK 2.53.1 upstream `94f583635d295ae0f227726718904d952cadb8ab`. Los identificadores siguientes son etiquetas propuestas, no recursos ni cuentas reales.
 
-No se ejecutó el seeder local, no se modificó la protección que rechaza producción y no se escribió directamente a la BD. Cleanup exigirá desactivar/revocar exclusivamente IDs de este run y leer evidencia de acceso negado después; auditoría append-only se conserva. Ver detalle y dependencias en `20-plan/pias/PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md`.
-
-## Historial de manifiesto — KELEDON 5.2.4
-
-Fecha: 2026-10-17 · run `20261014-0007-phdk-auto-completion` · entorno solicitado: producción para UAT funcional.
-
-## Resultado actual
-
-**NOT PROVISIONED.** No se creó usuario, tenant, device, catálogo, token, sesión, fila de BD ni URL CRM. No se ejecutó seeder ni prueba local de aplicación. El único UAT vigente del candidato actual es anónimo y público (UAT-117).
-
-| Recurso sintético propuesto | Propietario/tenant | Identificador estable propuesto | Estado |
+| Fixture | Etiqueta propuesta | Tenant | Estado / límite |
 |---|---|---|---|
-| Empresa A | Company Co ficticia | `phdk-uat-companyco-20261017` | BLOCKED — no write autorizado/owner |
-| Empresa B | Other Co ficticia | `phdk-uat-otherco-20261017` | BLOCKED — no write autorizado/owner |
-| Roles | A/B | `phdk-uat-{superadmin,admin,coordinator,agent,user,other-user}` | BLOCKED — ninguna cuenta |
-| Devices Browser | A/B | `phdk-uat-device-a`, `phdk-uat-device-b` | BLOCKED — no registro pairing |
-| CRM endpoint | tenant-specific, simulado | Ningún hostname configurado | N/A — no contactar CRM real |
-| Credenciales/tokens | IdP/app | Ninguno | Ninguno solicitado, creado o registrado |
+| Tenant A | `phdk-auto-tenant-a-20261017` | — | BLOCKED — falta vía autenticada/auditada de creación y cleanup |
+| User A | `phdk-auto-user-a-20261017` | A | BLOCKED — rol regular únicamente; sin invitación/email |
+| Browser device A | `phdk-auto-device-a-20261017` | A | BLOCKED — sin pairing ni credenciales |
+| Tenant B | `phdk-auto-tenant-b-20261017` | — | BLOCKED — falta vía autenticada/auditada de creación y cleanup |
+| User B | `phdk-auto-user-b-20261017` | B | BLOCKED — rol regular únicamente; sin invitación/email |
+| Browser device B | `phdk-auto-device-b-20261017` | B | BLOCKED — sin pairing ni credenciales |
+| Flow inerte | `phdk-auto-flow-20261017` | A/B aislado según contrato | BLOCKED — aún no creado; prohibidos PII y side effects |
+| DNS/CRM sandbox | No asignada | Por tenant | BLOCKED — no hay hostname/puerto/esquema/CIDR sandbox aprobados |
+| Secretos/tokens | Ninguno | — | No solicitar, crear ni registrar en evidencia |
 
-## Invariantes de provisioning/cleanup
+## Ciclo de vida
 
-- Nunca usar cuentas del propietario ni registros de cliente.
-- Provisioning, si se autoriza por un camino permitido, queda a nombre de un owner identificado; toda fila lleva marcador único del run para limpieza exacta.
-- No enviar invitaciones ni correo; usar `.invalid` únicamente cuando el flujo admite alta sin side effect externo.
-- Revocar sesiones y credenciales de prueba al final; retirar solo registros marcados del run. Retener auditoría append-only; no purgarla.
-- No configurar un destino privado; el CRM sandbox de cada tenant espera owner, allowlist y autorización del cliente.
+- Solo un operador autorizado ya existente, mediante consola first-party normal y auditada; no se crean cuentas privilegiadas para este run.
+- Prefijo/run ID obligatorio, idempotencia por run, expiración máxima 24 horas y cleanup inmediato al terminar.
+- Cleanup desactiva/revoca solo IDs de este run y verifica acceso/login y comandos denegados; la auditoría append-only se conserva según retención vigente.
+- No se permiten escrituras directas a BD, rutas públicas de seed, auth bypass, invitaciones, clientes activos, llamadas a Genesys/Salesforce/CallPicker, CRM real, redes privadas de cliente ni hosts metadata.
 
-El seeder `services/api/scripts/uat-prep-companyco.ts` rechaza production/staging y exige DB loopback `keledon_phdk_uat`; provisiona seis cuentas locales incluyendo superadmin y no configura devices o CRM. No se modifica esa protección ni se fuerza el seeder a producción. UAT-127/128/129 son pruebas anónimas públicas, no validan autenticación.
+El registro de producción permanece vacío para este manifiesto. No se aprovisionaron filas, usuarios, tenants, devices o URLs CRM.

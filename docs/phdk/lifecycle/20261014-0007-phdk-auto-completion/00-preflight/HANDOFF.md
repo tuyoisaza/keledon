@@ -1,3 +1,21 @@
+## Revalidación vigente — Preflight 2.53.1 / KELEDON 5.2.10 (2026-10-17)
+
+Run ID: `20261014-0007-phdk-auto-completion` · Stage: `00-preflight` · Status: `COMPLETED / REUSED`.
+
+- Producto source: `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental pre-cambio `357cc5074da94741b4717404f2b588a6daa8755d`.
+- PHDK 2.53.1, canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; 64 manifest mappings; coherencia estática 64/64; `AGENTS.md` managed block exacto.
+- Railway Web/API posteriores al PR documental #256: SUCCESS, 1/1. UAT-140 acepta de manera acotada solo el 404 público localizado en producción.
+- GitHub no tenía PRs abiertos al entrar en este cambio. La capacidad de navegador CUA fue verificada dentro de UAT público; no se intentó login ni acceso administrativo.
+- La instrucción del owner impide pruebas/builds/lint locales de aplicación. No se hicieron escrituras de identidad, DB, CRM, IdP o proveedor.
+
+## Salida y siguiente etapa
+
+Preflight confirma el baseline; las instrucciones PHDK y el bloque managed están alineados. El nuevo owner rule sobre testing prod-only se guarda fuera del managed block para sobrevivir futuras sincronizaciones. Las PIAs de continuación están indexadas; CMT-003C1 sigue pendiente de revisión de seguridad y de una identidad sintética con login normal.
+
+SIGUIENTE PASO: usar el handoff de Plan/PMO vigente y resolver CMT-003C1 antes de intentar aceptación autenticada.
+
+---
+
 # PHDK Lifecycle Handoff — Preflight
 
 Run ID: `20261014-0007-phdk-auto-completion`

@@ -1,49 +1,32 @@
-## Revalidación vigente CMT-003C — 5.2.6 (2026-10-17)
+# Reporte UAT Prep — CMT-003C / KELEDON 5.2.10
 
-### UAT-130 readiness — candidate v5.2.7 / CMT-002
+Fecha: 2026-10-17 · **PARTIAL / BLOCKED** · meta PHDK Auto: **PARTIALLY DELIVERED**.
 
-Source review found that Landing diagnostics emitted configured API and OAuth hostnames; v5.2.7 now withholds them. PR #247 merged as `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; Railway Web/API deployments both reached SUCCESS. Production UAT-130 confirms Web copy status “Diagnóstico copiado” without reading clipboard contents. Landing source redaction is reviewed, but runtime remains BLOCKED: Railway has no Landing service and Web's Dockerfile builds `services/web` only. No credentials, customer data, local app test or build was used.
+## Resultado
 
-Remote `main` ahora es `7969fc87d3d5dc9f65a9a198d0f7a504577c7252` tras PR #246 (documentación únicamente); Railway Web/API #246 `SUCCESS`, source de producto sin cambio.
+Se actualizaron los artefactos de preparación al baseline de producto 5.2.10 y se acotó la matriz a los dos usuarios regulares y dos devices aprobados. El scope de provisioning mínimo está autorizado por el owner en la PIA CMT-003C. La fuente sí ofrece CRUD normal de empresas/usuarios con auth y guards de rol/tenant, pero no se encontró un camino completo que incluya login sintético normal, device/flow, auditoría durable previa a cada mutación y cleanup reversible/idempotente. Se creó [PIA-CMT-003C1](../20-plan/pias/PIA-CMT-003C1-PROVISIONING-AUDITADO.md) para revisar ese remedio. No se elevó el estado a READY y no se hizo ninguna escritura productiva.
 
-El reporte 5.2.4 que sigue se conserva como historial de Prep previo.
+Producto source: `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental antes de este update `357cc5074da94741b4717404f2b588a6daa8755d`. PHDK 2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`; chequeo estático PASS, 64 mappings. Railway Web `7724c95e-84e8-4923-8f76-6c0a0151ff49` y API `abb17a83-2de2-470b-86da-3bf3397ca5f9`: SUCCESS, 1/1; despliegue documental, sin cambio de runtime del producto. UAT-140 PASS_SCOPED: 404 anónimo localizado en producción, sin sesión.
 
-**Estado: BLOCKED** para UAT autenticada del runtime; **PARTIAL** para preparación. Producto 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`; PR #244/#245 son solo documentación. Railway Web `b3dd466a-5c1a-40a9-ac99-c032cfaa6d32` y API `430a4bd6-4d9f-4b32-89c9-10501c617df1` SUCCESS para deploy documental #245; versión de producto no cambió.
+## Revisión de preparación
 
-| Caso / rol | Estado | Razón/evidencia |
-|---|---|---|
-| Visitante público | PASS SCOPED | UAT-125/126 targets móviles; UAT-127/128 AX presence; UAT-129 orden/foco público en producción. No prueba autenticación ni runtime queue. |
-| Usuarios/tenants A y B | BLOCKED | No hay fixtures sintéticos productivos provisionados ni camino autorizado de cleanup. |
-| Browser devices / leases | BLOCKED | Sin pairings; claim actual no tiene lease durable/fencing; caso se ejecutará solo con candidato corregido. |
-| CRM privado/DNS | BLOCKED | Sin sandbox DNS/CRM sintético ni hostname/puerto/CIDR aprobados; fuente no fija la IP al socket. |
-| Secreto/credenciales | N/A | No se solicitaron ni expusieron. |
-| Tests/builds locales de aplicación | NOT RUN — instrucción del owner | No usar suites o builds locales como evidencia de aceptación. |
-| Escrituras de DB/CRM o pruebas autenticadas de runtime en esta revalidación | NOT RUN | No se creó cuenta/tenant/device ni se tocó CRM/DB; UAT público CMT-002 (UAT-127–129) está registrado por separado. |
-
-El plan, matriz, manifiesto y PIA CMT-003C están listos para retomar con el camino autorizado de provisión/cleanup. No se afirma que los fixtures existan ni que la feature haya sido aceptada. CMT-003A/B siguen PARTIAL y el Auto total continúa PARCIALMENTE ENTREGADO.
-
-# Reporte UAT Prep — KELEDON 5.2.4
-
-**Estado: PARTIAL / BLOCKED.** Candidato Web de producto 5.2.4, main `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`; PHDK 2.53.1. Railway Web/API ambos `SUCCESS` sobre main `6715ea9`; esto no acepta el comportamiento autenticado ni los contratos API. UAT-120 solo cubre locale/`lang` público en `/login`.
-
-## Trabajo de Prep
-
-- Revisado el PIA CMT-003A y la implementación `services/api/src/browser-commands/browser-commands.service.ts`: el claim escribe `browser.command.claimed`; `findNextPendingCommand` excluye para siempre todo comando con claim y no existe TTL, heartbeat, intento o lease durable. La recepción de resultados evita duplicados a posteriori, no idempotencia de side effects externos.
-- Revisión estática de `services/api/scripts/uat-prep-companyco.ts` y `.policy.cjs`: el comando confirma exclusivamente PostgreSQL `keledon_phdk_uat` en `127.0.0.1`/`localhost`/`::1`, exige confirmación explícita y deployment `development` o `test`; rechaza production/staging y hosts remotos. Por tanto, no ofrece provisión en Railway. El script tiene un fixture `superadmin` de desarrollo, seis cuentas fijas, sin pairing de Browser device ni CRM sandbox y cleanup con retención de auditoría; no se ejecutó ni se debe debilitar para producción.
-- La norma de ejecución del usuario prohíbe app tests/builds locales; no se ejecutó ningún test/build. No hay identidad sintética, tenant, dispositivo ni sandbox productivo disponible. No se usó la identidad del propietario ni se crearon filas/cuentas.
-- `phdk-standards/PHDK_UAT_PREP.md` prohíbe identidades privilegiadas de prueba en producción y cualquier auth bypass. El pedido prod-only permite solo UAT pública anónima. No existe flujo aprobado de sandbox IdP/admin productivo, provisioning de fixtures ni cleanup que satisfaga FIXTURE-01..05; no usar el seeder loopback ni crear cuentas superadmin productivas.
+- La PIA CMT-003C mantiene dos tenants sintéticos, un `user` y un device por tenant, un flow inerte y cleanup inmediato con máximo de 24 h; excluye roles privilegiados, invitaciones/email, clientes activos, proveedores de llamada y CRM real.
+- El seeder `uat-prep-companyco` está limitado a DB `keledon_phdk_uat` por loopback en desarrollo/test y rechaza producción/staging. Su fixture local incluye superadmin; no se ejecutó ni se modificó esa protección. El test-as existente excluye production; no se alteró su guard ni se leyeron variables de proveedor.
+- Fuente: `/management/companies` y `/management/users` llaman al CRUD autenticado. `AuthGuard` y `CrudAccessGuard` comprueban la identidad/rol desde BD; el `AuditInterceptor` intenta registrar CREATE/DELETE de forma asíncrona y no bloqueante. `deleteCompany` borra directamente, así que no es un cleanup seguro por run.
+- No se usó la identidad habitual del owner, sesión no entregada, token, datos de clientes, base de datos, IdP, CRM, llamada o red privada. No se ejecutaron pruebas/builds/lint locales de aplicación.
+- La revisión del navegador se limita a la UAT pública autorizada ya registrada; no se intentó iniciar sesión ni abrir una superficie administrativa.
 
 | Gate | Estado | Evidencia / faltante |
 |---|---|---|
-| Home/widget público v5.2.6 | PARTIAL | UAT-127/128 tree presence y UAT-129 orden/foco teclado limitados; despliegues #245 SUCCESS. |
-| Auth normal por rol | BLOCKED | No hay identidades sintéticas autenticables; no usar owner. |
-| Tenant A/B persistente | BLOCKED | No hay tenants sintéticos ni autorización/owner de provisioning. |
-| Device A/B y lease | BLOCKED | No pairing sintético ni heartbeat/recovery implementados. |
-| OAuth Google | EXTERNAL/BLOCKED | Configuración y cuentas pertenecen a cada cliente. |
-| CRM privado sandbox | BLOCKED | No cliente, endpoint, allowlist o side effect sintético seleccionado. |
-| Cleanup/revocación | BLOCKED | No fixtures creados, no se simuló cleanup. |
-| Tests/builds de app | NOT RUN BY OWNER INSTRUCTION | No se ejecutaron localmente. La aceptación autenticada/productiva no es segura ni posible hasta habilitar un mecanismo permitido de fixture sin privilegios productivos.
+| PHDK coherencia | PASS estático | PHDK 2.53.1, 64 mappings; bloque `PHDK-MANAGED` coincide con canonical |
+| UAT público 404 localizado | PASS_SCOPED | UAT-140 y su evidencia; no cubre autenticación |
+| Provisioning fixture mínimo | BLOCKED | Falta canal administrativo existente y auditado disponible para el run |
+| Tenant A/B, user y devices | BLOCKED | No hay recursos sintéticos aprovisionados |
+| Queue/lease/fencing | BLOCKED para aceptación | Requiere identities/devices sintéticos y candidato runtime desplegado |
+| DNS/CRM privado positivo | BLOCKED | Sin sandbox sintético aprobado por tenant con host/port/esquema/CIDR |
+| Cleanup/expiración | BLOCKED | No se puede probar sin fixture y acción de cleanup disponible |
+| Tests/builds/lint locales de app | NOT RUN | Instrucción del owner; solo producción sirve para acceptance funcional |
 
-## Próximo gate
+## Siguiente paso exacto
 
-Mantener la extensión autenticada BLOCKED. Continuar fuentes/PIAs y UAT público. Antes de cualquier escritura de identidad/tenant/device productiva, se requiere una ruta permitida por seguridad, owner de provisioning y cleanup, y autorización explícita para ese acceso; no se solicitan contraseñas ni secretos por chat. Si la restricción PHDK de no crear identidades privilegiadas productivas permanece, usar un runtime aislado autorizado para la parte autenticada y documentar que no cumple el pedido de UAT prod-only.
+Revisar PIA-CMT-003C1 y decidir el camino de identidad sintética normal controlada por KELEDON. Si el flujo admin existente no cubre login, auditoría durable y cleanup reversible, la implementación queda detrás de una revisión de seguridad antes de tocar auth/admin. Hasta entonces CMT-003C sigue BLOCKED; CMT-003A/B admiten revisión de fuente, pero no aceptación autenticada/egress. Ningún secreto o contraseña se necesita por chat.

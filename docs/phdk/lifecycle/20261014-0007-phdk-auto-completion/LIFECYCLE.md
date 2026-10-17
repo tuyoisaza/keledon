@@ -1,4 +1,27 @@
-## Current continuation — candidate v5.2.7 / CMT-002 privacy fix (2026-10-17)
+## Current continuation — candidate v5.2.10 / CMT-003C1 fixture lifecycle (2026-10-17)
+
+Product source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; product PR #255 merged, docs PR #256 merged at main `357cc5074da94741b4717404f2b588a6daa8755d`. Railway Web `7724c95e-84e8-4923-8f76-6c0a0151ff49` and API `abb17a83-2de2-470b-86da-3bf3397ca5f9` SUCCESS, 1/1. PHDK 2.53.1 upstream `94f583635d295ae0f227726718904d952cadb8ab`; static coherence 64/64; exact managed AGENTS block verified.
+
+UAT-140 PASS_SCOPED covers only the anonymous localized 404 in production. UAT Prep is current for 5.2.10; CMT-003C remains BLOCKED because the existing CRUD path does not provide a durable-audit, reversible/idempotent fixture lifecycle or a synthetic normal-login identity. New PIA-CMT-003C1 is ready for security review. No production fixture was created; no local application tests/build/lint ran. Whole Auto remains **PARTIALLY DELIVERED**.
+
+| Stage | Current status | Evidence / next gate |
+|---|---|---|
+| Preflight | REVALIDATED | PHDK 2.53.1; sync ran from canonical main, 64 manifest mappings; coherence static PASS 64/64; AGENTS managed block exact. |
+| Capture / Plan | REUSED / REVALIDATED | Four owner-confirmed commitments and approved tenant/security policy retained. |
+| PMO | ACTIVE / PARTIAL | CMT-001 complete for 5.2.10; CMT-002 partial; CMT-003/004 remain open. |
+| Integration | COMPLETED FOR 5.2.10 PRODUCT SLICE | PR #255 merged; package/lock roots and Browser renderer align. CMT-003 runtime source remains an open independent slice. |
+| UAT Prep | PARTIAL / BLOCKED AUTH | Four active artifacts updated; old 5.2.6 preparation preserved as snapshot; PIA-CMT-003C1 added. |
+| UAT | PASS SCOPED / INCOMPLETE | UAT-140 public 404 localization passes in production; authenticated/device/queue/egress cases remain blocked. |
+| UAT Fix | COMPLETED FOR 5.2.10 SEO SLICE | UAT-138 language gap closed by UAT-140; no broader runtime change implied. |
+| SEO / AEO-GEO | COMPLETED / PARTIAL | Public route/metadata work accepted within scope; external crawler, rankings/citations and Landing runtime not measured. |
+| Check / remediation | PASS FOR DOCUMENTED CUT / GAPS OPEN | PHDK Check delta report; 5 high and 8 medium open gaps remain. |
+| Delivery | MERGED / DEPLOYED | PR #255 product and #256 docs merged; current docs deploys SUCCESS. |
+
+SIGUIENTE PASO: revisar PIA-CMT-003C1 y definir una identidad sintética con login normal, auditoría durable y cleanup reversible antes de implementar cambios auth/data. Después retomar CMT-003A y CMT-003B con UAT solo en producción.
+
+---
+
+## Histórico — candidate v5.2.7 / CMT-002 privacy fix (2026-10-17)
 
 Remote production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON Web 5.2.7; PR #247 merged and Railway Web/API SUCCESS. UAT-130 passes Web copy status and source-level Landing redaction; UAT-131 passes the public homepage locale/theme AX matrix and four visual samples; UAT-132 passes the public login locale/theme AX matrix and one keyboard sequence. Standalone `landing/` runtime is BLOCKED because the verified Railway environment has no Landing service and Web builds `services/web` only. PHDK 2.53.1 coherence 64/64. Current UAT-132 documentation/evidence follows from merged PR #249 at `c9de2f2f7f7387bba9f6b68624db657dc58b0a4a`.
 

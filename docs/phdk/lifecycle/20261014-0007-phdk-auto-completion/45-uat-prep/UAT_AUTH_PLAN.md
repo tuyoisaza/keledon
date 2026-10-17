@@ -1,36 +1,30 @@
-## Revalidación CMT-003C — 5.2.6 (2026-10-17)
+# Plan de autenticación UAT — CMT-003C / KELEDON 5.2.10
 
-Estado: **BLOCKED** para aceptación autenticada/cola/egress. Producto candidato: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. Remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` tras PR #245 (docs/evidencia); el source desplegado no cambia.
+Fecha de revalidación: 2026-10-17 · PHDK 2.53.1 · estado: **BLOCKED — camino de provisioning/cleanup no disponible**.
 
-La ruta de identidad se conserva: login normal y actor/tenant derivados por servidor desde BD. No se preparará un bypass, endpoint público de fixture, token manual, secreto de seed persistente ni alta de identidad privilegiada productiva. El owner exige pruebas de aplicación en producción; por tanto, antes de aprovisionar recursos se requiere una vía existente, auditada y autorizada que permita crear/desactivar solo fixtures sintéticos bajo prefijo/run ID y verificar su cleanup sin tocar settings del IdP ni clientes activos.
+## Baseline y alcance
 
-Para CMT-003A se necesitan dos tenants/devices sintéticos y un workflow inerte; para CMT-003B además un sandbox DNS/CRM aislado con hostname, puerto, esquema y CIDR exactos aprobados. No usar destinos privados encontrados en configuración o navegación de clientes. No contactar una plataforma de llamadas ni CRM real.
+- Producto 5.2.10, source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental antes de este update `357cc5074da94741b4717404f2b588a6daa8755d`.
+- PHDK 2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática PASS, 64 mappings.
+- UAT-140 PASS_SCOPED en producción: 404 anónimo localizado; no acepta autenticación ni runtime.
+- Se probarán en producción solo identidades/recursos sintéticos autorizados por la PIA CMT-003C. El alcance actual es dos tenants temporales, un usuario `user` y un device sintético por tenant, y un flow inerte sin side effects.
 
-Entrada actual: PIA CMT-003C en `20-plan/pias/PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md`. Ninguna cuenta, token, sesión, tenant, device, CRM, llamada o dato productivo se creó/consultó en esta revalidación estática. No se ejecutan pruebas/builds locales de aplicación.
+## Ruta de acceso permitida
 
-## Historial del plan — KELEDON 5.2.4
+1. Usar exclusivamente el login normal del producto y el flujo first-party de administración ya existente, con actor y tenant derivados por el servidor desde la sesión/BD.
+2. El operador de provisioning debe ser un superadmin ya existente y autorizado. No crear un superadmin de prueba, no usar la identidad habitual del owner como persona de prueba, no enviar invitaciones ni correo y no compartir credenciales, cookies o tokens en chat.
+3. Antes de escribir, comprobar que la consola puede crear el run aislado y que existe una acción auditada para desactivar/limpiar únicamente los IDs marcados. Si cualquiera de esos pasos no está disponible, detenerse sin crear recursos y mantener BLOCKED.
+4. No usar seeder local, auth bypass, token falsificado, escritura directa a PostgreSQL, endpoints públicos de fixture, configuración de IdP ni datos de clientes.
 
-Estado: **PARTIAL / BLOCKED** · Fecha: 2026-10-17 · PHDK: 2.53.1.
+## Secuencia de aceptación cuando haya ruta lista
 
-## Candidato y entorno
+1. Confirmar el run ID `phdk-auto-uat-20261017`, el owner que opera, producción, IDs previstos, expiración máxima de 24 horas y limpieza inmediata al terminar.
+2. Crear Tenant A/B, un usuario regular por tenant, un device sintético por tenant y un flow sin PII, sin CRM, email, audio o llamada externa.
+3. En el sitio de producción, probar login normal, aislamiento tenant, claims/leases y denegaciones de acceso cruzado contra esos fixtures. Capturar solo estados e IDs anonimizados.
+4. Desactivar/limpiar por la misma consola autenticada; verificar que ya no inician sesión ni aceptan comandos. Retener solo la auditoría permitida y evidencia redacted.
 
-- Candidato Web: v5.2.4, merge `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`; PR #232. `main` actual: `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`.
-- Producción declarada: `https://keledon.tuyoisaza.com/`; latest Web `228369da-23e8-49e0-8345-2469f9fd4863` y API `367eb4ae-a101-448a-ac0a-361e7efee620` reportaron `SUCCESS` sobre main `6715ea9`. Esto no acepta comportamiento autenticado ni contratos API.
-- El usuario indicó pruebas funcionales únicamente en producción y no ejecutar pruebas locales de aplicación. Se sigue esa restricción; PHDK estático y parseo/version alignment no cuentan como app tests.
+## Evidencia requerida
 
-## Límite de identidad y confianza
+Registrar SHA y deployments exactos, timestamp UTC, operador/rol sintético redacted, IDs anonimizados, caso, estado, attempt/lease/tiempo y resultado de cleanup. Nunca guardar correo completo, token, URL privada, query, body, transcripción ni datos reales.
 
-La ruta admitida para un UAT autenticado es el login normal del producto y autorización derivada por API de identidad/rol/tenant persistidos. No se fabrican tokens, no se suplanta actor, no se usa UI de rol simulada como autenticación ni se activa un test adapter en producción. OAuth/Google se excluye porque depende de cada proveedor de cliente.
-
-El seeder `uat-prep-companyco` solo acepta DB PostgreSQL `keledon_phdk_uat` por loopback y env development/test; rechaza production/staging y contiene fixture superadmin local. No hay identidades, tenants ni devices sintéticos productivos disponibles ni mecanismo permitido para crearlos. La norma [`PHDK_UAT_PREP.md`](../../../../../phdk-standards/PHDK_UAT_PREP.md) prohíbe provisionar identidades de prueba privilegiadas en producción; el usuario autorizó el entorno de pruebas, pero todavía no autorizó la expansión concreta de acceso ni existe owner de provisioning/cleanup asignado. Por ello Prep no provisiona usuarios, cambia roles, escribe configuración del IdP ni toca datos live.
-
-## Plan de prueba cuando exista fixture autorizado
-
-1. Obtener por canal seguro y con owner asignado seis identidades sintéticas independientes: plataforma `superadmin`; tenant A `admin`, `coordinator`, `agent` y `user`; tenant B `user`. No se pega ninguna credencial en chat ni evidencia.
-2. Crear dos tenants ficticios con marcador único de run, sin CRM real, datos de clientes, invitaciones ni llamadas. Para CMT-003A, registrar un Browser device sintético por tenant sin permisos de audio.
-3. Ejecutar aceptación solo en UI/API de producción contra las entidades sintéticas; capturar IDs sintéticos, estados y tiempos redacted. Nada de transcripciones, cookies, tokens, payloads completos o endpoints CRM.
-4. Revocar sesiones/cuentas y retirar solo records con marcador del run por el owner; verificar acceso revocado y dejar auditoría append-only intacta.
-
-## Gate
-
-**BLOCKED:** no usar el login del propietario ni crear identidades privilegiadas en producción. Se puede seguir haciendo UAT público anónimo. Para aceptar UAT autenticado hacen falta identidades/tenants/devices sintéticos preparados por su owner en un destino permitido, plan de limpieza verificado y evidencia de autorización de acceso; si se mantiene la prohibición de producción, usar únicamente ese destino aislado para pruebas autenticadas, dejando claro que no sustituye la aceptación prod-only solicitada.
+**Salida actual:** existen rutas CRUD administrativas protegidas por auth/roles, pero no se verificó una ruta que cubra de manera durable y reversible el ciclo completo de identidad-login, tenant, device, flow y cleanup. No se preparó ni se operó una sesión admin. No se hicieron escrituras, no se consultaron datos de clientes y no se ejecutaron pruebas/builds/lint locales de aplicación. La preparación documental no cambia CMT-003C a READY; revisar [PIA-CMT-003C1](../20-plan/pias/PIA-CMT-003C1-PROVISIONING-AUDITADO.md).
