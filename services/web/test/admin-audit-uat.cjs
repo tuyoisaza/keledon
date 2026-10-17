@@ -69,6 +69,22 @@ async function main() {
     await page.setViewportSize({ width: 390, height: 844 });
     const mobileLayout = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth }));
     assert(mobileLayout.scrollWidth <= mobileLayout.width, `page must reflow without horizontal overflow: ${JSON.stringify(mobileLayout)}`);
+    const mobileNav = page.getByRole('navigation', { name: 'Primary navigation' });
+    const navBefore = await mobileNav.evaluate(element => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth, overflowX: getComputedStyle(element).overflowX }));
+    assert(navBefore.scrollWidth > navBefore.clientWidth && ['auto', 'scroll'].includes(navBefore.overflowX), `mobile navigation must expose its horizontal overflow as scrollable: ${JSON.stringify(navBefore)}`);
+    const managementLink = mobileNav.getByRole('link', { name: 'Management', exact: true });
+    await managementLink.focus();
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Tab');
+    const navFocus = await managementLink.evaluate(element => {
+      const item = element.getBoundingClientRect();
+      const nav = element.closest('nav').getBoundingClientRect();
+      return { visible: item.left >= nav.left && item.right <= nav.right, active: document.activeElement === element, keyboardVisible: element.matches(':focus-visible'), scrollLeft: element.closest('nav').scrollLeft };
+    });
+    assert.equal(navFocus.active, true);
+    assert.equal(navFocus.visible, true, 'keyboard focus must bring the final mobile navigation link into view');
+    assert.equal(navFocus.keyboardVisible, true, 'final mobile navigation link must show keyboard focus');
+    assert(navFocus.scrollLeft > 0, 'keyboard focus must scroll the navigation strip to the focused link');
     const mobileScreenshot = path.join(evidenceDir, 'admin-audit-uat-5.1.78-mobile.png');
     await page.screenshot({ path: mobileScreenshot, fullPage: true });
     await page.getByText('View redacted details', { exact: true }).click();
@@ -102,7 +118,7 @@ async function main() {
     await page.waitForURL('**/dashboard');
     assert.equal(requests.length, requestsBeforeDeniedRoute);
     const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
-    const result = { candidate: { version: packageJson.version, revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim() }, runAt: new Date().toISOString(), target: 'isolated local built React SPA with synthetic audit rows', targetUrl: address + '/admin/audit', browser: 'installed Microsoft Edge through Playwright (headless)', result: 'PASS', cases: ['superadmin route loads sanitized audit data', 'event metadata and success-only limitation shown', '44px minimum interactive targets', 'keyboard tab focus is visible', '390px mobile page reflows without horizontal overflow', 'redacted change details displayed', 'filters sent as encoded query', 'visible-page CSV export records bounded metadata before download', 'audit write failure blocks file download and announces an error', 'pagination requests next page', 'tenant admin route denied before audit data request'], accessibility: { minimumTargetPx: 44, targetHeightsPx: controlHeights, keyboardFocusVisible: keyboardFocus.visible, mobileViewport: mobileLayout, automatedOnly: true }, screenshots: ['docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-desktop.png', 'docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-mobile.png'], outboundHttp: 'non-loopback requests are aborted by the test route', spend: 'NO_NEW_SPEND', exportRequests, providerCalls: 0, persistence: 'fixture only; no database or audit data claim' };
+    const result = { candidate: { version: packageJson.version, revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim() }, runAt: new Date().toISOString(), target: 'isolated local built React SPA with synthetic audit rows', targetUrl: address + '/admin/audit', browser: 'installed Microsoft Edge through Playwright (headless)', result: 'PASS', cases: ['superadmin route loads sanitized audit data', 'event metadata and success-only limitation shown', '44px minimum interactive targets', 'keyboard tab focus is visible', '390px mobile page reflows without horizontal overflow', 'mobile navigation scrolls to the final link and keeps keyboard focus visible', 'redacted change details displayed', 'filters sent as encoded query', 'visible-page CSV export records bounded metadata before download', 'audit write failure blocks file download and announces an error', 'pagination requests next page', 'tenant admin route denied before audit data request'], accessibility: { minimumTargetPx: 44, targetHeightsPx: controlHeights, keyboardFocusVisible: keyboardFocus.visible, mobileViewport: mobileLayout, mobileNavigation: { ...navBefore, ...navFocus }, automatedOnly: true }, screenshots: ['docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-desktop.png', 'docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-mobile.png'], outboundHttp: 'non-loopback requests are aborted by the test route', spend: 'NO_NEW_SPEND', exportRequests, providerCalls: 0, persistence: 'fixture only; no database or audit data claim' };
     const evidence = path.resolve(__dirname, '../../../docs/phdk/workstreams/ADMIN-AUDIT-UAT.json');
     fs.writeFileSync(evidence, JSON.stringify(result, null, 2) + '\n');
     console.log('PASS admin audit UI UAT: ' + result.cases.join('; '));

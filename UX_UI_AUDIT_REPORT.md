@@ -2,7 +2,7 @@
 
 ## Candidate 5.1.78 — Admin Audit UAT-089 (2026-10-17)
 
-The new `/admin/audit` page initially used compact controls below the project's 44px interaction target. The page now gives inputs, buttons and disclosure summaries 44px minimum height and adds explicit keyboard focus outlines. Exact production-build Playwright UAT measures all 12 targets at 44px, verifies keyboard-visible focus and tests a 390×844 viewport with no document overflow. Synthetic API rows show sanitized details; export failure remains visibly announced and prevents download. Evidence: `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json` and `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-*.png`.
+The new `/admin/audit` page initially used compact controls below the project's 44px interaction target. The page now gives inputs, buttons and disclosure summaries 44px minimum height and adds explicit keyboard focus outlines. Exact production-build Playwright UAT measures all 12 targets at 44px, verifies keyboard-visible focus, and tests a 390×844 viewport with no document overflow. The responsive navigation's clipped strip is intentionally horizontally scrollable; keyboard traversal scrolls the final link into view and retains visible focus. Synthetic API rows show sanitized details; export failure remains visibly announced and prevents download. Evidence: `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json` and `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-*.png`.
 
 No remaining P0/P1 was observed in this focused admin-audit journey. This automated check does not certify screen-reader behavior, all routes/locales/themes, database-backed persistence or whole-application accessibility.
 

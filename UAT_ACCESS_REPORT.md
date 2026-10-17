@@ -7,7 +7,7 @@
 - Permission: `ACTIVE_UAT_EXCEPTION`. Browser capability: `AVAILABLE_VERIFIED` through installed Microsoft Edge launched by Playwright; actual page navigation and UI assertions passed.
 - Target/data/roles: intercepted synthetic superadmin and tenant-admin fixtures; synthetic `.invalid` user and redacted event; outbound non-loopback HTTP is aborted. No real login, database, provider, CRM or customer record.
 - Spend: `NO_NEW_SPEND`; billing remains unverified.
-- Cases: UAT-089; 44px target sizing, keyboard-visible focus, 390×844 reflow, redacted data, bounded CSV audit event before download, fail-closed download and pre-read tenant denial. Result: PASS, 11 scoped checks. Desktop/mobile screenshots and response evidence are versioned under `50-uat/evidence/`.
+- Cases: UAT-089; 44px target sizing, keyboard-visible focus, 390×844 reflow, keyboard-accessible scrolling to the final mobile nav link, redacted data, bounded CSV audit event before download, fail-closed download and pre-read tenant denial. Result: PASS, 12 scoped checks. Desktop/mobile screenshots and response evidence are versioned under `50-uat/evidence/`.
 - Owner action/retest cue: none for this scoped journey. PostgreSQL-backed export persistence and migrations remain blocked until an isolated disposable database is available; resume with UAT-089 database/restart companion after provisioning it.
 
 ## Browser Readiness — candidate 5.1.78 UAT entry
