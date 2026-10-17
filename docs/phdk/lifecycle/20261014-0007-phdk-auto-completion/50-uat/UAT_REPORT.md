@@ -4,6 +4,14 @@ En producción 5.2.2 (main `a8b4969418f8add68c549e7dc2e296234866b5eb`), la revis
 
 La comprobación de Railway al registrar este caso mostraba API `6467f5d6-d99b-41ed-9af8-2f3176d505b7` todavía `BUILDING` para el mismo SHA; UAT-117 cubre solo el bundle Web y no declara el despliegue API aceptado. La verificación del API queda pendiente como lectura de estado.
 
+## UAT-118 — producción: foco/teclado de acciones de diagnóstico (2026-10-17)
+
+En la portada pública v5.2.3, Tab recorrió marca → copiar diagnóstico → limpiar caché → Recursos; Shift+Tab volvió por esos controles. Copiar y limpiar tienen target 44×44 CSS px y foco visible de 2 px teal. Ningún control se activó. UAT-118 **PASA este muestreo de orden/foco/target**; no usó lector de pantalla ni revisó el resto de rutas/teclado. Evidencia: `evidence/uat-118-production-diagnostics-keyboard-2026-10-17.json`.
+
+## UAT-119 — producción: orden de teclado de login (2026-10-17)
+
+En `/login` de producción, KELEDON v5.2.3 expuso campos E-mail/Senha y botones Entrar/Google/Criar conta con nombres accesibles. Tab recorrió los campos y acciones en ese orden; Shift+Tab desde Criar conta volvió a Google. El tema observado fue oscuro y el contenido, portugués, pero `document.documentElement.lang` permaneció `en`; queda como defecto de metadatos sin corregir en este caso. Apareció una sugerencia de autocompletado del navegador; no se eligió ni se registró ningún valor de campo. No se envió el formulario ni se activaron login, OAuth o alta. El estilo calculado al enfocar Criar conta fue `outline: auto` de 0.666667px; por eso este caso acepta únicamente el orden de teclado y no la visibilidad/contraste del foco. UAT-119 **PASA el muestreo de orden público del login**; no valida autenticación, errores, lector de pantalla ni otros temas/rutas/locales. Producción sirvió los assets `index-MRgeTPqB.js` y `index-CV49ph3H.css`; Railway Web `51d32a43-e3ea-4961-a4ea-b5ac8fd68621` corresponde a main `85d7923`. Evidencia: `evidence/uat-119-production-login-keyboard-2026-10-17.json`.
+
 ## Current re-entry — UAT-109, production theme contrast samples (2026-10-17)
 
 After PR #213 deployed at `5884b80ba4318b2c4beed3e50d94945028b9a311`, computed CSS measurements on production gave foreground/background token ratios of 18.68:1 dark, 17.06:1 light and 13.53:1 corporate. Representative hero text/disclaimer ratios were 7.62:1, 7.24:1 and 5.62:1; CTA label/background ratios were 7.84:1, 5.47:1 and 9.83:1. UAT-109 **passes these sampled pairs only**. The calculation does not cover all composited gradients, translucent panels, component states or every page element; it is not a full WCAG contrast acceptance. Screen-reader and broader accessibility checks remain open. Evidence: `evidence/uat-109-production-theme-contrast-samples-2026-10-17.json`.

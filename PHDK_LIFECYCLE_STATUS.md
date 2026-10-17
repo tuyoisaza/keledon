@@ -1,8 +1,8 @@
 ## Verified current readback — KELEDON 5.2.3 / 2026-10-17
 
-This readback supersedes the earlier 5.2.1/5.2.2 candidate summaries below; those remain historical. PR #229 merged at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`. Five package/lock roots and Browser renderer align at 5.2.3; PHDK 2.53.1 coherence is 64/64 static. Railway Web deployment `3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7` reports `SUCCESS`; API `6467f5d6-d99b-41ed-9af8-2f3176d505b7` was `BUILDING` at 18:42:32Z. UAT-117 observed v5.2.3 and the accessible copy success on anonymous production UI; deployed source withholds configured API/OAuth hostnames, and clipboard was not read. Overall Auto remains PARTIALLY DELIVERED.
+This readback supersedes the earlier 5.2.1/5.2.2 candidate summaries below; those remain historical. PR #229 merged at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; evidence PR #230 merged at `85d792321445da6ba6a744e79d7128fed8717d3d`. Five package/lock roots and Browser renderer align at 5.2.3; PHDK 2.53.1 coherence is 64/64 static. Latest Web deployment `51d32a43-e3ea-4961-a4ea-b5ac8fd68621` and API `567027ff-9d5f-411f-b073-3b6eed4eeb2f` both report `SUCCESS` for `85d7923`. UAT-117 observed anonymous copy success after hostname withholding; UAT-118 sampled diagnostic keyboard/focus; UAT-119 sampled login keyboard order and found `lang=en` while Portuguese is selected. Clipboard was not read; no autofill value was captured. Prep artifacts for 5.2.3 are present; authenticated/device tests remain blocked. Overall Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: re-read Railway API settlement, then continue the next anonymous, read-only CMT-002 case. Keep authenticated and audio UAT pending synthetic identities/device fixtures.
+SIGUIENTE PASO: fix the login document-language metadata in the next candidate and revalidate in production; continue CMT-002 public cases. Authenticated/audio UAT remains gated on synthetic identities and a test device.
 
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
