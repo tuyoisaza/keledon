@@ -1,10 +1,10 @@
-## Current PHDK Auto audit — candidate 5.1.74; source checks pass; portfolio partial
+## Current PHDK Auto audit — 5.1.74 source slice merged; portfolio partial
 
-Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`. Repository: `tuyoisaza/keledon`; branch `fix/phdk-auto-uat-082`; base and fresh `origin/main`: `0dd405d930c518537ecea17ca363e95a5b99a9fd`. Canonical PHDK is 2.51.5 at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; updater is CURRENT and static coherence is 61/61. Candidate 5.1.74 is local and has not yet been committed, opened as a PR, merged or deployed. There are no open repository PRs as of this audit.
+Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`. Repository: `tuyoisaza/keledon`; source branch `fix/phdk-auto-uat-082`; PR [#192](https://github.com/tuyoisaza/keledon/pull/192) squash-merged at `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a` with tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`, matching the tested candidate tree at delivery. Canonical PHDK is 2.51.5 at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; updater is CURRENT and static coherence is 61/61. Delivery is verified; no deployment is claimed. GitHub returned no hosted checks/review decision and `main` has no branch protection.
 
 | Gate | Result | Evidence / remaining |
 |---|---|---|
-| CMT-001 baseline/version/PR | PASS FOR CANDIDATE; DELIVERY PENDING | Five app package/lock roots and Browser renderer are 5.1.74; fresh remote main matches base. Create version-prefixed source commit and normal PR, then verify remote result. |
+| CMT-001 baseline/version/PR | SOURCE SLICE DELIVERED | PR #192 merged at `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a`; remote tree `dc0eb9e08bea909fa05de472353112cd56ff6f62` and six version reads verified. |
 | CMT-002 widget/diagnostics | PARTIAL | Web UAT 7/7 plus 19 diagnostics tests; Browser 43/43; Landing/SEO pass. Native device/audio and broad assistive technology, route and locale acceptance remain open. |
 | CMT-003 voice→Cloud→Browser→CRM | PARTIAL / CUSTOMER-SCOPED | API/Cloud contracts, tenant flow configuration and private-origin policy have coverage. Managed API AI path validates graph inputs; legacy `cloud/` LLM source parity and per-client live call/CRM execution remain open. |
 | CMT-004 administration/permissions | PARTIAL | Restrictive role policy, tenant-scoped admin routes, role-aware settings and audit attribution are covered by API/Cloud regressions and synthetic Web UAT. Audit migration/restart acceptance and the remaining CRUD operation matrix are open. |
@@ -13,7 +13,7 @@ Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`. Repository: `tuyois
 
 No live database migration/restart, production deployment, provider call or customer endpoint was used. Railway/GitHub provider state is read-only; static automation hygiene has no findings, while remote automation state is not fully inventoried. Whole goal remains **PARTIALLY DELIVERED** until the outstanding environment-bound and portfolio gates close; an open PR is not completion.
 
-SIGUIENTE PASO: commit/push this candidate through the normal PR controls, inspect actual review/check gates, and verify the resulting remote main SHA/tree/version without claiming whole-Auto completion.
+SIGUIENTE PASO: continue the open UAT and environment-bound acceptance gates; keep the whole PHDK Auto goal PARTIAL.
 
 ---
 

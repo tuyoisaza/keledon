@@ -1,6 +1,6 @@
-## Current PHDK Auto — Check remediation underway; PHDK 2.51.5 synchronized (2026-10-17)
+## Current PHDK Auto — 5.1.74 source delivered; acceptance remains partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`, candidate 5.1.74, branch `fix/phdk-auto-uat-082`, base `0dd405d930c518537ecea17ca363e95a5b99a9fd`. Canonical PHDK `main` is v2.51.5 at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61 manifest mappings; updater `CURRENT` and static coherence checker `PASS`. Approved Check remediation CHK-001–005 is documented in `PHDK_REMEDIATION_REPORT.md`; all five remain partial. CHK-006 pricing is still decision-required. Four owner-confirmed commitments remain active; no delivery or whole-goal completion is claimed.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; source branch `fix/phdk-auto-uat-082`; PR #192 delivered candidate 5.1.74 and merged at `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a` (tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`). Canonical PHDK `main` is v2.51.5 at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61 manifest mappings; updater `CURRENT`, coherence `PASS`. CHK-001–005 remain partial; CHK-006 pricing is decision-required. CMT-001 source delivery is complete; overall Auto remains partial and no deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -14,7 +14,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`, candid
 | AEO/GEO | REUSED / CURRENT | Public answers/claims unchanged; source review remains applicable; external citations and visibility remain unmeasured. |
 | Check | IN PROGRESS | Recheck records remaining source gaps plus static and live automation-hygiene evidence. |
 | Remediation | IN PROGRESS | CHK-001–005 advanced but remain partial; CHK-006 excluded pending owner pricing decision. |
-| Delivery | PENDING | The local 5.1.74 candidate is version-bumped but has not been committed, opened as a PR, merged or deployed. |
+| Delivery | SOURCE SLICE DELIVERED | PR #192 squash-merged; remote main SHA/tree and six version reads verified. No deployment is claimed. |
 
 Next: complete final source/automation review, rerun relevant checks, resolve any remaining authorized source findings, then update delivery evidence if the candidate meets its gates.
 

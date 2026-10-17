@@ -1,10 +1,10 @@
 ## Current PMO progress — superadmin CRUD UAT extends coverage; portfolio remains partial (2026-10-17)
 
-After the audit attribution work, production-built Web UAT-073 now covers tenant-admin flow definition, draft-version update/approval, availability enable/disable and intent-map add/remove, paired with persisted UAT-079 API/Cloud acceptance; UAT-081 pairs superadmin flow-editor lifecycle/legacy assignment with UAT-083; UAT-086/087 covers Company, Brand, Team and User and pairs with UAT-071/075/076. The CRUD regression requires each promoted row to cite both kinds of evidence. API regression/build 42/42, Cloud build/regression 18/18, matrix evidence contract, audit query/redaction 4/4, denied-attribution/interceptor 10/10, Web UAT 7/7 plus standalone admin-settings/theme-template/AI-admin UAT, and PHDK 2.51.5 coherence 61/61 pass. UAT tally: 85 PASS, 0 BLOCKED, 1 MANUAL. Matrix: 560 rows, 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Four commitments remain active; the current candidate is uncommitted, no PR/deployment is claimed, and audit migration/restart acceptance remains open.
+After the audit attribution work, production-built Web UAT-073 now covers tenant-admin flow definition, draft-version update/approval, availability enable/disable and intent-map add/remove, paired with persisted UAT-079 API/Cloud acceptance; UAT-081 pairs superadmin flow-editor lifecycle/legacy assignment with UAT-083; UAT-086/087 covers Company, Brand, Team and User and pairs with UAT-071/075/076. The CRUD regression requires each promoted row to cite both kinds of evidence. API regression/build 42/42, Cloud build/regression 18/18, matrix evidence contract, audit query/redaction 4/4, denied-attribution/interceptor 10/10, Web UAT 7/7 plus standalone admin-settings/theme-template/AI-admin UAT, and PHDK 2.51.5 coherence 61/61 pass. UAT tally: 85 PASS, 0 BLOCKED, 1 MANUAL. Matrix: 560 rows, 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. PR #192 delivered candidate 5.1.74 to main; CMT-001 source delivery is complete. The other three commitments remain active; no deployment is claimed and audit migration/restart acceptance remains open.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | PHDK current; candidate 5.1.74 is on the local branch. | Whole-candidate review and normal PR merge/readback. |
+| CMT-001 baseline/version/PR | Source slice 5.1.74 merged in PR #192; remote readback verified. | Continue baseline/version maintenance as later candidate work requires. |
 | CMT-002 widget/diagnostics | Existing selected browser/widget/theme checks remain green. | Native device/audio and broad accessibility/localization. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant flow configuration, URL allowlists and managed API AI input validation covered in source tests. | Cloud legacy AI path, integrated runtime, per-customer stack acceptance. |
 | CMT-004 administration/permissions | API/Cloud audit events preserve event-time tenant; nine Web rows now pair lifecycle/configuration UAT with persisted API evidence. | DB migration/restart acceptance, 396 remaining blocked CRUD rows, other denial paths and audit export/retention. |
@@ -225,7 +225,7 @@ Four confirmed / zero DONE / four active / zero deferred or cancelled. Candidate
 
 | WS | State | Next gate |
 |---|---|---|
-| WS-001 / CMT-001 baseline/version/PR | Check PASS / delivery pending | Create version-prefixed product PR, merge, then verify remote main and version evidence. |
+| WS-001 / CMT-001 baseline/version/PR | Source slice delivered in PR #192; remote main/version readback pass | Continue baseline/version maintenance as new candidate work requires. |
 | WS-002 / CMT-002 widget/diagnostics | Scoped UAT PASS | Native UI, broad screen-reader/a11y and all-route acceptance remain. |
 | WS-003 / CMT-003 voice→Cloud→Browser→client CRM | Source contract retained | Keep client-specific live call/CRM acceptance scoped to each chosen tenant. |
 | WS-004 / CMT-004 administration/permissions | Source matrix + selected persisted acceptance | Complete remaining persisted operation coverage and delete/reindex concurrency. |

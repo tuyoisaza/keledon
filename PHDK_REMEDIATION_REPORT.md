@@ -2,7 +2,7 @@
 
 Date: 2026-10-17
 Run: `20261014-0007-phdk-auto-completion`
-Base: `0dd405d930c518537ecea17ca363e95a5b99a9fd`; local candidate is uncommitted.
+Delivery: PR [#192](https://github.com/tuyoisaza/keledon/pull/192) merged; verified `origin/main` `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a`, tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`. Deployment and database acceptance remain pending.
 
 The owner authorized automatic remediation of CHK-20261016-001 through 005. CHK-20261016-006 remains decision-required; AI pricing is not inferred or added.
 
