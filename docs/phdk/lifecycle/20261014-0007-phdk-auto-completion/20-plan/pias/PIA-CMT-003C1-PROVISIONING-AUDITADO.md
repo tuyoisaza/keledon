@@ -18,7 +18,15 @@ La relectura de autenticación confirma que sí existe alta e inicio de sesión 
 
 Esta es revisión estática de código; no prueba el runtime desplegado ni justifica escrituras productivas.
 
-Referencias de fuente verificadas: `services/web/src/pages/ManagementCompaniesPage.tsx`, `services/web/src/pages/ManagementUsersPage.tsx`, `services/api/src/main.ts`, `services/api/src/guards/crud-access.guard.ts`, `services/api/src/interceptors/audit.interceptor.ts`, `services/api/src/crud/crud.controller.ts`, `services/api/src/crud/crud-company.service.ts`, `services/api/src/auth-local/uat-test-profile.policy.ts` y `services/api/src/auth-local/uat-test-profiles.service.ts`.
+## Diseño requerido para retiro reversible — revisión estática adicional
+
+El modelo Prisma actual no tiene estado activo/inactivo para `Company` ni `User`; `deleteCompany` es hard delete. `Device` sí puede pasar a `revoked` y borrar `authToken`; `Flow` tiene `isActive`. `AuthGuard` valida la firma y expiración del JWT y vuelve a leer el usuario desde la BD en cada request, por lo que borrar el usuario invalida el token al siguiente request, pero el borrado no es reversible. Un flag local de test-as no sustituye este lifecycle y sigue deshabilitado en producción.
+
+Para satisfacer la reversibilidad de esta PIA sin dejar cuentas/tenants huérfanos, el diseño de implementación debe incluir un registro persistente de `UatFixtureRun` y un lifecycle soft-disable asociado: `Company.isActive` y `User.isActive` aditivos con default `true`; `Device.status='revoked'` más `authToken=null`; `Flow.isActive=false`. El run guarda `runId`, actor, `expiresAt`, estado y referencias a las entidades creadas, sin passwords, bearer tokens, cuerpos, emails completos ni CRM URLs. Cada mutación y su entrada de auditoría redacted se confirman en una misma transacción; auditoría fallida revierte la operación. Cleanup repetido solo desactiva las referencias de ese run y conserva audit logs.
+
+El enforcement debe ser integral antes de marcar inactivo: el AuthGuard/local login/Google rechazan usuario desactivado; el tenant resolver y guards rechazan empresa inactiva; DeviceGuard/WebSocket rechazan el device revocado; las rutas de ejecución no enumeran ni ejecutan Flow inactivo. Consultas globales de administración excluyen los tenants inactivos para actores no superadmin. Reactivación solo por superadmin con nueva auditoría. La migración es additive y preserva entidades existentes por default; cualquier rollback se prueba en producción con el run sintético antes de cerrar este gate.
+
+Referencias de fuente verificadas: `services/web/src/pages/ManagementCompaniesPage.tsx`, `services/web/src/pages/ManagementUsersPage.tsx`, `services/api/src/main.ts`, `services/api/src/guards/auth.guard.ts`, `services/api/src/guards/crud-access.guard.ts`, `services/api/src/guards/device-access.guard.ts`, `services/api/src/interceptors/audit.interceptor.ts`, `services/api/src/crud/crud.controller.ts`, `services/api/src/crud/crud-company.service.ts`, `services/api/src/devices/device.service.ts`, `services/api/src/flows/flow.service.ts`, `services/api/src/auth-local/auth-local.service.ts`, `services/api/src/auth-local/uat-test-profile.policy.ts`, `services/api/src/auth-local/uat-test-profiles.service.ts` y `services/api/prisma/schema.prisma`.
 
 ## Resultado esperado
 
@@ -50,6 +58,7 @@ Todas las pruebas funcionales/de seguridad se hacen en el sitio de producción u
 | FIXTURE-AUDIT-01 | Cada mutación queda durablemente auditada con runId antes de confirmarse; una falla de auditoría rechaza la mutación. |
 | FIXTURE-TTL-01 | Recursos vencidos dejan de autenticarse/ejecutar comandos; TTL nunca excede 24 horas. |
 | FIXTURE-CLEANUP-01 | Cleanup del run solo invalida sus IDs, es reintentable y verifica login/comandos denegados; retiene auditoría. |
+| FIXTURE-REVOKE-02 | Después de soft-disable, el mismo JWT recibe 401, el device revocado no autentica por HTTP/WebSocket y el flow inactivo no se puede ejecutar; superadmin puede reactivar únicamente las entidades del run con auditoría. |
 | FIXTURE-TENANT-01 | A no lee/modifica B; B no lee/modifica A; actor/tenant siempre vienen de registros server-side. |
 
 La evidencia de UAT incluye SHA/deploy, timestamp UTC, runId no sensible, resultado redacted, estado de auditoría y lectura posterior de cleanup. No se incluyen sesiones, tokens, emails completos, URL/host privados, payloads o datos de clientes.
