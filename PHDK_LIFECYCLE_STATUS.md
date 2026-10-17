@@ -9,8 +9,8 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | Integration Review | COMPLETED FOR SELECTOR RACE | Monotonic request sequence invalidates stale team loads and saves when another team is opened or the modal closes. |
 | UAT / UAT Fix | SOURCE REGRESSION PASS; FULL ACCEPTANCE BLOCKED | Focused stale-request regression passes. Live migration, fixture provisioning, authenticated browser UAT and cleanup remain blocked because isolated PostgreSQL was unavailable under Windows Application Control. |
 | SEO / AEO-GEO | NOT AFFECTED | This management UI state fix changes no public routes, metadata or answer content. |
-| Check / Remediation | PASS FOR 5.2.1 SOURCE SLICE; PORTFOLIO GAPS REMAIN | Web typecheck/lint/build, Browser build, focused request-sequence regression, `git diff --check`, and PHDK coherence 64/64 pass. Web build reports the existing large-chunk advisory. |
-| Delivery | FEATURE BRANCH PUSHED; PR NOT CREATED | Feature source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` is included; latest remote branch head is the status-record commit `9ce670b6a3d37bcdc270493ab8da89841d1bfe7b`. PR creation was rejected by the execution control; no alternate transport was used. |
+| Check / Remediation | PASS FOR 5.2.1 SOURCE SLICE; WHOLE CHECK INCOMPLETE | Web typecheck/lint/build, Browser build, focused request-sequence regression, `git diff --check`, and PHDK coherence 64/64 pass. Full scoped Check and GitHub/Railway automation evidence are recorded in [PHDK_CHECK_REPORT-5.2.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1.md). Web build reports the existing large-chunk advisory. |
+| Delivery | FEATURE BRANCH PUSHED; PR NOT CREATED | Feature source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` is included on the remote branch. PR creation was rejected by the execution control; no alternate transport was used. |
 
 Overall PHDK Auto remains PARTIALLY DELIVERED. Browser acceptance, PostgreSQL-backed migration/seed verification, and the normal PR/review/merge/main verification remain open. Historical 5.1.85 and 5.2.0 snapshots below retain their original results.
 
