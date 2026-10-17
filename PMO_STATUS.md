@@ -1,13 +1,13 @@
-## Current PMO board — 5.1.81 source merged; whole Auto partial
+## Current PMO board — 5.1.81 source/deploy verified; whole Auto partial
 
 | Workstream | State | Evidence / open gate |
 |---|---|---|
-| CMT-001 baseline/version/PRs | ACTIVE | PR #200 merged; five roots and renderer at 5.1.81; API deploy success; fresh Web build pending after root/Dockerfile correction. |
+| CMT-001 baseline/version/PRs | ACTIVE | PR #200 merged; five roots and renderer at 5.1.81; API and Web deployments succeeded. |
 | CMT-002 widget and safe diagnostics | ACTIVE | Full Web UAT 8/8; delayed tenant-response regression passes. Native and broad accessibility remain. |
 | CMT-003 voice→Cloud→Browser→CRM | ACTIVE | Tenant flow configuration scoped; PostgreSQL/native and client-selected provider/CRM acceptance remain. |
 | CMT-004 administration and permissions | ACTIVE | Least-privilege policy remains; broad persisted CRUD and audit/retention acceptance remain. |
 
-Overall 0/4 DONE; 4 ACTIVE/PARTIAL. UAT 89 PASS / 0 BLOCKED / 1 MANUAL. CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Next: verify a fresh Web build from corrected Railway config.
+Overall 0/4 DONE; 4 ACTIVE/PARTIAL. UAT 89 PASS / 0 BLOCKED / 1 MANUAL. CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Next: continue database, native, accessibility and tenant-selected runtime acceptance.
 
 ## Historical pre-merge PMO board — 5.1.81 candidate
 

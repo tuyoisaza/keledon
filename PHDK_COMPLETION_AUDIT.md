@@ -1,6 +1,6 @@
-## 5.1.81 source delivery readback — overall completion remains partial
+## 5.1.81 source/deployment readback — overall completion remains partial
 
-PR #200 delivered at verified `main` `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`. All five package roots and Browser renderer are 5.1.81; PHDK 63/63. API deploy succeeded. Web and old-snapshot redeploys failed because `/shared` is outside the captured context. Railway is now configured with root `/` and `services/web/Dockerfile`; a fresh source build must validate it. Candidate Web UAT passes 8/8 with standalone admin/theme/AI. Four commitments and the broad DB, CRUD, native, accessibility and client-runtime gates remain open.
+PR #200 delivered at verified `main` `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`. All five package roots and Browser renderer are 5.1.81; PHDK 63/63. Railway API and Web deployments succeeded; Web now builds from root `/` with `services/web/Dockerfile` and includes `/shared`. Candidate Web UAT passes 8/8 with standalone admin/theme/AI. Four commitments and the broad DB, CRUD, native, accessibility and client-runtime gates remain open.
 
 ## Historical candidate 5.1.81 — scoped remediation verified; overall Auto partial
 

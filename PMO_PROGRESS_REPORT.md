@@ -1,15 +1,15 @@
-## 5.1.81 delivery readback — source merged; Web source build pending
+## 5.1.81 delivery readback — source and deployment verified
 
-PR #200 merged at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all roots and renderer are 5.1.81 and PHDK is 63/63. API deploy succeeded. Railway Web's old snapshot failed at `COPY shared/`; the service root and Dockerfile are corrected, but old-snapshot redeploys preserve the old context. A fresh source deployment must verify the fix. Full Web UAT passes 8/8 plus admin/theme/AI. Four commitments remain active/partial.
+PR #200 merged at `86b93a0bfe8393180d65c035d814f73e8f2`; all roots and renderer are 5.1.81 and PHDK is 63/63. Railway API and Web both deployed successfully; the fresh Web build uses root `/` and `services/web/Dockerfile`, so it includes `shared/`. Full Web UAT passes 8/8 plus admin/theme/AI. Four commitments remain active/partial.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | 5.1.81 merged and verified; API deployment success. | Fresh Web source build from corrected context; confirm Web deployment. |
+| CMT-001 baseline/version/PR | 5.1.81 merged and verified; API and Web deployments succeeded. | Continue baseline and evidence gates across the portfolio. |
 | CMT-002 widget/diagnostics | Full Web UAT 8/8; delayed flow-editor response regression passes. | Native audio/device and broad accessibility/localization. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant flow configuration remains scoped. | PostgreSQL runtime, native call path, each client's configured provider/CRM sandbox. |
 | CMT-004 administration/permissions | Restrictive role/tenant policy remains covered. | DB migration/restart, CRUD matrix, audit retention and remaining denials. |
 
-SIGUIENTE PASO: verify a fresh Web deployment, then continue the open database and client acceptance.
+SIGUIENTE PASO: continue open database, CRUD, native and client-specific acceptance.
 
 ## Historical PMO progress — 5.1.81 flow-editor UAT fix; portfolio partial
 

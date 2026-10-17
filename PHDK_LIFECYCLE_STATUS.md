@@ -1,6 +1,6 @@
-## Current PHDK Auto — 5.1.81 source merged; Web deployment needs fresh source build
+## Current PHDK Auto — 5.1.81 source and Web deployment verified; portfolio partial
 
-PR [#200](https://github.com/tuyoisaza/keledon/pull/200) merged to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all five package/lock roots and Browser renderer read 5.1.81; PHDK coherence is 63/63. Railway API deployment succeeded. Web deployment and two redeploys from the old snapshot failed at `COPY shared/`; the live Web config is now root `/` with `services/web/Dockerfile`, and a fresh source build is needed to apply it. Full 5.1.81 Web UAT passes 8/8 plus three standalone admin/theme/AI UATs. Overall Auto remains PARTIALLY DELIVERED, 0/4 commitments closed.
+PR [#200](https://github.com/tuyoisaza/keledon/pull/200) merged to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all five package/lock roots and Browser renderer read 5.1.81; PHDK coherence is 63/63. Railway API `9264c007-3f37-4879-bf6a-caf7d3b4dc91` and Web `021a70c4-5d15-49be-bd33-e31afd3a92f7` are SUCCESS. Web's old context failed, then a fresh source build using root `/` and `services/web/Dockerfile` found `shared/` and built successfully. Full 5.1.81 Web UAT passes 8/8 plus three standalone admin/theme/AI UATs. Overall Auto remains PARTIALLY DELIVERED, 0/4 commitments closed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -11,11 +11,11 @@ PR [#200](https://github.com/tuyoisaza/keledon/pull/200) merged to `main` at `86
 | UAT / UAT Fix | PASS FOR 5.1.81 WEB SLICE | Full Web UAT 8/8 and standalone admin/theme/AI pass; delayed-response race reproduced and fixed. |
 | SEO / AEO-GEO | NOT AFFECTED | Authenticated management UI only; public routes and content unchanged. |
 | Check / Remediation | PASS FOR SOURCE SLICE; PORTFOLIO GAPS FOUND | Web typecheck/build, five package builds, focused ESLint and PHDK 63/63. |
-| Delivery | SOURCE MERGED; API SUCCESS; WEB FRESH BUILD PENDING | PR #200 and main/version readback verified. Corrected root/Dockerfile config awaits a fresh source deployment. |
+| Delivery | SOURCE MERGED; API + WEB SUCCESS | PR #200 and main/version readback verified; fresh source build passes with corrected root/Dockerfile config. |
 
 UAT portfolio: 89 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL/restart, broad CRUD, native/accessibility, fresh Web deployment and each customer's configured call/CRM acceptance remain open.
 
-SIGUIENTE PASO: verify a new Web build from the corrected source context and continue the remaining four-front acceptance.
+SIGUIENTE PASO: continue PostgreSQL, CRUD, native/accessibility and each customer's configured call/CRM acceptance.
 
 ## Historical pre-merge candidate state — 5.1.81 UAT Fix verified
 

@@ -1,10 +1,10 @@
-## Current delivery readback — 5.1.81 source merged (2026-10-17)
+## Current delivery readback — 5.1.81 source and deploy verified (2026-10-17)
 
-PR [#200](https://github.com/tuyoisaza/keledon/pull/200) merged to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; fresh local and remote SHA match. All five package/lock roots and Browser renderer read 5.1.81; PHDK v2.52.2 coherence passes 63/63. GitHub reports no hosted checks/reviews and main is unprotected. Railway API deployment on the merge SHA is SUCCESS. Web auto-deploy and two redeploys from the old snapshot failed at `COPY shared/`; live Web settings now point to repository root `/` and `services/web/Dockerfile`, but a fresh source deployment is required to exercise the corrected context.
+PR [#200](https://github.com/tuyoisaza/keledon/pull/200) delivered product source to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`. PR #201 recorded the post-merge readback at `507085a118a064ab209ca0e31568b4033346676a` (tree `6a885b758601945abdfd13a9211dc64bdc8ffcf6`). All five package/lock roots and Browser renderer read 5.1.81; PHDK v2.52.2 coherence passes 63/63. GitHub reports no hosted checks/reviews and main is unprotected. Railway API `9264c007-3f37-4879-bf6a-caf7d3b4dc91` and Web `021a70c4-5d15-49be-bd33-e31afd3a92f7` are SUCCESS. Web's initial deployment and old-snapshot redeploys failed at `COPY shared/`; a fresh source build using root `/` and `services/web/Dockerfile` included `shared/` and succeeded.
 
 Production Web typecheck/build, changed-source ESLint, full Web UAT 8/8, standalone admin-settings/theme-template/AI-admin UAT, and all five package builds pass. Candidate SEO/AEO/GEO is not applicable. All four commitments remain active/partial (0/4 done). Portfolio UAT is 89 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. Whole Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: verify a fresh Web build from the corrected Railway root/Dockerfile config, then continue PostgreSQL, CRUD, native/accessibility and tenant-specific call/CRM acceptance.
+SIGUIENTE PASO: continue PostgreSQL, CRUD, native/accessibility and tenant-specific call/CRM acceptance.
 
 ## Historical pre-merge candidate state — 5.1.81, PHDK 2.52.2
 
