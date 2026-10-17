@@ -1,6 +1,23 @@
 # PHDK Auto — estado de cartera al 2026-10-17
 
-## Readback vigente — candidate 5.2.7 / CMT-002
+## Readback vigente — candidate 5.2.10 / CMT-003C1
+
+Repo `tuyoisaza/keledon`; producto 5.2.10 en source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental antes de este cambio `357cc5074da94741b4717404f2b588a6daa8755d`. PR #255 producto y PR #256 documental integrados. Railway Web/API posteriores al PR #256 SUCCESS, 1/1 (`7724c95e-84e8-4923-8f76-6c0a0151ff49` / `abb17a83-2de2-470b-86da-3bf3397ca5f9`). PHDK 2.53.1, canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64; `AGENTS.md` managed block coincide byte por byte con `PHDK_NATIVE_RULES.md`.
+
+UAT-140 acepta en producción solo el 404 anónimo localizado, no auth ni runtime. La revisión de fuente encontró CRUD normal de empresa/usuarios con guards DB-derived, pero auditoría no bloqueante, borrado directo, ausencia de ciclo synthetic device/flow y test-as deshabilitado para producción. UAT Prep quedó actualizado y se creó PIA-CMT-003C1. No hubo escrituras productivas ni pruebas/builds/lint locales de aplicación. Meta total **PARTIALLY DELIVERED**.
+
+| Orden | Compromiso | Estado vigente | Evidencia / siguiente gate |
+|---|---|---|---|
+| 1 | CMT-001 — baseline/versiones/PR | **COMPLETO para corte 5.2.10** | Cinco package/lock roots y Browser renderer alineados; PR #255; Web/API SUCCESS. Reconciliar en cada entrega. |
+| 2 | CMT-002 — widget/diagnóstico | **ACTIVE / PARTIAL** | UAT público hasta UAT-140 dentro del alcance declarado; accesibilidad integral, audio/dispositivo y runtime Landing siguen sin aceptación. |
+| 3 | CMT-003 — voz/Cloud/Browser/CRM por tenant | **ACTIVE / PARTIAL / BLOCKED AUTH** | Stack configurable por cliente; CMT-003A/B tienen gates de fuente/UAT pendientes; CMT-003C1 define el remedio de fixture/auth/audit/cleanup. Egress positivo requiere DNS/CRM sandbox sintético exacto y autorizado por tenant. |
+| 4 | CMT-004 — administración/permisos | **ACTIVE / PARTIAL / BLOCKED AUTH** | Selector Web asignado por tenant implementado; RBAC, persistencia y denegaciones cross-tenant requieren usuarios sintéticos normales y limpieza. |
+
+SIGUIENTE PASO: revisar PIA-CMT-003C1 para fijar una identidad sintética con login normal y ciclo auditado reversible; después avanzar CMT-003A/B y aceptación en producción con ese run. No cambiar el control `uat-test-as` de production.
+
+---
+
+## Histórico — candidate 5.2.7 / CMT-002
 
 Repo `tuyoisaza/keledon`; production `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON 5.2.7, PR #247 merged; Railway Web/API SUCCESS. PHDK 2.53.1 coherence 64/64. UAT-130 passes Web copy-status and reviewed Landing source privacy; Landing runtime remains blocked because there is no verified deployment target.
 

@@ -1,3 +1,23 @@
+## Revalidación vigente — 2026-10-17 / KELEDON 5.2.10
+
+Run: `20261014-0007-phdk-auto-completion` · Modo: PHDK Auto · etapa: Preflight / reentrada de contexto.
+
+- Repository: `tuyoisaza/keledon`; current source branch `docs/phdk-5-2-10-cmt003c-prep`; `origin/main` antes de este cambio `357cc5074da94741b4717404f2b588a6daa8755d`.
+- Producto: KELEDON 5.2.10, source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 producto y #256 documentación ya integrados.
+- PHDK instalado 2.53.1. `phdk-standards/scripts/phdk_update.py .` sincronizó desde canonical `main` SHA `94f583635d295ae0f227726718904d952cadb8ab`, 64 mappings. El managed block de `AGENTS.md` ya coincide exactamente con `PHDK_NATIVE_RULES.md`; el permiso local-only del owner está fuera del bloque.
+- `phdk_coherence_check.py .`: PASS, 64/64 manifest mappings (estático). `git diff --check`: PASS. No hay diferencia semántica del vendored estándar tras normalizar saltos de línea; no se creó una actualización de versión inexistente.
+- Railway production read-only status tras PR #256: Web `7724c95e-84e8-4923-8f76-6c0a0151ff49` y API `abb17a83-2de2-470b-86da-3bf3397ca5f9` SUCCESS, 1/1, sin trabajo pendiente ni fallos recientes. El sitio muestra v5.2.10. UAT-140 pasa solo 404 anónimo localizado; no cubre login ni runtime.
+- GitHub repository search: no PRs abiertos antes de iniciar este cambio.
+- Capacidades relevantes: Git/GitHub y Railway read-only disponibles; CUA disponible para scoped UAT. El owner prohíbe pruebas/builds/lint locales de aplicación; esta reentrada ejecutó solo sincronización/documentación y verificaciones PHDK estáticas.
+
+Decisiones activas: cuatro compromisos en orden; cuentas nuevas `user`; roles elevados/empresas solo por superadmin existente; tenant/actor desde BD; secretos write-only; destinos privados solo por allowlist tenant; cada cliente define proveedor de voz/CRM; no reutilizar datos/identidad de clientes para fixtures.
+
+Salida: Preflight completo. CMT-003C permanece BLOCKED; CMT-003C1 define la brecha de ciclo auditado/reversible y requiere revisión de seguridad antes de cambios auth/data. Meta global PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: revisar PIA-CMT-003C1 y confirmar una identidad sintética de login normal controlada por KELEDON, sin cambios de IdP; luego continuar CMT-003A/B con acceptance solo en producción.
+
+---
+
 # PHDK Preflight — current Auto run `20261014-0007-phdk-auto-completion`
 
 Run opened: 2026-10-14 00:07 America/Mexico_City.

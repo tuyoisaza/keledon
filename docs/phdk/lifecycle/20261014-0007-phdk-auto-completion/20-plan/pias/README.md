@@ -2,11 +2,11 @@
 
 ## Estado vigente — KELEDON 5.2.10, PHDK 2.53.1 (2026-10-17)
 
-Baseline remoto `main` `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 integrado; cinco package/lock roots y Browser renderer alineados a 5.2.10; PHDK coherence 64/64. Railway Web/API `SUCCESS`, 1/1. PIA-AUTO-SEO-002 está aceptada para los contratos de rutas/metadata/localización probados anónimamente en producción por UAT-135/136/137/139 y UAT-140; UAT-138 queda como hallazgo parcial histórico, corregido/retestado por UAT-140. CMT-001 se cierra para este corte; CMT-002 permanece parcial; CMT-003/004 siguen activos y no aceptados de forma integral. No se ejecutan suites, builds ni lint locales de aplicación.
+Producto KELEDON 5.2.10 en `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 integrado. El PR documental #256 está en `main` `357cc5074da94741b4717404f2b588a6daa8755d`; cinco package/lock roots y Browser renderer alineados a 5.2.10. PHDK 2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`, coherence 64/64. Railway Web/API posteriores al PR #256 `SUCCESS`, 1/1. PIA-AUTO-SEO-002 está aceptada para los contratos de rutas/metadata/localización probados anónimamente en producción por UAT-135/136/137/139 y UAT-140; UAT-138 queda como hallazgo parcial histórico, corregido/retestado por UAT-140. CMT-001 se cierra para este corte; CMT-002 permanece parcial; CMT-003/004 siguen activos y no aceptados de forma integral. Por instrucción vigente del owner, no se ejecutan pruebas/builds/lint locales de aplicación.
 
 ## Siguiente ruta de trabajo
 
-1. Completar CMT-003C: hacer operativo el provisioning, la expiración y el cleanup mínimos para identidad/device/tenant sintéticos mediante un canal permitido. La autorización existente cubre el fixture mínimo definido en esa PIA; hoy no se ha identificado un canal seguro listo y no se crea ningún usuario privilegiado ni dato productivo.
+1. Completar CMT-003C mediante [PIA-CMT-003C1 — ciclo de vida auditado de fixtures](PIA-CMT-003C1-PROVISIONING-AUDITADO.md). Las pantallas/rutas CRUD normales existen, pero el registro de auditoría de CRUD es asíncrono/no bloqueante, el borrado de empresa es directo, no hay fixture/device lifecycle completo y UAT test-as está desactivado en producción. La autorización actual cubre solo dos tenants, dos usuarios `user`, dos devices y un flow inerte; no se crea ningún superadmin de prueba.
 2. Con CMT-003C aceptada, implementar y aceptar CMT-003A (lease/fencing/idempotencia o reconciliación) y después CMT-003B (enforcement de conexión, DNS/CIDR/redirect por tenant), manteniendo cerrados side effects CRM y egress privado hasta pasar los casos de producción.
 3. Continuar CMT-004 y aceptar selector por tenant, ciclo de cuentas, RBAC y persistencia con identidades sintéticas; después cerrar los gates amplios CMT-002 y las integraciones que cada cliente seleccione.
 
@@ -40,7 +40,7 @@ Este directorio convierte los cuatro compromisos confirmados en paquetes ejecuta
 |---|---|---|---|
 | 1 | [CMT-001 — baseline y entrega](PIA-CMT-001-BASELINE-ENTREGA.md) | Mantener versiones, PHDK, PR y readback de despliegue | Completo para el corte 5.2.10; continuar en cada cambio |
 | 2 | [CMT-002 — widget y diagnóstico](PIA-CMT-002-WIDGET-DIAGNOSTICO.md) | Aceptar widget/diagnóstico y cerrar accesibilidad segura | Activo/parcial; UAT público limitado hasta UAT-140; Landing y RBAC/audio pendientes |
-| 3 | [CMT-003 — voz/Cloud/Browser/CRM](PIA-CMT-003-RUNTIME-POR-TENANT.md) | Contrato adaptable por cliente y destinos privados seguros | Activo; CMT-003A/B listas; CMT-003C provisioning/cleanup es gate previo |
+| 3 | [CMT-003 — voz/Cloud/Browser/CRM](PIA-CMT-003-RUNTIME-POR-TENANT.md) | Contrato adaptable por cliente y destinos privados seguros | Activo; [CMT-003C](PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md) y [CMT-003C1](PIA-CMT-003C1-PROVISIONING-AUDITADO.md) bloquean acceptance auth; CMT-003A/B continúan después |
 | 4 | [CMT-004 — administración y permisos](PIA-CMT-004-ADMIN-PERMISOS.md) + [ADM-IF — asignación de interfaces por tenant](PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md) | Catálogo tenant, selector de equipo, ciclo de cuentas, roles y persistencia | Selector implementado; aceptación autenticada bloqueada por falta de sesión sintética autorizada |
 
 ## Reglas compartidas de ejecución
