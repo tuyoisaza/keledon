@@ -1,8 +1,8 @@
-## 5.1.75 delivered by PR #194; 5.1.76 handoff correction pending
+## 5.1.76 corrective record delivered; whole Auto remains partial
 
-PR #194 squash-merged at remote main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`, delivering 5.1.75. Web typecheck/build, UAT 7/7, focused admin/theme/AI-admin UAT, 53 Team Settings assertions, Web/Landing SEO 1/1 each, focused ESLint and PHDK coherence 61/61 passed. Synthetic APIs only; no screen-reader session, migration, customer integration or deployment was performed.
+PR #195 squash-merged at verified remote main `e3706537a43af58bc97f2b58b0a80b0173342bef`. It restores all 32,810 bytes of the previous Check handoff behind the new candidate 5.1.75 Check entry. PR #194 separately delivered the 5.1.75 source slice. All five app roots and Browser renderer read 5.1.76; PHDK coherence passes 61/61. Whole Auto remains PARTIALLY DELIVERED.
 
-The 5.1.76 correction restores the complete historical `70-check/HANDOFF.md` and retains the 5.1.75 Check recheck. Corrective PR and remote verification are pending. Whole Auto remains PARTIALLY DELIVERED.
+SIGUIENTE PASO: continue remaining database/CRUD, accessibility, native device/audio, customer-specific integration, Cloud parity and deployed SEO/AEO gates.
 
 ---
 ## Candidate 5.1.74 — source delivered; portfolio acceptance remains partial (2026-10-17)

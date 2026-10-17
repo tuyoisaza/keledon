@@ -1,8 +1,8 @@
-## Current PHDK Auto - 5.1.75 delivered; 5.1.76 handoff correction pending; portfolio partial
+## Current PHDK Auto - 5.1.76 correction delivered; four-front goal partial
 
-Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered 5.1.75 at verified remote main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. Team Settings labels/help, keyboard focus, 44px controls, announced outcomes and three-locale copy passed Web typecheck/build, UAT 7/7, 53 focused assertions and ESLint. Candidate 5.1.76 restores historical Check handoff content; PR and remote verification are pending. PHDK 2.51.5 coherence is 61/61. CMT-002 through CMT-004 and whole Auto remain partial. No screen-reader session, database, customer integration or deployment was used.
+Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered 5.1.75 at `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`; PR #195 restored the historical Check handoff at verified main `e3706537a43af58bc97f2b58b0a80b0173342bef`. Remote version is 5.1.76 across all five package/lock roots and Browser renderer; PHDK 2.51.5 coherence is 61/61. The whole four-front goal remains partial. No deployment is claimed.
 
-SIGUIENTE PASO: deliver the 5.1.76 handoff correction by PR and verify remote main; keep the four-front goal partial.
+SIGUIENTE PASO: continue the remaining approved four-front Auto gates; do not mark completion while external and portfolio acceptance remains open.
 
 ---
 ## Last delivered source audit — 5.1.74; portfolio partial
