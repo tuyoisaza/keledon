@@ -1,6 +1,6 @@
 # KELEDON Administration Architecture
 
-**Audit baseline:** PHDK 2.53.1; candidate KELEDON 5.2.1; branch `feature/tenant-interface-selector-5.2.0` (current audited source basis `ef6fe6db`; subsequent branch commits are documentation only). This is a source architecture record; it is not runtime or persisted-data acceptance.
+**Audit baseline:** PHDK 2.53.1; candidate KELEDON 5.2.1; branch `feature/tenant-interface-selector-5.2.0` (product basis `ef6fe6db`; the active continuation adds managed-interface secret-at-rest encryption in API and Cloud). This is a source architecture record; it is not runtime or persisted-data acceptance.
 
 ## Tenancy and authority
 
@@ -31,6 +31,8 @@ The owner-approved invariants are: new email/Google registrations default to `us
 Company ownership and current user/team membership are the primary tenant boundary. Direct identifiers, client-provided `companyId`, stale JWT role claims and hidden UI controls are not authority. Private CRM targets require both syntactic URL validation and a matching tenant allowlist entry. Audit/telemetry must exclude credential values and customer payloads unless specifically sanitized.
 
 The 5.2.1 migration adds nullable `ManagedInterface.companyId` with an FK/index and deliberately does not backfill legacy interfaces. Existing ownerless rows must remain unavailable to tenant selectors until their Company is established through an authoritative process. No inventory, ownership assignment, data migration, production login or production write was performed.
+
+`ManagedInterface.credentials` is write-only through ordinary CRUD projections. API and Cloud now encrypt new values and replacements with an AES-256-GCM envelope using a domain-separated derivation from `KELEDON_VENDOR_KEY`; the credential-write path fails closed when the key is absent or shorter than 32 characters. The source search found no in-repository runtime consumer for this field. Existing rows remain in their current format; no bulk conversion or production key inspection occurred. The envelope implementation and API/Cloud parity still require candidate-site acceptance, and key rotation/recovery remains an operational design item.
 
 The repository also retains `DatabasePersistenceService` and `DatabaseBackupStore`, which write JSON snapshots of an in-memory Map. The active Nest module graph has no registration/callsite for this service in the inspected source, so it is not evidence of a PostgreSQL backup or recovery capability and must not be surfaced as production backup status.
 

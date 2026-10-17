@@ -11,6 +11,7 @@ import { CrudAuditService } from './crud-audit.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudSessionDataService } from './crud-session-data.service';
+import { encryptManagedInterfaceSecretAtRest } from '../security/vendor-secret-crypto';
 
 @Injectable()
 export class CrudService {
@@ -239,9 +240,21 @@ export class CrudService {
     status?: string;
     credentials?: string;
   }) {
-    const { credentials, ...record } =
-      await this.prisma.managedInterface.create({ data });
-    return { ...record, hasCredentials: !!credentials };
+    const { credentials, ...record } = data;
+    const storedCredentials =
+      credentials === undefined
+        ? undefined
+        : encryptManagedInterfaceSecretAtRest(credentials);
+    const created = await this.prisma.managedInterface.create({
+      data: {
+        ...record,
+        ...(storedCredentials === undefined
+          ? {}
+          : { credentials: storedCredentials }),
+      },
+    });
+    const { credentials: storedValue, ...safeRecord } = created;
+    return { ...safeRecord, hasCredentials: !!storedValue };
   }
 
   async updateManagedInterface(
@@ -254,9 +267,22 @@ export class CrudService {
       credentials?: string;
     },
   ) {
-    const { credentials, ...record } =
-      await this.prisma.managedInterface.update({ where: { id }, data });
-    return { ...record, hasCredentials: !!credentials };
+    const { credentials, ...record } = data;
+    const storedCredentials =
+      credentials === undefined
+        ? undefined
+        : encryptManagedInterfaceSecretAtRest(credentials);
+    const updated = await this.prisma.managedInterface.update({
+      where: { id },
+      data: {
+        ...record,
+        ...(storedCredentials === undefined
+          ? {}
+          : { credentials: storedCredentials }),
+      },
+    });
+    const { credentials: storedValue, ...safeRecord } = updated;
+    return { ...safeRecord, hasCredentials: !!storedValue };
   }
 
   async deleteManagedInterface(id: string) {

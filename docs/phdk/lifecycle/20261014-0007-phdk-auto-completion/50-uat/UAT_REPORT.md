@@ -10,6 +10,10 @@ Evidence: `docs/phdk/evidence/uat-local-web.json`; `docs/phdk/evidence/uat-landi
 
 Conclusion: **ACCEPTANCE INCOMPLETE** for whole Auto; the CMT-002 widget geometry case passes for the tested Web/Landing scope.
 
+## Candidate 5.2.1 — ADM-004 ManagedInterface credential storage re-entry
+
+API and Cloud source now encrypt newly written `ManagedInterface.credentials` with AES-256-GCM and return presence metadata only. The key is domain-derived from `KELEDON_VENDOR_KEY`; writes fail closed if it is missing or shorter than 32 characters. This is **source evidence only**; no local application tests were run, no production records or keys were accessed, and the deployed site remains 5.1.85. Legacy stored values are not migrated by this change. UAT-101 is **BLOCKED / NOT RUN** until exact candidate 5.2.1 is deployed and a dedicated synthetic production fixture plus redacted persistence evidence path is available. Do not interpret PHDK coherence as runtime or cryptographic acceptance.
+
 ---
 
 ## Candidate 5.1.73 — UAT-086/087 superadmin Web CRUD PASS

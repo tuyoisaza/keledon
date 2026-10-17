@@ -1,3 +1,9 @@
+## Candidate 5.2.1 — UAT-101 ManagedInterface secret storage (production, pending)
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-101 | ADM-004 / synthetic superadmin and tenant fixture | Deploy and identify the exact 5.2.1 candidate first. Use only a dedicated synthetic Company/Team and synthetic credential that cannot authenticate to any customer/provider. Verify configured-key presence/length without displaying it. Through the supported UI, create an interface, replace its secret, clear it, and read/list/assign it. Verify the synthetic row's stored value is the versioned encrypted envelope without returning plaintext; inspect redacted API/UI responses and logs. Clean up the fixture and verify removal. | New/replaced values persist as authenticated ciphertext; missing/short key fails closed; omitted secret preserves the value; clear removes it; ordinary responses expose only `hasCredentials`; no secret appears in UI, API response, diagnostics or logs; API and Cloud behave consistently. | Production candidate site only; bounded synthetic fixture and approved redacted persistence evidence; no local application tests | **BLOCKED / NOT RUN.** Current production is v5.1.85; PR #210 candidate 5.2.1 is not deployed. No synthetic fixture or DB operation was performed. Required evidence: candidate deployment SHA/version, key-readiness boolean only, encrypted-envelope check for the synthetic row, redacted response/log evidence and cleanup confirmation. |
+
 ## Candidate 5.1.77 — UAT-067 widget geometry revalidation
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
