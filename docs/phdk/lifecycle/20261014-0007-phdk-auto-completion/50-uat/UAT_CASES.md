@@ -465,3 +465,9 @@ Authenticated ADM-IF-01..06 remain BLOCKED because no authorized synthetic produ
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
 | UAT-123 | CMT-002 / anonymous public visitor | Open the current production homepage in a new browser tab and inspect only its accessibility tree. Do not activate controls or change persistent preferences. | Current version, truthful demo disclosure, named controls, main landmark, headings and public navigation are exposed to accessibility APIs. | Production browser read-only tree | **PASS (tree presence only):** v5.2.4, explicit no-live-sessions disclaimer, named diagnostics/cache/theme/language controls, main landmark, headings and links are exposed. Does not prove focus, screen-reader speech or WCAG conformance. Evidence: `evidence/uat-123-production-public-accessibility-tree-2026-10-17.json`. |
+
+## Current production — UAT-124 header keyboard and focus sample
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-124 | CMT-002 / anonymous public visitor | On production `/` v5.2.4 in a fresh anonymous tab at pt/dark/1280×720, traverse header controls with Tab, continue to the hero CTA, and Shift+Tab back. Observe focus without activating controls. | Stable order, visible focus on each sampled control, no keyboard trap between header and main content. | Production browser keyboard/visual observation | **PASS (limited keyboard/focus sample):** all 11 sampled focus stops expose `:focus-visible`; diagnostic/cache buttons and theme/language selectors have a 2px teal ring, links show a visible system ring, and Shift+Tab returns from the hero CTA. No screen-reader/WCAG-wide claim. Evidence: `evidence/uat-124-production-keyboard-focus-2026-10-17.json`. |

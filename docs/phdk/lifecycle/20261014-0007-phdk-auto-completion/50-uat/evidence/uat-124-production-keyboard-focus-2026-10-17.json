@@ -1,0 +1,42 @@
+{
+  "case": "UAT-124",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:15:59Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-124=20261017",
+  "deployedVersion": "5.2.4",
+  "mainCommitAtObservation": "d1a3a112acdfb466be1f8a387c652bf2401e3740",
+  "webDeploymentId": "92520613-af71-472f-84c9-18327db0996d",
+  "apiDeploymentId": "a0fa4d23-063a-49ae-84ee-cb8b630857da",
+  "deploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "viewportCssPx": {"width": 1280, "height": 720},
+  "locale": "pt",
+  "actions": [
+    "Opened a new anonymous production browser tab at the homepage.",
+    "Used Tab to traverse the header controls through Create account and onward to the hero CTA.",
+    "Used Shift+Tab from the hero CTA to confirm return to Create account.",
+    "Observed computed focus styles and the visible focus ring in browser screenshots; no control was activated."
+  ],
+  "sequence": [
+    {"control":"KELEDON home link","focusVisible":true,"computedOutline":"auto 0.666667px","visual":"visible system ring"},
+    {"control":"Copy diagnostics","focusVisible":true,"computedOutline":"solid 2px rgb(20,184,165)","targetCssPx":{"width":44,"height":44}},
+    {"control":"Clear application cache","focusVisible":true,"computedOutline":"solid 2px rgb(20,184,165)","targetCssPx":{"width":44,"height":44}},
+    {"control":"Resources","focusVisible":true,"computedOutline":"auto 0.666667px","visual":"visible gray ring in screenshot"},
+    {"control":"Architecture","focusVisible":true,"computedOutline":"auto 0.666667px"},
+    {"control":"Use cases","focusVisible":true,"computedOutline":"auto 0.666667px"},
+    {"control":"Theme","focusVisible":true,"computedOutline":"solid 2px rgb(20,184,165)"},
+    {"control":"Language","focusVisible":true,"computedOutline":"solid 2px rgb(20,184,165)"},
+    {"control":"Sign in","focusVisible":true,"computedOutline":"auto 0.666667px"},
+    {"control":"Create account","focusVisible":true,"computedOutline":"auto 0.666667px","visual":"high-contrast system ring in screenshot"},
+    {"control":"Open KELEDON hero CTA","focusVisible":true,"computedOutline":"auto 2.66667px"},
+    {"control":"Create account via Shift+Tab","focusVisible":true}
+  ],
+  "result": "PASS_LIMITED_HEADER_KEYBOARD_AND_FOCUS",
+  "limitations": [
+    "One public homepage, Portuguese locale, dark theme, 1280x720 only; no full-route, theme, locale or viewport matrix.",
+    "No screen-reader speech, WCAG 2.2 focus appearance conformance, zoom, contrast audit, authenticated diagnostic RBAC or audio/device behavior was tested.",
+    "The sub-1px computed UA outline was not classified as a failure because the captured screenshot showed the system focus ring visibly; other browsers/OS/high-contrast modes still need coverage.",
+    "No login, account creation, preference change, clipboard read/write, cache clearing, API mutation, customer data, paid call, external submission, local application test, or local application build was used."
+  ]
+}

@@ -591,3 +591,7 @@ Fresh HTTPS GETs to production `/` and `/login` both returned 200 and referenced
 ## UAT-123 — public accessibility-tree presence (2026-10-17 20:10 UTC)
 
 An anonymous production homepage tab exposes the current `v5.2.4` version, truthful illustrative-demo disclaimer, named diagnostic/cache/theme/language controls, a main landmark, headings and public navigation links. Scope is accessibility-tree presence only; no controls were activated, no persistent preferences changed, and no focus, speech, contrast or complete route coverage is claimed. Evidence: `evidence/uat-123-production-public-accessibility-tree-2026-10-17.json`.
+
+## UAT-124 — header keyboard/focus sample (2026-10-17 20:15 UTC)
+
+Production `/` v5.2.4 in pt/dark/1280×720 passed a limited Tab sequence through the logo, diagnostic/cache buttons, navigation, theme/language selectors, sign-in and create-account links, then into the hero CTA. Shift+Tab returned from the hero CTA to Create account. Each sampled target matched `:focus-visible`; screenshots showed visible system rings on links and solid 2px teal outlines on the diagnostic/cache and theme/language controls. No controls were activated. This is not screen-reader, cross-browser, WCAG 2.2 focus-appearance, contrast, zoom or full-route acceptance. Evidence: `evidence/uat-124-production-keyboard-focus-2026-10-17.json`.
