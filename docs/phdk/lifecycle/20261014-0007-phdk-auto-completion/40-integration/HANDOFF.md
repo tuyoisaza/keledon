@@ -1,3 +1,32 @@
+# PHDK Lifecycle Handoff — Integration Review v5.2.7 candidate
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: `40-integration`
+Status: `COMPLETED FOR SOURCE CANDIDATE; PRODUCTION UAT AND WHOLE AUTO OPEN`
+Candidate: KELEDON 5.2.7 on `fix/phdk-5-2-7-landing-diagnostic-host-redaction`, based on verified main `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`
+Date: 2026-10-17
+
+## Goal and evidence
+
+Integrated the CMT-002 Landing diagnostics privacy correction with package versions, changelog, source regression contract, PIA and UAT-130. Review found no API/schema, tenant policy, route or customer-integration contract changes. PHDK coherence passed 64/64; static version/source checks and `git diff --check` passed. No app tests/builds/lint were run locally under the owner's instruction.
+
+## Deliverables
+
+- `INTEGRATION_REPORT-5.2.7.md`
+- Candidate source/test/version files and `CHANGELOG.md`
+- CMT-002 PIA and UAT-130 readiness/case
+- Pre-candidate 40-stage evidence snapshot: `revalidations/candidate-5.2.7-20261017/`
+
+## Exit gate and risks
+
+Source candidate is ready for normal versioned PR delivery. Runtime payload is not accepted by reading clipboard contents. Following verified merge and Railway deployment, UAT-130 may activate the anonymous public copy action solely to observe accessible success/failure feedback; clipboard content must never be inspected or attached. Authenticated diagnostic, full accessibility and audio cases remain open. CMT-003/004 fixture-dependent UAT remains blocked as documented. Overall Auto is PARTIALLY DELIVERED.
+
+## Next stage
+
+UAT Prep validates this handoff and the new UAT-130 boundary. Delivery/merge/deploy must complete before browser access for this candidate; UAT readiness and actual tool access are recorded independently in `50-uat/UAT_ACCESS_REPORT.md`.
+
+---
+
 # PHDK Lifecycle Handoff — Integration Review
 
 Run ID: `20261014-0007-phdk-auto-completion`

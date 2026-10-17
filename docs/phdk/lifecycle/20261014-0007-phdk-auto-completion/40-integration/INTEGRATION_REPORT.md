@@ -1,3 +1,7 @@
+# Current Integration Review — candidate KELEDON 5.2.7 (2026-10-17)
+
+Source review found and corrected a privacy regression in Landing diagnostics: API and OAuth hostnames are now withheld exactly as in Web. Five package/lock pairs and Browser renderer align at 5.2.7; PHDK coherence is 64/64; `git diff --check` and static version/source comparison pass. No local application test/build/lint was run per owner instruction. Full review and limits: `INTEGRATION_REPORT-5.2.7.md`. Candidate is ready for normal PR delivery; UAT-130 awaits production deploy and will observe copy status only, never clipboard contents. CMT-002 and the overall Auto remain partial.
+
 # Current Integration Review — candidate 5.1.53 (2026-10-14)
 
 ## Public initial-document source slice

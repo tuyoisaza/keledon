@@ -1,5 +1,20 @@
 # PHDK Auto — informe de progreso, 2026-10-17
 
+## Reentrada vigente — candidate 5.2.7 / CMT-002 privacy regression
+
+Remote `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; PR #246 docs-only; production source 5.2.6 `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Current 5.2.7 candidate fixes Landing's copied API/OAuth hostname disclosure, aligns five package/lock roots and Browser renderer, and adds UAT-130 plus a PIA update. PHDK 2.53.1 coherence 64/64. The official updater's `UPDATED` result was only CRLF/LF checkout drift; normalized semantic diff is empty.
+
+- CMT-001: baseline is current and complete for the cut.
+- CMT-002: public UAT-112–129 is scoped/partial. Source review found and fixed the Landing hostname leak; the source regression is recorded but not run locally, and UAT-130 waits on production deployment. Broad a11y and native/audio remain open.
+- CMT-003: lease claim remains non-atomic/permanent; Browser allows origin but does not pin resolved IP at the socket. CMT-003A/B need source implementation; production runtime acceptance needs the independent CMT-003C fixture/sandbox gate.
+- CMT-004: tenant-scoped interface selector and least-privilege policy remain in source; authenticated persistence/cross-tenant proof needs permitted synthetic fixtures.
+
+The active acceptance target is the anonymous public production page after delivery of the 5.2.7 candidate. No local app test/build or customer resource was touched.
+
+SIGUIENTE PASO: complete candidate Integration Review, then UAT Prep/UAT-130 on production; preserve all role-dependent cases as BLOCKED.
+
+---
+
 Baseline producto: PHDK **2.53.1**, KELEDON **5.2.6**, desplegado source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #245 documental fusionado y remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`; PR #241 y #240 integraron el source del producto. Coherencia estática PHDK: **64/64**; cinco package/lock roots y renderer alineados. Railway Web/API `SUCCESS` para el SHA actual. Estado: **PARCIALMENTE ENTREGADO** (CMT-001 completo para el corte, otros tres activos/parciales).
 
 ## Revalidación de continuidad — CMT-002 UAT-127/128/129 y CMT-003C / 5.2.6 (2026-10-17)

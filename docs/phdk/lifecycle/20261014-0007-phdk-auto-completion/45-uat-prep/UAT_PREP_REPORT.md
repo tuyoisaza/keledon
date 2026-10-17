@@ -1,5 +1,11 @@
 ## Revalidación vigente CMT-003C — 5.2.6 (2026-10-17)
 
+### UAT-130 readiness — candidate v5.2.7 / CMT-002
+
+Source review found the Landing diagnostics builder emitted the configured API and OAuth hostnames. The candidate now withholds them on both public surfaces. After PR merge and observed production deployment, the permitted acceptance is an anonymous public copy action's visible accessible success/failure status only; do not read/collect clipboard contents. No credentials, private CRM/network destination, customer data, local app test, or build is part of this case. Browser access proceeds only after the exact deployed candidate and active production UAT readiness are recorded in `50-uat/UAT_ACCESS_REPORT.md`.
+
+Remote `main` ahora es `7969fc87d3d5dc9f65a9a198d0f7a504577c7252` tras PR #246 (documentación únicamente); Railway Web/API #246 `SUCCESS`, source de producto sin cambio.
+
 El reporte 5.2.4 que sigue se conserva como historial de Prep previo.
 
 **Estado: BLOCKED** para UAT autenticada del runtime; **PARTIAL** para preparación. Producto 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`; PR #244/#245 son solo documentación. Railway Web `b3dd466a-5c1a-40a9-ac99-c032cfaa6d32` y API `430a4bd6-4d9f-4b32-89c9-10501c617df1` SUCCESS para deploy documental #245; versión de producto no cambió.
