@@ -1,8 +1,8 @@
 ## Candidate 5.1.84 — UAT-094 dashboard controls reflect implemented runtime
 
-PASS_SCOPED on branch `fix/phdk-auto-5-1-84-agent-controls`, based on main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Web and Landing no longer present Start/Stop Agent actions or an empty realtime toggle with no backend implementation; both hooks no longer emit unsupported dashboard agent-control events. Web and Landing build/typecheck/lint pass; Web diagnostics 19/19; Browser build/lint and focused version/security tests 16/16; package/lock/renderer versions align at 5.1.84; PHDK coherence 63/63. No live deployment or customer runtime was used. Overall portfolio tally: 92 PASS / 0 BLOCKED / 1 MANUAL; acceptance remains incomplete. CRUD: 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS.
+PASS_SCOPED on exact candidate branch `fix/phdk-auto-5-1-84-agent-controls`; PR [#206](https://github.com/tuyoisaza/keledon/pull/206) squash-merged product source `631b12132570631e2ef1c20ff08029423b27fb6b` at remote `main` `eb5f5b47b7cd4a6de6354486603df4233341cab4`. Web and Landing no longer present Start/Stop Agent actions or an empty realtime toggle with no backend implementation; both hooks no longer emit unsupported dashboard agent-control events. Web and Landing build/typecheck/lint pass; API/Cloud builds and regression suites 43/43 and 20/20; Web diagnostics 19/19; Browser build/lint and focused version/security tests 16/16; five package/lock roots and Browser renderer align at 5.1.84; PHDK coherence 63/63. Railway Web deployment `65ffff07-d497-4ff1-b77f-1ba9d7631857` and API deployment `89541838-9f48-40b2-b2d7-8db3e0489c5a` report SUCCESS. API logs confirm PostgreSQL connection and successful Nest startup; no LLM provider is configured, so the process reports degraded mode. No live HTTP/UI probe or customer runtime was used. Overall portfolio tally: 92 PASS / 0 BLOCKED / 1 MANUAL; acceptance remains incomplete. CRUD: 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS.
 
-SIGUIENTE PASO: complete normal PR delivery and verify remote `main`.
+SIGUIENTE PASO: continue remaining ordered acceptance gates from verified `main`.
 
 ---
 

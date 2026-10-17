@@ -1,0 +1,65 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "source_pr": 206,
+  "source_branch": "fix/phdk-auto-5-1-84-agent-controls",
+  "source_commit": "631b12132570631e2ef1c20ff08029423b27fb6b",
+  "merge_commit": "eb5f5b47b7cd4a6de6354486603df4233341cab4",
+  "target_branch": "main",
+  "target_tree": "59d95ef1f4506f91e709c2fab495f41c1cacf982",
+  "candidate_tree_matches_target": true,
+  "version": "5.1.84",
+  "package_roots": [
+    "services/api",
+    "services/web",
+    "cloud",
+    "landing",
+    "browser"
+  ],
+  "renderer_version": "5.1.84",
+  "phdk": {
+    "version": "2.52.2",
+    "coherence": "PASS",
+    "mappings": 63
+  },
+  "checks": {
+    "api_build": "PASS",
+    "api_regressions": "43/43",
+    "cloud_build": "PASS",
+    "cloud_regressions": "20/20",
+    "web_build_typecheck_lint": "PASS",
+    "web_diagnostics": "19/19",
+    "landing_build_typecheck_lint": "PASS",
+    "browser_build_lint": "PASS",
+    "browser_focused_tests": "16/16",
+    "diff_check": "PASS"
+  },
+  "railway": {
+    "project": "KELEDON",
+    "environment": "production",
+    "web": {
+      "deployment_id": "65ffff07-d497-4ff1-b77f-1ba9d7631857",
+      "status": "SUCCESS"
+    },
+    "api": {
+      "deployment_id": "89541838-9f48-40b2-b2d7-8db3e0489c5a",
+      "status": "SUCCESS",
+      "database_connected": true,
+      "application_started": true,
+      "llm_provider_configured": false,
+      "runtime_mode": "degraded"
+    },
+    "http_probe": false
+  },
+  "whole_auto": {
+    "status": "PARTIALLY DELIVERED",
+    "commitments_done": 0,
+    "commitments_total": 4,
+    "uat_pass": 92,
+    "uat_blocked": 0,
+    "uat_manual": 1,
+    "crud_pass": 29,
+    "crud_blocked": 396,
+    "crud_not_applicable": 132,
+    "crud_decision_needed": 3
+  }
+}

@@ -1,10 +1,10 @@
-## Current ledger status — 5.1.84 candidate / UAT-094
+## Current ledger status — 5.1.84 delivered by PR #206 / UAT-094
 
-Branch `fix/phdk-auto-5-1-84-agent-controls` is based on verified local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Candidate 5.1.84 removes unsupported Start/Stop Agent controls and an empty real-time toggle from both Web dashboards; corresponding hooks no longer emit unhandled control events. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing production builds, typechecks and lint pass; Web diagnostics passes 19/19; Browser build, zero-warning lint and focused version/security tests are pending final readback. PHDK coherence passes 63/63. No PR or deployment is claimed.
+PR [#206](https://github.com/tuyoisaza/keledon/pull/206) squash-merged product source `631b12132570631e2ef1c20ff08029423b27fb6b` at remote `main` `eb5f5b47b7cd4a6de6354486603df4233341cab4`, tree `59d95ef1f4506f91e709c2fab495f41c1cacf982`; the tested candidate tree matches. Five app package/lock roots and the Browser renderer are 5.1.84. API/Cloud builds and regressions pass 43/43 and 20/20; Web/Landing builds, typechecks and lint pass; diagnostics 19/19; Browser build/lint and focused version/security tests pass 16/16; PHDK coherence 63/63. UAT-094 passes. Railway Web `65ffff07-d497-4ff1-b77f-1ba9d7631857` and API `89541838-9f48-40b2-b2d7-8db3e0489c5a` now report SUCCESS. Logs show Nginx workers started; API logs confirm PostgreSQL connection and successful Nest startup, with no LLM provider configured (degraded mode). No live HTTP/UI or customer integration probe was made.
 
-The four owner-confirmed commitments remain active: 0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled. UAT portfolio remains 91 PASS, 0 BLOCKED, 1 MANUAL until this candidate's source evidence is delivered; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Database/restart, native device/audio, broad accessibility/localization, deployed SEO/AEO, remaining CRUD and customer-selected integration acceptance remain open.
+The four owner-confirmed commitments remain active: 0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled. UAT portfolio: 92 PASS, 0 BLOCKED, 1 MANUAL; CRUD: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Database/restart, native device/audio, broad accessibility/localization, deployed SEO/AEO, remaining CRUD and customer-selected integration acceptance remain open.
 
-SIGUIENTE PASO: finish Browser and exact-candidate checks, then deliver 5.1.84 through the normal PR path and verify remote `main`.
+SIGUIENTE PASO: continue the remaining ordered acceptance fronts from verified `main`.
 
 ---
 

@@ -1,10 +1,10 @@
-# Current PHDK Auto — 5.1.84 widget control repair candidate; portfolio partial
+# Current PHDK Auto — 5.1.84 dashboard control repair delivered; portfolio partial
 
-Current run: `20261014-0007-phdk-auto-completion`; candidate branch `fix/phdk-auto-5-1-84-agent-controls`, based on verified local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Candidate 5.1.84 removes unsupported agent start/stop commands and an empty realtime toggle from Web and Landing dashboards. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing build/typecheck/lint pass; Web diagnostics 19/19 and PHDK coherence 63/63 pass. Browser exact checks and PR delivery are in progress.
+Current run: `20261014-0007-phdk-auto-completion`; PR [#206](https://github.com/tuyoisaza/keledon/pull/206) delivered candidate source `631b12132570631e2ef1c20ff08029423b27fb6b` to remote main `eb5f5b47b7cd4a6de6354486603df4233341cab4`, tree `59d95ef1f4506f91e709c2fab495f41c1cacf982`, matching the tested candidate tree. Candidate 5.1.84 removes unsupported agent start/stop commands and an empty realtime toggle from Web and Landing dashboards. Five package/lock roots and Browser renderer align at 5.1.84. Web/Landing build/typecheck/lint, API/Cloud build/regressions 43/43 and 20/20, Web diagnostics 19/19, Browser build/lint/focused tests 16/16, and PHDK coherence 63/63 pass. Railway Web `65ffff07-d497-4ff1-b77f-1ba9d7631857` and API `89541838-9f48-40b2-b2d7-8db3e0489c5a` report SUCCESS. Logs confirm Nginx workers started and API/Nest connected to PostgreSQL; API reports no LLM provider configured and is running degraded. No public request was made.
 
-Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments DONE; UAT portfolio 91 PASS / 0 BLOCKED / 1 MANUAL before this candidate is included; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Database/restart, CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected provider/CRM acceptance remain open.
+Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments DONE; UAT portfolio 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Database/restart, CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected provider/CRM acceptance remain open.
 
-SIGUIENTE PASO: complete Browser checks, record UAT-094 and the Check handoff, then deliver the candidate through the normal PR flow and verify remote `main`.
+SIGUIENTE PASO: continue the remaining ordered acceptance fronts from verified `main`.
 
 ---
 
