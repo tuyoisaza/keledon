@@ -1,4 +1,16 @@
-## Current completion audit — candidate 5.2.9 — NOT COMPLETE
+## Current completion audit — KELEDON 5.2.10 production-scoped delivery — Auto remains partial
+
+Run `20261014-0007-phdk-auto-completion`; PR #255 merged as main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; product v5.2.10; PHDK v2.53.1, coherence 64/64.
+
+**State: PARTIALLY DELIVERED.** PIA-AUTO-SEO-002's explicit public route/metadata contract is accepted by anonymous production UAT-135/136/137/139 plus the UAT-140 localization follow-up; UAT-138 remains recorded as the historical partial result that exposed the language gap. Railway Web `15f47990-5368-4462-aeba-0d508c388262` and API `1b391751-bfc4-4d88-8131-ae239a3c5a07` both report SUCCESS, 1/1. No local application tests/builds/lint were run. This slice does not accept CMT-002 broadly or CMT-003/004; their synthetic fixture/cleanup, authenticated persistence, tenant-negative, client-sandbox, egress, idempotency, accessibility/audio and integration gates remain open. Whole Auto remains **PARTIALLY DELIVERED**, and the completion gate is not run.
+
+Evidence: [UAT-140 production record](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-140-production-localized-404-2026-10-17.json) and [5.2.10 delivery report](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/DELIVERY_REPORT-5.2.10.md).
+
+SIGUIENTE PASO: establish the approved synthetic identity/device provisioning and cleanup path for CMT-003C; keep Browser private egress and CRM side effects disabled until their tenant-specific production gates pass.
+
+---
+
+## Historical completion audit — candidate 5.2.9 — NOT COMPLETE
 
 Run: `20261014-0007-phdk-auto-completion` · Base remote `main`: `9aa0d452684d4bcf1b00bdb3321649ae4675877a` · Candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` · KELEDON 5.2.9 · PHDK 2.53.1.
 

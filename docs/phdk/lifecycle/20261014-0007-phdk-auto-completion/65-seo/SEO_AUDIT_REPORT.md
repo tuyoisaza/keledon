@@ -1,3 +1,9 @@
+## Candidate 5.2.10 — production route acceptance closed (2026-10-17)
+
+PR #255 merged at `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; Web/API deployments `15f47990-5368-4462-aeba-0d508c388262` / `1b391751-bfc4-4d88-8131-ae239a3c5a07` are SUCCESS. UAT-135/136/137/139 and follow-up UAT-140 confirm root index/follow/canonical, private app route noindex/no-canonical, a real unknown-route 404 with noindex/no canonical/no redirect, and Portuguese 404 title/copy. `/robots.txt` and `/sitemap.xml` remain available with only `/` in the sitemap. PIA-AUTO-SEO-002 is accepted for these explicit route/metadata contracts. Evidence: `../50-uat/evidence/uat-135-139-production-routes-2026-10-17.json` and `../50-uat/evidence/uat-140-production-localized-404-2026-10-17.json`.
+
+This does not measure crawler/indexation, search ranking, TLS redirect chains, CWV field data or the standalone `landing/` runtime; these remain out of this PIA's production acceptance.
+
 ## Candidate 5.2.9 — production route metadata revalidation (2026-10-17)
 
 PR #254 merged as `1a7216dfd5431c712b3968bce93099b2196da93e`; Railway Web/API deployments `8c7ab848-a86c-4ba2-bb67-641512055856` / `554fa13f-65a6-44f8-a71c-8ed58691db75` are SUCCESS. Anonymous production responses show: `/` 200 index/follow with the root canonical; `/login` and the valid `/sessions/phdk-uat-137` deep link 200 noindex/no-canonical; an unknown path 404 noindex/no-canonical without redirect; `/robots.txt` and `/sitemap.xml` 200 with only `/` listed. The private SPA metadata and real HTTP 404 portion of PIA-AUTO-SEO-002 passes. UAT-138 found the static 404 page was English while Portuguese was saved; patch 5.2.10 addresses that language issue and UAT-140 is pending. No crawler/indexing/ranking/Search Console result was observed. Evidence: `../50-uat/evidence/uat-135-139-production-routes-2026-10-17.json`.

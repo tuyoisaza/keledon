@@ -1,6 +1,6 @@
 # PIA CMT-004 — administración y permisos por tenant
 
-Estado: ACTIVE / PARTIAL · Prioridad: 4 · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, Railway Web/API SUCCESS; PR #247 no cambió RBAC, modelo de datos ni flujos administrativos. Decisión de tenancy: multi-tenant aprobada.
+Estado: ACTIVE / PARTIAL · Prioridad: 4 · Baseline productivo KELEDON 5.2.10 en main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, Railway Web/API SUCCESS; los PR #253–255 no cambiaron RBAC, modelo de datos ni flujos administrativos. Decisiones confirmadas: cuenta nueva=user; solo superadmin existente eleva roles/asigna empresas; admin/coordinator quedan confinados a su empresa; actor/tenant se derivan de BD; secretos son write-only. Decisión de tenancy: multi-tenant aprobada.
 
 ## Política autorizada
 

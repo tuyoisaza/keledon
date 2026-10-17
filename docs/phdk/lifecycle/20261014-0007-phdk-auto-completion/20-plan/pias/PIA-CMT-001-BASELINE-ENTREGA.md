@@ -1,6 +1,10 @@
 # PIA CMT-001 — baseline, versiones y entrega
 
-Estado: COMPLETED FOR THE 5.2.3 CUT · Prioridad: 1 · Owner: mantenimiento KELEDON/PHDK.
+Estado: COMPLETED FOR THE 5.2.10 CUT · Prioridad: 1 · Owner: mantenimiento KELEDON/PHDK.
+
+## Revalidación más reciente — 5.2.10
+
+PR #255 merged as main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; five package/lock roots and Browser renderer align at 5.2.10; PHDK v2.53.1 coherence passes 64/64. Railway Web/API deployments `15f47990-5368-4462-aeba-0d508c388262` / `1b391751-bfc4-4d88-8131-ae239a3c5a07` are SUCCESS, 1/1. Anonymous production UAT-140 closes the active localized 404 gap. This closes CMT-001 for the 5.2.10 delivery cut only, not the remaining three commitments or whole Auto acceptance.
 
 ## Resultado esperado
 

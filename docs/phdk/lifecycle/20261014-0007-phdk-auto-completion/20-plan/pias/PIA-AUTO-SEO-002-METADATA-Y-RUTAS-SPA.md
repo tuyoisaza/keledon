@@ -1,6 +1,6 @@
 # PIA-AUTO-SEO-002 — metadata privada y rutas SPA inexistentes
 
-Estado: IMPLEMENTACIÓN EN CANDIDATOS 5.2.9–5.2.10 / REACEPTACIÓN PRODUCTIVA DEL 404 PENDIENTE · Prioridad: SEO-02/04/05, AG-02/13 · Run: `20261014-0007-phdk-auto-completion` · Detectado en 5.2.7 y revalidado en producción 5.2.8 (`main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`).
+Estado: ACEPTADA EN PRODUCCIÓN, 5.2.10 (`main` `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, PR #255; UAT-135/136/137/139 PASS y UAT-140 PASS_SCOPED; UAT-138 PARTIAL histórico con gap retestado) · Prioridad: SEO-02/04/05, AG-02/13 · Run: `20261014-0007-phdk-auto-completion` · Detectado en 5.2.7 y revalidado en producción 5.2.8.
 
 ## Hallazgo productivo
 
@@ -14,7 +14,7 @@ Antes de implementar, inventariar las rutas estáticas/dinámicas vigentes de `A
 
 ## Decisión técnica de esta PIA
 
-La revisión de `services/web/src/AppRouter.tsx` encontró 45 declaraciones: la raíz pública, 41 rutas SPA estáticas, dos parámetros dinámicos (`/sessions/:id` y `/management/vector-store/edit-document/:id`) y un comodín. Se mantiene esa fuente de verdad y se añadió una lista equivalente en NGINX: regex opcionales de barra final para las 41 rutas estáticas y patrones acotados para los dos parámetros. El runtime Vite compila dos shells HTML: `index.html` para `/` con index/follow/canonical público y `app.html` para rutas SPA válidas con título Application, noindex/nofollow y sin canonical. NGINX sirve `app.html` internamente solo cuando la URI está en el mapa; archivos estáticos conservan `try_files`; rutas desconocidas reciben status 404 y un documento estático noindex/sin canonical. El comodín React muestra una pantalla No encontrado localizada, como defensa ante navegación interna o divergencia del mapa. La primera UAT de 5.2.9 confirmó los cinco contratos HTTP, pero el documento 404 estático no respetaba el idioma seleccionado; 5.2.10 actualiza esa página en español, inglés o portugués a partir de la preferencia guardada o del idioma del navegador. Cualquier cambio de ruta debe actualizar Router y el mapa en el mismo PR.
+La revisión de `services/web/src/AppRouter.tsx` encontró 45 declaraciones: la raíz pública, 41 rutas SPA estáticas, dos parámetros dinámicos (`/sessions/:id` y `/management/vector-store/edit-document/:id`) y un comodín. Se mantiene esa fuente de verdad y se añadió una lista equivalente en NGINX: regex opcionales de barra final para las 41 rutas estáticas y patrones acotados para los dos parámetros. El runtime Vite compila dos shells HTML: `index.html` para `/` con index/follow/canonical público y `app.html` para rutas SPA válidas con título Application, noindex/nofollow y sin canonical. NGINX sirve `app.html` internamente solo cuando la URI está en el mapa; archivos estáticos conservan `try_files`; rutas desconocidas reciben status 404 y un documento estático noindex/sin canonical. El comodín React muestra una pantalla No encontrado localizada, como defensa ante navegación interna o divergencia del mapa. La primera UAT de 5.2.9 confirmó los contratos HTTP pero encontró texto estático en inglés. 5.2.10 localiza título, encabezado, descripción y enlace en es/en/pt a partir de la preferencia guardada, luego del idioma compatible del navegador y finalmente en inglés; también actualiza `<html lang>`. Cualquier cambio de ruta debe actualizar Router y el mapa en el mismo PR.
 
 ## Aceptación exclusivamente en producción
 
@@ -25,6 +25,12 @@ La revisión de `services/web/src/AppRouter.tsx` encontró 45 declaraciones: la 
 - La UI del 404 refleja el idioma guardado de KELEDON o, si no existe, un idioma compatible del navegador.
 - `/robots.txt` y `/sitemap.xml` continúan disponibles, y solo `/` permanece en sitemap.
 - Probar fuente únicamente con revisión estática/`git diff --check`; no ejecutar suites o builds de aplicación localmente. La aceptación HTTP/navegador se hace en el sitio desplegado.
+
+## Aceptación y cierre
+
+UAT-135–139 pasó el contrato HTTP/metadata en 5.2.9; UAT-138 detectó la localización omitida. UAT-140 pasó con Web/API Railway SUCCESS (`15f47990-5368-4462-aeba-0d508c388262` / `1b391751-bfc4-4d88-8131-ae239a3c5a07`) sobre main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`: GET anónimo devolvió 404, `noindex, nofollow`, sin canonical; `/404.js` respondió 200 bajo CSP same-origin; con portugués seleccionado en el control visible, la página conservó la ruta y presentó título, encabezado, descripción y enlace localizados. La implementación asigna `document.documentElement.lang='pt'` antes de actualizar el contenido; la interfaz de accesibilidad disponible no expone el atributo directamente. Evidencia: `../50-uat/evidence/uat-140-production-localized-404-2026-10-17.json`.
+
+Resultado: **ACEPTADA EN PRODUCCIÓN para los contratos enumerados**. Esto no mide indexación/crawler, ranking, cita de respuestas, CWV de campo ni Landing runtime. Los límites no reabren esta PIA.
 
 ## Dependencias y salida
 

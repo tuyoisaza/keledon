@@ -1,6 +1,6 @@
 # Sub-PIA CMT-003C — fixtures sintéticos para aceptación productiva
 
-Estado: OWNER AUTHORIZED MINIMAL SYNTHETIC FIXTURE SCOPE / PROVISIONING PATH NOT READY · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). Instrucción directa del owner del 2026-10-17: crear lo necesario para continuar la meta y ejecutar toda aceptación en producción. Se registra como autorización para preparar y, al existir un canal permitido, aprovisionar y limpiar únicamente el fixture mínimo sintético definido aquí; la aceptación de alcance general no autoriza tráfico/datos de clientes.
+Estado: OWNER AUTHORIZED MINIMAL SYNTHETIC FIXTURE SCOPE / PROVISIONING PATH NOT READY · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline productivo KELEDON 5.2.10 en main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). Instrucción directa del owner del 2026-10-17: crear lo necesario para continuar la meta y ejecutar toda aceptación en producción. Se registra como autorización para preparar y, al existir un canal permitido, aprovisionar y limpiar únicamente el fixture mínimo sintético definido aquí; la aceptación de alcance general no autoriza tráfico/datos de clientes.
 
 ## Hallazgo y objetivo
 

@@ -1,3 +1,13 @@
+## Current Check — KELEDON 5.2.10 / PHDK 2.53.1 — 2026-10-17
+
+Remote `main`: `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, PR #255 merged. **SCOPED ROUTE PIA PASS; WHOLE AUTO PARTIAL.** Delta audit: [PHDK_CHECK_REPORT-5.2.10-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.10-PHDK-2.53.1.md).
+
+PHDK coherence 64/64; all five app package/lock roots and Browser renderer align at 5.2.10. Railway Web/API deploys both SUCCESS, 1/1. UAT-135/136/137/139 pass on 5.2.9; UAT-140 confirms the production localized 404 and closes PIA-AUTO-SEO-002 route acceptance. No local application tests/builds/lint. Five high gaps remain; the remaining four-front commitment and privacy/security gates stay open.
+
+SIGUIENTE PASO: continue CMT-003C synthetic fixture and cleanup planning, then the approved CMT-003A/B and CMT-004 gates in order.
+
+---
+
 ## Current Check — 5.2.8 / PHDK 2.53.1 — 2026-10-17
 
 Remote `main`: `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, PR #253 merged. **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL.** Full grouped findings, current GitHub/Railway state, production evidence and authorized Auto remediation scope: [PHDK_CHECK_REPORT-5.2.8-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.8-PHDK-2.53.1.md).
