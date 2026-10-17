@@ -1,4 +1,8 @@
 {
+  "candidate": {
+    "version": "5.1.78",
+    "revision": "9839d521d7e0eae157e095c4f6fcdfbf7618d896"
+  },
   "target": "isolated local built React SPA with synthetic audit rows",
   "result": "PASS",
   "cases": [
@@ -6,9 +10,26 @@
     "event metadata and success-only limitation shown",
     "redacted change details displayed",
     "filters sent as encoded query",
-    "visible page exports CSV with redacted values",
+    "visible-page CSV export records bounded metadata before download",
+    "audit write failure blocks file download and announces an error",
     "pagination requests next page",
     "tenant admin route denied before audit data request"
+  ],
+  "exportRequests": [
+    {
+      "rowCount": 1,
+      "offset": 0,
+      "filterKeys": [
+        "action"
+      ]
+    },
+    {
+      "rowCount": 1,
+      "offset": 0,
+      "filterKeys": [
+        "action"
+      ]
+    }
   ],
   "providerCalls": 0,
   "persistence": "fixture only; no database or audit data claim"
