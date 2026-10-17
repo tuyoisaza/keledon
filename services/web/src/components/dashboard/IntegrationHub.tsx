@@ -19,6 +19,10 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useIntegrationHub } from '../../hooks/useIntegrationHub';
+import {
+  getIntegrationHealthIndicator,
+  hasMeasuredIntegrationHealth,
+} from '../../../../../shared/integration-health.mjs';
 
 interface IntegrationProvider {
   id: string;
@@ -33,6 +37,8 @@ interface IntegrationProvider {
     responseTime: number;
     uptime: number;
     errorRate: number;
+    lastCheck?: Date | string;
+    totalRequests?: number;
   };
   features: string[];
   config: {
@@ -96,12 +102,6 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
       case 'connecting': return 'text-yellow-500 bg-yellow-100 border-yellow-200 animate-pulse';
       default: return 'text-muted-foreground bg-gray-100 border-gray-200';
     }
-  };
-
-  const getHealthIndicator = (health: IntegrationProvider['health']) => {
-    if (health.errorRate > 10) return 'error';
-    if (health.responseTime > 1000) return 'warning';
-    return 'healthy';
   };
 
   const categories = ['all', 'crm', 'helpdesk', 'communication', 'analytics', 'database', 'other'];
@@ -179,7 +179,7 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
           filteredProviders.map((provider) => {
             const IconComponent = getIconComponent(provider.icon);
             const CategoryIcon = categoryIcons[provider.category];
-            const healthStatus = getHealthIndicator(provider.health);
+            const healthStatus = getIntegrationHealthIndicator(provider.health);
 
             return (
               <div key={provider.id} className="p-4 rounded-lg border bg-card hover:shadow-md transition-shadow">
@@ -215,30 +215,36 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
                       <span className={cn(
                         healthStatus === 'error' ? "text-red-500" :
                         healthStatus === 'warning' ? "text-yellow-500" :
-                        "text-green-500"
+                        healthStatus === 'healthy' ? "text-green-500" :
+                        "text-muted-foreground"
                       )}>
-                        {provider.health.responseTime}ms
+                        {hasMeasuredIntegrationHealth(provider.health) ? `${provider.health.responseTime}ms` : 'Not measured'}
                       </span>
                       <div className={cn(
                         "w-2 h-2 rounded-full",
                         healthStatus === 'error' ? "bg-red-500" :
                         healthStatus === 'warning' ? "bg-yellow-500" :
-                        "bg-green-500"
+                        healthStatus === 'healthy' ? "bg-green-500" :
+                        "bg-muted-foreground"
                       )} />
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Uptime</span>
-                    <span className="text-green-500">{provider.health.uptime}%</span>
+                    <span className={healthStatus === 'healthy' ? "text-green-500" : "text-muted-foreground"}>
+                      {hasMeasuredIntegrationHealth(provider.health) ? `${provider.health.uptime}%` : '—'}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Error Rate</span>
                     <span className={cn(
+                      !hasMeasuredIntegrationHealth(provider.health) ? "text-muted-foreground" :
                       provider.health.errorRate > 5 ? "text-red-500" : "text-green-500"
                     )}>
-                      {provider.health.errorRate}%
+                      {hasMeasuredIntegrationHealth(provider.health) ? `${provider.health.errorRate}%` : '—'}
                     </span>
                   </div>
+                  <div className="text-xs text-muted-foreground">Health: {healthStatus}</div>
                 </div>
 
                 {/* Last Sync */}
@@ -329,15 +335,27 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
             </div>
             <div>
               <span className="text-muted-foreground">Response Time:</span>
-              <p className="font-semibold">{providers.find(p => p.id === selectedProvider)?.health.responseTime}ms</p>
+              <p className="font-semibold">
+                {hasMeasuredIntegrationHealth(providers.find(p => p.id === selectedProvider)?.health)
+                  ? `${providers.find(p => p.id === selectedProvider)?.health.responseTime}ms`
+                  : 'Not measured'}
+              </p>
             </div>
             <div>
               <span className="text-muted-foreground">Uptime:</span>
-              <p className="font-semibold">{providers.find(p => p.id === selectedProvider)?.health.uptime}%</p>
+              <p className="font-semibold">
+                {hasMeasuredIntegrationHealth(providers.find(p => p.id === selectedProvider)?.health)
+                  ? `${providers.find(p => p.id === selectedProvider)?.health.uptime}%`
+                  : 'Not measured'}
+              </p>
             </div>
             <div>
               <span className="text-muted-foreground">Error Rate:</span>
-              <p className="font-semibold">{providers.find(p => p.id === selectedProvider)?.health.errorRate}%</p>
+              <p className="font-semibold">
+                {hasMeasuredIntegrationHealth(providers.find(p => p.id === selectedProvider)?.health)
+                  ? `${providers.find(p => p.id === selectedProvider)?.health.errorRate}%`
+                  : 'Not measured'}
+              </p>
             </div>
           </div>
         </div>

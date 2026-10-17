@@ -21,7 +21,7 @@ export interface ProviderHealth {
   responseTime: number; // milliseconds
   uptime: number; // percentage
   errorRate: number; // percentage
-  lastCheck: Date;
+  lastCheck?: Date;
   consecutiveFailures: number;
   totalRequests: number;
   successfulRequests: number;
@@ -38,8 +38,8 @@ export interface ProviderConfig {
 export interface ConnectionMetrics {
   providerId: string;
   status: string;
-  lastSync: Date;
-  metrics: {
+  lastSync?: Date;
+  metrics?: {
     requestsPerMinute: number;
     dataTransfer: number; // bytes
     errorCount: number;
@@ -67,9 +67,8 @@ export class IntegrationHealthService {
       ...provider,
       health: {
         responseTime: 0,
-        uptime: 100,
+        uptime: 0,
         errorRate: 0,
-        lastCheck: new Date(),
         consecutiveFailures: 0,
         totalRequests: 0,
         successfulRequests: 0,
@@ -211,13 +210,7 @@ export class IntegrationHealthService {
     return Array.from(this.providers.values()).map((provider) => ({
       providerId: provider.id,
       status: provider.status,
-      lastSync: provider.lastSync || new Date(),
-      metrics: {
-        requestsPerMinute: this.calculateRequestsPerMinute(provider),
-        dataTransfer: 0,
-        errorCount: provider.health?.consecutiveFailures || 0,
-        avgResponseTime: provider.health?.responseTime || 0,
-      },
+      lastSync: provider.lastSync,
     }));
   }
 
@@ -392,11 +385,6 @@ export class IntegrationHealthService {
     } else if (provider.status !== 'disconnected') {
       provider.status = 'connected';
     }
-  }
-
-  private calculateRequestsPerMinute(provider: IntegrationProvider): number {
-    if (!provider.health) return 0;
-    return 0;
   }
 
   private broadcastUpdate(): void {
