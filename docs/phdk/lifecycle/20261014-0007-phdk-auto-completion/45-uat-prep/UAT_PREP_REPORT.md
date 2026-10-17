@@ -1,3 +1,21 @@
+## Revalidación vigente CMT-003C — 5.2.6 (2026-10-17)
+
+El reporte 5.2.4 que sigue se conserva como historial de Prep previo.
+
+**Estado: BLOCKED** para UAT autenticada del runtime; **PARTIAL** para la preparación documental. Candidato de producto: 5.2.6 / `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; Railway Web/API SUCCESS está registrado para ese source. El merge documental #242 mueve remote `main` a `269b0717`, sin cambiar el candidato de producto.
+
+| Caso / rol | Estado | Razón/evidencia |
+|---|---|---|
+| Visitante público | REUSED / PASS dentro de UAT-125/126 | Solo geometría anónima pública; no prueba autenticación ni runtime queue. |
+| Usuarios/tenants A y B | BLOCKED | No hay fixtures sintéticos productivos provisionados ni camino autorizado de cleanup. |
+| Browser devices / leases | BLOCKED | Sin pairings; claim actual no tiene lease durable/fencing; caso se ejecutará solo con candidato corregido. |
+| CRM privado/DNS | BLOCKED | Sin sandbox DNS/CRM sintético ni hostname/puerto/CIDR aprobados; fuente no fija la IP al socket. |
+| Secreto/credenciales | N/A | No se solicitaron ni expusieron. |
+| Tests/builds locales de aplicación | NOT RUN — instrucción del owner | No usar suites o builds locales como evidencia de aceptación. |
+| Escrituras o pruebas en producción en esta revalidación | NOT RUN | No se creó cuenta/tenant/device ni se tocó CRM/DB; esta sesión fue lectura de fuente y documentación. |
+
+El plan, matriz, manifiesto y PIA CMT-003C están listos para retomar con el camino autorizado de provisión/cleanup. No se afirma que los fixtures existan ni que la feature haya sido aceptada. CMT-003A/B siguen PARTIAL y el Auto total continúa PARCIALMENTE ENTREGADO.
+
 # Reporte UAT Prep — KELEDON 5.2.4
 
 **Estado: PARTIAL / BLOCKED.** Candidato Web de producto 5.2.4, main `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`; PHDK 2.53.1. Railway Web/API ambos `SUCCESS` sobre main `6715ea9`; esto no acepta el comportamiento autenticado ni los contratos API. UAT-120 solo cubre locale/`lang` público en `/login`.

@@ -1,10 +1,10 @@
 # Sub-PIA CMT-003A — lease de comandos y efectos idempotentes
 
-Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 1 · Candidato observado: KELEDON Web 5.2.3 (`3cccb4b2f88828fa5d273b682925d3a106dd3b9`).
+Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 1 · Candidato revalidado: KELEDON Web 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`), Railway Web deployment `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` SUCCESS. Revisión estática de fuente: 2026-10-17.
 
 ## Hallazgo y objetivo
 
-La revisión `40-integration/revalidations/20261017-runtime-contract/RUNTIME_CONTRACT_MAP.md` y la relectura en 5.2.3 de `services/api/src/browser-commands/browser-commands.service.ts` confirman que `getNextCommand()` añade `browser.command.claimed` sin expiración ni heartbeat; `findNextPendingCommand()` excluye para siempre cualquier comando con ese claim. El comando no se vuelve a entregar aunque Browser/red caigan antes de guardar resultado. `recordCommandResult()` reconoce `commandId` duplicado después de completarse, pero esa deduplicación no vuelve idempotente un efecto externo que ya ocurrió. No hay migración ni modificación de fuente iniciada; autenticación/device/tenant y side-effect UAT siguen bloqueados sin fixtures.
+La relectura actual de `services/api/src/browser-commands/browser-commands.service.ts` en 5.2.6 confirma que `getNextCommand()` añade `browser.command.claimed` sin expiración ni heartbeat; `findNextPendingCommand()` excluye para siempre cualquier comando con ese claim. El comando no se vuelve a entregar aunque Browser/red caigan antes de guardar resultado. `recordCommandResult()` reconoce `commandId` duplicado después de completarse, pero esa deduplicación no vuelve idempotente un efecto externo que ya ocurrió. El esquema PostgreSQL solo persiste estos estados como eventos JSON (`Session`/`Event`); no existe fila de lease ni restricción única específica de comando. No hay migración ni modificación de fuente iniciada; autenticación/device/tenant y side-effect UAT siguen bloqueados sin fixtures sintéticos de producción. Véase el mapa de fuente revalidado en `40-integration/revalidations/20261017-runtime-contract-5.2.6/RUNTIME_CONTRACT_MAP.md`.
 
 Definir y desplegar una entrega recuperable y trazable que no repita una mutación CRM al reconectar, reintentar o competir dos workers. La garantía aplica por step/efecto de negocio, además de la idempotencia del transporte.
 
@@ -35,6 +35,7 @@ Definir y desplegar una entrega recuperable y trazable que no repita una mutaci�
 - No guardar transcripciones, cuerpos completos, tokens, cookies, secretos ni PII en la cola/auditoría. Evidencia registra IDs sintéticos, transición, `attempt`, duración y resultado redacted.
 - No crear ni ejecutar pruebas de aplicación local: todos los casos se corren en la producción desplegada usando identidades, device y tenant sintéticos aprobados; limpieza validada después.
 - No elegir un CRM ni inferir la semántica de sus operaciones. La aceptación del adaptador real queda bloqueada hasta que ese cliente elija sandbox y autorice su uso.
+- Antes de cambiar el contrato persistido o habilitar la expiración de claims, cerrar PIA CMT-003C: identidad/device sintético, autorización del owner para usar producción, método de aprovisionamiento con mínimo privilegio, expiración/limpieza y evidencia. No crear fixtures ni ejecutar escritura productiva hasta completar esa entrada.
 
 ## Entregables y salida
 

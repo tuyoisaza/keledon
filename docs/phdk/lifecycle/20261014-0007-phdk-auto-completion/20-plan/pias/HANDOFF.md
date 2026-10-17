@@ -3,7 +3,7 @@
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `20-plan` (continuation)
 Status: **COMPLETED / EXTENDED**
-Current baseline after delivery: `main` `3cccb4b2f88828fa5d273b682925d3a106dd3b9` (KELEDON 5.2.3)
+Current product source after PR #241: `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (KELEDON 5.2.6); remote `main` after documentation PR #242: `269b0717109121e3a2c02eaf91867dd1e45439bd`
 PHDK: `2.53.1`; coherence `64/64`
 Date: `2026-10-17`
 
@@ -13,8 +13,8 @@ Turn the four owner-confirmed, ordered workstreams into current implementation/a
 
 ## Inputs verified
 
-- PR #210 product merge and PR #211 post-merge documentation are in `origin/main`.
-- The current 5.2.1 PIA, 5.2.1 PHDK Check, UAT-103/104, PMO progress and four-commitment ledger were reviewed.
+- PR #210 product merge and PR #211 post-merge documentation are in `origin/main`; product PRs #240/#241 and docs PR #242 are also merged.
+- The current product source 5.2.6, latest PHDK Check/UAT evidence, PMO progress and four-commitment ledger were reviewed.
 - `py -3 phdk-standards/scripts/phdk_coherence_check.py` passed for v2.53.1, 64 mappings.
 - Production browser inspection of the public homepage exposed version 5.2.1, localized public content, an explicit illustrative-demo disclaimer, diagnostic copy and cache-clear controls. This is a limited public observation, not a completed accessibility or authenticated UAT.
 - No application tests/builds were run locally; no production login, write, fixture or provider configuration was performed.
@@ -54,3 +54,10 @@ Next gate: advance CMT-002 with non-destructive production browser UAT, then imp
 - Added `PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md`, with code anchors and cases ADM-IF-01..07.
 - Baseline refreshed to KELEDON 5.2.4 / main `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`, PHDK 2.53.1.
 - Production evidence UAT-121 passes only the anonymous redirect; role-based persistence acceptance is blocked until synthetic production identities/data/cleanup are authorized.
+
+
+## Re-entry — CMT-003 runtime acceptance readiness (2026-10-17)
+
+Current 5.2.6 source revalidation confirms a permanent, non-atomic command claim and origin-only Browser egress filtering. Updated CMT-003A/B to the current candidate and added CMT-003C for synthetic production fixture provisioning, authorization and cleanup. Integration evidence is `40-integration/revalidations/20261017-runtime-contract-5.2.6/`.
+
+Plan exit: source gaps and dependency are explicit. Production UAT Prep is blocked on an approved provisioning/cleanup path and, for private CRM acceptance, an exact controlled sandbox hostname/port/CIDR. No local application tests or production writes were performed.

@@ -55,3 +55,12 @@ Honor production-only testing for public, anonymous observations. Do not create 
 
 Stage: `50-uat` — continue safe anonymous production cases and source review. Authenticated role/lease cases stay BLOCKED until the required identities/devices/tenant fixture and cleanup are allowed and provisioned.
 Required inputs: this blocked Prep handoff and the four canonical 5.2.4 artifacts.
+
+## Continuación — CMT-003C / producción 5.2.6 (2026-10-17)
+
+- Integration revalidó la fuente de producto `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; revalidación: `../40-integration/revalidations/20261017-runtime-contract-5.2.6/`.
+- CMT-003C preparó el alcance mínimo y cleanup para fixtures sintéticos; artefactos canónicos arriba actualizados a 5.2.6.
+- Estado sigue **BLOCKED**: no existe vía productiva autorizada/auditada de aprovisionamiento y cleanup; CMT-003B además necesita DNS/CRM sandbox y hostname/puerto/CIDR exactos.
+- No hubo cuenta/tenant/device/CRM ni escritura de producción, prueba de Browser, app test/build local o credencial utilizada.
+
+**Next:** esperar el mecanismo y autorización de fixture/cleanup; luego ejecutar CMT-003A/B únicamente sobre el candidato desplegado en producción. No pasar a UAT autenticada con recursos inventados o cuentas reales.

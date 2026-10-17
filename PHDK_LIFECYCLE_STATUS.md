@@ -1,8 +1,19 @@
 ## Verified current readback — KELEDON 5.2.6 / 2026-10-17
 
-This readback supersedes earlier summaries below; those remain historical. PR #240/#241 merged and remote `main` is `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Five package/lock roots and Browser renderer align at 5.2.6; PHDK 2.53.1 coherence is 64/64 static. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 passes the scoped anonymous mobile menu/header target-size checks at 320/375px; the baseline failures are retained in evidence. CMT-001 is complete for this cut; CMT-002 remains partial for broad accessibility, diagnostic RBAC and audio; CMT-003A/B are implementation-not-started; CMT-004 authenticated persistence/cross-tenant proof remains blocked by synthetic fixtures. Overall Auto remains PARTIALLY DELIVERED.
+## Continuación Auto — CMT-003 source/PIA revalidación (2026-10-17)
 
-SIGUIENTE PASO: start CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR source implementation; prepare synthetic production acceptance inputs without contacting customer CRM targets.
+Producto: KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (Railway Web/API SUCCESS). Remote `main`: `269b0717109121e3a2c02eaf91867dd1e45439bd` tras merge del PR documental #242; sin cambios al source desplegado.
+
+- 20 Plan: **COMPLETADO / extendido** con CMT-003C, gate de fixtures sintéticos productivos y cleanup.
+- 40 Integration: **REVALIDADA PARA FUENTE**; claim de Browser command no expira y no es atómico; filtro de egress valida orígenes pero no IP/socket/DNS pinning.
+- 45 UAT Prep: **BLOCKED** hasta confirmar un aprovisionamiento/desactivación autenticado, auditado y de bajo privilegio para fixtures productivos. Egress privado también necesita sandbox DNS/CRM y hostname/puerto/CIDR aprobados.
+- No se ejecutaron pruebas/builds locales ni pruebas de aplicación productiva durante la revalidación. Todo Auto permanece **PARCIALMENTE ENTREGADO**.
+
+SIGUIENTE PASO: cerrar la preparación CMT-003C y sus entradas de aprobación/cleanup; después abrir implementación con validación desplegada exclusivamente en producción.
+
+This readback supersedes earlier summaries below; those remain historical. Product PR #240/#241 merged; product source remains `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Documentation PR #242 is merged; remote `main` is `269b0717109121e3a2c02eaf91867dd1e45439bd`. Five package/lock roots and Browser renderer align at 5.2.6; PHDK 2.53.1 coherence is 64/64 static. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 passes the scoped anonymous mobile menu/header target-size checks at 320/375px; the baseline failures are retained in evidence. CMT-001 is complete for this cut; CMT-002 remains partial for broad accessibility, diagnostic RBAC and audio; CMT-003A/B are implementation-not-started; CMT-004 authenticated persistence/cross-tenant proof remains blocked by synthetic fixtures. Overall Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: complete UAT Prep CMT-003C with the approved audited provisioning/cleanup path; then implement the lease and socket-level egress controls, with application acceptance only on the deployed production candidate.
 
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 

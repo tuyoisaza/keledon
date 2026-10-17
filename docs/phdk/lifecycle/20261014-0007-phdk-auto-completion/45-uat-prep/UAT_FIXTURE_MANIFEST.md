@@ -1,3 +1,17 @@
+## Revalidación CMT-003C — 5.2.6 (2026-10-17)
+
+**Resultado: NOT PROVISIONED / BLOCKED.** Producto source: `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #242 solo actualizó documentación. Run propuesto: `20261014-0007-phdk-auto-completion-cmt003c-20261017`.
+
+| Fixture requerido | Alcance mínimo | Estado |
+|---|---|---|
+| Tenant sintético A/B | Dos empresas aisladas marcadas por el run; sin usuarios/clientes copiados | BLOCKED — vía/owner autorizado de provisioning y cleanup pendiente |
+| Device Browser A/B | Device sintético por tenant; sin audio ni token en evidencia | BLOCKED — no pairings productivos |
+| Flow | Workflow inerte para polling, lease/heartbeat/result | BLOCKED — sin efecto; candidato con cambios aún no desplegado |
+| DNS/CRM sandbox | Host/port/schema/CIDR exacto y controlado, con respuestas y redirects sintéticos | BLOCKED — owner y sandbox no seleccionados |
+| Credenciales/tokens | Secretos solo en ruta segura existente | Ninguno solicitado, creado o registrado |
+
+No se ejecutó el seeder local, no se modificó la protección que rechaza producción y no se escribió directamente a la BD. Cleanup exigirá desactivar/revocar exclusivamente IDs de este run y leer evidencia de acceso negado después; auditoría append-only se conserva. Ver detalle y dependencias en `20-plan/pias/PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md`.
+
 # Manifest de fixtures UAT — KELEDON 5.2.4
 
 Fecha: 2026-10-17 · run `20261014-0007-phdk-auto-completion` · entorno solicitado: producción para UAT funcional.
