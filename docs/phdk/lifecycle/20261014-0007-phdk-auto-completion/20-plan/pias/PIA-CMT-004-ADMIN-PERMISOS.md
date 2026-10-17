@@ -16,10 +16,13 @@ Altas email/Google reciben `user`; solo un superadmin existente eleva roles o as
 | ADM-RECOVERY | Propietario, política, retención y recuperación de PostgreSQL; restore de prueba en destino aislado | Evidencia del proveedor/operador y autorización para restore aislado |
 | ADM-AI | Grafo de agentes/acciones y permisos a partir de callsites reales, con límites de ciclo/terminación | Trazado source completo y fixtures sintéticos |
 | ADM-UAT | Probar selector y CRUD con user/coordinator/admin/superadmin sintéticos; cross-tenant deny y cleanup | Tenant/roles sintéticos autorizados, versión exacta desplegada, plan de limpieza |
+| [ADM-IF](PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md) | Selector Web y asignación de interfaces por empresa, con denegación cross-tenant | Decisión aprobada; falta sesión sintética autorizada en producción |
 
 ## Prioridad inmediata
 
-Cerrar el origen/provisión tenant del catálogo es prerequisito de aceptación del selector 5.2.1: el código añade `companyId` nullable sin backfill, y no se halló UI superadmin de provisión. No inferir propietario de interfaces históricas ni migrar su ownership automáticamente. El inventario de variables de Railway no encontró el nombre `KELEDON_VENDOR_KEY`; no leer valores ni introducir una clave en evidencia. El owner debe configurar el secreto por canal autorizado. Luego usar una interfaz sintética sin endpoint de cliente.
+El owner aprobó el selector de Admin/Coordinator con asignación por tenant el 2026-10-17. La PIA ADM-IF registra alcance, controles fuente y aceptación productiva pendiente. En producción solo se comprobó la redirección anónima a login; no se infiere aceptación autenticada.
+
+La PIA ADM-IF separa el selector de equipo, ya implementado, de la provisión del catálogo y de la aceptación persistida. El esquema deja companyId nullable y no backfillea filas históricas; no inferir dueño. No se encontró UI Web de provisión superadmin. El inventario histórico de Railway no encontró el nombre KELEDON_VENDOR_KEY; no leer valores ni incluir claves en evidencia. Su owner debe provisionarla por canal autorizado antes de acceptance de secretos.
 
 ## Aceptación productiva
 
@@ -31,4 +34,4 @@ Cerrar el origen/provisión tenant del catálogo es prerequisito de aceptación 
 
 ## Estado/exit gate
 
-El código del selector, guards y cifrado se merged; UAT-104 solo prueba rechazo anónimo. La clave y UI del catálogo, ownership de filas anteriores, persistencia autenticada y ciclo de cuenta siguen sin aceptar. ADM-004/ADM-UAT están BLOCKED hasta las dependencias; ADM-IDENT/RBAC/RECOVERY/AI requieren implementación trazada y no se cierran con estas especificaciones. Mantener CMT-004 PARTIAL.
+El selector por tenant, guards, cifrado y redacción de secretos se fusionaron en PR #210. UAT-104 prueba disponibilidad/denegación anónima del catálogo y UAT-121 prueba la redirección anónima del selector en Web v5.2.4; ambos tienen alcance limitado. El comportamiento por rol, persistencia autenticada, UI Web de provisión, ownership de filas antiguas y ciclo de cuenta siguen sin aceptación. ADM-IF-01..06 y ADM-UAT están BLOCKED por falta de fixtures productivos autorizados; ADM-IDENT/RBAC/RECOVERY/AI requieren implementación y evidencia trazadas. Mantener CMT-004 ACTIVE / PARTIAL.

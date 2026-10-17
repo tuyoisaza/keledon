@@ -444,3 +444,12 @@ Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified 
 | UAT-A11Y-I18N / US-006 | Broad active-route locale/copy, WCAG keyboard/zoom/contrast/screen-reader acceptance | BLOCKED: only selected UI subset was exercised. |
 | UAT-SEO-AEO / US-001/US-006 | Deployed headers and public discovery evidence | BLOCKED: no deployed target/measurement. |
 | UAT-CLIENT-CRM / US-003 | Tenant-selected real call/CRM integration | NOT APPLICABLE to universal source gate; validate only when a client/provider is selected. |
+
+
+## Current production re-entry — UAT-121 tenant interface route boundary (2026-10-17)
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-121 | CMT-004 / anonymous visitor | Open production `/management/teams` directly without a session; inspect the resulting route, accessibility tree and version only. | The protected route redirects to login; team/catalog data is not exposed. No authentication or mutation. | Production UI / anonymous connected browser | **PASS FOR ANONYMOUS BOUNDARY ONLY:** route redirected to `/login`; login displayed v5.2.4 and no team/interface content. Does not accept authenticated roles, tenant filtering, persistence or cross-tenant denial. Evidence: `evidence/uat-121-production-anonymous-team-selector-2026-10-17.json`. |
+
+Authenticated ADM-IF-01..06 remain BLOCKED because no authorized synthetic production identities/dataset and cleanup plan are available. No customer data or normal owner account was used.

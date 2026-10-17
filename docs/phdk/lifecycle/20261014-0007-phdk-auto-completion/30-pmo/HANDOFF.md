@@ -24,11 +24,16 @@ Continuar los cuatro frentes en el orden del usuario: (1) baseline/versiones/PR;
 - [PMO_STATUS.md](PMO_STATUS.md) — tablero y próximo paso.
 - [PMO_PROGRESS_REPORT.md](PMO_PROGRESS_REPORT.md) — progreso y evidencia del corte.
 - [PHDK_COMMITMENT_COVERAGE.md](PHDK_COMMITMENT_COVERAGE.md) — cobertura y límites de aceptación.
-- PIAs ejecutables: `../20-plan/pias/README.md` y `../20-plan/pias/PIA-CMT-001-BASELINE-ENTREGA.md` a `PIA-CMT-004-ADMIN-PERMISOS.md`.
-- Evidencia de producción: `../50-uat/evidence/uat-112-production-cta-theme-contrast-2026-10-17.json` a `uat-120-production-locale-lang-2026-10-17.json`.
+- PIAs ejecutables: `../20-plan/pias/README.md`, PIA-CMT-001..004 y `../20-plan/pias/PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md`.
+- Evidencia de producción: `../50-uat/evidence/uat-112-production-cta-theme-contrast-2026-10-17.json` a `uat-121-production-anonymous-team-selector-2026-10-17.json`.
 
 ## Siguiente etapa
 
 Continuar CMT-002 con el siguiente caso público, de solo lectura y ejecutado en producción. No empezar pruebas autenticadas, audio ni mutaciones hasta contar con fixture sintético y limpieza acordada. Luego implementar los sub-PIA CMT-003A/B antes de abrir aceptación de CRM privado. Mantener el estado global PARTIAL hasta cerrar la evidencia de los cuatro compromisos.
 
 SIGUIENTE PASO: continuar la cobertura pública de foco/lector de pantalla para CMT-002 en producción 5.2.4; luego avanzar en orden por CMT-003A/B y CMT-004.
+
+
+## Re-entry — current main and ADM-IF (2026-10-17)
+
+PR #233 is merged and remote main is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`; production Web/API deployment IDs are `be95247a-bd0e-49d9-bcb6-4166a4222746` and `0c31ee86-59f5-4943-82d6-902ec0d6b6dc`, both SUCCESS. UAT-121 confirms the production anonymous route boundary only. The owner-approved interface selector PIA is `20-plan/pias/PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md`. Authenticated role/persistence and cross-tenant UAT remain blocked pending synthetic production identity/data/cleanup authorization.

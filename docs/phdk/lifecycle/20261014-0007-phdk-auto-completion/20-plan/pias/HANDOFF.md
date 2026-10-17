@@ -46,3 +46,11 @@ UAT-103 found no `KELEDON_VENDOR_KEY` variable name in production API metadata. 
 
 Stage: `30-pmo` — consume the four PIA packages, retain the approved order and assign executable work.
 Next gate: advance CMT-002 with non-destructive production browser UAT, then implement only code gaps demonstrated by that evidence. Keep CMT-003 customer-stack acceptance and CMT-004 tenant/secret UAT blocked until their stated prerequisites exist.
+
+
+## Re-entry — ADM-IF approved and split (2026-10-17)
+
+- Owner decision recorded: Admin/Coordinator interface assignment is tenant-scoped.
+- Added `PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md`, with code anchors and cases ADM-IF-01..07.
+- Baseline refreshed to KELEDON 5.2.4 / main `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`, PHDK 2.53.1.
+- Production evidence UAT-121 passes only the anonymous redirect; role-based persistence acceptance is blocked until synthetic production identities/data/cleanup are authorized.

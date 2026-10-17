@@ -1,0 +1,31 @@
+{
+  "case": "UAT-121",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T19:56:00Z",
+  "environment": "production",
+  "urlRequested": "https://keledon.tuyoisaza.com/management/teams?phdk-uat-121=20261017",
+  "urlObserved": "https://keledon.tuyoisaza.com/login",
+  "deployedVersion": "5.2.4",
+  "sourceCommit": "26e1fe1452cffb97164d65917b3c9a4308bdbdc2",
+  "webDeploymentId": "be95247a-bd0e-49d9-bcb6-4166a4222746",
+  "apiDeploymentId": "0c31ee86-59f5-4943-82d6-902ec0d6b6dc",
+  "deploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "actions": [
+    "Opened /management/teams directly without an authenticated session.",
+    "Inspected the resulting page accessibility tree and visible deployment version."
+  ],
+  "observations": {
+    "protectedRouteRedirectedToLogin": true,
+    "loginPageLoaded": true,
+    "visibleVersion": "v5.2.4",
+    "loginFormPresent": true,
+    "teamOrInterfaceDataExposed": false
+  },
+  "result": "PASS_LIMITED_ANONYMOUS_ACCESS_BOUNDARY",
+  "limitations": [
+    "Does not verify Admin/Coordinator authenticated selector behavior.",
+    "Does not verify tenant filtering, writes, persistence, cross-tenant denial, or cleanup.",
+    "No login, OAuth, account creation, form submission, API mutation, or customer data was used."
+  ]
+}

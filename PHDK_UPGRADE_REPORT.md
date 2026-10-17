@@ -1,4 +1,13 @@
-# PHDK upgrade report — 2.50.8 → 2.50.10
+# PHDK upgrade report — current PHDK 2.53.1
+
+## Current Auto preflight sync — 2.53.1 verified (2026-10-17)
+
+KELEDON `main` is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2` / product 5.2.4. Installed PHDK is 2.53.1; the conservative upstream updater fetched canonical `main` `94f583635d295ae0f227726718904d952cadb8ab`, reported `UPDATED` for 64 mappings at the same version, and the subsequent static coherence checker passed 64/64. The resulting working-tree differences were line-ending-only (`git diff --ignore-space-at-eol` had no content diff), so tracked repository line endings were restored; no PHDK semantic or product source change was introduced by this preflight.
+
+SIGUIENTE PASO: keep PHDK 2.53.1 active for this Auto continuation; no additional upgrade is indicated.
+
+---
+
 
 ## Current Auto preflight sync — 2.50.10 → 2.51.2 — 2026-10-15
 

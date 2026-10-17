@@ -1,3 +1,13 @@
+## Revalidación actual de esta continuación — 2026-10-17
+
+Alcance revisado: reconciliación documental PHDK Auto 5.2.4, CMT-004 ADM-IF y UAT-121; esto no reemplaza el Check completo del producto. PHDK 2.53.1 coherence pasa 64/64 mappings. La evidencia UAT-121 JSON parsea correctamente; `git diff --check` pasa. No se ejecutaron pruebas ni builds locales de aplicación, según la instrucción del owner.
+
+Conclusión de esta revalidación: **GAPS FOUND / AUTO PARTIAL**. El selector tenant-scoped está en main y la ruta anónima redirige en producción; no se verificó rol autenticado, escritura, persistencia ni cross-tenant denial. CMT-003A/B siguen sin implementación. No clasificar la documentación como cierre de los gates de producto.
+
+SIGUIENTE PASO: mantener los casos autenticados en BLOCKED hasta disponer de identidad/dataset sintéticos autorizados en producción; continuar independentemente el trabajo de fuente y aceptación pública permitido.
+
+---
+
 # Current PHDK Auto — 5.1.83 delivered; portfolio partial
 
 PR #204 merged the Web Nginx root-context fix at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer are 5.1.83, and PHDK coherence is 63/63. Railway Web and API deployments report SUCCESS with 1/1 replicas. Web startup logs confirm configuration complete and workers started without the prior directive error. API logs show Nest and Prisma startup after a transient dependency reachability timeout. No live request/UI health check was performed.

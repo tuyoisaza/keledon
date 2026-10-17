@@ -578,3 +578,8 @@ After the owner authorized the Electron runtime, `browser/npm run dev` launched 
 A safe local New Tab UI action created the second tab. KELEDON automatically navigated it to its default `https://www.google.com` page; the tab was closed while loading. No content was reviewed, no account or data was entered, and no client service was accessed. Evidence of the transition: `docs/phdk/evidence/uat-browser-native-new-tab.png`.
 
 The native renderer startup is **PASS**. Native media-consent dialog, OS microphone/camera permission, physical device/audio and call lifecycle remain **NOT TESTED**. CUA inventory returned no native apps, its app-list API was unavailable, and Sky reported `Trusted RPC service is not configured`; therefore no Windows app UI input was possible. The local permission-policy unit tests remain the only consent-dialog behavior verification. No permission was granted and no customer call occurred.
+
+
+## UAT-121 — producción: límite anónimo del selector por tenant (2026-10-17)
+
+La ruta directa `/management/teams?phdk-uat-121=20261017` terminó en `/login`; el login mostró v5.2.4 y no se observó contenido de equipos ni catálogo. UAT-121 **PASA únicamente la barrera anónima**. No se inició sesión, no se envió formulario, no se llamó OAuth y no se modificaron datos. El resultado no acepta asignación por rol/tenant, persistencia ni denegación cross-tenant. Evidencia: `evidence/uat-121-production-anonymous-team-selector-2026-10-17.json`. Los casos autenticados ADM-IF-01..06 permanecen BLOCKED hasta contar con identidades y datos sintéticos autorizados para producción, además del plan de limpieza.

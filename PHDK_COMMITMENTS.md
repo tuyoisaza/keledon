@@ -1,6 +1,10 @@
-## Current Auto ledger — candidate 5.2.1 / PHDK 2.53.1 (2026-10-17)
+## Current Auto ledger — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
-The user's four confirmed commitments remain unchanged and in order: CMT-001 baseline/version/PR; CMT-002 widget/safe diagnostics; CMT-003 customer-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Status is 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. PR #210 merged at main `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; UAT-104 confirms production Web/API version 5.2.1 only. UAT-103 found `KELEDON_VENDOR_KEY` absent from production API metadata; no secret value was read. The migration keeps legacy rows ownerless and the Web has no catalog-provisioning UI. Authenticated persistence, tenant provisioning/cross-tenant acceptance, and all other portfolio gates remain open.
+The owner-confirmed commitments remain in order: CMT-001 baseline/version/PR; CMT-002 widget/safe diagnostics; CMT-003 tenant-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Status is 1 complete for the 5.2.4 baseline cut / 3 active-partial; overall Auto remains partial. Remote main is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`; PR #233 merged; production Web/API report SUCCESS on that SHA. Selector PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`. UAT-121 verifies only anonymous production redirect of the interface assignment route on v5.2.4. ADM-IF-01..06 remain blocked without authorized synthetic production identity/data/cleanup. CMT-003A/B implementation remains pending; do not contact customer CRM/private hosts.
+
+PHDK 2.53.1 static coherence is 64/64. No local application tests/builds were run. All four fronts remain part of the active goal; no unrelated backlog is started.
+
+SIGUIENTE PASO: advance CMT-002 public production acceptance, then implement CMT-003 safeguards and resume authenticated CMT-004 only when authorized synthetic fixtures exist.
 
 ---
 
