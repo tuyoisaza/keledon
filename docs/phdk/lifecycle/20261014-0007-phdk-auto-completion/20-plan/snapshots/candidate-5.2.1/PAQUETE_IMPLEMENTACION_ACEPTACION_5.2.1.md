@@ -13,6 +13,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 - Candidato de producto: 5.2.1; selector base `ef6fe6dbf7eca04708c7200615e7538812751f7e`; cifrado de credenciales y redacción de auditoría añadidos hasta `fd7af3b963505fd7756c78ecfa7d8469096a9d84`; head actual del PR `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01` también incluye evidencia y documentación PHDK.
 - Base `main` registrada: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
 - PHDK actualizado: 2.53.1 desde upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64.
+- Tras la reparación de credenciales: `npm run build:typescript` y lint sobre los archivos API/Cloud modificados pasan; no se ejecutaron tests de aplicación locales.
 - Fuentes relevantes: `services/web/src/pages/ManagementTeamsPage.tsx`, `services/web/src/lib/request-sequence.ts`, guards y servicios API/Cloud de asignación tenant/equipo, y la regresión `services/web/test/team-interface-request-sequence.test.cjs`.
 - El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto, no fusionado; producción continúa en v5.1.85.
 
