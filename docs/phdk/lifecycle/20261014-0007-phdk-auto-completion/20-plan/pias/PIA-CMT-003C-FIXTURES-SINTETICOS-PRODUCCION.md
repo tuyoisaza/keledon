@@ -1,6 +1,6 @@
 # Sub-PIA CMT-003C — fixtures sintéticos para aceptación productiva
 
-Estado: INPUT GATE / PREPARATION NOT STARTED · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). El owner reiteró el 2026-10-17 que la aceptación de la meta debe ocurrir en el sitio productivo y pidió crear los artefactos necesarios para continuar; esto autoriza continuar preparación/documentación y UAT público permitido, sujeto a los límites vigentes de UAT Prep.
+Estado: OWNER AUTHORIZED MINIMAL SYNTHETIC FIXTURE SCOPE / PROVISIONING PATH NOT READY · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). Instrucción directa del owner del 2026-10-17: crear lo necesario para continuar la meta y ejecutar toda aceptación en producción. Se registra como autorización para preparar y, al existir un canal permitido, aprovisionar y limpiar únicamente el fixture mínimo sintético definido aquí; la aceptación de alcance general no autoriza tráfico/datos de clientes.
 
 ## Hallazgo y objetivo
 
@@ -17,6 +17,13 @@ Preparar una ruta de UAT que permita ejecutar Q-LEASE-01..Q-TENANT-06 y NET-DNS-
 5. Guardar evidencia con run ID, SHA/deployment exactos, estado/attempt/tiempo, identificadores sintéticos anonimizados, clase de IP redacted, redirects/hops y resultado. No incluir correo completo, token, URL privada, query, body, transcripción ni datos de cliente.
 6. Ejecutar cleanup por el mismo límite autenticado y dejar evidencia de que tenants/devices/flows/sandbox fueron desactivados o retirados. Verificar que las identidades sintéticas ya no pueden iniciar sesión ni ejecutar comandos; conservar solo evidencia anonimizada de auditoría conforme a retención aprobada.
 
+## Autorización del owner — 2026-10-17
+
+- Aprobado para esta meta: dos tenants temporales aislados con prefijo/run ID `phdk-auto-uat-20261017`, un usuario sin privilegios y un device sintético por tenant, un flujo sin PII y cleanup inmediato al terminar la aceptación (límite máximo propuesto: 24 horas).
+- No incluidos: identidades de prueba `admin`, `coordinator` o `superadmin`; elevación de cuentas; envío de invitaciones/email; acceso a tenant real; datos/secretos de clientes; llamada a proveedor real, red privada externa o metadata cloud.
+- No hay endpoint o sesión administrativa de provisión/cleanup disponible en este run. Por eso la autorización de alcance **no** se convierte en escritura: CMT-003C permanece BLOCKED hasta que exista un camino first-party autenticado y auditado que respete la política. No crear bypass, fixture endpoint público ni escritura directa a la base productiva.
+- Sin un CRM/DNS sandbox sintético controlado, solo podrán ejecutarse casos de cola/tenant sin efectos externos; casos de egress positivo permanecen BLOCKED.
+
 ## Casos de aceptación
 
 | Caso | Resultado exigido | Canal/evidencia |
@@ -29,8 +36,8 @@ Preparar una ruta de UAT que permita ejecutar Q-LEASE-01..Q-TENANT-06 y NET-DNS-
 
 ## Invariantes y límites
 
-- Esta PIA no aprueba aún una escritura en el entorno productivo. La autorización previa “usar producción para aceptación” no fija qué identidades/datos puede crear ni el procedimiento de borrado; obtener autorización explícita para el fixture y cleanup concretos antes de provisionar.
-- La instrucción del owner del 2026-10-17 no cambia el límite explícito de `PHDK_UAT_PREP.md`: no aprovisionar identidades de prueba privilegiadas en producción ni crear un auth bypass. No existe en esta inspección evidencia de una vía administrativa productiva auditada y reversible. Continuar cambios de fuente/documentación que no dependan de cuentas; mantener autenticación persistida y acciones privadas externas en BLOCKED hasta resolver una ruta que cumpla el estándar.
+- El owner autorizó el alcance sintético acotado anterior; esta autorización no reemplaza el mecanismo permitido. Hasta verificar el aprovisionamiento y cleanup first-party, no realizar escrituras productivas.
+- El límite explícito de `PHDK_UAT_PREP.md` sigue vigente: no aprovisionar identidades de prueba privilegiadas en producción ni crear auth bypass. Mantener aceptación de roles elevados, autenticación persistida y acciones privadas externas en BLOCKED hasta resolver una ruta que cumpla el estándar.
 - No se requieren credenciales de clientes para preparar mocks/sandboxes sintéticos. No pedir ni registrar secretos en conversación; usar un flujo de alta seguro ya existente.
 - No ejecutar suites, builds ni pruebas de aplicación locales. La aceptación funcional y de seguridad se ejecuta en la instancia productiva, con casos y evidencia de UAT.
 - No hacer llamadas a Genesys, Salesforce, CallPicker, CRM real, hosts privados de cliente o metadata cloud. Un sandbox externo necesita owner, alcance y hostname/puerto/CIDR autorizados.
