@@ -1,5 +1,15 @@
 # PHDK Lifecycle Handoff — UAT
 
+## Production UAT — UAT-130 / v5.2.7 (2026-10-17)
+
+Run: `20261014-0007-phdk-auto-completion` · main/source `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b` · Web/API Railway `SUCCESS`, 1/1 each, no pending work.
+
+UAT-130 passes the anonymous production Web copy control's accessible status (“Diagnóstico copiado”). Clipboard contents were not read/exported; cache clear, login, probes and customer data were untouched. Landing host withholding passes source review and regression-source presence, but its runtime is **BLOCKED**: Railway has only Web/API for this project and the Web image includes only `services/web`. No authoritative standalone Landing production target is recorded. The case is therefore **ACCEPTANCE INCOMPLETE** overall.
+
+Evidence: `evidence/uat-130-production-copy-status-2026-10-17.json`. Snapshot: `snapshots/production-uat-130-20261017/`. All local application tests/builds were skipped per owner instruction. Next: UAT Fix records the exact runtime blocker; continue unrelated authorized CMT-003/004 work without representing the entire Auto as complete.
+
+---
+
 ## Production re-entry — UAT-125/126 mobile targets (2026-10-17)
 
 Stage: `50-uat` · Candidate: KELEDON 5.2.6 · Result: **PASS FOR SCOPED ANONYMOUS PUBLIC HEADER/MENU TARGET SIZE**.

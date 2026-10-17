@@ -1,3 +1,11 @@
+# UAT Fix revalidation — v5.2.7 / UAT-130 (2026-10-17)
+
+UAT-130 found no regression in the deployed public Web copy action: production announced “Diagnóstico copiado”. Source review confirms Landing now withholds API/OAuth hostnames. No product code repair is indicated by the Web journey. UAT remains acceptance-incomplete because Railway deploys only `services/web` and API; it has no Landing service, so the fixed `landing/` package has not received runtime acceptance. Required follow-up: identify the authoritative customer-facing Landing production URL/deployment and verify it runs this merged main revision; then repeat UAT-130's anonymous copy-status check without reading clipboard contents.
+
+No authenticated/runtime testing was attempted. CMT-003/004 remain subject to the existing PHDK-compliant synthetic identity/tenant/device/CRM sandbox and cleanup blocker. App tests/builds remain unrun locally per owner instruction. Historical remediation below is retained as prior work.
+
+---
+
 # UAT remediation — run `20261013-1900-phdk-auto`
 
 ## Defect 1 — stale candidate version in synthetic device fixture

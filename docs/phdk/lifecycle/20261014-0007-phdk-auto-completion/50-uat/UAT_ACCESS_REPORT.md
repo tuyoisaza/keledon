@@ -1,3 +1,14 @@
+## Browser Readiness — UAT-130 production copy status (2026-10-17)
+
+- Stage/run: Auto `50-uat`, `20261014-0007-phdk-auto-completion`; owner authorized acceptance on production; `ACTIVE_UAT_EXCEPTION` for this bounded anonymous public case.
+- Candidate/target: product main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, KELEDON 5.2.7; public `https://keledon.tuyoisaza.com/?phdk-uat-130=20261017`.
+- Runtime: CUA in-app browser `AVAILABLE_VERIFIED`; Railway Web deployment `c731a6ec-db04-42b4-9738-838eebc151d2` and API deployment `072f618b-3142-4615-babb-62aa73a64de2` both `SUCCESS`, each 1/1 running; no pending work, warning or recent failure.
+- Access: anonymous public page only; no login, account, customer record, CRM, API probe or private network destination. Existing unrelated customer tabs were not accessed.
+- Action boundary: activate only Copy diagnostics to observe accessible success/failure feedback. Do not inspect, export or attach clipboard contents. Do not activate cache clear.
+- Landing deployment: Railway service inventory contains Web/API but no Landing service; the Web Dockerfile builds `services/web` only. No authoritative Landing production destination is present in current project records, so UAT-130 cannot claim Landing runtime acceptance.
+- Spend: `NO_NEW_SPEND`.
+- Result: public Web displayed v5.2.7 and the copy action announced “Diagnóstico copiado” in the accessibility tree. Clipboard remained unread; cache clear and login were untouched. PASS for Web copy status/source contract; Landing runtime BLOCKED pending a verified target.
+
 ## Browser Readiness — UAT-129 producción: teclado público (2026-10-17)
 
 - Permiso: UAT público anónimo autorizado; CUA in-app browser verificado.

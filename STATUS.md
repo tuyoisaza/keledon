@@ -1,6 +1,6 @@
-# Current PHDK Auto readback — v5.2.7 candidate continuation, 2026-10-17
+# Current PHDK Auto readback — v5.2.7 delivered / UAT-130 scoped, 2026-10-17
 
-Repo `tuyoisaza/keledon`; remote `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; production product KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; candidate 5.2.7 removes an API/OAuth hostname disclosure from copied Landing diagnostics and adds a source regression contract. UAT-130 is pending normal PR/deployment. PHDK 2.53.1 static coherence 64/64.
+Repo `tuyoisaza/keledon`; remote `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; production Web v5.2.7. PR #247 fixed Landing diagnostic API/OAuth hostname disclosure in source and added a regression contract; PHDK coherence is 64/64. UAT-130 passes Web copy status and source redaction only; Landing runtime is blocked because Railway has no Landing service and the Web build excludes `landing/`.
 
 CMT-001 is complete for the current cut. CMT-002 is partial: UAT-112–129 covers sampled public layout, labels, focus, target size and locale; broad accessibility, protected diagnostics and audio remain open. CMT-003 is partial with known lease/race and DNS/socket enforcement gaps; customer platform/CRM is per tenant. CMT-004 is partial; role/persistence/cross-tenant UAT needs compliant synthetic fixtures and cleanup. UAT Prep has no permitted production provisioning path, and the current seeder is loopback-only development/test.
 

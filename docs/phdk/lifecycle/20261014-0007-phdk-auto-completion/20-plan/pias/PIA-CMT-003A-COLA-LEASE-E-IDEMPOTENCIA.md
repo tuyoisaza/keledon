@@ -1,6 +1,6 @@
 # Sub-PIA CMT-003A — lease de comandos y efectos idempotentes
 
-Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 1 · Candidato revalidado: KELEDON Web 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`), Railway Web deployment `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` SUCCESS. Revisión estática de fuente: 2026-10-17.
+Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 1 · Baseline actual KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, Railway Web/API SUCCESS. El PR #247 solo corrigió Landing diagnostics y alineó versión; API command source no cambió desde revalidación 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`). Hallazgos y contrato siguen aplicables. Revisión estática de fuente: 2026-10-17.
 
 ## Hallazgo y objetivo
 

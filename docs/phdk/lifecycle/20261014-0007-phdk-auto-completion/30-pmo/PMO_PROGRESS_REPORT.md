@@ -2,16 +2,16 @@
 
 ## Reentrada vigente — candidate 5.2.7 / CMT-002 privacy regression
 
-Remote `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; PR #246 docs-only; production source 5.2.6 `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Current 5.2.7 candidate fixes Landing's copied API/OAuth hostname disclosure, aligns five package/lock roots and Browser renderer, and adds UAT-130 plus a PIA update. PHDK 2.53.1 coherence 64/64. The official updater's `UPDATED` result was only CRLF/LF checkout drift; normalized semantic diff is empty.
+Production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PR #247 delivered KELEDON 5.2.7 and Railway Web/API are SUCCESS. Landing source now withholds copied API/OAuth hostnames and is version-aligned with the other app roots. UAT-130 passes public Web copy status and source contract; the standalone Landing runtime is BLOCKED because Railway has no such service and its target is undocumented. PHDK 2.53.1 coherence 64/64. The official updater's `UPDATED` result was only CRLF/LF checkout drift; normalized semantic diff is empty.
 
 - CMT-001: baseline is current and complete for the cut.
-- CMT-002: public UAT-112–129 is scoped/partial. Source review found and fixed the Landing hostname leak; the source regression is recorded but not run locally, and UAT-130 waits on production deployment. Broad a11y and native/audio remain open.
+- CMT-002: public UAT-112–130 is scoped/partial. Source review fixed the Landing hostname leak; its regression source exists but is unrun locally by owner instruction. Web copy status passes in production; Landing runtime target remains unknown. Broad a11y and native/audio remain open.
 - CMT-003: lease claim remains non-atomic/permanent; Browser allows origin but does not pin resolved IP at the socket. CMT-003A/B need source implementation; production runtime acceptance needs the independent CMT-003C fixture/sandbox gate.
 - CMT-004: tenant-scoped interface selector and least-privilege policy remain in source; authenticated persistence/cross-tenant proof needs permitted synthetic fixtures.
 
-The active acceptance target is the anonymous public production page after delivery of the 5.2.7 candidate. No local app test/build or customer resource was touched.
+The completed acceptance target was the anonymous public Web production page at v5.2.7. No local app test/build or customer resource was touched; `landing/` runtime is not included in that deployment.
 
-SIGUIENTE PASO: complete candidate Integration Review, then UAT Prep/UAT-130 on production; preserve all role-dependent cases as BLOCKED.
+SIGUIENTE PASO: continue CMT-003A/B and preserve the missing Landing deployment target and fixture-dependent acceptance as explicit blockers.
 
 ---
 

@@ -1,0 +1,51 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-130",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T21:13:38Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-130=20261017",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.7",
+  "deployedSourceCommit": "a7ca8689265642e6fe1f2f69aa4fa2c90b81867b",
+  "webDeploymentId": "c731a6ec-db04-42b4-9738-838eebc151d2",
+  "apiDeploymentId": "072f618b-3142-4615-babb-62aa73a64de2",
+  "deploymentStatus": {
+    "web": "SUCCESS",
+    "api": "SUCCESS",
+    "runningReplicas": "1/1 each",
+    "pendingWork": 0,
+    "recentFailures": 0
+  },
+  "channel": "anonymous production in-app browser; accessibility tree; visual screenshot shown in task output",
+  "context": {
+    "route": "/",
+    "locale": "pt",
+    "theme": "dark",
+    "identity": "anonymous"
+  },
+  "result": "PASS_FOR_PUBLIC_WEB_COPY_STATUS_ONLY; LANDING_RUNTIME_NOT_COVERED",
+  "observations": {
+    "versionVisible": "v5.2.7",
+    "copyControlAccessibleName": "Copiar diagnóstico completo",
+    "copyStatusAccessibleText": "Diagnóstico copiado",
+    "copyButtonDisabledDuringSuccess": true,
+    "clipboardRead": false,
+    "clipboardContentsExported": false,
+    "cacheClearActivated": false,
+    "authenticationOrCustomerDataAccessed": false
+  },
+  "sourceContract": {
+    "landingApiAndOauthHostnames": "Withheld in candidate source, aligned with Web",
+    "regressionTestAdded": true,
+    "regressionTestExecutedLocally": false
+  },
+  "deploymentScopeLimit": "Railway inventory contains keledon-web and keledon-api but no Landing service. The Web Dockerfile builds services/web only; this production UAT does not execute landing/ code.",
+  "privacy": "The public copy action wrote to the browser clipboard as designed; clipboard content was never read, exported or attached. No cache clear, login, API probe, customer record or private endpoint was accessed.",
+  "spend": "NO_NEW_SPEND",
+  "notProven": [
+    "Landing package runtime behavior in production because no authoritative Landing deployment target is available",
+    "complete copied report contents or absence of any other unexpected content",
+    "authenticated diagnostic/RBAC behavior, copy failure behavior or clipboard permission denial",
+    "full screen-reader, WCAG, locale/theme/viewport coverage or audio/device behavior"
+  ]
+}

@@ -1,23 +1,24 @@
 ## Current continuation — candidate v5.2.7 / CMT-002 privacy fix (2026-10-17)
 
-Remote `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; production product remains KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Candidate 5.2.7 fixes the Landing API/OAuth diagnostic hostname leak; source regression and UAT-130 are added, pending integration/delivery. PHDK 2.53.1 coherence 64/64. Active branch remains `fix/phdk-5-2-7-landing-diagnostic-host-redaction` from exact main.
+Remote production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON Web 5.2.7; PR #247 merged and Railway Web/API SUCCESS. UAT-130 passes Web copy status and source-level Landing redaction. Standalone `landing/` runtime is BLOCKED because the verified Railway environment has no Landing service and Web builds `services/web` only. PHDK 2.53.1 coherence 64/64. Current documentation/evidence follow-up is on `docs/phdk-5-2-7-check-uat-130`, based on the merged main.
 
 | Stage | Current status | Evidence / next gate |
 |---|---|---|
 | Preflight | REVALIDATED | Current PHDK 2.53.1, 64/64, managed AGENTS block matches native rules; updater EOL-only drift reconciled. |
 | Capture / Plan | REUSED / REVALIDATED | Four owner-confirmed commitments and security/customer-specific decisions remain current. |
 | PMO | ACTIVE / PARTIAL | 1/4 complete for the current cut; CMT-002 partial; CMT-003/004 open. |
-| Integration | RUNNING | Review v5.2.7 source fix/version/diff; current UAT-130 case and CMT-002 PIA updated. Lease atomicity and socket-level DNS/IP remain CMT-003 implementation gaps. |
-| UAT Prep | PARTIAL / BLOCKED AUTH | Current seeder is loopback dev/test only; no permitted prod fixture, identity, Browser device or CRM/DNS sandbox path. |
-| UAT | PENDING | After exact source merge/deploy, execute only UAT-130 anonymous copy-status acceptance without reading clipboard; authenticated/device/private-network cases remain BLOCKED. |
-| UAT Fix | OPEN | Repair only reproducible in-scope failures and retest on production. |
-| SEO / AEO-GEO | PARTIAL / REUSE CHECK | No public source changed in PR #246; current candidate and active findings still require stage readback. |
-| Check / remediation | PENDING | Run scoped PHDK Check and safe auto-fix after the current UAT/implementation boundary. |
-| Delivery | PENDING | Versioned branch/PR and verified deployment are required for 5.2.7. |
+| Integration | COMPLETED FOR 5.2.7 SLICE | PR #247 merged; five package/lock pairs + Browser renderer align; coherence 64/64. CMT-003 lease and socket DNS/IP gaps remain. |
+| UAT Prep | COMPLETED WITH BLOCKERS | UAT-130 public scope/readiness recorded; no valid Landing production target or auth/device/private-network fixtures. |
+| UAT | ACCEPTANCE INCOMPLETE | UAT-130 passes Web copy status/source contract only; Landing runtime and authenticated/device/private-network cases remain BLOCKED. |
+| UAT Fix | COMPLETED FOR THIS SLICE | No Web defect found; missing Landing deployment target and recovery path recorded. No source fix indicated by Web UAT. |
+| SEO | COMPLETED / PARTIAL | v5.2.7 source review reuses the 25-control audit; no public metadata/content change. Deployed/external SEO remains unmeasured. |
+| AEO/GEO | COMPLETED / PARTIAL | 15-control answer review reused; no public answer change. Provenance/market and external citations remain unmeasured. |
+| Check / remediation | COMPLETED FOR THIS CUT / GAPS OPEN | `70-check/PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md`; coherence 64/64, theme static 0 findings/runtime unverified, automation static clean/provider state unverified. CMT-003A/B and tenant CRUD remain prioritized gaps. |
+| Delivery | PARTIAL | PR #247 and production Web/API deploy verified; complete Auto delivery remains open. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. No local application tests/builds are permitted by the owner's instruction. No production login, customer data, private host, database write or provider setting was touched.
 
-SIGUIENTE PASO: finish candidate Integration Review, stage UAT readiness, deliver by PR, then execute UAT-130 against the production deployment.
+SIGUIENTE PASO: continue CMT-003C → CMT-003A → CMT-003B, then tenant runtime/admin closure; do not promote the overall Auto until production UAT closes the four commitments.
 
 ---
 

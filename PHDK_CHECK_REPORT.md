@@ -1,3 +1,11 @@
+## Current Check — 5.2.7 / PHDK 2.53.1 — 2026-10-17
+
+Current main: `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, PR #247 merged. **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL.** Full current audit, stable findings, mandatory PHDK gates, provider evidence and next execution order: [PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md).
+
+Verified: PHDK coherence 64/64; theme static audit 0 findings (runtime unverified); automation no static findings (remote unverified); Web/API Railway deployments SUCCESS but `checkSuites=false`; production UAT-130 passed the anonymous Web diagnostic copy-status interaction only. No local app test/build/lint ran. CMT-003C, CMT-003A/B, tenant admin CRUD and Landing runtime acceptance remain open.
+
+---
+
 ## Revalidación actual de esta continuación — 2026-10-17
 
 Alcance revisado: baseline PHDK Auto 5.2.4, estándares PHDK 2.53.1 y evidencia CMT-002 UAT-122. `origin/main` en este corte es `d3f27ef137939c1acbbb313dd7f95b525c735dc7`; Railway Web/API para ese SHA reportan SUCCESS. Coherencia PHDK estática 64/64; el JSON UAT-122 parsea y `git diff --check` está limpio. HTTPS GET productivos confirmaron homepage/login/bundle 200 y versión 5.2.4.

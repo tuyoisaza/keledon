@@ -1,8 +1,8 @@
-# Current PHDK Auto continuation — KELEDON 5.2.7 candidate / PHDK 2.53.1
+# Current PHDK Auto continuation — KELEDON 5.2.7 / PHDK 2.53.1
 
 Continue the owner-confirmed fronts in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 tenant-specific voice→Cloud→Browser→CRM, and CMT-004 administration/permissions. The Admin/Coordinator TeamInterface selector is source-implemented and the owner approved tenant-scoped assignment.
 
-At this reentry, remote `main` is `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; PR #246 is documentation-only. Product source in production stays `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6); candidate 5.2.7 corrects Landing diagnostic hostname redaction and is pending delivery. Railway Web/API report SUCCESS on #246. PHDK 2.53.1 coherence is 64/64. UAT-130 production copy-status check is pending; do not inspect clipboard contents. CMT-003A/B are not implemented; authenticated ADM-IF/tenant acceptance remains blocked on a compliant synthetic identity/data/cleanup path.
+Remote `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PR #247 delivered v5.2.7, and Railway Web/API are SUCCESS. UAT-130 passes the public Web copy status and source redaction only; never inspect clipboard contents. The standalone `landing/` runtime is not deployed by Railway and has no verified production URL, so runtime UAT remains blocked for that package. CMT-003A/B remain to implement; authenticated ADM-IF/tenant acceptance remains blocked on a compliant synthetic identity/data/cleanup path.
 
 No local application tests or builds are run. Production acceptance stays within approved, read-only anonymous checks until authorized synthetic fixtures exist. Never treat the whole Auto as complete based on a scoped delivery.
 

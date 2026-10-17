@@ -2,11 +2,11 @@
 
 ## Readback vigente — candidate 5.2.7 / CMT-002
 
-Repo `tuyoisaza/keledon`; `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; producción KELEDON 5.2.6 `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Candidate 5.2.7 fixes Landing's diagnostic hostname disclosure and awaits Integration/PR/deployment. PHDK 2.53.1 64/64 static. PR #246 únicamente registró evidencia y Prep; no modificó la app.
+Repo `tuyoisaza/keledon`; production `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON 5.2.7, PR #247 merged; Railway Web/API SUCCESS. PHDK 2.53.1 coherence 64/64. UAT-130 passes Web copy-status and reviewed Landing source privacy; Landing runtime remains blocked because there is no verified deployment target.
 
-UAT-129 solo aprueba secuencia/foco público muestreados. Se mantiene CMT-001 completo para el corte, CMT-002 parcial y CMT-003/004 activos/parciales. La matriz de personas de UAT propone IDs; no hay cuentas/tenants/devices sintéticos reales ni camino permitido de provisioning/cleanup en producción. El seeder actual rechaza producción.
+UAT-129 solo aprueba secuencia/foco público muestreados. UAT-130 confirma estado de copia Web, no lee clipboard, y conserva BLOCKED la ejecución de `landing/`. CMT-001 está completo para el corte 5.2.7; CMT-002 parcial y CMT-003/004 activos/parciales. La matriz de personas de UAT propone IDs; no hay cuentas/tenants/devices sintéticos reales ni camino permitido de provisioning/cleanup en producción. El seeder actual rechaza producción.
 
-SIGUIENTE PASO: revisar y entregar candidate 5.2.7, luego completar UAT-130 en portada pública de producción; no leer clipboard, iniciar sesión ni usar datos de clientes. CMT-003A/B y UAT autenticada permanecen abiertas.
+SIGUIENTE PASO: continuar CMT-003A/B y resolver el destino de producción de Landing antes de afirmar su runtime; preservar bloqueados los casos autenticados sin fixture autorizado.
 
 ---
 

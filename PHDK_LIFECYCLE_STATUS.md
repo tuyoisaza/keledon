@@ -1,10 +1,10 @@
-## Auto continuation — KELEDON v5.2.7 candidate privacy fix (2026-10-17)
+## Auto continuation — KELEDON v5.2.7 production delivery / UAT-130 (2026-10-17)
 
-Repo `tuyoisaza/keledon`; worktree `C:\KELEDON\keledon-phdk-auto-contrast109`; branch actual `fix/phdk-5-2-7-landing-diagnostic-host-redaction`, base `origin/main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`. Producto desplegado KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; candidate de fix 5.2.7 pendiente de checks/PR/despliegue. Source review halló que Landing copiaba hostnames de API/OAuth; candidate los oculta como Web y agrega regresión de contrato. UAT-130 queda pendiente en producción. No pruebas/builds locales de app.
+Repo `tuyoisaza/keledon`; worktree `C:\KELEDON\keledon-phdk-auto-contrast109`; documentación de continuación en `docs/phdk-5-2-7-check-uat-130`, basada en `main`. PR #247 se fusionó por squash como `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; `git ls-remote` confirma mismo main. Producto Web 5.2.7 desplegó SUCCESS en Railway Web/API; UAT-130 pasa copy-status Web y revisión de redacción en fuente. El runtime de paquete `landing/` queda BLOCKED porque no hay servicio/deploy target verificado. No pruebas/builds locales de app.
 
 UAT-127/128 solo confirma presencia AX pública; UAT-129 pasa el muestreo de 11 Tab/foco de nav al CTA. Ninguna prueba autenticación o WCAG completa. PHDK 2.53.1 coherence 64/64; updater oficial constató solo deriva de finales de línea, sin cambio semántico. Auto **PARCIALMENTE ENTREGADO**: CMT-001 completo al corte; CMT-002 parcial; CMT-003/004 abiertos. CMT-003C sigue bloqueada por falta de vía permitida de fixtures sintéticos, sandbox y cleanup. No tests/builds locales de app.
 
-SIGUIENTE PASO: cerrar Integration/Check del candidate y entregar por PR; después verificar UAT-130 en producción sin leer el portapapeles.
+SIGUIENTE PASO: cerrar el registro de UAT Fix/Check para este corte; continuar CMT-003A/B y dejar UAT autenticada de CMT-003/004 bloqueada hasta tener provisioning/cleanup sintético autorizado. Todo Auto sigue PARCIALMENTE ENTREGADO.
 
 This readback supersedes earlier summaries below; those remain historical.
 

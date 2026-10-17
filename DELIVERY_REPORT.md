@@ -1,3 +1,20 @@
+## Current scoped delivery — KELEDON 5.2.7 Landing diagnostics privacy fix (2026-10-17)
+
+Goal: deliver the CMT-002 source correction under the active PHDK Auto portfolio; this does not complete the portfolio.
+
+- Branch: `fix/phdk-5-2-7-landing-diagnostic-host-redaction`; source commit `89a0bf26df76950e3ef93a00ae1331f3ead2634e`.
+- PR [#247](https://github.com/tuyoisaza/keledon/pull/247) squash-merged to verified remote `main` as `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`.
+- Version: five application package/lock roots and Browser renderer align at 5.2.7.
+- Source outcome: Landing debug report no longer derives/emits API or OAuth hostnames; it matches Web's withheld fields. Added a cross-surface redaction regression source, not run locally under the owner instruction.
+- Static checks: PHDK coherence 64/64; package/lock/renderer alignment 11/11; source contract reviewed; `git diff --check` passes. No local application tests, lint or builds were run.
+- Railway production: Web deployment `c731a6ec-db04-42b4-9738-838eebc151d2` and API deployment `072f618b-3142-4615-babb-62aa73a64de2` SUCCESS, each 1/1 replica; no pending work or recent failures.
+- Production UAT-130: public Web shows v5.2.7; copy announces “Diagnóstico copiado”; clipboard not read/exported and cache-clear untouched. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-130-production-copy-status-2026-10-17.json`.
+- Residual: Railway's verified project has no Landing service, and Web builds `services/web` only. The standalone `landing/` runtime has no verified production deployment target, so its runtime acceptance is BLOCKED. Full CMT-002 accessibility/RBAC/audio and CMT-003/004 work remain open. Overall Auto remains **PARTIALLY DELIVERED**.
+
+Lifecycle details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/40-integration/INTEGRATION_REPORT-5.2.7.md`, `50-uat/HANDOFF.md`, and `60-uat-fix/UAT_REMEDIATION.md`.
+
+---
+
 ## Current delivery — 5.1.85 keyboard-accessible agent selection merged (2026-10-17)
 
 PR [#208](https://github.com/tuyoisaza/keledon/pull/208) squash-merged source `595a297c3576fe17bb1a10202eafae6c70198a96` at remote `main` `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; candidate and target tree match `ec04b42fc211b81e893a66e95ba9e5ebcffc7594`. Five app package/lock roots and Browser renderer read 5.1.85. PHDK v2.52.2 coherence passes 63/63. Web/Landing builds, typechecks and lint pass; Web UAT passes 8/8 plus admin-settings, theme-template and AI-admin; API/Cloud regressions pass 43/43 and 20/20; Browser focused tests pass 16/16. UAT-095 verifies the keyboard selection source contract 2/2 and built dashboard navigation. A real authenticated populated agent card and screen-reader pass remain MANUAL.
