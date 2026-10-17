@@ -1,3 +1,9 @@
+## Production v5.2.6 — UAT-127 public accessibility-tree presence
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-127 | CMT-002 / anonymous public visitor | Fresh anonymous production `/` in pt/dark; inspect the accessibility tree without activating controls. | Current version/title, main landmark, illustrative-demo disclosure, named diagnostic/theme/language controls, public navigation, headings and links are exposed. | Production browser accessibility tree | **PASS for presence only:** fresh tree displayed v5.2.6, page title, main landmark, truthful demo disclosure, two named diagnostic actions, locale/theme controls and public content. First fresh navigation showed Cloudflare 502; a second loaded the page. Cause unknown. No screen-reader, interaction, keyboard or WCAG-wide claim. Evidence: `evidence/uat-127-production-public-ax-presence-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-104 production candidate availability smoke
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

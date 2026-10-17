@@ -1,0 +1,56 @@
+{
+  "case": "UAT-127",
+  "phase": "PHDK Auto production public accessibility re-entry",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:44:57Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-auto-cmt002-public-20261017=02",
+  "deployedVersion": "5.2.6",
+  "sourceCommit": "e7257a7d0c66c8b34e6bbb7028c30be092f33102",
+  "webDeploymentId": "546bedfd-c6b4-deb8-bfd8-0511351d0437",
+  "webDeploymentStatus": "SUCCESS",
+  "apiDeploymentId": "2ff4cdde-e05f-4ab3-af72-d489cb3fa142",
+  "apiDeploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "locale": "pt",
+  "theme": "dark",
+  "browser": "Codex in-app browser via CUA",
+  "observations": {
+    "title": "KELEDON | Cloud-governed contact center runtime",
+    "versionVisible": true,
+    "mainLandmarkPresent": true,
+    "demoDisclosurePresent": true,
+    "namedDiagnosticActions": [
+      "Copiar diagnóstico completo",
+      "Limpar cache do aplicativo"
+    ],
+    "namedLocaleAndThemeControls": true,
+    "publicNavigationLinksNamed": true,
+    "contentHeadingsPresent": true,
+    "publicLinksPresent": true,
+    "observedContentLanguage": "Portuguese"
+  },
+  "initialNavigationObservation": {
+    "result": "Cloudflare 502 Bad Gateway page; host status displayed Error",
+    "atUtc": "2026-10-17T20:44:13Z",
+    "action": "fresh anonymous navigation only"
+  },
+  "followUp": {
+    "providerReadback": "Railway production Web/API Online, SUCCESS, 1/1 replicas running, 0 reported recent failures, no pending work",
+    "secondFreshNavigation": "production page loaded and exposed v5.2.6 accessibility tree",
+    "rootCause": "not determined"
+  },
+  "result": "PASS_FOR_PUBLIC_ACCESSIBILITY_TREE_PRESENCE_ON_5_2_6; INITIAL_502_RECORDED",
+  "actions": [
+    "Opened a fresh anonymous production homepage in the in-app browser.",
+    "Recorded accessible title, version, main landmark, demo disclosure, named diagnostic/theme/language controls, navigation links and headings.",
+    "Did not activate links, buttons, menus, selectors, clipboard or cache actions; no login, API mutation, customer data or CRM access."
+  ],
+  "limitations": [
+    "Accessibility-tree presence only; no spoken output or screen-reader conformance was tested.",
+    "One public route, Portuguese/dark, one production browser session; no other routes, themes, locales, zoom levels or browser engines.",
+    "The first fresh navigation displayed Cloudflare 502; a subsequent fresh navigation loaded v5.2.6. Railway reported services healthy, but the cause of the initial 502 was not established.",
+    "No controls were activated; clipboard/cache behavior, login, RBAC, persistence and audio remain untested."
+  ],
+  "spendDisposition": "NO_NEW_SPEND"
+}

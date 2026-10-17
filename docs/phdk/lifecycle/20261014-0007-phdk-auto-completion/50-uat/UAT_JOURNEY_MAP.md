@@ -1,5 +1,10 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.6 — UAT-127 public accessibility-tree presence
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Anonymous visitor | CMT-002 / public semantics | UAT-127 / homepage AX presence | Fresh anonymous production navigation → verify version/title, main landmark, demo disclosure, named diagnostic/theme/language controls, navigation/headings/public links → stop without activation | PASS for tree presence only. Initial navigation showed Cloudflare 502; second fresh navigation loaded v5.2.6. No screen-reader speech or interaction was tested. Evidence: `evidence/uat-127-production-public-ax-presence-2026-10-17.json`. |
 ## Production v5.2.6 — anonymous mobile header/menu target size
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

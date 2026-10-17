@@ -1,3 +1,13 @@
+## Current continuation — UAT-127 documentation candidate (2026-10-17)
+
+Product remains KELEDON 5.2.6 at source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #243 moved remote `main` to `5c9393851389a3b7291597acf3d01678251449de` without changing product source. UAT-127 passes public accessibility-tree presence only after a first-navigation Cloudflare 502 and a successful second navigation; root cause is unknown. Evidence and frozen UAT snapshot are under `50-uat/evidence/uat-127-*` and `50-uat/snapshots/production-uat-127-public-ax-20261017/`.
+
+PHDK coherence 64/64; documentation/evidence JSON and diff checks only. No local application tests/builds. Overall Auto remains PARTIALLY DELIVERED; authenticated tenant/device gates await CMT-003C synthetic fixture provisioning and cleanup.
+
+SIGUIENTE PASO: merge the documentation PR through the normal delivery path, read back remote `main`, and continue the open four-front gates.
+
+---
+
 # PHDK Lifecycle Handoff — Delivery
 
 ## Current scoped delivery — 5.2.6 mobile target remediation (2026-10-17)
