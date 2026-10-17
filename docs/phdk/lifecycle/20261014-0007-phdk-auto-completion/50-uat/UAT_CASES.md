@@ -1,3 +1,9 @@
+## Candidate 5.2.1 — UAT-104 production candidate availability smoke
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-104 | CMT-001/CMT-004 / anonymous release observer | After PR #210 merge and connected autodeploy, GET the public homepage, referenced JavaScript bundle, API `/health`, and guarded `/api/crud/interfaces` without an Authorization header. Do not log in or submit application data. | HTTP 200 from page/bundle/health; API and bundle report 5.2.1; unauthenticated catalog access is denied (401). This is availability/version and anonymous-denial smoke only. | Production HTTPS GET, no session | **PASS (scoped smoke):** homepage, bundle and API health returned 200; the API and bundle identify v5.2.1; anonymous catalog GET returned 401 with no authorization header. No authenticated selector, role-specific tenant scope, database, migration, or credential behavior was tested. Evidence: `evidence/uat-104-production-candidate-smoke-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-103 production key-config readiness
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

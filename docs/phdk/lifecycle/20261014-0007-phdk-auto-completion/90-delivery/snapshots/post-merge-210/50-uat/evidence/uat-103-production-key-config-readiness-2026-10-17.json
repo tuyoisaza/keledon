@@ -1,0 +1,35 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-103",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:02:41Z",
+  "candidate": {
+    "version": "5.2.1",
+    "branch": "feature/tenant-interface-selector-5.2.0",
+    "pr": 210,
+    "state": "OPEN"
+  },
+  "target": {
+    "environment": "production",
+    "provider": "Railway",
+    "project": "KELEDON",
+    "service": "keledon-api"
+  },
+  "channel": "bounded read-only Railway describe-service metadata",
+  "identity": "authenticated provider metadata connector; no application login",
+  "observation": {
+    "requiredVariableName": "KELEDON_VENDOR_KEY",
+    "namePresent": false,
+    "variableValuesRead": false
+  },
+  "result": "BLOCKED: required key name is absent from the production API service metadata; new ManagedInterface credential writes fail closed until owner-managed configuration is present",
+  "actions": "read service description and variable names only; no variable value endpoint, provider mutation, deployment, customer data, or database access",
+  "notProven": [
+    "key value, length, validity, or rotation state",
+    "Cloud runtime key configuration",
+    "candidate deployment or runtime encryption behavior",
+    "synthetic credential persistence or response redaction"
+  ],
+  "nextAction": "Owner configures the dedicated key through the authorized provider process; verify name presence and minimum length without revealing the value before UAT-101.",
+  "redaction": "No secret values or customer data collected."
+}

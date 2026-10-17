@@ -1,0 +1,47 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-104",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:12:30Z",
+  "candidate": {
+    "version": "5.2.1",
+    "pr": 210,
+    "mergeCommit": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+    "targetBranch": "main"
+  },
+  "target": {
+    "environment": "production",
+    "webUrl": "https://keledon.tuyoisaza.com/",
+    "apiHealthUrl": "https://keledonapi.tuyoisaza.com/health",
+    "anonymousCatalogUrl": "https://keledonapi.tuyoisaza.com/api/crud/interfaces",
+    "assetPath": "/assets/index-Cq8xumtq.js"
+  },
+  "channel": "anonymous HTTPS GET requests; bounded Railway deployment metadata",
+  "identity": "anonymous",
+  "observations": {
+    "webStatus": 200,
+    "bundleStatus": 200,
+    "bundleContainsCandidateVersion": true,
+    "bundleContainsPreviousVersion": false,
+    "apiHealthStatus": 200,
+    "apiHealthBody": {
+      "status": "ok",
+      "version": "5.2.1"
+    },
+    "anonymousCatalogStatus": 401,
+    "anonymousCatalogAuthorizationHeader": false,
+    "anonymousCatalogBodyCaptured": false,
+    "railwayApiDeployment": "SUCCESS",
+    "railwayWebDeployment": "SUCCESS"
+  },
+  "result": "PASS_FOR_PUBLIC_AVAILABILITY_VERSION_AND_ANONYMOUS_DENIAL_ONLY",
+  "notProven": [
+    "authenticated role or tenant behavior",
+    "team interface selection or persistence",
+    "database migration state or tenant ownership backfill",
+    "managed-interface credential encryption, persistence, or audit redaction",
+    "CRM/voice integration behavior"
+  ],
+  "actions": "Read public page, referenced bundle, API liveness and deployment metadata only; no login, application data, provider configuration, or database operations.",
+  "redaction": "No credentials, customer data, or private runtime diagnostics collected."
+}

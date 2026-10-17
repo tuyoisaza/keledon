@@ -1,0 +1,75 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: four owner-confirmed KELEDON fronts and maximum applicable PHDK conformity",
+  "target_branch": "main",
+  "expected_version": "5.2.1",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_commit_sha": "683f7b84b07af8b4edad38b6d7fe0ce42218c14a",
+  "source_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
+  "merged_commit_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+  "merge_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
+  "final_remote_main_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/210",
+  "checks": {
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Remote main at the merge SHA reports 5.2.1 in services/api, cloud, services/web, browser and landing package.json; merge tree equals source tree."
+    },
+    "pr_merge_remote_readback": {
+      "status": "PASS",
+      "evidence": "PR #210 is MERGED at 9c4c143abba911261f8c881cfc1b3c4e32c373a9; origin/main and git ls-remote match. GitHub reported no hosted checks or review decision."
+    },
+    "lint": {
+      "status": "PASS",
+      "evidence": "Targeted ESLint passed for changed API/Cloud CRUD services, secret-crypto helpers and audit interceptors on the merged product source."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API and Cloud npm run build:typescript passed on the merged product source."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Existing Railway autodeploy reports SUCCESS for production keledon-api and keledon-web at the candidate; no local application build was run."
+    },
+    "focused_tests": {
+      "status": "BLOCKED",
+      "evidence": "No local application tests were run per the user's production-only instruction. Focused authenticated production tests were not run because the required synthetic tenant/catalog fixture is not provisioned and UAT-103 found KELEDON_VENDOR_KEY absent from the production API variable-name metadata."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "UAT-104: anonymous production homepage, bundle and API /health returned HTTP 200; bundle/API identify 5.2.1; unauthenticated /api/crud/interfaces returned 401. This is availability/version and anonymous-denial smoke only, not tenant feature acceptance."
+    },
+    "whole_auto_acceptance": {
+      "status": "BLOCKED",
+      "evidence": "The four confirmed commitments remain 0/4 DONE. Authenticated role/tenant and persisted selector UAT, secret storage acceptance, catalog ownership/provisioning, and other administration, diagnostics, accessibility and client-specific integration gates remain open."
+    }
+  },
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "mechanical_completion_gate": {
+    "status": "BLOCKED",
+    "command": "py -3 phdk-standards/scripts/phdk_completion_gate.py --evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.2.1.json",
+    "evidence": "Expected to reject completion because focused tests and whole Auto acceptance are BLOCKED; remote merge/version readback are independently verified."
+  },
+  "deployment": "EXISTING_CONNECTED_AUTODEPLOY_OBSERVED_SUCCESS",
+  "production_database_or_customer_data": "NOT_USED",
+  "candidate": {
+    "expected_version": "5.2.1",
+    "branch": "feature/tenant-interface-selector-5.2.0",
+    "source_commit_sha": "683f7b84b07af8b4edad38b6d7fe0ce42218c14a",
+    "merged_commit_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+    "pull_request": "https://github.com/tuyoisaza/keledon/pull/210",
+    "pull_request_state": "MERGED",
+    "merge_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
+    "production_api_and_web": "SUCCESS",
+    "production_public_smoke": "PASS UAT-104, scoped to HTTP availability and version",
+    "production_secret_readiness": "BLOCKED UAT-103; required variable name absent, no value read",
+    "whole_product_acceptance": "PARTIALLY_DELIVERED"
+  },
+  "residual_blockers": [
+    "Owner-managed KELEDON_VENDOR_KEY configuration through the authorized provider process",
+    "Authorized synthetic tenant and catalog provisioning path; no Web catalog-provisioning UI found",
+    "Authenticated production role, persistence, cross-tenant denial and cleanup UAT",
+    "Other open PHDK Auto commitments and administration-console requirements"
+  ]
+}

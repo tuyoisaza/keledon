@@ -2,18 +2,18 @@
 
 ## Current Auto continuation — 2026-10-17
 
-The user's ordered portfolio confirmation remains current: baseline/version/PR; widget/diagnostics; per-client voice→Cloud→Browser→CRM; administration/permissions. No new commitment or scope reduction was introduced. Candidate branch `feature/tenant-interface-selector-5.2.0` contains product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is OPEN with no check runs or review decision. PHDK 2.53.1 coherence passes 64/64. Production remains at v5.1.85.
+The user's ordered portfolio confirmation remains current: baseline/version/PR; widget/diagnostics; per-client voice→Cloud→Browser→CRM; administration/permissions. No new commitment or scope reduction was introduced. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) squash-merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; `origin/main` and `git ls-remote` match. Railway API/Web deployed successfully and UAT-104 observed public version 5.2.1. The application remains only smoke-tested; PHDK 2.53.1 coherence passes 64/64.
 
 | Commitment | Status | Current evidence | Remaining gate |
 |---|---|---|---|
-| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PR #210 open; standards upgraded; production public page reports 5.1.85. | Resolve safe acceptance, review/check gates, merge and verify main/deployment. |
-| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Prior local/source acceptance remains scoped to its recorded candidate. | Native device/audio and broad accessibility/localization acceptance. |
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | Standards upgraded; PR #210 merged, exact remote main verified, API/Web deployment successful, public 5.2.1 smoke observed. GitHub reported no checks/review decision. | Continue baseline/version discipline and close whole-goal completion gates. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | UAT-104 confirms public Web bundle/API availability at 5.2.1; prior widget evidence keeps its original scope. | Native device/audio and broad accessibility/localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Client-neutral source and tenant configuration evidence retained. | Per-client sandbox, call/CRM stack and customer acceptance; no endpoint selected/contacted. |
-| CMT-004 administration/permissions | ACTIVE / PARTIAL | Approved tenant/role policy; tenant-scoped selector source and API/Cloud review; UAT-098/099 anonymous production smoke only. Superadmin provision route exists; existing interface ownership is not backfilled. | Verify interface provisioning/ownership, then role/persistence/cross-tenant acceptance; remaining CRUD matrix and other required gates. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Tenant selector, DB-derived guards, encryption and audit redaction are merged. UAT-103 found `KELEDON_VENDOR_KEY` absent from production API metadata; migration has no legacy ownership backfill and Web catalog provisioning UI was not found. | Owner-managed key setup, approved synthetic tenant/catalog fixture, then role/persistence/cross-tenant acceptance; remaining CRUD matrix and other required gates. |
 
-**Portfolio:** 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. The deployment at production is v5.1.85 and cannot accept branch-only 5.2.1. Authenticated UAT remains blocked; no real production accounts/data were touched.
+**Portfolio:** 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. Production serves 5.2.1, but authenticated UAT and persistence are blocked. No real production accounts/data or secret values were touched.
 
-SIGUIENTE PASO: continue delivery and safe candidate acceptance; preserve all four commitments as open.
+SIGUIENTE PASO: owner configures `KELEDON_VENDOR_KEY` through the authorized provider process and provides/authorizes a synthetic tenant catalog fixture; then run UAT on production and continue the remaining fronts.
 
 ---
 

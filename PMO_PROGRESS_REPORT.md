@@ -1,17 +1,17 @@
 # PMO Progress — 5.2.1 continuation / PHDK 2.53.1 (2026-10-17)
 
-Current Auto re-entry evidence: production UAT-100 confirms only anonymous homepage/login widget presence on deployed v5.1.85; UAT-098/099 remain narrow smoke results. PHDK 2.53.1 Check also established newly mandatory admin-console gaps: unified settings is currently a link hub; invitation/session lifecycle, permission editor and backup/recovery are not established; AI catalog has four managed IDs but no default graph edges. `ADMIN_ARCHITECTURE.md`, `ADMIN_CAPABILITY_MATRIX.md`, `ADMIN_SETTINGS_REGISTRY.md` and `AI_WORKFLOW_CATALOG.md` now provide the source-traceable baseline. The candidate is not accepted or deployed, and no production state changed.
+PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; Railway API/Web deployments succeeded and UAT-104 observed the public bundle and API liveness at version 5.2.1. This is a limited availability smoke, not authenticated feature acceptance. UAT-103 found `KELEDON_VENDOR_KEY` absent from production API metadata, and no Web catalog-provisioning UI was found. PHDK 2.53.1 Check also established admin-console gaps: settings is a link hub; invitation/session lifecycle, permission editor, backup/recovery, and AI graph edges remain incomplete. Registries remain in place to support the next implementation slices.
 
 | Commitment | Verified progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 remains open at the live remote head; production shows v5.1.85. | No checks/review decision reported; UAT and exact `main`/deployment readback remain. |
-| CMT-002 widget/diagnostics | Production UAT-100 confirms anonymous homepage/login widget presence on v5.1.85; prior source evidence retains its candidate scope. | Candidate 5.2.1 and authenticated/admin surfaces; action behavior, native device/audio and broad assistive-tech/localization remain. No local app tests run in this continuation. |
+| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 merged, exact remote main SHA and Railway API/Web success verified; public 5.2.1 smoke passed. GitHub had no checks/review decision. | Continue baseline and version reconciliation; product-wide completion gates remain. |
+| CMT-002 widget/diagnostics | UAT-104 confirms anonymous homepage/bundle/API availability at 5.2.1; prior widget source evidence retains original scope. | Authenticated/admin surfaces, action behavior, native device/audio and broad assistive-tech/localization remain. No local app tests were run. |
 | CMT-003 voice→Cloud→Browser→CRM | Client-neutral contracts and allowlist evidence retained; no customer integration contacted. | Client must select and provide safe call/CRM sandbox for acceptance. |
-| CMT-004 administration/permissions | Selector/stale-response source fixes reviewed; UAT-098/099 are anonymous production smoke, not feature acceptance. Superadmin provision route exists; migration has no legacy-row backfill. | Verify tenant provisioning/ownership, then role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
+| CMT-004 administration/permissions | Selector/stale-response and credential-boundary source merged. UAT-103 found the key name absent; migration has no legacy-row backfill and Web catalog provisioning UI was not found. | Owner-managed key setup, authorized synthetic fixture/catalog provisioning, then role sessions, persisted assignment and cross-tenant denial. |
 
 Portfolio remains 4 confirmed / 0 complete / 4 active-partial. CRUD inventory counts from the prior candidate remain historical and are not recalculated by this read-only smoke. PHDK static coherence: 64/64. See stage 30 PMO snapshot `snapshots/candidate-5.2.1/`.
 
-SIGUIENTE PASO: continue normal versioned delivery and re-enter tenant UAT only with a safe target matching 5.2.1.
+SIGUIENTE PASO: configure the required key through the owner-authorized provider process and prepare an authorized synthetic tenant/catalog; then execute the blocked UAT cases on production and continue CMT-002/003/004.
 
 ---
 

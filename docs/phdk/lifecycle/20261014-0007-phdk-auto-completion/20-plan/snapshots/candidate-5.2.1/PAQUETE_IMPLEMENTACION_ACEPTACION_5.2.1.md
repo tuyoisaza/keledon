@@ -16,7 +16,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 - Readback Railway de solo lectura (2026-10-17 17:02 UTC): el inventario de nombres del servicio `keledon-api` en producción no incluye `KELEDON_VENDOR_KEY`; no se leyeron valores. El cifrado nuevo falla de forma cerrada si falta, así que la operación de credenciales no puede pasar aceptación hasta que el propietario configure la clave por el canal autorizado. No modificar la configuración del proveedor desde este flujo.
 - Tras la reparación de credenciales: `npm run build:typescript` y lint sobre los archivos API/Cloud modificados pasan; no se ejecutaron tests de aplicación locales.
 - Fuentes relevantes: `services/web/src/pages/ManagementTeamsPage.tsx`, `services/web/src/lib/request-sequence.ts`, guards y servicios API/Cloud de asignación tenant/equipo, y la regresión `services/web/test/team-interface-request-sequence.test.cjs`.
-- El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto y mergeable, sin checks alojados ni decisión de revisión; producción continúa en v5.1.85. La siguiente aceptación funcional debe ejecutarse sobre la versión candidata que se observe desplegada en el sitio de producción.
+- El selector y la protección contra respuestas asíncronas obsoletas están en `main` por PR [#210](https://github.com/tuyoisaza/keledon/pull/210), squash-merge `9c4c143abba911261f8c881cfc1b3c4e32c373a9`. Railway reportó API y Web exitosos; UAT-104 observó HTTP 200 en la página, bundle y salud API, versión 5.2.1, y HTTP 401 sin sesión en el catálogo protegido. Esto comprueba disponibilidad/denegación anónima, no aceptación autenticada ni persistencia.
 
 ## Hallazgos PHDK 2.53.1 que condicionan la continuación
 
@@ -39,21 +39,21 @@ Este plan no cambia el alcance confirmado ni habilita acceso a datos/secretos de
 | Interfaces existentes y provisión tenant | La migración agrega `ManagedInterface.companyId` nullable, FK e índice; la API y Cloud filtran por empresa y omiten valores de credenciales | No hay backfill: las filas previas quedan sin empresa y no salen en el selector. La Web solo implementa lectura/asignación; el rastreo no encontró UI de catálogo para que superadmin provisione interfaces. Confirmar origen y herramienta de provisión; mapear filas antiguas solo con ownership verificado, sin inferir tenant ni exponer catálogo global |
 | Las respuestas viejas no pisan el equipo seleccionado | Regresión de secuencia HTTP enfocada; Web typecheck/lint/build reportados PASS | Repetir con usuario/tenant reales únicamente en target aislado y candidato 5.2.1 |
 | Provisionamiento de identidades sintéticas | Seeder idempotente, validación de host/db y rechazo de producción; artefactos de fixture ya existen | Ejecución con PostgreSQL dedicado de UAT, login normal por rol, Test-as y cleanup |
-| Prueba en el sitio solicitado | UAT-098 cargó la página pública; UAT-099 redirigió `/management/teams` sin sesión a `/login`. Ambos muestran versión 5.1.85 y son de solo lectura | Producción no sirve el candidato 5.2.1; por ello no prueba ni acepta el selector de la rama ni sus roles por tenant |
+| Prueba en el sitio solicitado | UAT-098/099/100/102 son evidencias históricas sobre 5.1.85; UAT-104 comprueba el servicio y bundle públicos en 5.2.1 | UAT-104 no autentica ni verifica selector, permisos, persistencia o migración; esos casos requieren fixture sintético autorizado |
 | Presencia del widget en home/login | UAT-100 inspeccionó los árboles de accesibilidad anónimos de `/` y `/login`: versión y dos acciones de diagnóstico visibles en 5.1.85 | No se activaron acciones; no verifica su funcionamiento, permisos de diagnóstico ni la rama candidata |
 
 ## Orden ejecutable
 
-1. Mantener Preflight, Integration Review, este Plan y Check enlazados al SHA actual `13866671e0290519924efbb030b77101e95aa66f`.
-2. Completar la integración por PR #210 según MAIN_DELIVERY_STANDARD y observar la versión exacta mediante el autodeploy ya conectado.
-3. Releer en producción solo los nombres de variables. Si `KELEDON_VENDOR_KEY` sigue ausente, registrar el bloqueo y no intentar guardar credenciales; el propietario debe configurarla por el proceso autorizado sin revelar el valor.
-4. Ejecutar UAT en el sitio de producción con cuenta/tenant sintético autorizado cuando la dependencia esté lista: permisos y persistencia, rechazo cross-tenant, vacíos/errores, secretos cifrados y limpieza. No ejecutar pruebas de aplicación localmente ni usar datos de clientes.
+1. Mantener Preflight, Integration Review, este Plan y Check vinculados a la integración de PR #210, merge `9c4c143abba911261f8c881cfc1b3c4e32c373a9`.
+2. Releer en producción solo los nombres de variables. Si `KELEDON_VENDOR_KEY` sigue ausente, no probar escrituras de secretos; el propietario debe configurarla por el proceso autorizado sin revelar el valor.
+3. Resolver la provisión de catálogo y preparar un fixture de tenant sintético autorizado; la Web no tiene UI de catálogo y las filas anteriores carecen de ownership verificado.
+4. Ejecutar UAT de permisos/persistencia, rechazo cross-tenant, vacíos/errores, cifrado de secretos y limpieza en el sitio de producción, una vez listas las dependencias. No ejecutar pruebas de aplicación localmente ni usar datos de clientes.
 5. Corregir hallazgos mediante PR, repetir aceptación únicamente en producción para el SHA desplegado, y verificar el gate PHDK posterior a merge.
 6. Mantener los cuatro frentes como PARTIAL mientras queden compromisos o aceptaciones abiertos; la promoción de fuente a `main` y el estado de producto en producción se registran como hechos separados.
 
 ## Condiciones de seguridad y bloqueo
 
-Las comprobaciones web productivas anteriores fueron anónimas y de solo lectura; UAT-103 consultó únicamente metadatos de configuración. No se inició sesión, ni se modificaron datos o configuración del proveedor. La rama candidata 5.2.1 no está desplegada; su migración agrega ownership nullable sin backfill. No inferir propiedad de interfaces antiguas. Este paquete deja trazabilidad para continuar cuando el propietario complete el prerequisito de clave.
+Producción ya sirve 5.2.1. UAT-104 fue anónima y de solo lectura; UAT-103 consultó únicamente nombres de variables. No se inició sesión ni se modificaron datos o configuración del proveedor. La migración agrega ownership nullable sin backfill; no inferir propiedad de interfaces antiguas. La aceptación funcional continúa pendiente de clave, provisión y fixture autorizados.
 
 ## Artefactos canónicos
 
@@ -62,5 +62,5 @@ Las comprobaciones web productivas anteriores fueron anónimas y de solo lectura
 - Casos/evidencia: `UAT_STORIES.md`, `UAT_JOURNEY_MAP.md`, `UAT_CASES.md`, `UAT_ACCESS_REPORT.md`, `UAT_REPORT.md`, `UX_UI_AUDIT_REPORT.md`.
 - Check de candidato vigente: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` (ADM-001…006 y límites de evidencia).
 - Evidencia UAT-100 y reingreso de solo lectura: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json` y `50-uat/snapshots/production-widget-20261017/HANDOFF.md`.
-- Readiness UAT-102: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-102-production-release-readiness-2026-10-17.json`; production still serves 5.1.85.
+- Readiness anterior UAT-102: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-102-production-release-readiness-2026-10-17.json`; smoke productivo tras merge UAT-104: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-104-production-candidate-smoke-2026-10-17.json`.
 - Estado de continuación: **PARTIAL**. Siguiente paso técnico: revisar el diff de cifrado API/Cloud y preparar su aceptación de producción para el candidato exacto; después continuar ADM-002/003. Sin aceptación del sitio, no marcar ADM-004 como cerrado.
