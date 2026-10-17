@@ -1,0 +1,54 @@
+{
+  "caseId": "UAT-131",
+  "runId": "20261014-0007-phdk-auto-completion",
+  "date": "2026-10-17",
+  "environment": "production",
+  "product": "KELEDON Web",
+  "version": "5.2.7",
+  "codeSha": "a7ca8689265642e6fe1f2f69aa4fa2c90b81867b",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-cmt002-theme-20261017=1",
+  "actor": "anonymous public visitor",
+  "surface": "homepage only",
+  "viewportScreenshotPx": {
+    "width": 1265,
+    "height": 720,
+    "deviceScaleFactor": "not measured"
+  },
+  "matrix": [
+    { "language": "es", "theme": "dark", "selected": true, "localizedContentObserved": true },
+    { "language": "es", "theme": "light", "selected": true, "localizedContentObserved": true },
+    { "language": "es", "theme": "corporate", "selected": true, "localizedContentObserved": true },
+    { "language": "en", "theme": "dark", "selected": true, "localizedContentObserved": true },
+    { "language": "en", "theme": "light", "selected": true, "localizedContentObserved": true },
+    { "language": "en", "theme": "corporate", "selected": true, "localizedContentObserved": true },
+    { "language": "pt", "theme": "dark", "selected": true, "localizedContentObserved": true },
+    { "language": "pt", "theme": "light", "selected": true, "localizedContentObserved": true },
+    { "language": "pt", "theme": "corporate", "selected": true, "localizedContentObserved": true }
+  ],
+  "observations": {
+    "versionLabel": "v5.2.7 present in all sampled accessibility trees",
+    "diagnosticActions": "Copy and cache-clear controls remained present with localized names; neither action was activated",
+    "demoDisclosure": "The no-live-session/service-metrics disclosure was present and localized in es/en/pt",
+    "visualSamples": ["pt/light", "pt/corporate", "es/dark", "en/dark"],
+    "visualRow": "Sampled screenshots showed version label and adjacent clipboard/trash icon controls without a visible extra status sentence or wrapping at the observed desktop size",
+    "accessibilityTree": "Theme/language selectors, page heading, main content and translated public navigation/content observed"
+  },
+  "result": "PASS_SCOPED",
+  "limitations": [
+    "This is a public homepage selector/localization matrix, not full WCAG conformance or contrast measurement.",
+    "The 9 combinations were confirmed in the accessibility tree; only the four visual samples listed above were screenshot-inspected.",
+    "No mobile viewport, login/authenticated role, diagnostics contents, clipboard, cache-clear, audio, API or CRM journey was tested.",
+    "No screenshot file was persisted; screenshots were inspected through the connected browser session."
+  ],
+  "safety": {
+    "loginOrFormSubmitted": false,
+    "clipboardReadOrExported": false,
+    "cacheClearActivated": false,
+    "apiProbeOrMutation": false,
+    "customerDataAccessed": false,
+    "privateDestinationAccessed": false,
+    "finalTabPreferences": { "theme": "dark", "language": "pt" },
+    "restoredToInitialTabPreferences": true
+  },
+  "localApplicationTestsOrBuilds": "not run per owner instruction"
+}

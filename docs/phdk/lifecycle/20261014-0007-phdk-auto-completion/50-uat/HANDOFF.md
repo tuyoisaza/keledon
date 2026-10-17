@@ -1,5 +1,13 @@
 # PHDK Lifecycle Handoff — UAT
 
+## Production UAT-131 — v5.2.7 public locale/theme matrix (2026-10-17)
+
+UAT-131 passes the nine public language/theme selections on the anonymous homepage: ES/EN/PT × dark/light/corporate. AX confirms localized navigation, demo disclosure and current theme/language selection; four screenshots were visually checked for the compact diagnostic row. The tab ended restored to dark/PT. No login, clipboard read, cache clear, endpoint probe or customer data. This does not establish WCAG/contrast, mobile or authenticated behavior. Evidence: `evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`.
+
+No local application tests/builds were run. Whole UAT and Auto remain incomplete; next product gates are CMT-003C fixture authorization and then CMT-003A/B runtime/security. Landing runtime remains blocked pending an authoritative deployment target.
+
+---
+
 ## Production UAT — UAT-130 / v5.2.7 (2026-10-17)
 
 Run: `20261014-0007-phdk-auto-completion` · main/source `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b` · Web/API Railway `SUCCESS`, 1/1 each, no pending work.

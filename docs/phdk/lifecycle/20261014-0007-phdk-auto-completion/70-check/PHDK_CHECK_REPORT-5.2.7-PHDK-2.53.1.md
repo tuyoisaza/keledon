@@ -45,6 +45,7 @@ Gap severity: **Critical 0, High 5, Medium 4, Low 0**. Installed/canonical PHDK 
 - PHDK 2.53.1 coherence: 64/64 manifest mappings; no upstream version drift was found in the current installed standard set.
 - Version 5.2.7 is aligned across five package/lock roots plus the Browser renderer. PR #247 merged to `main` at `a7ca8689` and Railway Web/API deployments for that revision report SUCCESS.
 - UAT-130 on production Web: anonymous public page exposes the expected compact diagnostic row; after clicking copy the accessibility state became “Diagnóstico copiado.” Clipboard contents were not read. This passes the scoped copy-status case only.
+- UAT-131 on production Web: all nine public ES/EN/PT × dark/light/corporate selections passed AX localization checks; four desktop screenshots visually confirm the compact row in representative combinations. It does not close contrast/WCAG/mobile/authenticated gates.
 - Landing diagnostics source now withholds API/OAuth hostnames by matching the Web diagnostic contract. Landing has no verified production deployment, so runtime remains UNVERIFIED.
 - Theme static audit: zero static findings; runtime unverified. Automation static audit: no local findings; provider plane unverified.
 - Railway production environment currently reports five services, zero issues, zero recent deployment failures and no staged work. Web/API source is `tuyoisaza/keledon@main`; autodeploy is present. Both service configs say `checkSuites=false`.
