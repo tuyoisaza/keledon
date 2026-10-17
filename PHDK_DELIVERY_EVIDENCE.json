@@ -1,115 +1,80 @@
 {
   "version": "1",
-  "goal": "PHDK Auto four-front continuation; deliver the 5.1.73 orphan-session safeguard and persisted admin/coordinator/superadmin CRUD acceptance while retaining partial portfolio status",
+  "goal": "PHDK Auto four-front continuation; current 5.2.10 production baseline with portfolio intentionally PARTIAL",
   "target_branch": "main",
-  "expected_version": "5.1.73",
+  "expected_version": "5.2.10",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
-  "tested_candidate_tree": "f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9",
-  "uat_066_historical_runtime_source_commit": "4f1db4b19509a8ca8188a782cbe76ea2fb998683",
-  "uat_066_exact_candidate_source_commit": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
-  "uat_066_exact_candidate_rerun": "5.1.72 API/Cloud packages started against isolated PostgreSQL 16.15: 9 API and 7 Cloud migrations found with none pending; API authorization assertions 5/5; Cloud 10/10; API two-instance session persistence passed; API and Cloud session persistence survived service restart; all listeners stopped afterward.",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/180",
-  "merged_commit_sha": "2bb4a7dc84075d4b43be43e88aa19334c21d0f2c",
-  "remote_main_tree": "f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9",
-  "remote_main_verified_at": "2026-10-16T02:07:50Z",
+  "product_source_commit_sha": "fd429298a85bdcf3b5c20791f9b1598c132aabcb",
+  "deployed_commit_sha": "edd18be5dd8fd2c49c866f9006ee0f408642e9b4",
+  "remote_main_tree": "31f11fdb8a347c12684f43f8891ce1f2b28f9747",
+  "phdk": {
+    "version": "2.53.1",
+    "upstream_commit": "94f583635d295ae0f227726718904d952cadb8ab",
+    "coherence": "PASS 64/64 static manifest mappings"
+  },
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/257",
+  "merged_commit_sha": "edd18be5dd8fd2c49c866f9006ee0f408642e9b4",
+  "remote_main_verified_at": "2026-10-17T22:53:37Z",
   "git_ls_remote_matches": true,
   "github": {
     "state": "MERGED",
-    "main_protection": "UNVERIFIED (protection endpoint denied by integration; rulesets endpoint returned none)",
+    "main_protection": "NOT_PROTECTED (HTTP 404; no rulesets)",
     "hosted_checks": [],
     "merge_method": "squash",
-    "merge_state": "CLEAN",
-    "review_decision": "none reported"
+    "review_decision": "none reported",
+    "open_follow_up_prs": [
+      {"number": 258, "head": "2f089a275eaef0dba25ed06c001a2d9cf5cd2fe2", "scope": "PHDK/PIA documentation"},
+      {"number": 259, "head": "293532e3404f84a08725a0662acd56bf42543184", "scope": "5.2.11 login touch targets"}
+    ]
   },
   "versions": {
-    "browser_renderer": "5.1.73",
-    "landing": "5.1.73",
-    "services_api": "5.1.73",
-    "services_web": "5.1.73",
-    "cloud": "5.1.73",
-    "browser": "5.1.73"
+    "browser_renderer": "5.2.10",
+    "landing": "5.2.10",
+    "services_api": "5.2.10",
+    "services_web": "5.2.10",
+    "cloud": "5.2.10",
+    "browser": "5.2.10"
+  },
+  "production": {
+    "environment": "Railway KELEDON / production",
+    "deployed_commit": "edd18be5dd8fd2c49c866f9006ee0f408642e9b4",
+    "api": {"deployment": "02ce9322-a9eb-4bb5-9935-e041b767c18a", "status": "SUCCESS", "replicas": "1/1"},
+    "web": {"deployment": "cb925cdb-413b-420d-95c2-2cdf6047ffc5", "status": "SUCCESS", "replicas": "1/1"},
+    "pending_changes": 0,
+    "postgres_qdrant_speaches": "SLEEPING; not woken or modified"
   },
   "checks": {
-    "cloud_regression": {
-      "evidence": "npm run test:regression in cloud; 18/18 suites.",
-      "status": "PASS"
-    },
-    "api_regression": {
-      "evidence": "npm run test:regression in services/api; 40/40 suites on the 5.1.73 candidate, including the API/Cloud orphan cleanup predicate regression.",
-      "status": "PASS"
-    },
-    "phdk_coherence": {
-      "evidence": "PHDK v2.51.2 coherence check passed 56/56 manifest mappings.",
-      "status": "PASS"
-    },
-    "cleanup_postgres_uat": {
-      "evidence": "UAT-068: authenticated 5.1.73 API and Cloud count/delete routes against separate disposable PostgreSQL 16.15 databases returned 401 anonymous, 403 tenant admin, and superadmin count/delete 1 eligible row; active, metadata-bearing, Event-bearing, FlowRun-bearing and SubAgent-bearing fixtures remained. All synthetic rows and temporary Cloud superadmin removed; both databases returned to zero candidates; runtimes and cluster stopped.",
-      "status": "PASS"
-    },
-    "crud_admin_postgres_uat": {
-      "evidence": "UAT-069: API and Cloud each passed 19 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for Company/User/Brand/Team tenant-admin CRUD, forged-filter/direct-ID isolation, blocked company create/delete and role elevation, role=user provisioning, persistence/readback, safe response fields, and API cleanup. Both databases returned zero temporary rows; runtimes and cluster stopped.",
-      "status": "PASS"
-    },
-    "crud_coordinator_postgres_uat": {
-      "evidence": "UAT-070: API and Cloud each passed 22 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for coordinator Company/User/Brand/Team scope and CRUD, DB-derived tenant identity, blocked company create/delete and role escalation, default-role registration, persistence/readback, and cleanup. Both databases returned zero temporary rows; runtimes and cluster stopped.",
-      "status": "PASS"
-    },
-    "crud_superadmin_company_postgres_uat": {
-      "evidence": "UAT-071: API and Cloud each passed 12 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for superadmin Company list/detail/create/update/delete, persisted country relations, DB-authorized role assignment in a synthetic Company, safe projections, and cleanup. Company/user/country test rows and temporary superadmins were removed; pre-existing API fixture was left unchanged; runtimes and cluster stopped.",
-      "status": "PASS"
-    },
-    "crud_web_superadmin_company_uat": {
-      "evidence": "UAT-072: production-built Web SPA in headless Edge passed 6 UI/request assertions for synthetic superadmin Company create/edit, exact payloads, country label readback, native delete confirmation and mock-store cleanup. APIs and WebSockets were intercepted/blocked; no backend authorization or persistence claim.",
-      "status": "PASS"
-    },
-    "tenant_flow_editor_web_uat": {
-      "evidence": "UAT-073: production-built Web Flow Definitions editor browser suite passed 1/1 for company-scoped definition create, draft/approved versions, keyboard availability, company intent mapping, tenant-filtered reads, no company picker, and 390px reflow. API/Cloud are mocked/intercepted; no persistence or live CRM claim.",
-      "status": "PASS"
-    },
-    "private_vendor_origin_policy": {
-      "evidence": "UAT-074 source checks: API and Cloud vendor destination policy builds and suites 3/3 each; Browser security policy build and suite 13/13. Explicit tenant origins allow configured private CRM destinations while blocking malformed/unsafe inputs and out-of-scope Browser requests. Synthetic-only; no live customer endpoint.",
-      "status": "PASS"
-    },
-    "remote_delivery": {
-      "evidence": "PR #180 squash-merged; origin/main and git ls-remote both read 2bb4a7dc84075d4b43be43e88aa19334c21d0f2c; remote tree matches tested source tree.",
-      "status": "PASS"
-    },
-    "hosted_ci": {
-      "evidence": "GitHub reported zero hosted checks for PR #180; local checks above were run.",
-      "status": "NOT_APPLICABLE"
-    },
-    "builds": {
-      "evidence": "npm run build passed in services/api and cloud on 5.1.73.",
-      "status": "PASS"
-    },
-    "version_alignment": {
-      "evidence": "All five package/lock roots and Browser renderer read 5.1.73 on remote main.",
-      "status": "PASS"
-    }
+    "phdk_coherence": {"status": "PASS", "evidence": "PHDK 2.53.1 static coherence: 64/64 manifest mappings."},
+    "version_alignment": {"status": "PASS", "evidence": "Five package/lock roots and Browser renderer are 5.2.10."},
+    "automation_static": {"status": "PASS", "evidence": "PHDK static automation audit has no findings; remote state is separately UNVERIFIED/GAP."},
+    "theme_static": {"status": "PASS", "evidence": "PHDK theme audit STATIC_PASS with no findings; runtime_verified=false."},
+    "physical_line_limit": {"status": "PASS", "evidence": "Inventory: 1,230 active app/test files, zero at or above 600 physical lines."},
+    "production_deploy": {"status": "PASS", "evidence": "Railway Web/API deploy from current main reports SUCCESS, 1/1 each."},
+    "uat_140_public_route": {"status": "PASS", "evidence": "Scoped production acceptance of localized unknown-route 404, noindex/no-canonical and same-origin script; does not establish full SEO/accessibility."},
+    "uat_141_login_touch_targets": {"status": "PARTIAL", "evidence": "Production 320x720 found four targets below 44px: brand 40px, email 41px, password 41px, signup toggle 20px. 5.2.11 fix is pending in PR #259."},
+    "cmt_003c_fixture_lifecycle": {"status": "PARTIAL", "evidence": "Owner-authorized synthetic scope is documented; audited production provisioning, expiry and cleanup path is not implemented/accepted."},
+    "cmt_003a_queue_idempotency": {"status": "PARTIAL", "evidence": "Source audit records non-atomic permanent claims and no lease fencing/effect idempotency; production acceptance pending fixture and security gates."},
+    "cmt_003b_private_egress": {"status": "PARTIAL", "evidence": "Tenant allowlist does not pin DNS validation to the effective socket or every redirect; private egress remains blocked pending enforcement and controlled sandbox."},
+    "cmt_004_admin_permissions": {"status": "PARTIAL", "evidence": "Tenant-scoped interface selector is source implemented; persisted role and cross-tenant production acceptance remains open."},
+    "whole_auto_acceptance": {"status": "PARTIAL", "evidence": "Four owner-confirmed commitments are not all accepted; see PHDK_CHECK_REPORT.md and current PIA matrix."}
   },
   "whole_auto_acceptance": {
     "status": "PARTIAL",
-    "uat_tally": {
-      "pass": 72,
-      "blocked": 0,
-      "manual": 1
-    },
     "open_gates": [
-      "Native packaged device/audio acceptance",
-      "Full 39-model x role x surface x operation coverage, superadmin breadth, and backend-backed Web auth/persistence integration",
-      "Three Session lifecycle ownership/retention decisions",
-      "Broad route, screen-reader, zoom and localization acceptance",
-      "Deployed SEO/AEO measurements",
-      "Live Qdrant concurrency acceptance",
-      "Client-selected live voice/CRM acceptance per tenant"
+      "Merge/review PR #258 documentation and PR #259 accessibility fix; deploy the latter and run UAT-142 in production.",
+      "Complete CMT-003C1 first-party audited synthetic fixture lifecycle before provisioning the authorized minimal fixtures.",
+      "Implement and production-accept queue lease/fencing/idempotency (CMT-003A).",
+      "Implement and production-accept tenant-bound DNS/CIDR/redirect enforcement at the effective network connection (CMT-003B).",
+      "Complete persisted tenant/admin permission negative cases; regular user fixtures do not prove Admin/Coordinator roles.",
+      "Complete broad widget accessibility, protected diagnostics/audio, per-client CRM/voice acceptance, Landing runtime and external SEO/AEO evidence."
     ],
-    "flow_run_evidence": "Dormant schema-only model; not required by current runtime, no writer/reader/UI/retention job, no migration."
+    "flow_run_evidence": "Dormant schema-only model; no writer, reader, route, UI, or runtime requirement. Preserve without new retention until a separate contract is approved."
   },
   "limitations": [
-    "No production database, customer data, provider destination, persistent test fixture, or deployment was used.",
-    "This scoped source slice is merged and mechanically verifiable; the four-front PHDK Auto portfolio remains PARTIALLY DELIVERED.",
-    "GitHub reported no hosted CI checks or review decision; main branch protection could not be read through the connected integration."
+    "No local application tests, builds or lint were run; owner requires application acceptance on production.",
+    "No production data writes or fixture provisioning occurred.",
+    "GitHub branch protection/checks and Railway CI-wait, billed cost and restart history remain absent or unverified; no provider settings changed.",
+    "Production UAT is scoped evidence and does not close the four-front Auto goal."
   ]
 }

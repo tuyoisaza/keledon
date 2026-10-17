@@ -10,6 +10,7 @@ Fecha: 2026-10-17. Revalidación del `main` remoto `edd18be5dd8fd2c49c866f9006ee
 - Auditoría local de higiene automática: `findings: []`, pero `remote_state: UNVERIFIED` por separado. Auditoría de tema: `STATIC_PASS`, sin hallazgos, con `runtime_verified: false`.
 - El inventario físico de esta rama incluye 1,230 archivos de aplicación/pruebas TS/TSX/JS/JSX/HTML/CSS/MJS/CJS/Vue; cero llegan al límite PHDK de 600 líneas. Se excluyeron dependencias, builds, documentación/snapshots y estándares vendorizados.
 - PR #258 y #259 siguen abiertos, mergeables y sin decisión de review ni checks reportados. #258 contiene PIAs/documentación de fixture; #259 propone remediación de targets de login para 5.2.11. Ninguno está desplegado ni se afirma aceptado.
+- `PHDK_DELIVERY_EVIDENCE.json` se reconcilió al baseline 5.2.10/2.53.1, SHA/tree remoto y deployments actuales. Conserva `whole_auto_acceptance: PARTIAL` y casos no aceptados como `PARTIAL`; no se ejecutó ni se pretende pasar el completion gate.
 - No se ejecutaron pruebas, build ni lint locales de la aplicación. La aceptación funcional continúa siendo en producción, según instrucción del owner.
 
 ## Resultado y alcance
