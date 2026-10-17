@@ -260,12 +260,6 @@ function browserDescription(userAgent: string): string {
   return 'Unavailable';
 }
 
-function apiHostname(): string {
-  const configured = import.meta.env.VITE_API_URL;
-  if (!configured || configured === '/') return window.location.hostname || 'same-origin';
-  try { return new URL(configured).hostname || 'unavailable'; } catch { return 'unavailable'; }
-}
-
 function buildEnvironment(): string {
   if (import.meta.env.PROD) return 'production';
   const mode = import.meta.env.MODE;
@@ -323,8 +317,6 @@ export function getDebugInfo(context: SafeAuthContext = {}): string {
   const failedCorrelationLines = failedRequests.filter(event => event.correlationId).map(event => `- ${event.correlationId}`).join('\n') || 'Unavailable';
   const callbackOutcome = [...authEvents].reverse().find(event => event.stage === 'oauth-callback')?.outcome || 'Not reached';
   const googleRedirect = authEvents.some(event => event.stage === 'google-redirect' && event.outcome === 'started') ? 'Yes' : 'No';
-  const oauthHost = import.meta.env.VITE_API_URL ? apiHostname() : window.location.hostname;
-
   return [
     '=== PHDK Debug Diagnostics Report ===',
     '',
@@ -350,7 +342,7 @@ export function getDebugInfo(context: SafeAuthContext = {}): string {
     `Google OAuth redirect triggered: ${googleRedirect}`,
     `OAuth callback reached: ${callbackOutcome === 'Not reached' ? 'No' : 'Yes'}`,
     `OAuth callback result: ${callbackOutcome}`,
-    `OAuth redirect host: ${oauthHost || 'Unavailable'} (host only; no query or state)`,
+    'OAuth redirect host: Withheld (hostnames are excluded from copied diagnostics)',
     `Session detected: ${authenticated ? 'Yes' : 'No'}`,
     `Auth error stage: ${lastAuthFailure?.stage || 'None captured'}`,
     'Auth error code: Unavailable (response bodies are not retained)',
@@ -360,7 +352,7 @@ export function getDebugInfo(context: SafeAuthContext = {}): string {
     `Debug mode: ${debugLogger.isEnabled() ? 'on' : 'off'}`,
     `Feature flags: ${diagnosticsAuthorized && backendSummary ? Object.entries(backendSummary.featureFlags).map(([flag, enabled]) => `${flag}=${enabled ? 'on' : 'off'}`).join(', ') : 'Unavailable or protected'}`,
     '',
-    `API: ${apiHostname()}`,
+    'API hostname: Withheld (hostnames are excluded from copied diagnostics)',
     `/health: ${events.filter(event => event.kind === 'network' && event.endpoint === '/health').slice(-1)[0]?.status ?? 'Unavailable (not probed)'}`,
     `/health/deep: ${diagnosticsAuthorized ? visibleDeepHealthEvent?.status ?? 'Unavailable (not probed)' : 'Unavailable or protected'}`,
     `DB provider: ${diagnosticsAuthorized ? 'PostgreSQL/Prisma; connection details withheld' : 'Not exposed to this user'}`,

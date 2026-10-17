@@ -1,3 +1,9 @@
+## Candidate v5.2.7 — Landing diagnostics privacy regression
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-130 | CMT-002 / anonymous public visitor | Review Landing and Web report builders on exact candidate source; after normal production deployment, activate only public Copy diagnostics and observe its accessible status. Never inspect clipboard contents. | Both report builders omit configured API and OAuth hostnames; deployed public copy gives truthful success/failure feedback. Production check claims copy control behavior only; payload privacy is established by source review and the regression contract. | Source privacy contract plus anonymous production browser; no login, endpoint probe or data mutation. | PENDING PR/deployment and production observation. App tests/builds are not run locally per owner instruction. |
+
 ## Production read-only re-entry — public widget on v5.1.85 (2026-10-17)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,3 +1,17 @@
+# Active Auto ledger — KELEDON 5.2.7 candidate / PHDK 2.53.1 (2026-10-17)
+
+Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; verified `origin/main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; production source `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). Candidate 5.2.7 fixes Landing's API/OAuth hostname disclosure; regression contract and UAT-130 are pending PR/deployment. PHDK 2.53.1 coherence 64/64.
+
+The four owner-confirmed commitments stay in their approved order: CMT-001 baseline/version/PRs; CMT-002 widget and safe diagnostics; CMT-003 tenant-specific voice→Cloud→Browser→CRM; CMT-004 administration and permissions. CMT-001 is complete for the 5.2.6 cut. CMT-002 remains partial after scoped production UAT-112–129. CMT-003A/B implementation and production acceptance remain open; CMT-003C authenticated fixtures are blocked by the absence of a PHDK-compliant production provisioning/cleanup path and customer-selected sandbox. CMT-004's authenticated persistence/cross-tenant proof remains blocked by the same fixture dependency.
+
+Owner decisions retained: new email/Google identities get minimum `user`; only an existing superadmin elevates/assigns company; Admin/Coordinator stay inside tenant; API resolves actor/tenant from DB; secrets are write-only; private destinations require tenant allowlist/validation; each customer chooses voice/CRM. No customer integration is inferred. No local application tests/builds.
+
+Overall **PARCIALMENTE ENTREGADO**; CMT-001 complete for the 5.2.6 cut, CMT-002 partial with UAT-130 pending, and CMT-003/004 active/partial, 0 deferred/cancelled.
+
+SIGUIENTE PASO: finish candidate review/delivery and run UAT-130 on production without inspecting clipboard contents; keep authenticated CMT-003/004 UAT blocked until an approved synthetic provisioning and cleanup path exists.
+
+---
+
 ## Current Auto ledger — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
 The owner-confirmed commitments remain ordered: CMT-001 baseline/version/PR; CMT-002 widget/safe diagnostics; CMT-003 tenant-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. CMT-001 baseline is reconciled at remote `main` `d3f27ef137939c1acbbb313dd7f95b525c735dc7`; Web/API production deploys for this SHA are SUCCESS. PR #234 recorded ADM-IF and UAT-121; PR #235 its delivery record; PR #236 added UAT-122. Fresh production GETs to `/` and `/login` serve the same 5.2.4 asset. PHDK 2.53.1 coherence is 64/64.

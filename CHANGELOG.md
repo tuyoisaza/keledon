@@ -1,3 +1,11 @@
+## v5.2.7 — 2026-10-17
+
+### Fixed
+- Keep API and OAuth hostnames out of copied Landing diagnostics, matching the Web privacy contract.
+
+### Verification
+- Added a Landing/Web redaction-contract regression. App tests and builds are not run locally; verify the deployed public copy status in production without reading clipboard contents.
+
 ## v5.2.6 — 2026-10-17
 
 ### Fixed

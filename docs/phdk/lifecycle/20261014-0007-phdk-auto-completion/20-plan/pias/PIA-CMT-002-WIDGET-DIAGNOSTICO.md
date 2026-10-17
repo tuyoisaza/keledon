@@ -1,6 +1,10 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Baseline actual: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. UAT-112–129 cubren muestras públicas limitadas en producción: CTA/disclosure, responsive, copia, teclado/foco, tamaños táctiles, árbol accesible y locale. UAT-129 confirma únicamente orden/foco en una secuencia pt/dark; no cubre lector de pantalla ni conformidad WCAG integral. Diagnóstico protegido/RBAC, persistencia, otras rutas/temas/locales y audio siguen pendientes o bloqueados por falta de fixtures permitidos.
+## Candidate privacy regression — v5.2.7 (2026-10-17)
+
+Static review of v5.2.6 found that Landing diagnostics reconstructed and copied the configured API hostname and OAuth redirect hostname, while Web withheld both. That contradicted the shared privacy contract and the earlier v5.2.3 fix. The v5.2.7 candidate removes hostname derivation from Landing and uses the same withheld fields as Web. A source regression contract now checks both surfaces. The regression has not been run locally under the owner's production-only verification instruction. Production UAT is pending normal PR merge and deployment: verify only the public copy action's visible success/failure indicator, never read or export clipboard contents. This accepts button operation only; payload privacy is assessed from the reviewed source contract.
+
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Baseline productivo: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; candidate 5.2.7 pending PR/deploy; PHDK 2.53.1. UAT-112–129 cubren muestras públicas limitadas en producción: CTA/disclosure, responsive, copia, teclado/foco, tamaños táctiles, árbol accesible y locale. UAT-129 confirma únicamente orden/foco en una secuencia pt/dark; no cubre lector de pantalla ni conformidad WCAG integral. Diagnóstico protegido/RBAC, persistencia, otras rutas/temas/locales y audio siguen pendientes o bloqueados por falta de fixtures permitidos.
 
 El detalle 5.2.4 de la sección siguiente es el baseline histórico de esta PIA; las revalidaciones vigentes se agregan al final.
 

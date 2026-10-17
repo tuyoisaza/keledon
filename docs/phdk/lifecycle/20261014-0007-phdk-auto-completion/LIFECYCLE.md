@@ -1,3 +1,26 @@
+## Current continuation — candidate v5.2.7 / CMT-002 privacy fix (2026-10-17)
+
+Remote `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; production product remains KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Candidate 5.2.7 fixes the Landing API/OAuth diagnostic hostname leak; source regression and UAT-130 are added, pending integration/delivery. PHDK 2.53.1 coherence 64/64. Active branch remains `fix/phdk-5-2-7-landing-diagnostic-host-redaction` from exact main.
+
+| Stage | Current status | Evidence / next gate |
+|---|---|---|
+| Preflight | REVALIDATED | Current PHDK 2.53.1, 64/64, managed AGENTS block matches native rules; updater EOL-only drift reconciled. |
+| Capture / Plan | REUSED / REVALIDATED | Four owner-confirmed commitments and security/customer-specific decisions remain current. |
+| PMO | ACTIVE / PARTIAL | 1/4 complete for the current cut; CMT-002 partial; CMT-003/004 open. |
+| Integration | RUNNING | Review v5.2.7 source fix/version/diff; current UAT-130 case and CMT-002 PIA updated. Lease atomicity and socket-level DNS/IP remain CMT-003 implementation gaps. |
+| UAT Prep | PARTIAL / BLOCKED AUTH | Current seeder is loopback dev/test only; no permitted prod fixture, identity, Browser device or CRM/DNS sandbox path. |
+| UAT | PENDING | After exact source merge/deploy, execute only UAT-130 anonymous copy-status acceptance without reading clipboard; authenticated/device/private-network cases remain BLOCKED. |
+| UAT Fix | OPEN | Repair only reproducible in-scope failures and retest on production. |
+| SEO / AEO-GEO | PARTIAL / REUSE CHECK | No public source changed in PR #246; current candidate and active findings still require stage readback. |
+| Check / remediation | PENDING | Run scoped PHDK Check and safe auto-fix after the current UAT/implementation boundary. |
+| Delivery | PENDING | Versioned branch/PR and verified deployment are required for 5.2.7. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. No local application tests/builds are permitted by the owner's instruction. No production login, customer data, private host, database write or provider setting was touched.
+
+SIGUIENTE PASO: finish candidate Integration Review, stage UAT readiness, deliver by PR, then execute UAT-130 against the production deployment.
+
+---
+
 ## Current continuation — UAT-129 public keyboard / CMT-003C readiness recheck (2026-10-17)
 
 Remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`; PR #245 merged docs/evidence only. Product remains v5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Railway Web `b3dd466a-5c1a-40a9-ac99-c032cfaa6d32` and API `430a4bd6-4d9f-4b32-89c9-10501c617df1` are SUCCESS.

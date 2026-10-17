@@ -1,5 +1,15 @@
 # PHDK Auto — estado de cartera al 2026-10-17
 
+## Readback vigente — candidate 5.2.7 / CMT-002
+
+Repo `tuyoisaza/keledon`; `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; producción KELEDON 5.2.6 `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Candidate 5.2.7 fixes Landing's diagnostic hostname disclosure and awaits Integration/PR/deployment. PHDK 2.53.1 64/64 static. PR #246 únicamente registró evidencia y Prep; no modificó la app.
+
+UAT-129 solo aprueba secuencia/foco público muestreados. Se mantiene CMT-001 completo para el corte, CMT-002 parcial y CMT-003/004 activos/parciales. La matriz de personas de UAT propone IDs; no hay cuentas/tenants/devices sintéticos reales ni camino permitido de provisioning/cleanup en producción. El seeder actual rechaza producción.
+
+SIGUIENTE PASO: revisar y entregar candidate 5.2.7, luego completar UAT-130 en portada pública de producción; no leer clipboard, iniciar sesión ni usar datos de clientes. CMT-003A/B y UAT autenticada permanecen abiertas.
+
+---
+
 PHDK **2.53.1** · KELEDON **5.2.6** · Run `20261014-0007-phdk-auto-completion` · Estado global: **PARCIALMENTE ENTREGADO**.
 
 Producto desplegado: source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #243 actualizó PIAs/documentación y está fusionado en remote `main` `870e6db73b5706d8469b2d9a49e575bf735a9a3f` tras PR #244 (documentación); el source desplegado no cambió. Railway Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` y API `27dba245-5425-47d4-a1cf-cdc3aee2f480` reportan SUCCESS para el deploy documental `870e6db`; el source de producto sigue en `e7257a7`. Cinco package/lock roots y Browser renderer alineados en 5.2.6; PHDK coherence 64/64. UAT-125/126 pasan sus alcances limitados de target-size móvil en producción; UAT-126 mide todos los controles de header/menú incluidos logo, selectores y acciones a 44px en 320/375.

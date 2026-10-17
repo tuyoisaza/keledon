@@ -1,5 +1,9 @@
 # PIAs de continuación — PHDK Auto / KELEDON 5.2.1+
 
+## Estado vigente — KELEDON 5.2.6 (2026-10-17)
+
+Baseline remoto `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252` después del PR documental #246; producto fuente `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1 coherence 64/64; Railway Web/API #246 `SUCCESS`. El usuario mantiene las pruebas de aplicación exclusivamente en producción y prohíbe suites/builds locales. CMT-001 completo para este corte; CMT-002 parcial tras UAT-112–129; CMT-003A/B sin implementar; CMT-003C y CMT-004 autenticado bloqueados por la ausencia de una ruta de provisioning/cleanup sintética compatible con PHDK.
+
 ## Reconciliación vigente — 2026-10-17
 
 Baseline remoto verificado: KELEDON 5.2.4, main 26e1fe1452cffb97164d65917b3c9a4308bdbdc2; PHDK 2.53.1. El selector de interfaces por tenant ya está implementado y fusionado. La nueva PIA [ADM-IF](PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md) documenta el alcance autorizado y separa la aceptación anónima productiva (UAT-121 PASS limitado) de las pruebas autenticadas, que siguen bloqueadas sin identidades sintéticas autorizadas.
