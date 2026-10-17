@@ -10,7 +10,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     <select value={locale} onChange={event => {
       const selected = supportedLocales.find(value => value === event.target.value);
       if (selected) setLocale(selected);
-    }} className="rounded border border-border bg-background text-foreground px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+    }} className="min-h-11 rounded border border-border bg-background text-foreground px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
       {supportedLocales.map(value => <option key={value} value={value}>{localeNames[value]}</option>)}
     </select>
   </label>;
