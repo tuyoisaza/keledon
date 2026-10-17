@@ -9,7 +9,7 @@ Remote production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON 
 | PMO | ACTIVE / PARTIAL | 1/4 complete for the current cut; CMT-002 partial; CMT-003/004 open. |
 | Integration | COMPLETED FOR 5.2.7 SLICE | PR #247 merged; five package/lock pairs + Browser renderer align; coherence 64/64. CMT-003 lease and socket DNS/IP gaps remain. |
 | UAT Prep | COMPLETED WITH BLOCKERS | UAT-130 public scope/readiness recorded; no valid Landing production target or auth/device/private-network fixtures. |
-| UAT | ACCEPTANCE INCOMPLETE | UAT-130 passes Web copy status/source contract only; Landing runtime and authenticated/device/private-network cases remain BLOCKED. |
+| UAT | ACCEPTANCE INCOMPLETE | UAT-130 passes Web copy status/source contract; UAT-131 passes all 9 public theme/locale selections and 4 sampled desktop visual states. Landing runtime and authenticated/device/private-network cases remain BLOCKED. |
 | UAT Fix | COMPLETED FOR THIS SLICE | No Web defect found; missing Landing deployment target and recovery path recorded. No source fix indicated by Web UAT. |
 | SEO | COMPLETED / PARTIAL | v5.2.7 source review reuses the 25-control audit; no public metadata/content change. Deployed/external SEO remains unmeasured. |
 | AEO/GEO | COMPLETED / PARTIAL | 15-control answer review reused; no public answer change. Provenance/market and external citations remain unmeasured. |

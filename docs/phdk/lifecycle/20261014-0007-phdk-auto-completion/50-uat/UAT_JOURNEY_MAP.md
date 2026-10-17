@@ -8,6 +8,12 @@ After PR #244's docs-only deploy settled, a fresh anonymous tab served KELEDON v
 
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.7 — UAT-131 public theme/locale matrix
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Anonymous visitor | CMT-002 / public theme and localization | UAT-131 | Open fresh homepage → select ES/EN/PT and dark/light/corporate → inspect all nine AX states and four visual samples → restore dark/PT. | PASS for selectability/localized public content in all 9 combinations and compact diagnostic row in four desktop visual samples. No contrast/WCAG/mobile/auth claim. `evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`. |
+
 ## Production v5.2.7 — UAT-130 anonymous copy
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

@@ -1,3 +1,14 @@
+## Browser Readiness — UAT-131 production public theme/locale matrix (2026-10-17)
+
+- Stage/run: Auto `50-uat`, `20261014-0007-phdk-auto-completion`; authorized production-only public UAT; anonymous homepage.
+- Candidate/target: product SHA `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, Web v5.2.7; `https://keledon.tuyoisaza.com/?phdk-uat-cmt002-theme-20261017=1`.
+- Runtime: connected CUA in-app browser `AVAILABLE_VERIFIED`; production page loaded and exposed expected v5.2.7 controls.
+- Access: selector interactions only across es/en/pt and dark/light/corporate. No login, customer data, CRM, endpoint probe, clipboard read or cache clear.
+- Restoration: ephemeral tab restored to its initial dark/PT preferences after the matrix.
+- Result: all 9 selector/localization combinations pass AX review; four desktop combinations were screenshot-inspected for compact widget presentation. This does not prove contrast, full WCAG, mobile or authenticated behavior.
+- Spend: `NO_NEW_SPEND`.
+- Evidence: `evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`.
+
 ## Browser Readiness — UAT-130 production copy status (2026-10-17)
 
 - Stage/run: Auto `50-uat`, `20261014-0007-phdk-auto-completion`; owner authorized acceptance on production; `ACTIVE_UAT_EXCEPTION` for this bounded anonymous public case.

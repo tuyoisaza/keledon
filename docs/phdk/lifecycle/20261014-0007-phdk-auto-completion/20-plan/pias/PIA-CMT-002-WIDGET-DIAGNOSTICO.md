@@ -1,5 +1,9 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Revalidación de locale/tema UAT-131 — v5.2.7 (2026-10-17)
+
+En producción anónima Web se recorrieron las nueve combinaciones ES/EN/PT × oscuro/claro/corporativo en `/`. El árbol accesible confirma idioma/tema seleccionado, navegación y aviso de demo localizados, versión `v5.2.7` y controles de diagnóstico nombrados. Cuatro capturas visuales (pt/claro, pt/corporativo, es/oscuro, en/oscuro) muestran la fila compacta de versión/clipboard/trash sin texto adicional ni salto de línea al tamaño desktop observado. Se restauró el tab efímero a oscuro/portugués. UAT-131 pasa solo selección/localización y muestra visual de cuatro combinaciones: no prueba contraste, WCAG completa, mobile, login, RBAC, clipboard o cache. Evidencia: `50-uat/evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`. No hubo app tests/builds locales.
+
 ## Candidate privacy regression — v5.2.7 (2026-10-17)
 
 Static review of v5.2.6 found that Landing diagnostics reconstructed and copied the configured API hostname and OAuth redirect hostname, while Web withheld both. That contradicted the shared privacy contract and the earlier v5.2.3 fix. Candidate v5.2.7 removes hostname derivation from Landing and uses the same withheld fields as Web. A source regression contract was added but not run locally under the owner's production-only test instruction. After PR #247 merged as `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, production Web v5.2.7's public copy action announced “Diagnóstico copiado”; clipboard contents were never read. This passes Web copy status plus Landing's source privacy contract only. Railway has no Landing service, and Web's Dockerfile builds `services/web` only, so Landing runtime remains BLOCKED until its authoritative deployment target is known.

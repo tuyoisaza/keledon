@@ -8,6 +8,10 @@ The post-merge anonymous tree exposes the v5.2.6 title/version, main landmark, d
 
 # UX/UI UAT audit — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.7 — theme/locale selectors and compact widget (UAT-131)
+
+The anonymous homepage's three languages and three themes are selectable in all nine combinations. AX snapshots confirm the active selection, public navigation, demo disclosure and diagnostic action names are localized. Four desktop screenshot samples retain the compact version/copy/cache row without wrapping. This is a focused selector and presentation retest only; no contrast values, mobile layout, screen-reader output, authentication, diagnostic content, clipboard or cache behavior were tested. Evidence: `evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`. The broader UX/UI audit remains partial.
+
 ## Production v5.2.6 — public accessibility-tree presence (UAT-127)
 
 A fresh anonymous production read exposed the current version, main landmark, illustrative-demo disclosure, named diagnostic/theme/language controls, navigation, headings and public links. This is semantic presence only; no screen-reader speech or WCAG-wide acceptance is claimed. The initial navigation returned Cloudflare 502, and a second navigation loaded the page while Railway reported Web/API healthy; cause is undetermined. Evidence: `evidence/uat-127-production-public-ax-presence-2026-10-17.json`.

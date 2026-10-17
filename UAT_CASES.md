@@ -1,3 +1,9 @@
+## Production v5.2.7 — all public theme/locale combinations
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-131 | CMT-002 / anonymous public visitor | Open a fresh production homepage and select each available public language (es/en/pt) and theme (dark/light/corporate). Inspect the accessible tree; visually inspect representative combinations. Restore the ephemeral tab's initial preferences. | All 9 language/theme combinations are selectable; the public navigation, demo disclosure and widget retain localized names/content. The diagnostic row remains compact in sampled desktop screenshots. | Anonymous production browser, AX tree and four screenshots; no login or diagnostic/cache activation. | PASS for the selector/localization matrix and the four stated visual samples only. Contrast measurement, mobile, WCAG completeness and authenticated behavior remain open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`. |
+
 ## Candidate v5.2.7 — Landing diagnostics privacy regression
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
