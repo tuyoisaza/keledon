@@ -10,7 +10,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | UAT / UAT Fix | SOURCE REGRESSION PASS; FULL ACCEPTANCE BLOCKED | Focused stale-request regression passes. Live migration, fixture provisioning, authenticated browser UAT and cleanup remain blocked because isolated PostgreSQL was unavailable under Windows Application Control. |
 | SEO / AEO-GEO | NOT AFFECTED | This management UI state fix changes no public routes, metadata or answer content. |
 | Check / Remediation | PASS FOR 5.2.1 SOURCE SLICE; PORTFOLIO GAPS REMAIN | Web typecheck/lint/build, Browser build, focused request-sequence regression, `git diff --check`, and PHDK coherence 64/64 pass. Web build reports the existing large-chunk advisory. |
-| Delivery | FEATURE BRANCH PUSHED; PR NOT CREATED | Remote branch resolves to `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39`. PR creation was rejected by the execution control; no alternate transport was used. |
+| Delivery | FEATURE BRANCH PUSHED; PR NOT CREATED | Feature source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` is included; latest remote branch head is the status-record commit `9ce670b6a3d37bcdc270493ab8da89841d1bfe7b`. PR creation was rejected by the execution control; no alternate transport was used. |
 
 Overall PHDK Auto remains PARTIALLY DELIVERED. Browser acceptance, PostgreSQL-backed migration/seed verification, and the normal PR/review/merge/main verification remain open. Historical 5.1.85 and 5.2.0 snapshots below retain their original results.
 
