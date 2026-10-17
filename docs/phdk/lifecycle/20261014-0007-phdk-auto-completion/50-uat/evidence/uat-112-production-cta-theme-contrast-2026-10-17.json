@@ -1,0 +1,54 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-112",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:08:16Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261017=2",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.2",
+  "deployedSourceCommit": "818ac9c8f1043cfc04768c30770f505b48d5087c",
+  "deploymentId": "a1f52f34-3844-423a-98b5-92336e80500b",
+  "assetsObserved": ["/assets/index-i9Z2OoIq.js", "/assets/index-CV49ph3H.css"],
+  "channel": "isolated anonymous in-app browser; read-only computed styles, accessibility tree, and visual inspection; no links activated",
+  "context": {
+    "route": "/",
+    "locale": "pt",
+    "viewportCssPixels": "1265x720",
+    "themes": ["dark", "light", "corporate"]
+  },
+  "result": "PASS_FOR_SAMPLED_FLAT_COLOR_CTA_PAIRS",
+  "method": "Read rendered computed foreground/background colors and font metrics for the lower CTA heading, description, and primary action in each theme. Calculate WCAG relative-luminance ratios from sRGB values. Visually inspect the rendered CTA card in dark theme. The CTA container had a flat computed background and no background image; no link or form was activated.",
+  "themeResults": [
+    {
+      "theme": "dark",
+      "ctaTitle": {"foreground": "#080c16", "background": "#14b8a5", "fontSize": "36px", "weight": 700, "ratio": 7.8448, "required": 3.0},
+      "ctaDescription": {"foreground": "#080c16", "background": "#14b8a5", "fontSize": "18px", "ratio": 7.8448, "required": 4.5},
+      "primaryActionLabel": {"text": "Começar", "foreground": "#f8fafc", "background": "#080c16", "fontSize": "16px", "weight": 600, "ratio": 18.6796, "required": 4.5},
+      "backgroundImage": "none"
+    },
+    {
+      "theme": "light",
+      "ctaTitle": {"foreground": "#ffffff", "background": "#0f766e", "fontSize": "36px", "weight": 700, "ratio": 5.4733, "required": 3.0},
+      "ctaDescription": {"foreground": "#ffffff", "background": "#0f766e", "fontSize": "18px", "ratio": 5.4733, "required": 4.5},
+      "primaryActionLabel": {"text": "Começar", "foreground": "#0f172a", "background": "#f8fafc", "fontSize": "16px", "weight": 600, "ratio": 17.0629, "required": 4.5},
+      "backgroundImage": "none"
+    },
+    {
+      "theme": "corporate",
+      "ctaTitle": {"foreground": "#ffffff", "background": "#194185", "fontSize": "36px", "weight": 700, "ratio": 9.8308, "required": 3.0},
+      "ctaDescription": {"foreground": "#ffffff", "background": "#194185", "fontSize": "18px", "ratio": 9.8308, "required": 4.5},
+      "primaryActionLabel": {"text": "Começar", "foreground": "#102a43", "background": "#f3f6fc", "fontSize": "16px", "weight": 600, "ratio": 13.5253, "required": 4.5},
+      "backgroundImage": "none"
+    }
+  ],
+  "visualInspection": "The lower CTA card was visible in the 1265x720 viewport in dark theme; title, description, and primary button were legible. The theme selector was restored to dark and confirmed in the accessibility tree.",
+  "privacy": "Anonymous public route only; no authenticated route, form, clipboard, cache-clear action, customer data, audio permission, credential, or backend state was read or changed.",
+  "notProven": [
+    "full-page contrast conformance beyond the three CTA pairs",
+    "gradient/image compositing on other page text",
+    "other routes, responsive viewports, locales, hover/focus/disabled/error states",
+    "screen-reader quality and authenticated diagnostic RBAC",
+    "audio/device behavior"
+  ],
+  "themeRestoredToDefault": "dark"
+}

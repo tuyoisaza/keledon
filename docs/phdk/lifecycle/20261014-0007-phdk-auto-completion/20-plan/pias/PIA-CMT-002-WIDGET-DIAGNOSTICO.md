@@ -1,6 +1,6 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.1; candidato correctivo: 5.2.2 pendiente de despliegue/UAT.
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.2 (source `818ac9c8f1043cfc04768c30770f505b48d5087c`). UAT-112 pasa las muestras planas del CTA; la aceptación integral continúa abierta.
 
 ## Resultado esperado
 
@@ -21,6 +21,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 - UAT-110 pasa una muestra limitada de árbol accesible y orden/foco de teclado en `/`, portugués, oscuro, 1280×720. Se observan landmark principal, encabezados, controles con nombre, foco visible y ausencia de trampa en el ciclo de la cabecera. No se usó lector de pantalla ni se activaron controles.
 - UAT-108/109/110 prueban comportamiento público en la producción 5.2.1 del commit `5884b80ba4318b2c4beed3e50d94945028b9a311`. La aceptación completa por lector de pantalla, idioma/tema/viewport, diagnóstico autenticado/RBAC y audio/dispositivo siguen abiertas.
 - UAT-111 amplió el muestreo al CTA inferior y encontró un fallo real no cubierto por UAT-109: el título del CTA mide 2.38:1 en tema oscuro y 1.49:1 en corporativo; el botón blanco “Começar” mide 2.49:1 en oscuro. Se corrigió la fuente candidata en Web y Landing con tokens semánticos; la validación de aceptación queda pendiente en el despliegue 5.2.2. Ver `50-uat/evidence/uat-111-production-cta-theme-contrast-2026-10-17.json`.
+- UAT-112 revalidó en producción 5.2.2 el título/descripción del CTA a 7.84:1 oscuro, 5.47:1 claro y 9.83:1 corporativo; la etiqueta principal quedó a 18.68:1, 17.06:1 y 13.53:1. Pasa solo estos pares de color plano; faltan contraste integral, lector de pantalla, diagnóstico autenticado/RBAC y audio/dispositivo. Evidencia: `50-uat/evidence/uat-112-production-cta-theme-contrast-2026-10-17.json`.
 
 ## Casos y aceptación
 
