@@ -1,0 +1,19 @@
+{
+  "goal": "PHDK Auto ADM-IF tenant interface acceptance evidence slice",
+  "target_branch": "main",
+  "expected_version": "5.2.4",
+  "merged_commit_sha": "a30fb84faedcc734d9b8b5302e89df3b4c9a51ba",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/234",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "checks": {
+    "phdk_coherence": {"status": "PASS", "evidence": "Official static coherence check: 64/64."},
+    "version_alignment": {"status": "PASS", "evidence": "Static package version readback for services/api, cloud, services/web, landing and browser all reported 5.2.4."},
+    "remote_merge_and_production_deploy": {"status": "PASS", "evidence": "PR #234 merged as a30fb84faedcc734d9b8b5302e89df3b4c9a51ba; Railway production Web deployment 477c94e7-bb0f-4d5a-a3cf-3d40ebef934e and API deployment 5991ac3c-ca8f-4c96-851c-9c4b65df3059 both SUCCESS for that commit."},
+    "uat_121_anonymous_boundary": {"status": "PASS", "evidence": "Production UAT-121 only verifies anonymous /management/teams redirects to /login without exposing team/interface data; see ../50-uat/evidence/uat-121-production-anonymous-team-selector-2026-10-17.json."},
+    "application_tests": {"status": "NOT_APPLICABLE", "evidence": "PR #234 changes documentation only. Per owner instruction, no local application tests or builds were run."},
+    "application_build": {"status": "NOT_APPLICABLE", "evidence": "PR #234 changes documentation only; production Railway deployed the existing application source commit without application source changes in this PR."}
+  },
+  "overall_auto_status": "PARTIALLY_DELIVERED",
+  "scope_limit": "This evidence closes only the ADM-IF documentation and anonymous production boundary slice. Authenticated selector persistence/cross-tenant UAT, CMT-003A command lease/idempotency, CMT-003B tenant-scoped DNS/CIDR egress, and the other Auto commitments remain open."
+}
