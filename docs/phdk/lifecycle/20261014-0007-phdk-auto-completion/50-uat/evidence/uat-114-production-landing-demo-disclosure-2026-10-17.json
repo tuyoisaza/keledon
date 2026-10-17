@@ -1,0 +1,41 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-114",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:27:09Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261018=114",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.2",
+  "deployedSourceCommit": "28d60bfa00493eb575222cbee279df1e53c60ce0",
+  "deploymentId": "99fb259e-4afe-4a80-a822-656298479166",
+  "channel": "isolated anonymous in-app browser; read-only accessibility-tree observation",
+  "context": {
+    "route": "/",
+    "locale": "pt",
+    "theme": "dark",
+    "viewportCssPixels": "not measured",
+    "identity": "anonymous"
+  },
+  "result": "PASS_FOR_LIMITED_PUBLIC_ACCESSIBILITY_TREE_PRESENCE_AND_DEMO_DISCLOSURE",
+  "observations": {
+    "versionVisibleInTree": true,
+    "mainContentLandmarkPresent": true,
+    "themeSelectorNamed": true,
+    "languageSelectorNamed": true,
+    "diagnosticAndCacheControlsNamed": true,
+    "publicNavigationLinksNamed": true,
+    "demoDisclaimerExposedInAccessibilityTree": "Interface ilustrativa; sem sessões ou métricas de serviço em tempo real.",
+    "sessionPreviewLabeledIllustrative": true,
+    "screenReaderUsed": false,
+    "visualScreenshotInspected": false,
+    "interactiveControlsActivated": false
+  },
+  "privacy": "Anonymous public route only; no credentials, customer data, clipboard, cache, audio permission, or backend state was read or changed.",
+  "notProven": [
+    "visual position or contrast of the disclosure",
+    "viewport-specific behavior or responsive overflow",
+    "screen-reader speech and announcement quality",
+    "diagnostic content safety or authenticated RBAC",
+    "other locales/themes, audio/device behavior, or full accessibility conformance"
+  ]
+}
