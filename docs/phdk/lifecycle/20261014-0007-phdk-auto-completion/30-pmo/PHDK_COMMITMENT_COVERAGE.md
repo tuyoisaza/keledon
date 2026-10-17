@@ -1,4 +1,21 @@
-# Cobertura de compromisos PHDK Auto — KELEDON 5.2.6
+# Cobertura vigente PHDK Auto — KELEDON 5.2.10 / 2026-10-17
+
+Run 20261014-0007-phdk-auto-completion · PHDK **2.53.1** (94f583635d295ae0f227726718904d952cadb8ab) · producto source **5.2.10** (fd429298a85bdcf3b5c20791f9b1598c132aabcb) · origin/main documental **edd18be5dd8fd2c49c866f9006ee0f408642e9b4** · coherence estática **64/64**. Railway Web/API SUCCESS, 1/1, sin staged changes. La meta completa queda **PARTIAL**, no hay cierre de cartera.
+
+El usuario confirmó los cuatro frentes en este orden: baseline/versiones/PR; widget/diagnóstico; voz→Cloud→Browser→CRM configurable por cliente; administración/permisos. Pruebas de aplicación solo en producción, sin suites/build/lint locales.
+
+| ID | Cobertura vigente | Estado | Siguiente gate |
+|---|---|---|---|
+| CMT-001 | Cinco raíces package/lock y Browser renderer en 5.2.10; PHDK 2.53.1; PR #255 y #257 integrados; producción Web/API SUCCESS en main. | **Completo para el corte** | Revisar/entregar #258 documental y #259 fix 5.2.11 con flujo normal; mantener readback de main/deploy por cada entrega. |
+| CMT-002 | UAT-140 acepta el 404 anónimo/localizado. UAT-141 detectó cuatro controles bajo 44px (40/41/41/20); fix candidato en PR #259. | **Activo / parcial** | Review y deploy #259; ejecutar UAT-142 en producción; mantener abiertas a11y integral, diagnóstico RBAC, audio y runtime Landing. |
+| CMT-003 | Contrato CRM/voz por cliente; privados solo con validación y allowlist por tenant. Revisión fuente confirma problemas de claim/lease y socket egress. PIA CMT-003C autoriza dos tenants temporales, dos users user, dos devices Browser y un único flow inerte; Brand/Team mínimos, TTL máximo 24h y cleanup inmediato. | **Activo / parcial / fixture no provisionado** | Cerrar CMT-003C1 con provisioning first-party auditado, TTL y cleanup. Luego implementar y aceptar 003A lease/fencing/idempotencia; después 003B DNS/CIDR/redirect en socket con sandbox exacto. Sin CRM real. |
+| CMT-004 | Política mínima de roles y asignación por tenant aprobadas; selector Admin/Coordinator ya está implementado en fuente. | **Activo / parcial** | Aceptar persistencia y denegación cross-tenant cuando haya una identidad sintética Admin/Coordinator autorizada; fixture user no prueba esos roles. No crear superadmin de prueba ni elevar usuarios. |
+
+Evidencia actual: [PHDK Check](../70-check/PHDK_CHECK_REPORT-5.2.10-PHDK-2.53.1-current-2026-10-17.md), [PIAs](../20-plan/pias/README.md), PHDK_DELIVERY_EVIDENCE.json. Automatización remota tiene gaps externos (sin branch protection/workflows, Railway checkSuites=false); costos/restarts permanecen UNVERIFIED. No se alteró producción ni configuración de proveedor.
+
+---
+
+## Histórico — cobertura PHDK Auto KELEDON 5.2.6
 
 Run `20261014-0007-phdk-auto-completion` · PHDK **2.53.1** · corte **2026-10-17** · producto desplegado KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102` · remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` tras PR #245 (docs/evidencia); source de producto no cambia.
 
