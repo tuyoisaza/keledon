@@ -31,6 +31,10 @@ The bounded provider response did not expose an explicit wait-for-CI setting, re
 
 ## PHDK Auto Plan/UAT documentation continuation — 2026-10-17
 
+## Production UAT-110 — public keyboard and accessibility-tree sample (2026-10-17)
+
+UAT-110 read the deployed 5.2.1 anonymous public page at `/` in Portuguese/dark at 1280×720. The accessibility tree exposed a main-content landmark, section headings and named controls; Tab traversed the header links/selectors without a trap; focus on “Criar conta” was visibly outlined. No control was activated. The result is limited to this single combination and does not constitute screen-reader or complete WCAG acceptance. Evidence is `50-uat/evidence/uat-110-production-public-keyboard-ax-2026-10-17.json`. No local application tests or builds and no production backend writes were performed.
+
 | Check | Result | Evidence / limitation |
 |---|---|---|
 | Continuation PIA coverage | PASS FOR PLANNING | Four dedicated packages exist for CMT-001…004 under `20-plan/pias/`, preserving order, policy and acceptance gates. Planning does not complete the implementation commitments. |

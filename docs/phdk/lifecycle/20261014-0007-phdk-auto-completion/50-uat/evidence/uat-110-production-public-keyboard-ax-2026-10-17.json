@@ -1,0 +1,24 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-110",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:53:00Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261017=1",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.1",
+  "deployedSourceCommit": "5884b80ba4318b2c4beed3e50d94945028b9a311",
+  "assetsObserved": ["/assets/index-CsInpJxF.js", "/assets/index-B8uXFblK.css"],
+  "channel": "isolated anonymous in-app browser; read-only accessibility tree and keyboard navigation; no controls activated",
+  "context": {"route": "/", "locale": "pt", "theme": "dark", "viewportCssPixels": "1280x720", "authenticated": false},
+  "result": "PASS_FOR_LIMITED_PUBLIC_KEYBOARD_AND_AX_SCOPE",
+  "observations": {
+    "landmarksAndHeadings": "One main-content landmark and named page/section headings were exposed in the accessibility tree.",
+    "namedControls": ["Copiar diagnóstico completo", "Limpar cache do aplicativo", "Tema de cores (Escuro)", "Idioma (Português)"],
+    "keyboardOrder": ["KELEDON home link", "Copiar diagnóstico completo", "Limpar cache do aplicativo", "Recursos", "Arquitetura", "Casos de uso", "Tema de cores", "Idioma", "Entrar", "Criar conta"],
+    "visibleFocus": "Keyboard focus on the Criar conta button had a visible outline in the rendered production page.",
+    "focusCycle": "Repeated Tab navigation continued through the visible header controls without a keyboard trap."
+  },
+  "privacy": "Anonymous public route only. No control was activated; no clipboard, cache, form, account, customer data, audio permission or backend state was read or changed.",
+  "notProven": ["screen-reader speech, announcement quality or behavior with a named assistive technology", "keyboard/focus behavior in other locales, themes, routes or responsive breakpoints", "full WCAG conformance, including all contrast, hover, error and disabled states", "authenticated diagnostics and role-based access", "audio/device behavior"],
+  "revalidation": {"route": "/", "status": "public keyboard and accessibility-tree sample passes; full accessibility acceptance remains open"}
+}

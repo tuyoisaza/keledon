@@ -10,6 +10,12 @@
 |---|---|---|---|---|---|
 | UAT-105 | CMT-002 / anonymous public visitor | Open production `/` in a browser and inspect only the accessibility tree; do not click controls, log in, clear storage, copy clipboard or submit data. | Candidate version, truthful illustrative-demo disclaimer, localized named diagnostic/cache controls, theme/language selectors and public navigation are exposed to accessibility APIs. | Production browser read-only tree | **PASS (presence only):** observed version 5.2.1 in pt locale, demo disclaimer, named copy/cache buttons, theme/language selectors and public content. Does not prove interaction, focus, screen-reader announcements or RBAC. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`. |
 
+## Candidate 5.2.1 — UAT-110 public keyboard and accessibility-tree sample
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-110 | CMT-002 / anonymous public visitor | On production `/` in a disposable anonymous browser at pt/dark/1280×720, inspect the accessibility tree, traverse the header with Tab, observe visible focus and repeat Tab through the header cycle. Do not activate controls or use a screen reader. | Main landmark, headings and control names are exposed; keyboard sequence is stable, focus is visible, and no header keyboard trap occurs. | Production UI / isolated anonymous IAB | **PASS FOR LIMITED PUBLIC KEYBOARD/AX SAMPLE:** one main-content landmark, named headings and controls, stable header sequence, visible focus on “Criar conta”, and no trap in repeated Tab cycle. No screen-reader speech or other theme/locale/viewport is claimed. Evidence: `evidence/uat-110-production-public-keyboard-ax-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-109 sampled contrast in production themes
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

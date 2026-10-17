@@ -14,6 +14,13 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 4. En sesión sintética, probar visibilidad de diagnóstico: user/coordinator no obtienen diagnóstico profundo; admin/superadmin reciben solo los detalles permitidos por contrato y autorización servidor. Incluir denegación 401/403 y API no disponible. No fabricar resultados de health.
 5. Hacer UAT de micrófono/audio/dispositivos solo en hardware de prueba autorizado con permiso de micrófono visible y datos sintéticos. No grabar ni almacenar voz. Medir compatibilidad por navegador/OS, estados de permiso, desconexión y recuperación.
 
+### Progreso en producción — 2026-10-17
+
+- UAT-108 cierra el hallazgo responsive específico después del despliegue de PR #213: 320/375/768/1440 CSS px pasan sin overflow y con aviso/CTA dentro de viewport.
+- UAT-109 pasa solo las muestras documentadas de contraste de tokens, texto principal/aviso y CTA en temas oscuro/claro/corporativo; no equivale a conformidad WCAG completa.
+- UAT-110 pasa una muestra limitada de árbol accesible y orden/foco de teclado en `/`, portugués, oscuro, 1280×720. Se observan landmark principal, encabezados, controles con nombre, foco visible y ausencia de trampa en el ciclo de la cabecera. No se usó lector de pantalla ni se activaron controles.
+- UAT-108/109/110 prueban comportamiento público en la producción 5.2.1 del commit `5884b80ba4318b2c4beed3e50d94945028b9a311`. La aceptación completa por lector de pantalla, idioma/tema/viewport, diagnóstico autenticado/RBAC y audio/dispositivo siguen abiertas.
+
 ## Casos y aceptación
 
 | Caso | Criterio de aceptación | Evidencia requerida |

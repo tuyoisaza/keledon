@@ -2,18 +2,18 @@
 
 ## Current continuation — 2026-10-17
 
-The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. Production UAT-105/106 cover public widget presence, ES/EN/PT localization, light/corporate/dark selection, named copy/reset outcomes and keyboard access to 44×44 controls with a visible focus outline. UAT-107 identified pre-fix mobile clipping; PR #213 is now merged and deployed. UAT-108 passes at 320/375/768/1440px. UAT-109 shows sampled theme token and component pairs above 4.5:1 in dark/light/corporate, with gradient, all-component and assistive-technology acceptance still open. Clipboard was not read; cache cleanup was limited to a disposable anonymous session. RBAC, private diagnostics, complete contrast, screen-reader and audio remain open. PR #212 carries the PIAs and is merged.
+The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. Production UAT-105/106 cover public widget presence, ES/EN/PT localization, light/corporate/dark selection, named copy/reset outcomes and keyboard access to 44×44 controls with a visible focus outline. UAT-107 identified pre-fix mobile clipping; PR #213 is merged and deployed. UAT-108 passes at 320/375/768/1440px. UAT-109 shows sampled theme token and component pairs above 4.5:1 in dark/light/corporate. UAT-110 verifies one public pt/dark/desktop accessibility-tree and keyboard-focus sample. Gradient, all-component, other locale/theme/viewport and screen-reader acceptance remain open. Clipboard was not read; cache cleanup was limited to a disposable anonymous session. RBAC, private diagnostics, complete contrast and audio remain open. PR #212 carries the PIAs and is merged; PR #215 adds UAT-109 evidence to main.
 
 | Commitment | Status | Next executable gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PIA docs are merged in PR #212; retain baseline/version/deployment readback per each source PR. |
-| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Mobile responsive acceptance passes in UAT-108 after [PR #213](https://github.com/tuyoisaza/keledon/pull/213). Continue contrast/screen-reader; authenticated diagnostics/audio require authorized synthetic identity/hardware. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Mobile responsive acceptance passes in UAT-108 after [PR #213](https://github.com/tuyoisaza/keledon/pull/213); sampled contrast passes UAT-109; limited public keyboard/AX sample passes UAT-110. Continue full contrast/screen-reader; authenticated diagnostics/audio require authorized synthetic identity/hardware. |
 | CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Source path is mapped. Design recovery/idempotency for permanent command claims and DNS/CIDR protection before accepting tenant-private CRM; end-to-end still waits for customer sandbox. |
 | CMT-004 administration/permissions | ACTIVE / PARTIAL | Keep `KELEDON_VENDOR_KEY` and synthetic tenant/catalog prerequisites; no inferred legacy ownership. |
 
 Overall: **4 confirmed / 0 complete / 4 active-partial**. Continue in the owner's established order; do not mark a PIA or public smoke as product acceptance.
 
-SIGUIENTE PASO: continue remaining ordered PHDK gates: CMT-002 contrast, screen-reader and diagnostic RBAC; CMT-003 recovery/idempotency and private-network validation; CMT-004 admin/persistence. Keep the full Auto partial until those commitments pass their production acceptance gates.
+SIGUIENTE PASO: continue remaining ordered PHDK gates: CMT-002 screen-reader, complete contrast and diagnostic RBAC; CMT-003 recovery/idempotency and private-network validation; CMT-004 admin/persistence. Keep the full Auto partial until those commitments pass their production acceptance gates.
 
 ---
 
