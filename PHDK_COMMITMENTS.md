@@ -1,10 +1,12 @@
 ## Current Auto ledger — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
-The owner-confirmed commitments remain in order: CMT-001 baseline/version/PR; CMT-002 widget/safe diagnostics; CMT-003 tenant-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Status is 1 complete for the 5.2.4 baseline cut / 3 active-partial; overall Auto remains partial. Remote main is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`; PR #233 merged; production Web/API report SUCCESS on that SHA. Selector PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`. UAT-121 verifies only anonymous production redirect of the interface assignment route on v5.2.4. ADM-IF-01..06 remain blocked without authorized synthetic production identity/data/cleanup. CMT-003A/B implementation remains pending; do not contact customer CRM/private hosts.
+The owner-confirmed commitments remain ordered: CMT-001 baseline/version/PR; CMT-002 widget/safe diagnostics; CMT-003 tenant-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. CMT-001 baseline is reconciled at remote `main` `d3f27ef137939c1acbbb313dd7f95b525c735dc7`; Web/API production deploys for this SHA are SUCCESS. PR #234 recorded ADM-IF and UAT-121; PR #235 its delivery record; PR #236 added UAT-122. Fresh production GETs to `/` and `/login` serve the same 5.2.4 asset. PHDK 2.53.1 coherence is 64/64.
 
-PHDK 2.53.1 static coherence is 64/64. No local application tests/builds were run. All four fronts remain part of the active goal; no unrelated backlog is started.
+CMT-002 is ACTIVE/PARTIAL: UAT-122 closes only route/asset version reconciliation; a11y breadth, authenticated diagnostic RBAC, and native audio/device are open. CMT-003 is ACTIVE/PARTIAL: tenant-specific integrations remain provider-neutral; 003A lease/idempotency and 003B DNS/CIDR egress have design PIAs but no implementation. CMT-004 is ACTIVE/PARTIAL: least privilege and tenant selector are in source, but authenticated role/persistence/cross-tenant acceptance and catalog provisioning are incomplete. User-approved constraints remain production-only application acceptance and no external paid calls/submissions.
 
-SIGUIENTE PASO: advance CMT-002 public production acceptance, then implement CMT-003 safeguards and resume authenticated CMT-004 only when authorized synthetic fixtures exist.
+Whole PHDK Auto remains PARTIALLY DELIVERED. No local application tests/builds or customer-data operations were performed in this continuation.
+
+SIGUIENTE PASO: advance the pending CMT-002 public acceptance, then implement CMT-003 safeguards; keep synthetic-auth acceptance blocked until an authorized fixture and cleanup path are supplied.
 
 ---
 

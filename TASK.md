@@ -1,12 +1,12 @@
 # Current PHDK Auto continuation — KELEDON 5.2.4 / PHDK 2.53.1
 
-Continue the owner-confirmed four-front portfolio in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 tenant-specific voice→Cloud→Browser→CRM, and CMT-004 administration/permissions. The selector for Admin/Coordinator interface assignment by tenant was explicitly approved on 2026-10-17 and is source-implemented in main.
+Continue the owner-confirmed fronts in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 tenant-specific voice→Cloud→Browser→CRM, and CMT-004 administration/permissions. The Admin/Coordinator TeamInterface selector is source-implemented and the owner approved tenant-scoped assignment.
 
-Remote main is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`; product is 5.2.4. PHDK 2.53.1 updater readback is current at upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherence is 64/64. PR #210 is merged. Production serves 5.2.4; UAT-121 anonymously verified `/management/teams` redirects to login. Authenticated selector/persistence/cross-tenant UAT is blocked until a synthetic production identity and fixture are authorized. CMT-003A command leases/idempotency and CMT-003B DNS/IP pinning remain implementation-not-started PIAs; do not claim security closure without their deployed evidence.
+At this readback, remote `main` is `d3f27ef137939c1acbbb313dd7f95b525c735dc7`. PRs #234–#236 reconcile the ADM-IF PIA, production UAT-121 boundary, and UAT-122 asset/version readback. Product remains 5.2.4; installed PHDK 2.53.1 matches upstream `94f583635d295ae0f227726718904d952cadb8ab`, with static coherence 64/64. Railway Web/API report SUCCESS for `main` at this SHA. Fresh production GETs confirm `/` and `/login` serve the same 5.2.4 bundle. CMT-002 remains partial; CMT-003A lease/idempotency and CMT-003B DNS/CIDR egress remain implementation-not-started; authenticated ADM-IF acceptance remains blocked on authorized synthetic identity/data/cleanup.
 
-No local application tests or builds are run. Production acceptance uses only read-only anonymous flows unless the owner provides authorized synthetic identities/data and cleanup instructions. Keep all four commitments ACTIVE/PARTIAL.
+No local application tests or builds are run. Production acceptance stays within approved, read-only anonymous checks until authorized synthetic fixtures exist. Never treat the whole Auto as complete based on a scoped delivery.
 
-SIGUIENTE PASO: continue production-safe CMT-002 public coverage and source/integration work; do not perform authenticated or customer-side effects without authorized synthetic fixtures.
+SIGUIENTE PASO: continue the public production acceptance for CMT-002, then implement the provider-independent CMT-003 security work with safe deployment gates; resume authenticated CMT-004 acceptance only with approved synthetic fixtures.
 
 ---
 

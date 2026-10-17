@@ -39,3 +39,7 @@ Date: 2026-10-13 America/Mexico_City. Project: KELEDON. Canonical repository: `h
 The current `origin/main` baseline is `6413d8aed295c18af098ca6a58c6dfbb7503930b` at product version 5.1.24, with PHDK v2.50.10 installed. The authorized local continuation reviewed all four owner-confirmed fronts. It removes JavaScript `new Function` execution from both API and Cloud subagent flow conditions, adds strict tenant-filtered RAG retrieval in Cloud, and types the team settings controller. Focused Cloud ESLint is clean for these modules; Cloud/API subagent tests pass 3/3 each and RAG tenant-scope tests pass 2/2.
 
 API regression passes 19/19, Cloud regression 10/10, focused Cloud Jest 35/35 across 11 suites, API and Cloud builds pass, PHDK coherence passes 52/52, and the source-size audit finds 1,129 files with none at or above 600 lines. Cloud full-source ESLint has 333 errors/59 warnings, reduced from 1,345/106; the completion gate therefore remains BLOCKED on full lint and native/database/deployed acceptance. The continuation is local and uncommitted; no production database, client CRM or deployment was used.
+
+## Readback después de la continuación documental — 2026-10-17
+
+PRs #234–#236 quedaron integrados. Remote main `d3f27ef137939c1acbbb313dd7f95b525c735dc7`; Railway Web/API reportan SUCCESS para ese SHA; el versionado servido desde `/` y `/login` es 5.2.4 (UAT-122). PHDK instalado continúa 2.53.1 / coherence 64/64; no se necesitó otro upgrade de estándares. Auto sigue parcial.
