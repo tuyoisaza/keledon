@@ -13,7 +13,7 @@
 
 Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE. UAT portfolio: 90 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. GitHub has no active workflows and main is unprotected; Railway API/Web autodeploy remains connected to main with checkSuites disabled. Latest API deployment is SLEEPING; Web is SUCCESS. No 5.1.82 candidate deployment is claimed.
 
-SIGUIENTE PASO: open the normal PR for source commit `3b060a1bcc58089c6405f254f530c68581883934`.
+SIGUIENTE PASO: merge PR #203 under the existing repository controls, then verify remote `main`.
 
 ---
 

@@ -224,7 +224,7 @@ Source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` shipped through PR [#11
 
 ## Previous merged baseline — 5.1.35 (2026-10-14)
 
-Verified `origin/main` is `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. The active candidate `fix/phdk-device-revoke-ui-5-1-36` aligns all app package/lock roots and Browser renderer at 5.1.36. It adds tenant-bound, company-required device registration and confirmed manager revoke UI. API build/regression pass 35/35; Web typecheck/build and synthetic UAT 2/2; focused ESLint, locale parity, matrix 35 models/168 rows, and coherence 52/52 pass. PR delivery remains pending.
+Verified `origin/main` is `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. The active candidate `fix/phdk-device-revoke-ui-5-1-36` aligns all app package/lock roots and Browser renderer at 5.1.36. It adds tenant-bound, company-required device registration and confirmed manager revoke UI. API build/regression pass 35/35; Web typecheck/build and synthetic UAT 2/2; focused ESLint, locale parity, matrix 35 models/168 rows, and coherence 52/52 pass. PR #203 is open against `main`; merge and remote readback remain.
 
 | WS | Candidate state | Evidence / next gate |
 |---|---|---|

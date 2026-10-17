@@ -1,17 +1,17 @@
 ## 5.1.82 CORS source candidate — 2026-10-17
 
-The production CORS bypass was removed from API and Cloud HTTP and Socket.IO paths. Their shared resolver limits credentialed CORS to configured exact origins; the legacy variable is inert. API and Cloud full regression suites pass 43/43 and 20/20, builds and targeted lint pass, and PHDK coherence is 63/63. UAT-092 passes for both backends on exact source commit `3b060a1bcc58089c6405f254f530c68581883934`; evidence is recorded in the lifecycle evidence directory. Five app package/lock roots and Browser renderer align at 5.1.82. The source commit is on `fix/explicit-cors-allowlist-5.1.82`; PR delivery remains pending.
+The production CORS bypass was removed from API and Cloud HTTP and Socket.IO paths. Their shared resolver limits credentialed CORS to configured exact origins; the legacy variable is inert. API and Cloud full regression suites pass 43/43 and 20/20, builds and targeted lint pass, and PHDK coherence is 63/63. UAT-092 passes for both backends on exact source commit `3b060a1bcc58089c6405f254f530c68581883934`; evidence is recorded in the lifecycle evidence directory. Five app package/lock roots and Browser renderer align at 5.1.82. The source commit is on `fix/explicit-cors-allowlist-5.1.82`; PR #203 is open against `main`; merge and remote readback remain.
 
 Final Check found no enabled GitHub workflows, no `main` branch protection, and Railway API/Web connected to `main` with `checkSuites=false`. The API deployment is SLEEPING and Web SUCCESS on the previous main revision. No provider settings changed and no candidate deployment is claimed. All four commitments remain ACTIVE/PARTIAL (0/4 DONE). UAT is 90 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | PHDK refreshed to 2.52.2; candidate 5.1.82 source commit verified. | Open PR, merge/check evidence and main/version readback. |
+| CMT-001 baseline/version/PR | PHDK refreshed to 2.52.2; candidate 5.1.82 source commit verified. | PR #203 is open; merge and main/version readback remain. |
 | CMT-002 widget/diagnostics | Existing Web UAT remains; no UI source changed in this slice. | Native device/audio and broad accessibility/localization. |
 | CMT-003 voice→Cloud→Browser→CRM | Exact CORS allowlist proven in API/Cloud source. | PostgreSQL/native call path and each client's configured provider/CRM acceptance. |
 | CMT-004 administration/permissions | Existing least-privilege behavior retained; CORS source tests pass. | DB migration/restart, remaining CRUD and audit/retention. |
 
-SIGUIENTE PASO: create the normal PR for `3b060a1bcc58089c6405f254f530c68581883934`, then follow review controls and verify `main`.
+SIGUIENTE PASO: merge PR #203 under the existing repository controls, then verify remote `main`.
 
 ---
 

@@ -2,9 +2,9 @@
 
 PHDK 2.52.2 is installed and static coherence is 63/63. API and Cloud now enforce configured exact-origin CORS for HTTP and Socket.IO; the legacy allow-all variable is inert. Candidate package/lock roots and Browser renderer are 5.1.82. API regressions 43/43, Cloud regressions 20/20, both backend builds and targeted lint pass. CORS tests prove an approved origin receives the credentialed grant and an unlisted origin does not.
 
-Branch `fix/explicit-cors-allowlist-5.1.82` contains source commit `3b060a1bcc58089c6405f254f530c68581883934`; PR creation is pending and main remains 5.1.81. Railway latest API and Web deployments are both from main SHA `734bf0a` (API currently SLEEPING, Web SUCCESS); no 5.1.82 deployment exists. Four confirmed commitments remain active, 0/4 DONE. Portfolio UAT is 90 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL/restart, broad CRUD, native/accessibility and per-customer integration acceptance remain open.
+Branch `fix/explicit-cors-allowlist-5.1.82` contains source commit `3b060a1bcc58089c6405f254f530c68581883934`; PR #203 is open against `main`; main remains 5.1.81. Railway latest API and Web deployments are both from main SHA `734bf0a` (API currently SLEEPING, Web SUCCESS); no 5.1.82 deployment exists. Four confirmed commitments remain active, 0/4 DONE. Portfolio UAT is 90 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL/restart, broad CRUD, native/accessibility and per-customer integration acceptance remain open.
 
-SIGUIENTE PASO: create the normal PR for source commit `3b060a1bcc58089c6405f254f530c68581883934`.
+SIGUIENTE PASO: merge PR #203 under the existing repository controls, then verify remote `main`.
 
 ---
 

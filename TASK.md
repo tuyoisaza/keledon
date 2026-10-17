@@ -4,7 +4,7 @@ Keep the four owner-confirmed fronts active in order. This scoped security repai
 
 The candidate is on `fix/explicit-cors-allowlist-5.1.82`; source commit `3b060a1bcc58089c6405f254f530c68581883934` is on the candidate branch, with PR creation pending. Existing main is 5.1.81. Keep whole Auto PARTIALLY DELIVERED (0/4 commitments closed); UAT portfolio 90 PASS / 0 BLOCKED / 1 MANUAL and CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL persistence/restart, remaining CRUD, native/audio, broad accessibility/localization, deployed SEO/AEO and each customer’s configured integration remain open.
 
-SIGUIENTE PASO: open the normal PR for the verified source commit, then verify merge and target-branch delivery.
+SIGUIENTE PASO: merge PR #203 under the existing repository controls, then verify remote `main`.
 
 ---
 
