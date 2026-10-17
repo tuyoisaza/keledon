@@ -93,3 +93,10 @@ Stage: `60-uat-fix` only if new in-scope source defects emerge; none were identi
 - UAT-121 passes only the anonymous access boundary. Evidence is `evidence/uat-121-production-anonymous-team-selector-2026-10-17.json`.
 - Authenticated ADM-IF-01..06 remain BLOCKED: no owner-authorized synthetic production identity, dataset or cleanup plan. No account, credential, customer record, API mutation or provider was used.
 - CMT-004 remains ACTIVE/PARTIAL; the tenant selector was confirmed by owner and is already source-implemented in merged PR #210.
+# Production UAT-132 — v5.2.7 login locale/theme and keyboard (2026-10-17)
+
+UAT-132 passes nine locale/theme accessibility-tree states on anonymous production `/login`, confirms translated email/password and action labels, and samples forward keyboard order in Spanish/dark. The tab was restored to Portuguese/dark. No form, OAuth, signup, diagnostics or cache action was activated; no credentials or customer data were used. This does not prove full keyboard, contrast/WCAG, screen-reader, mobile or authenticated behavior. Evidence: `evidence/uat-132-production-login-locale-keyboard-2026-10-17.json`.
+
+No local application tests/builds were run. CMT-002 remains partial. Auto remains incomplete; Landing runtime target and authenticated production fixture gates remain open. Continue the next permitted CMT-003A/B source work while leaving fixture-gated acceptance blocked until a PHDK-compliant provisioning/cleanup path is available.
+
+---

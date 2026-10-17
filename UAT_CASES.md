@@ -1,3 +1,9 @@
+## Production v5.2.7 — login locale/theme and keyboard sample
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-132 | CMT-002 / anonymous public visitor | Open production `/login`; select ES/EN/PT across dark/light/corporate; inspect localized form names; sample forward Tab order in Spanish/dark; restore initial preferences. Do not enter or submit data. | All 9 locale/theme selections are exposed as selected and form labels/actions localize. Keyboard reaches language, email, password, sign-in, Google and create-account targets in sequence. | Anonymous production browser accessibility tree and one keyboard sample. | PASS for the nine AX states, form labels and sampled forward order only. No credential submission, contrast, WCAG, screen-reader, mobile or auth acceptance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-132-production-login-locale-keyboard-2026-10-17.json`. |
+
 ## Production v5.2.7 — all public theme/locale combinations
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,0 +1,54 @@
+{
+  "caseId": "UAT-132",
+  "runId": "20261014-0007-phdk-auto-completion",
+  "date": "2026-10-17",
+  "environment": "production",
+  "product": "KELEDON Web",
+  "version": "5.2.7",
+  "codeSha": "a7ca8689265642e6fe1f2f69aa4fa2c90b81867b",
+  "url": "https://keledon.tuyoisaza.com/login?phdk-uat-cmt002-login-20261017=1",
+  "actor": "anonymous public visitor",
+  "surface": "login page only",
+  "matrix": [
+    { "language": "es", "theme": "dark", "selected": true, "localizedFormObserved": true },
+    { "language": "es", "theme": "light", "selected": true, "localizedFormObserved": true },
+    { "language": "es", "theme": "corporate", "selected": true, "localizedFormObserved": true },
+    { "language": "en", "theme": "dark", "selected": true, "localizedFormObserved": true },
+    { "language": "en", "theme": "light", "selected": true, "localizedFormObserved": true },
+    { "language": "en", "theme": "corporate", "selected": true, "localizedFormObserved": true },
+    { "language": "pt", "theme": "dark", "selected": true, "localizedFormObserved": true },
+    { "language": "pt", "theme": "light", "selected": true, "localizedFormObserved": true },
+    { "language": "pt", "theme": "corporate", "selected": true, "localizedFormObserved": true }
+  ],
+  "observations": {
+    "versionLabel": "v5.2.7 present in the production accessibility tree",
+    "formLabels": "Localized email and password fields, sign-in action, Google action and create-account action were exposed in the accessibility tree",
+    "keyboardSample": {
+      "language": "es",
+      "theme": "dark",
+      "tabOrder": ["language selector", "email", "password", "Iniciar sesión", "Google", "Crear cuenta"],
+      "scope": "Six forward Tab targets observed; no controls activated"
+    }
+  },
+  "result": "PASS_SCOPED",
+  "limitations": [
+    "The nine locale/theme states were confirmed through the accessibility tree; contrast and visual appearance were not measured.",
+    "Keyboard order is a single forward sequence sample in Spanish/dark; reverse traversal, keyboard traps and other routes were not tested.",
+    "No credentials were entered; login, Google OAuth and account creation were not activated.",
+    "This does not establish screen-reader output, WCAG conformance, mobile behavior, authentication/RBAC or persisted locale preferences.",
+    "No screenshot file was persisted; the tree was observed in the connected browser session."
+  ],
+  "safety": {
+    "loginOrFormSubmitted": false,
+    "credentialsEntered": false,
+    "oauthOrSignupActivated": false,
+    "clipboardReadOrExported": false,
+    "cacheClearActivated": false,
+    "apiProbeOrMutation": false,
+    "customerDataAccessed": false,
+    "privateDestinationAccessed": false,
+    "finalTabPreferences": { "theme": "dark", "language": "pt" },
+    "restoredToInitialTabPreferences": true
+  },
+  "localApplicationTestsOrBuilds": "not run per owner instruction"
+}

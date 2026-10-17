@@ -112,3 +112,13 @@ Target exercised: local built production SPA served at loopback with Company Co 
 
 No account provisioning, test-role switch, email delivery, production browsing, provider write, paid call, database migration or secret read occurred.
 
+## Browser Readiness — UAT-132 production login locale/theme and keyboard (2026-10-17)
+
+- Stage/run: Auto `50-uat`, `20261014-0007-phdk-auto-completion`; owner-authorized production-only public UAT; anonymous `/login`.
+- Candidate/target: KELEDON Web v5.2.7, product source `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; `https://keledon.tuyoisaza.com/login?phdk-uat-cmt002-login-20261017=1`.
+- Runtime: connected CUA browser `AVAILABLE_VERIFIED`; page displayed v5.2.7 and localized login form tree.
+- Access: selector interactions across ES/EN/PT and dark/light/corporate; six-target forward Tab sample in ES/dark. No credentials, login, OAuth, signup, customer data, CRM, clipboard read, cache clear, endpoint probe or mutation.
+- Restoration: ephemeral tab restored to its initial dark/PT preferences.
+- Result: PASS for nine AX states, localized field/action labels and one forward keyboard sample only. Contrast, screen reader, full keyboard, mobile and authentication remain unverified.
+- Spend: `NO_NEW_SPEND`.
+- Evidence: `evidence/uat-132-production-login-locale-keyboard-2026-10-17.json`.
