@@ -1,6 +1,6 @@
 # Current PMO — 5.1.82 CORS source candidate; portfolio partial
 
-PHDK 2.52.2; coherence 63/63. API and Cloud credentialed HTTP/Socket.IO CORS now use the configured origin list; the legacy allow-all flag cannot bypass it. Full regressions pass API 43/43 and Cloud 20/20; backend builds and targeted lint pass. Candidate branch is `fix/explicit-cors-allowlist-5.1.82`, not yet committed or in a PR. Four commitments remain ACTIVE/PARTIAL (0/4 DONE).
+PHDK 2.52.2; coherence 63/63. API and Cloud credentialed HTTP/Socket.IO CORS now use the configured origin list; the legacy allow-all flag cannot bypass it. Full regressions pass API 43/43 and Cloud 20/20; backend builds and targeted lint pass. Candidate branch is `fix/explicit-cors-allowlist-5.1.82`, source commit `3b060a1bcc58089c6405f254f530c68581883934` is committed; PR is pending. Four commitments remain ACTIVE/PARTIAL (0/4 DONE).
 
 | Commitment | Current evidence | Remaining acceptance |
 |---|---|---|
@@ -9,7 +9,7 @@ PHDK 2.52.2; coherence 63/63. API and Cloud credentialed HTTP/Socket.IO CORS now
 | CMT-003 voice→Cloud→Browser→CRM | API/Cloud CORS allowlist regressions pass; tenant private-origin policy retained. | PostgreSQL/native path and each customer's configured provider/CRM sandbox. |
 | CMT-004 administration/permissions | Existing least-privilege suite remains covered; no auth semantics changed. | DB migration/restart, remaining CRUD and audit/retention acceptance. |
 
-SIGUIENTE PASO: finalize 5.1.82 candidate evidence, review, and normal PR delivery; keep all broader gates open.
+SIGUIENTE PASO: finish the normal PR delivery for source commit `3b060a1bcc58089c6405f254f530c68581883934`; keep all broader gates open.
 
 ---
 

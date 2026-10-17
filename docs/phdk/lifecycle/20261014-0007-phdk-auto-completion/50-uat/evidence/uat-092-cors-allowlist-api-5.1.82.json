@@ -1,0 +1,21 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-092",
+  "package": "services/api",
+  "candidate_version": "5.1.82",
+  "candidate_commit": "3b060a1bcc58089c6405f254f530c68581883934",
+  "target": "isolated cors middleware invocation with synthetic origins; no listening socket",
+  "production_allowlist": [
+    "https://keledon.tuyoisaza.com",
+    "chrome-extension://uat-extension-id"
+  ],
+  "legacy_allow_all_flag_set": true,
+  "result": "PASS",
+  "assertions": [
+    "Configured exact origin receives Access-Control-Allow-Origin and credentials.",
+    "Unlisted origin receives no Access-Control-Allow-Origin.",
+    "HTTP and credentialed Socket.IO gateway source does not read the legacy allow-all flag."
+  ],
+  "external_traffic": "none",
+  "database_or_provider": "not used"
+}

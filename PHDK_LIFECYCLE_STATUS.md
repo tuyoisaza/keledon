@@ -9,11 +9,11 @@
 | UAT / UAT Fix | PASS FOR CORS SOURCE SLICE | Exact allowlist middleware regressions pass; full API 43/43, Cloud 20/20. No live app request was made. |
 | SEO / AEO-GEO | NOT AFFECTED | No public routes, metadata, copy or answer content changed. |
 | Check / Remediation | COMPLETED FOR SOURCE SLICE | Builds, targeted lint, PHDK 63/63 and automation hygiene evidence recorded; live provider settings remain read-only. |
-| Delivery | RUNNING | Branch `fix/explicit-cors-allowlist-5.1.82`; exact-source evidence and review, commit and PR remain. |
+| Delivery | RUNNING | Branch `fix/explicit-cors-allowlist-5.1.82`; source commit `3b060a1bcc58089c6405f254f530c68581883934` is verified. PR creation and delivery remain. |
 
-Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE. UAT portfolio: 89 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. GitHub has no active workflows and main is unprotected; Railway API/Web autodeploy remains connected to main with checkSuites disabled. Latest API deployment is SLEEPING; Web is SUCCESS. No candidate deployment is claimed.
+Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE. UAT portfolio: 90 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. GitHub has no active workflows and main is unprotected; Railway API/Web autodeploy remains connected to main with checkSuites disabled. Latest API deployment is SLEEPING; Web is SUCCESS. No 5.1.82 candidate deployment is claimed.
 
-SIGUIENTE PASO: finalize exact-candidate evidence and diff review, then commit and open the normal PR.
+SIGUIENTE PASO: open the normal PR for source commit `3b060a1bcc58089c6405f254f530c68581883934`.
 
 ---
 

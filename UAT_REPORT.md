@@ -1,3 +1,9 @@
+## Candidate 5.1.82 — UAT-092 exact-origin CORS allowlist (2026-10-17)
+
+API and Cloud middleware regressions pass with production-managed configuration, two synthetic allowed origins and the legacy allow-all flag set. The configured web origin receives `Access-Control-Allow-Origin` and credentials; an unrelated origin receives no CORS grant. API and Cloud HTTP middleware and Socket.IO gateway source no longer reads the legacy bypass. These isolated tests use the installed CORS middleware without opening a socket, calling a provider, connecting to a database or sending external traffic. Evidence is bound to source commit `3b060a1bcc58089c6405f254f530c68581883934` in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-092-cors-allowlist-api-5.1.82.json` and `.../uat-092-cors-allowlist-cloud-5.1.82.json`. Full regressions pass API 43/43 and Cloud 20/20.
+
+Portfolio tally is **90 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. CRUD remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. All four commitments remain active; whole Auto remains PARTIALLY DELIVERED.
+
 # UAT report — run 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.81 — fix stale flow-editor scope responses (2026-10-17)

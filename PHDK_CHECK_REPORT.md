@@ -16,7 +16,7 @@ API regression 43/43; Cloud regression 20/20; API and Cloud builds pass; focused
 
 ## Remaining scope
 
-Whole Auto remains PARTIALLY DELIVERED (0/4 confirmed commitments DONE). UAT is 89 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS. PostgreSQL persistence/restart, remaining CRUD, native/audio, broad accessibility/localization, deployed SEO/AEO and customer-configured integration acceptance remain open. Candidate source is not merged or deployed.
+Whole Auto remains PARTIALLY DELIVERED (0/4 confirmed commitments DONE). UAT is 90 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS. PostgreSQL persistence/restart, remaining CRUD, native/audio, broad accessibility/localization, deployed SEO/AEO and customer-configured integration acceptance remain open. Source commit `3b060a1bcc58089c6405f254f530c68581883934` is not merged or deployed; no PR exists yet.
 
 ---
 
