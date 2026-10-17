@@ -1,0 +1,94 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "cases": "UAT-135–139",
+  "candidate": {
+    "version": "5.2.9",
+    "mainSha": "1a7216dfd5431c712b3968bce93099b2196da93e",
+    "pr": 254
+  },
+  "environment": "production",
+  "target": "https://keledon.tuyoisaza.com",
+  "runAt": "2026-10-17T22:03:20Z",
+  "deployments": {
+    "web": { "id": "8c7ab848-a86c-4ba2-bb67-641512055856", "status": "SUCCESS", "replicas": "1/1" },
+    "api": { "id": "554fa13f-65a6-44f8-a71c-8ed58691db75", "status": "SUCCESS", "replicas": "1/1" }
+  },
+  "browserReadiness": {
+    "permission": "ACTIVE_UAT_EXCEPTION",
+    "runtime": "AVAILABLE_VERIFIED",
+    "channel": "Codex in-app browser (CUA)",
+    "harmlessNavigation": "Anonymous production homepage loaded; visible app version v5.2.9 and product content.",
+    "spend": "NO_NEW_SPEND"
+  },
+  "http": [
+    {
+      "case": "UAT-135",
+      "path": "/",
+      "status": 200,
+      "robotsHeader": "index, follow",
+      "robotsMeta": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "title": "KELEDON | Cloud-governed contact center runtime",
+      "initialHtmlH1Count": 1,
+      "result": "PASS"
+    },
+    {
+      "case": "UAT-136",
+      "path": "/login",
+      "status": 200,
+      "robotsHeader": "noindex, nofollow",
+      "robotsMeta": "noindex, nofollow",
+      "canonical": null,
+      "title": "KELEDON | Application",
+      "result": "PASS"
+    },
+    {
+      "case": "UAT-137",
+      "path": "/sessions/phdk-uat-137",
+      "status": 200,
+      "robotsHeader": "noindex, nofollow",
+      "robotsMeta": "noindex, nofollow",
+      "canonical": null,
+      "title": "KELEDON | Application",
+      "result": "PASS"
+    },
+    {
+      "case": "UAT-138",
+      "path": "/phdk-uat-unknown-138",
+      "status": 404,
+      "robotsHeader": "noindex, nofollow",
+      "robotsMeta": "noindex, nofollow",
+      "canonical": null,
+      "title": "Page not found | KELEDON",
+      "localizedToSavedPortuguese": false,
+      "result": "PARTIAL: HTTP/robots/canonical/404 page pass; localized display failed"
+    },
+    {
+      "case": "UAT-139",
+      "path": "/robots.txt and /sitemap.xml",
+      "status": 200,
+      "sitemapUrls": ["https://keledon.tuyoisaza.com/"],
+      "result": "PASS"
+    }
+  ],
+  "browserTrace": {
+    "UAT-135": "Root loaded v5.2.9 and showed one H1, approved overview and no live metrics claim.",
+    "UAT-136": "Login rendered after React with title Application, two fields and no public overview. No data entered.",
+    "UAT-137": "Anonymous deep link rendered private shell, then redirected to /login. No credentials or customer records accessed.",
+    "UAT-138": "Unknown path retained its URL and displayed Page not found; static text was English despite saved Portuguese.",
+    "traceReference": "This evidence JSON summarizes the observed production browser accessibility trees; no customer content or session data was present."
+  },
+  "safety": {
+    "credentialsEntered": false,
+    "oauthOrSignupActivated": false,
+    "customerDataAccessed": false,
+    "writesPerformed": false,
+    "clipboardRead": false,
+    "privateEndpointsContacted": false,
+    "newSpend": false
+  },
+  "limits": [
+    "Anonymous route/metadata UAT only; no crawler indexing, ranking or citation claim.",
+    "UAT-138 language localization remains open and is retested as UAT-140 under v5.2.10."
+  ]
+}

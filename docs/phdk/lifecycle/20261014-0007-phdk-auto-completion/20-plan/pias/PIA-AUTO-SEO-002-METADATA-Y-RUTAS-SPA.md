@@ -1,6 +1,6 @@
 # PIA-AUTO-SEO-002 — metadata privada y rutas SPA inexistentes
 
-Estado: IMPLEMENTACIÓN PREPARADA EN CANDIDATO 5.2.9 / ACEPTACIÓN PRODUCTIVA PENDIENTE · Prioridad: SEO-02/04/05, AG-02/13 · Run: `20261014-0007-phdk-auto-completion` · Detectado en 5.2.7 y revalidado en producción 5.2.8 (`main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`).
+Estado: IMPLEMENTACIÓN EN CANDIDATOS 5.2.9–5.2.10 / REACEPTACIÓN PRODUCTIVA DEL 404 PENDIENTE · Prioridad: SEO-02/04/05, AG-02/13 · Run: `20261014-0007-phdk-auto-completion` · Detectado en 5.2.7 y revalidado en producción 5.2.8 (`main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`).
 
 ## Hallazgo productivo
 
@@ -14,7 +14,7 @@ Antes de implementar, inventariar las rutas estáticas/dinámicas vigentes de `A
 
 ## Decisión técnica de esta PIA
 
-La revisión de `services/web/src/AppRouter.tsx` encontró 45 declaraciones: la raíz pública, 41 rutas SPA estáticas, dos parámetros dinámicos (`/sessions/:id` y `/management/vector-store/edit-document/:id`) y un comodín. Se mantiene esa fuente de verdad y se añadió una lista equivalente en NGINX: regex opcionales de barra final para las 41 rutas estáticas y patrones acotados para los dos parámetros. El runtime Vite compila dos shells HTML: `index.html` para `/` con index/follow/canonical público y `app.html` para rutas SPA válidas con título Application, noindex/nofollow y sin canonical. NGINX sirve `app.html` internamente solo cuando la URI está en el mapa; archivos estáticos conservan `try_files`; rutas desconocidas reciben status 404 y un documento estático noindex/sin canonical. El comodín React muestra una pantalla No encontrado localizada, como defensa ante navegación interna o divergencia del mapa. Cualquier cambio de ruta debe actualizar Router y el mapa en el mismo PR.
+La revisión de `services/web/src/AppRouter.tsx` encontró 45 declaraciones: la raíz pública, 41 rutas SPA estáticas, dos parámetros dinámicos (`/sessions/:id` y `/management/vector-store/edit-document/:id`) y un comodín. Se mantiene esa fuente de verdad y se añadió una lista equivalente en NGINX: regex opcionales de barra final para las 41 rutas estáticas y patrones acotados para los dos parámetros. El runtime Vite compila dos shells HTML: `index.html` para `/` con index/follow/canonical público y `app.html` para rutas SPA válidas con título Application, noindex/nofollow y sin canonical. NGINX sirve `app.html` internamente solo cuando la URI está en el mapa; archivos estáticos conservan `try_files`; rutas desconocidas reciben status 404 y un documento estático noindex/sin canonical. El comodín React muestra una pantalla No encontrado localizada, como defensa ante navegación interna o divergencia del mapa. La primera UAT de 5.2.9 confirmó los cinco contratos HTTP, pero el documento 404 estático no respetaba el idioma seleccionado; 5.2.10 actualiza esa página en español, inglés o portugués a partir de la preferencia guardada o del idioma del navegador. Cualquier cambio de ruta debe actualizar Router y el mapa en el mismo PR.
 
 ## Aceptación exclusivamente en producción
 
@@ -22,6 +22,7 @@ La revisión de `services/web/src/AppRouter.tsx` encontró 45 declaraciones: la 
 - GET anónimo `/login`: app/login conserva 200, noindex por header y meta, sin canonical de homepage en respuesta inicial ni tras React.
 - GET anónimo de una ruta SPA válida profunda: shell esperado 200, noindex y navegación funcional; no requiere autenticarse ni enviar formularios.
 - GET anónimo de una ruta de control sintética inexistente: 404 real, noindex, sin canonical de homepage y UI de no encontrado sin redirección al home.
+- La UI del 404 refleja el idioma guardado de KELEDON o, si no existe, un idioma compatible del navegador.
 - `/robots.txt` y `/sitemap.xml` continúan disponibles, y solo `/` permanece en sitemap.
 - Probar fuente únicamente con revisión estática/`git diff --check`; no ejecutar suites o builds de aplicación localmente. La aceptación HTTP/navegador se hace en el sitio desplegado.
 
