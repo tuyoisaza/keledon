@@ -1,6 +1,12 @@
-## Current re-entry — UAT-107, production mobile responsive layout (2026-10-17)
+## Current re-entry — UAT-108, post-deploy responsive revalidation (2026-10-17)
 
-At 375×812 and 320×720 CSS px, production 5.2.1 visibly clips the hero copy/CTA; read-only geometry at 320px shows 439px hero content, a fixed 97px nav overlapping the disclaimer (y=64..80px), and a 24×24px mobile menu target. UAT-107 is **FAIL**. A source remediation candidate is prepared on `fix/production-mobile-landing-overflow`; it is not deployed and has no production acceptance. The retest gate is recorded in `revalidations/20261017-uat107/HANDOFF.md`. Evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`.
+After source PR #213 merged at `5884b80ba4318b2c4beed3e50d94945028b9a311`, Railway deployment `05e6bd08-4d52-4ea2-ac42-36d1a1c29ede` reported `SUCCESS`. A disposable anonymous browser initially loaded stale index asset references; after app-cache cleanup and one cache-busting homepage navigation, production served the deployed bundle `index-CsInpJxF.js` and stylesheet `index-B8uXFblK.css`. On that deployed page, UAT-108 **PASSES responsive layout** at 320×720, 375×812, 768×1024 and 1440×900 CSS px. At all four sizes the document width equals the available client width, hero copy and CTA remain in bounds, and the demo disclaimer clears the fixed 96.6px navigation. The mobile menu measures 44×44px at 320/375/768px and is not rendered at the desktop breakpoint. Evidence: `evidence/uat-108-production-mobile-layout-2026-10-17.json`.
+
+This closes the specific responsive failure from UAT-107 on the deployed source. It does not accept contrast, screen-reader quality, all locale/theme combinations, authenticated pages, diagnostics RBAC or audio/device behavior. The explicit viewport override was reset after testing.
+
+## Prior re-entry — UAT-107, production mobile responsive layout before remediation (2026-10-17)
+
+At 375×812 and 320×720 CSS px, production before PR #213 visibly clipped the hero copy/CTA; read-only geometry at 320px showed 439px hero content, a fixed 97px nav overlapping the disclaimer (y=64..80px), and a 24×24px mobile menu target. UAT-107 remains the historical **FAIL** that triggered remediation. UAT-108 records the passing post-deploy retest. Original evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`.
 
 ## Prior re-entry — UAT-106, production widget actions (2026-10-17)
 

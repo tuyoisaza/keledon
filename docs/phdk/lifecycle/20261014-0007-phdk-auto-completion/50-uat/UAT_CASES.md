@@ -10,11 +10,17 @@
 |---|---|---|---|---|---|
 | UAT-105 | CMT-002 / anonymous public visitor | Open production `/` in a browser and inspect only the accessibility tree; do not click controls, log in, clear storage, copy clipboard or submit data. | Candidate version, truthful illustrative-demo disclaimer, localized named diagnostic/cache controls, theme/language selectors and public navigation are exposed to accessibility APIs. | Production browser read-only tree | **PASS (presence only):** observed version 5.2.1 in pt locale, demo disclaimer, named copy/cache buttons, theme/language selectors and public content. Does not prove interaction, focus, screen-reader announcements or RBAC. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`. |
 
-## Candidate 5.2.1 — UAT-107 mobile responsive production revalidation
+## Candidate 5.2.1 — UAT-108 post-deploy responsive production revalidation
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
-| UAT-107 | CMT-002 / anonymous public visitor | Open production `/` with isolated viewport overrides 375×812 and 320×720 CSS px; inspect visual page and read-only element geometry. | Header does not cover the demo disclaimer; copy and CTA fit within viewport; menu target is at least 44×44; no clipped content/horizontal overflow. | Production UI / isolated anonymous IAB | **FAIL ON 5.2.1:** hero content measures 439px wide at both viewports and clips at right; 97px fixed nav overlaps disclaimer at y=64..80px; menu is 24×24px. Copy/reset remain 44×44px. Candidate remediation is on `fix/production-mobile-landing-overflow` but is not deployed. Evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`. |
+| UAT-108 | CMT-002 / anonymous public visitor | After PR #213 and Railway deployment `05e6bd08-4d52-4ea2-ac42-36d1a1c29ede` succeed, open production with a disposable anonymous context at 320×720, 375×812, 768×1024 and 1440×900 CSS px; inspect visual layout and read-only geometry. One stale HTML asset reference is invalidated using app-owned cache cleanup plus a cache-busting homepage URL. | No horizontal overflow; copy/CTA fit; demo disclaimer clears fixed nav; mobile menu target is 44×44 at mobile/tablet and hidden in desktop navigation. | Production UI / isolated anonymous IAB; Railway metadata readback | **PASS FOR RESPONSIVE LAYOUT:** all four viewports pass. Client/document widths agree (305, 360, 753, 1425 CSS px after scrollbar); hero/CTA bounds fit; disclaimer starts below the 96.6px fixed navigation; mobile menu measures 44×44px at 320/375/768px. Bundle hashes match the deployed build. Does not accept contrast, screen reader, auth, diagnostics RBAC, audio or all locale/theme states. Evidence: `evidence/uat-108-production-mobile-layout-2026-10-17.json`. |
+
+## Candidate 5.2.1 — UAT-107 mobile responsive production baseline before remediation
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-107 | CMT-002 / anonymous public visitor | Open production `/` with isolated viewport overrides 375×812 and 320×720 CSS px before PR #213; inspect visual page and read-only element geometry. | Header does not cover the demo disclaimer; copy and CTA fit within viewport; menu target is at least 44×44; no clipped content/horizontal overflow. | Production UI / isolated anonymous IAB | **FAIL BEFORE REMEDIATION:** hero content measures 439px wide at both viewports and clips at right; 97px fixed nav overlaps disclaimer at y=64..80px; menu is 24×24px. Superseded for current responsive acceptance by UAT-108; preserved as the baseline finding. Evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`. |
 
 ## Candidate 5.2.1 — UAT-106 production widget actions, theme/locale and keyboard
 

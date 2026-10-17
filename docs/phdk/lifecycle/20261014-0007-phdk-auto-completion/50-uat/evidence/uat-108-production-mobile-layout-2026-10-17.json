@@ -1,0 +1,116 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-108",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:46:37Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261017=1",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.1",
+  "deployedSourceCommit": "5884b80ba4318b2c4beed3e50d94945028b9a311",
+  "railwayDeployment": {
+    "service": "keledon-web",
+    "deploymentId": "05e6bd08-4d52-4ea2-ac42-36d1a1c29ede",
+    "status": "SUCCESS",
+    "builtAssetsObserved": [
+      "/assets/index-CsInpJxF.js",
+      "/assets/index-B8uXFblK.css"
+    ]
+  },
+  "channel": "isolated anonymous in-app browser with explicit viewport overrides; read-only visual and DOM geometry",
+  "result": "PASS_RESPONSIVE_LAYOUT_AT_320_375_768_AND_DESKTOP",
+  "viewports": [
+    {
+      "requestedCssPixels": {"width": 320, "height": 720},
+      "observed": {
+        "innerWidth": 320,
+        "clientWidth": 305,
+        "documentWidth": 305,
+        "hero": {"x": 0, "y": 112, "width": 305.1},
+        "heroCopy": {"x": 16, "right": 289.1, "width": 273.1},
+        "disclaimer": {"top": 112, "bottom": 144},
+        "fixedNavigationBottom": 96.6,
+        "primaryCtaRight": 289.1,
+        "mobileMenu": {"width": 44, "height": 44},
+        "checks": {
+          "noHorizontalOverflow": true,
+          "copyAndCtaFit": true,
+          "disclaimerClearsNavigation": true,
+          "menuTargetAtLeast44By44": true
+        }
+      }
+    },
+    {
+      "requestedCssPixels": {"width": 375, "height": 812},
+      "observed": {
+        "innerWidth": 375,
+        "clientWidth": 360,
+        "documentWidth": 360,
+        "hero": {"x": 0, "y": 112, "width": 360.6},
+        "heroCopy": {"x": 16, "right": 344.6, "width": 328.6},
+        "disclaimer": {"top": 112, "bottom": 144},
+        "fixedNavigationBottom": 96.6,
+        "primaryCtaRight": 344.6,
+        "mobileMenu": {"width": 44, "height": 44},
+        "checks": {
+          "noHorizontalOverflow": true,
+          "copyAndCtaFit": true,
+          "disclaimerClearsNavigation": true,
+          "menuTargetAtLeast44By44": true
+        }
+      }
+    },
+    {
+      "requestedCssPixels": {"width": 768, "height": 1024},
+      "observed": {
+        "innerWidth": 768,
+        "clientWidth": 753,
+        "documentWidth": 753,
+        "hero": {"x": 0, "y": 112, "width": 753.1},
+        "heroCopy": {"x": 24, "right": 729.1, "width": 705.1},
+        "disclaimer": {"top": 112, "bottom": 128},
+        "fixedNavigationBottom": 96.6,
+        "primaryCtaRight": 210.8,
+        "mobileMenu": {"width": 44, "height": 44},
+        "checks": {
+          "noHorizontalOverflow": true,
+          "copyAndCtaFit": true,
+          "disclaimerClearsNavigation": true,
+          "menuTargetAtLeast44By44": true
+        }
+      }
+    },
+    {
+      "requestedCssPixels": {"width": 1440, "height": 900},
+      "observed": {
+        "innerWidth": 1440,
+        "clientWidth": 1425,
+        "documentWidth": 1425,
+        "hero": {"x": 72.6, "y": 197.6, "width": 1280, "right": 1352.6},
+        "heroCopy": {"x": 104.6, "right": 680.6, "width": 576},
+        "disclaimer": {"top": 197.6, "bottom": 213.6},
+        "fixedNavigationBottom": 96.6,
+        "primaryCtaRight": 291.4,
+        "mobileMenu": "not rendered at desktop navigation breakpoint",
+        "checks": {
+          "noHorizontalOverflow": true,
+          "copyAndCtaFit": true,
+          "disclaimerClearsNavigation": true
+        }
+      }
+    }
+  ],
+  "privacy": "Anonymous read-only production route. The only state change was clearing app-owned cache in this disposable anonymous browser; no login, forms, clipboard read, customer data or backend state was used or changed.",
+  "notProven": [
+    "contrast conformance",
+    "screen-reader quality",
+    "other locale/theme combinations after the responsive source change",
+    "authenticated and customer-specific pages",
+    "audio/device behavior"
+  ],
+  "revalidation": {
+    "previousCase": "UAT-107 recorded the production defect before remediation.",
+    "cacheObservation": "The initial anonymous tab served the old HTML asset references; a single cache-busting homepage request returned the deployed asset hashes listed above and the repaired source classes.",
+    "status": "responsive acceptance passes on deployed source commit 5884b80ba4318b2c4beed3e50d94945028c9a311",
+    "viewportOverrideReset": true
+  }
+}
