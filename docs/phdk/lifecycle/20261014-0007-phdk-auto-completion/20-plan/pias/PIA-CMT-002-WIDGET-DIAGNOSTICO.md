@@ -1,6 +1,6 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Candidato base: KELEDON 5.2.1.
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.1; candidato correctivo: 5.2.2 pendiente de despliegue/UAT.
 
 ## Resultado esperado
 
@@ -20,6 +20,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 - UAT-109 pasa solo las muestras documentadas de contraste de tokens, texto principal/aviso y CTA en temas oscuro/claro/corporativo; no equivale a conformidad WCAG completa.
 - UAT-110 pasa una muestra limitada de árbol accesible y orden/foco de teclado en `/`, portugués, oscuro, 1280×720. Se observan landmark principal, encabezados, controles con nombre, foco visible y ausencia de trampa en el ciclo de la cabecera. No se usó lector de pantalla ni se activaron controles.
 - UAT-108/109/110 prueban comportamiento público en la producción 5.2.1 del commit `5884b80ba4318b2c4beed3e50d94945028b9a311`. La aceptación completa por lector de pantalla, idioma/tema/viewport, diagnóstico autenticado/RBAC y audio/dispositivo siguen abiertas.
+- UAT-111 amplió el muestreo al CTA inferior y encontró un fallo real no cubierto por UAT-109: el título del CTA mide 2.38:1 en tema oscuro y 1.49:1 en corporativo; el botón blanco “Começar” mide 2.49:1 en oscuro. Se corrigió la fuente candidata en Web y Landing con tokens semánticos; la validación de aceptación queda pendiente en el despliegue 5.2.2. Ver `50-uat/evidence/uat-111-production-cta-theme-contrast-2026-10-17.json`.
 
 ## Casos y aceptación
 
