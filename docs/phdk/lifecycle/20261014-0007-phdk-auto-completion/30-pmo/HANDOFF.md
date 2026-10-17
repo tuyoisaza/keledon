@@ -1,3 +1,9 @@
+## Re-entry — 5.2.8 production SEO slice (2026-10-17)
+
+PR #253 / main `9aa0d452` delivers the PIA-AUTO-SEO-001 initial Web overview; Railway Web/API both report SUCCESS. UAT-133/134 pass only the anonymous initial HTML and post-React public/login shell observations. PIA-AUTO-SEO-002 captures the remaining private-route raw meta/canonical mismatch and unknown-route soft-404. The four owner-confirmed commitments and their order are unchanged. Current delivery does not close CMT-002 breadth or the blocked CMT-003/004 authenticated lifecycle; no test/bootstrap/role-elevation bypass is approved. Check must carry branch-protection/CI-provider evidence limitations and production-only acceptance policy.
+
+---
+
 ## Revalidación vigente — UAT-129 / UAT Prep CMT-003C (2026-10-17)
 
 PHDK 2.53.1; KELEDON 5.2.6 product source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` after docs-only PR #245. Railway Web/API deployments for #245 report SUCCESS. UAT-127/128 cover public AX presence; UAT-129 sampled 11 Tab through public header to main CTA with visible focus on one header link and the CTA. No control activated; no broader WCAG/screen-reader claim.

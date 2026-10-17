@@ -1,5 +1,11 @@
 # AEO/GEO remediation report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.2.8 — no new answer claim; initial HTML delivery accepted
+
+PIA-AUTO-SEO-001 places the prior factual KELEDON overview in the canonical production Web shell. Production GET confirms the content is available before JavaScript; production browser confirms a single React H1 and clean fallback removal. No additional AEO-specific claims, FAQs, authorship, citations, structured data, locale pages or crawler access were added. No local application tests/builds or external answer-engine queries were run. Preserve partial status for raw private-route metadata mismatch, unverified authorship/market policy, and unmeasured citations/visibility; evidence is linked from `65-seo/snapshots/candidate-5.2.8/production-seo-after.json`.
+
+---
+
 ## Candidate 5.2.7 — no answer-content remediation required (2026-10-17)
 
 No public answer or claim changed in PR #247; no content remediation is indicated. Preserve the existing source findings and avoid inventing FAQs, authorship, citations, locale markets, or ranking claims. External answer-engine/citation evidence remains NOT MEASURED. No local app tests/builds or external queries were run.

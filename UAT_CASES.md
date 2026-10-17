@@ -1,3 +1,20 @@
+## Production v5.2.9 — PIA-AUTO-SEO-002 (pending deployment)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-135 | Public discovery / anonymous visitor | GET `/`; inspect initial response and rendered homepage. | 200/index-follow, root canonical, approved overview; React removes fallback after startup. | Anonymous production HTTP + browser. | PENDING deployment. |
+| UAT-136 | Login shell / anonymous visitor | GET `/login`; inspect response and app without entering data. | Initial application title, noindex/nofollow, no canonical; header stays noindex; no public fallback in app shell. | Anonymous production HTTP + browser. | PENDING deployment. |
+| UAT-137 | Valid deep link / anonymous visitor | GET `/sessions/phdk-uat-137`; inspect the route handoff. | 200 private shell; noindex; React redirects anonymous visitor to login without customer data. | Anonymous production HTTP + browser. | PENDING deployment. |
+| UAT-138 | Unknown path / anonymous visitor | GET `/phdk-uat-unknown-138`. | Real 404, noindex, no homepage canonical, not-found page, no redirect to `/`. | Anonymous production HTTP + browser. | PENDING deployment. |
+| UAT-139 | Discovery controls / anonymous visitor | GET `/robots.txt` and `/sitemap.xml`. | Both remain available; sitemap lists only `/`. | Anonymous production HTTP. | PENDING deployment. |
+
+## Production v5.2.8 — public HTML and SPA login fallback
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-133 | Public discovery / anonymous visitor | GET production `/`; inspect initial HTML, then observe the page after React startup. | Response is 200/indexable and carries the approved semantic H1/product overview before JS; React replaces the fallback with one H1 and no duplicate fallback. | Anonymous production HTTP + browser. | PASS for the single sampled production response/render. Does not prove crawler rendering, indexing or accessibility conformance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-133-production-web-seo-html-2026-10-17.json`. |
+| UAT-134 | Public login / anonymous visitor | GET production `/login`; inspect shell and after-React metadata/form. Do not enter credentials or activate auth controls. | Response header noindex; after React, title is Application, robots noindex, no homepage canonical, login form appears, and no public fallback remains. | Anonymous production HTTP + browser. | PASS after React; initial shell mismatch/fallback flash remains open under PIA-AUTO-SEO-002. No credential or auth behavior is accepted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-134-production-login-shell-metadata-2026-10-17.json`. |
+
 ## Production v5.2.7 — login locale/theme and keyboard sample
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

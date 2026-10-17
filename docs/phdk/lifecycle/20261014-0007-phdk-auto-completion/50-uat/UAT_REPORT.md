@@ -1,3 +1,14 @@
+## UAT-133/134 — v5.2.8 initial Web HTML and React route handoff (2026-10-17)
+
+PR #253 merged as `9aa0d452684d4bcf1b00bdb3321649ae4675877a`. Railway Web `4134bb32-8bbf-4401-b86f-c7bb72e26ea8` and API `823151d4-e820-4077-a538-2b26670226d4` are SUCCESS; production environment has no pending work, 0 issues and 0 recent failures.
+
+- **UAT-133 PASS_SCOPED:** anonymous `/` returned 200/index-follow and raw initial HTML includes the semantic H1 and approved Cloud/Browser/client-configured overview. The production browser shows v5.2.8, one H1, no fallback node and `no-js=false` after React startup.
+- **UAT-134 PASS_SCOPED after React:** anonymous `/login` renders the expected login page, v5.2.8, two fields, `noindex, nofollow`, no canonical and no leftover public fallback after React startup. The raw response still carries homepage meta/canonical and displays the public fallback until React starts; PIA-AUTO-SEO-002 tracks it. No credentials or login/OAuth/signup actions were used.
+
+Evidence: `evidence/uat-133-production-web-seo-html-2026-10-17.json` and `evidence/uat-134-production-login-shell-metadata-2026-10-17.json`. No local application tests/builds were run. This closes only the initial public HTML and React handoff case; full UAT and the authenticated CMT-003/004 gates remain incomplete.
+
+---
+
 ## UAT-131 — matriz pública de tema e locale en producción (2026-10-17)
 
 En KELEDON Web 5.2.7 (`a7ca8689`), un tab anónimo fresco recorrió las nueve combinaciones de español/inglés/portugués × oscuro/claro/corporativo en la portada pública. El árbol accesible confirmó en cada combinación la selección activa y contenido/navegación localizados, además de la versión y los controles del diagnóstico. Capturas de cuatro combinaciones muestran la fila compacta de versión y acciones sin texto de estado adicional ni salto de línea en el tamaño observado. Al final se restauró el tab a oscuro/portugués, que eran sus valores iniciales. UAT-131 **PASA con alcance limitado**: no mide contraste, WCAG integral, móvil, `/login`, comportamiento autenticado, clipboard ni caché. No se leyó el portapapeles ni se limpió caché. Evidencia: `evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`. No se ejecutaron pruebas/builds locales.

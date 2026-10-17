@@ -1,3 +1,27 @@
+## PHDK Auto checkpoint — KELEDON 5.2.9 candidate / 2026-10-17
+
+Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` is based on remote `main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; KELEDON 5.2.9 is prepared but not yet committed/published. PHDK 2.53.1 static coherence 64/64. User instruction remains production-only application acceptance; no local app tests/builds/lint.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REUSED | PHDK 2.53.1 and 64/64 mapping verified; no manifest drift. |
+| Capture | REUSED | Four fronts and tenant/actor/secrets/customer-provider boundaries remain confirmed. |
+| Plan | COMPLETED / EXTENDED | PIA-AUTO-SEO-001 accepted; PIA-AUTO-SEO-002 records private route metadata and soft-404 fixes; CMT PIAs retained. |
+| PMO / Workstreams | COMPLETED / REVALIDATED | Four original commitments preserved in order; no fifth commitment added. |
+| Integration Review | COMPLETED FOR 5.2.9 SOURCE CANDIDATE | `40-integration/INTEGRATION_REPORT-5.2.9.md`; route map matches all 43 non-root SPA routes. |
+| UAT Prep | PARTIAL / BLOCKED FOR AUTH | Existing audited identity/device fixture and cleanup gap remains; it does not block anonymous SEO cases. |
+| UAT | PENDING 5.2.9 DEPLOY | UAT-135–139 defined for production; UAT-133/134 remain accepted only for 5.2.8. |
+| UAT Fix | PENDING UAT | Verify private initial shell and real 404 after deployment; no credentials or customer data. |
+| SEO | PENDING PRODUCTION RECHECK | PIA-AUTO-SEO-002 requires metadata/status acceptance; external indexing remains unmeasured. |
+| AEO/GEO | REUSED SOURCE / PENDING DEPLOY | Product copy is unchanged; deployed root and crawler visibility remain unverified. |
+| Check | PENDING FINAL CANDIDATE | Reconcile PIA, route inventory, version, deployment evidence and open portfolio findings. |
+| Remediation | RUNNING | 5.2.9 source remediation prepared; continue CMT-003A/B and CMT-004 after this slice. |
+| Delivery | IN PROGRESS | Branch PR, merge/readback and production acceptance remain pending. |
+
+Overall Auto remains **PARTIALLY DELIVERED**. Current external gates include authenticated synthetic fixtures/cleanup, customer-selected private CRM sandbox, Landing deployment target, GitHub branch protection/provider controls and billing visibility. Do not change provider settings or claim full completion.
+
+---
+
 ## Auto continuation — KELEDON v5.2.7 production delivery / UAT-130 (2026-10-17)
 
 Repo `tuyoisaza/keledon`; worktree `C:\KELEDON\keledon-phdk-auto-contrast109`; documentación de continuación UAT-131 basada en main documental `da509b5054075d031aa417bcb87ed79b7f628cee`, con código de producto `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`. UAT-130 pasa copy-status Web y revisión de redacción en fuente; UAT-131 pasa selección/localización de las 9 combinaciones públicas de idioma/tema y muestra visual compacta en 4 combinaciones. Railway Web/API SUCCESS. El runtime de paquete `landing/` queda BLOCKED porque no hay servicio/deploy target verificado. No pruebas/builds locales de app.

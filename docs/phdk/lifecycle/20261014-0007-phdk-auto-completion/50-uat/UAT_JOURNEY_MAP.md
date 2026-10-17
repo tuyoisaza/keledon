@@ -8,6 +8,15 @@ After PR #244's docs-only deploy settled, a fresh anonymous tab served KELEDON v
 
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.8 — public HTML and login shell handoff
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Anonymous visitor | US-012 / readable public product overview | UAT-133 | GET `/` → inspect initial HTML → wait for React → inspect H1/version/fallback state. | PASS_SCOPED: 200/index-follow, approved overview in HTML; React leaves one H1 and no fallback. `evidence/uat-133-production-web-seo-html-2026-10-17.json`. |
+| Anonymous visitor | US-013 / login route shell | UAT-134 | GET `/login` → inspect response header/meta → wait for React → inspect login fields and metadata; no form input/action. | PASS_SCOPED after React; raw shell metadata/fallback mismatch remains assigned to PIA-AUTO-SEO-002. `evidence/uat-134-production-login-shell-metadata-2026-10-17.json`. |
+
+No local application tests/builds; no credentials, OAuth, signup or customer records.
+
 ## Production v5.2.7 — UAT-131 public theme/locale matrix
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

@@ -1,3 +1,13 @@
+## Candidate 5.2.8 — production revalidation
+
+PR #253 merged as `9aa0d452684d4bcf1b00bdb3321649ae4675877a`. Integration report: `INTEGRATION_REPORT-5.2.8.md`. PIA-AUTO-SEO-001 introduces a semantic overview in the deployed Web's initial HTML and the React fallback handoff; five packages/lock pairs and Browser renderer align at v5.2.8. Production Web/API deployments are SUCCESS; UAT-133/134 pass within their anonymous scope. No local app tests/builds ran. PIA-AUTO-SEO-002 owns the remaining initial private-route metadata and SPA soft-404 findings. CMT-003/004 runtime/authenticated acceptance gates remain unchanged. Next: Check exact main `9aa0d452`.
+
+## Candidate 5.2.9 — PIA-AUTO-SEO-002 source integration
+
+Branch `fix/phdk-5-2-9-runtime-auto-remediation`, based on main `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; `INTEGRATION_REPORT-5.2.9.md`. Source review is complete: split Vite shells, noindex/no-canonical app entry, exact 43/43 route-map parity, localized React not-found and static HTTP 404. Five package/lock roots plus Browser renderer align at 5.2.9. PHDK coherence 64/64, JSON parse and `git diff --check` pass. No app tests/build/lint were run. Ready for the normal versioned PR route; production behavior remains pending. Next stage: UAT Prep revalidation; authenticated fixture gates remain blocked while the anonymous PIA cases can proceed after deploy.
+
+---
+
 # PHDK Lifecycle Handoff — Integration Review v5.2.7 candidate
 
 Run ID: `20261014-0007-phdk-auto-completion`

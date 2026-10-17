@@ -1,4 +1,28 @@
-# Current PHDK Auto audit — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
+## Current completion audit — candidate 5.2.9 — NOT COMPLETE
+
+Run: `20261014-0007-phdk-auto-completion` · Base remote `main`: `9aa0d452684d4bcf1b00bdb3321649ae4675877a` · Candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` · KELEDON 5.2.9 · PHDK 2.53.1.
+
+**State: PARTIALLY DELIVERED.** PIA-AUTO-SEO-002 source remediation is prepared and statically reviewed; commit, PR, merge, deployment and UAT-135–139 remain pending. The four-front portfolio is still incomplete: CMT-002 remains partial, CMT-003/004 remain active/partial, and authenticated acceptance is blocked by the fixture/sandbox gate. Do not run the completion gate or claim full completion.
+
+Static evidence: 43/43 SPA route map parity, locale/package JSON parsing, PHDK coherence 64/64 and `git diff --check`. No application tests/builds/lint ran locally. Production behavior is unverified for 5.2.9.
+
+Next: complete version-prefixed PR delivery, then production acceptance under UAT-135–139; continue the other approved PIAs afterward.
+
+---
+
+## Historical completion audit — candidate 5.2.8 — NOT COMPLETE
+
+Run: `20261014-0007-phdk-auto-completion` · Remote target: `main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a` · PR #253 merged · KELEDON 5.2.8 · PHDK 2.53.1, coherence 64/64.
+
+**State: PARTIALLY DELIVERED.** CMT-001 is complete for this cut. CMT-002 remains partial, CMT-003 and CMT-004 remain active/partial; no full production synthetic-auth, CRM sandbox, role, persistence or cross-tenant acceptance has passed. Check records five high gaps, five partial groups and three unverified groups. The mechanical completion gate is not run because the four-front goal is incomplete and required gates are blocked/unverified. No `COMPLETED` or 100% claim is made.
+
+Current scoped pass: PR #253 plus Web/API deployment SUCCESS; production UAT-133/134 confirms initial public HTML and post-React homepage/login behavior. SEO-10/23 pass for this sample. Residual route metadata/soft-404, Landing target, external SEO/AEO visibility and provider governance evidence remain open. No local application tests/builds/lint were run.
+
+Next authorized Auto work: continue CMT-003A/B and CMT-004 source implementation under existing PIAs, complete route inventory before PIA-AUTO-SEO-002 implementation, and preserve the UAT Prep block for privileged production fixtures. Provider rules/settings, credentials, client endpoints and data remain outside this delivery.
+
+---
+
+# Historical PHDK Auto audit — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
 Remote `main` at this audit is `d3f27ef137939c1acbbb313dd7f95b525c735dc7` after PR #236. Product package/lock roots and Browser renderer remain 5.2.4. PHDK upstream is `94f583635d295ae0f227726718904d952cadb8ab`; static coherence is 64/64. Railway production Web `0aa895bc-8a83-4c9a-b7db-26171927042a` and API `3c80fa85-8b3f-4386-a961-f071d8b1dd70` report SUCCESS for this SHA.
 

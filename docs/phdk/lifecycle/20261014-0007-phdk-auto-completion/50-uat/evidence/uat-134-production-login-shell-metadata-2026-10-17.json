@@ -1,0 +1,45 @@
+{
+  "caseId": "UAT-134",
+  "runId": "20261014-0007-phdk-auto-completion",
+  "date": "2026-10-17",
+  "environment": "production",
+  "product": "KELEDON Web",
+  "version": "5.2.8",
+  "codeSha": "9aa0d452684d4bcf1b00bdb3321649ae4675877a",
+  "deploymentId": "4134bb32-8bbf-4401-b86f-c7bb72e26ea8",
+  "url": "https://keledon.tuyoisaza.com/login",
+  "actor": "anonymous public visitor",
+  "actions": ["anonymous HTTP GET", "read-only production browser render inspection"],
+  "observations": {
+    "beforeReact": {
+      "httpStatus": 200,
+      "xRobotsTag": "noindex, nofollow",
+      "metaRobots": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "publicOverviewFallbackPresent": true
+    },
+    "afterReact": {
+      "title": "KELEDON | Application",
+      "visibleVersion": "v5.2.8",
+      "loginHeading": "Bem-vindo de volta",
+      "inputCount": 2,
+      "robots": "noindex, nofollow",
+      "canonicalPresent": false,
+      "publicOverviewFallbackCount": 0,
+      "noJsClassPresent": false
+    }
+  },
+  "result": "PASS_SCOPED",
+  "limitations": [
+    "The raw shell still flashes public fallback content and carries homepage meta/canonical until React route metadata initializes; tracked separately in PIA-AUTO-SEO-002.",
+    "No credentials were entered and no auth, OAuth, signup, API, or customer data action was used.",
+    "No local application tests or builds were run."
+  ],
+  "safety": {
+    "loginOrFormSubmitted": false,
+    "credentialsEntered": false,
+    "oauthOrSignupActivated": false,
+    "customerDataAccessed": false,
+    "privateDestinationAccessed": false
+  }
+}
