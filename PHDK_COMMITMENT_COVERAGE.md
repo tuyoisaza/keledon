@@ -1,6 +1,6 @@
-## 5.1.81 source delivery readback
+## 5.1.81 source and deployment readback
 
-PR #200 merged at verified remote main `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; five roots and Browser renderer are 5.1.81; PHDK coherence passes 63/63. API deploy succeeded. Web's old snapshot failed; live root/Dockerfile settings are corrected and await a fresh source build. Full Web UAT passes 8/8 plus standalone admin/theme/AI. All four commitments remain ACTIVE/PARTIAL (0/4 DONE); broad persisted/external gates remain open.
+PR #200 merged at verified remote main `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; five roots and Browser renderer are 5.1.81; PHDK coherence passes 63/63. Railway API and Web deployments succeeded; Web built from root `/` with `services/web/Dockerfile` and included `shared/`. Full Web UAT passes 8/8 plus standalone admin/theme/AI. All four commitments remain ACTIVE/PARTIAL (0/4 DONE); broad persisted/external gates remain open.
 
 ## Historical pre-merge candidate — UAT Fix complete; delivery pending
 

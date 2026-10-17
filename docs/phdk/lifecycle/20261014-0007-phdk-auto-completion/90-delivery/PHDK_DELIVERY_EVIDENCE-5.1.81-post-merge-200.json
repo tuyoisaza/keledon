@@ -7,8 +7,9 @@
   "version_property": "version",
   "tested_source_commit_sha": "372a0f0399a65523d3be3929a7cb447ef1634018",
   "merged_commit_sha": "86b93a0bfe8393180d65c035d814f73e8f2dd9e2",
-  "remote_main_sha": "86b93a0bfe8393180d65c035d814f73e8f2dd9e2",
-  "remote_main_tree": "d42204c8c567e8cb1b61a297e100c4c471d4a76d",
+  "post_merge_documentation_commit_sha": "507085a118a064ab209ca0e31568b4033346676a",
+  "remote_main_sha": "507085a118a064ab209ca0e31568b4033346676a",
+  "remote_main_tree": "6a885b758601945abdfd13a9211dc64bdc8ffcf6",
   "pull_request": "https://github.com/tuyoisaza/keledon/pull/200",
   "pull_request_state": "MERGED",
   "github_hosted_checks": [],
@@ -36,7 +37,7 @@
   },
   "railway": {
     "api_deployment": {
-      "id": "ce773931-0b3c-4c5a-a422-2d46c7311bee",
+      "id": "9264c007-3f37-4879-bf6a-caf7d3b4dc91",
       "status": "SUCCESS"
     },
     "web_initial_deployment": {
@@ -58,7 +59,12 @@
         "status": "FAILED"
       }
     ],
-    "web_next_gate": "Fresh source-based deployment required to verify corrected build context.",
+    "web_fresh_source_deployment": {
+      "id": "021a70c4-5d15-49be-bd33-e31afd3a92f7",
+      "source_commit": "507085a118a064ab209ca0e31568b4033346676a",
+      "status": "SUCCESS",
+      "evidence": "Build logs show COPY shared/ succeeded and Vite production build completed."
+    },
     "variables_or_volume_data_changed": false
   },
   "whole_auto": "PARTIALLY DELIVERED",
@@ -67,7 +73,6 @@
   "uat_portfolio": "89 PASS, 0 BLOCKED, 1 MANUAL",
   "crud_portfolio": "396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS",
   "remaining_acceptance": [
-    "fresh Web deployment from corrected source context",
     "PostgreSQL migration and restart acceptance",
     "remaining persisted CRUD and authorization rows",
     "native device/audio and broader accessibility",

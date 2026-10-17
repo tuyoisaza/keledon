@@ -1,8 +1,8 @@
-# PHDK Check report — 5.1.81 source merged; operational deployment split
+# PHDK Check report — 5.1.81 source and deployment verified
 
-PR #200 merged at remote `main` `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all five roots and Browser renderer read 5.1.81; PHDK coherence passes 63/63. API deployment is SUCCESS. Railway Web failed at `COPY shared/` while using its prior context. The live Web config now uses root `/` and `services/web/Dockerfile`; old-snapshot redeploys still reuse the former context, so a fresh source deployment must verify the corrected config. Candidate UAT is green (Web 8/8, admin/theme/AI pass); overall Check still has portfolio gaps and Auto remains PARTIALLY DELIVERED.
+PR #200 merged at remote `main` `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all five roots and Browser renderer read 5.1.81; PHDK coherence passes 63/63. Railway API `9264c007-3f37-4879-bf6a-caf7d3b4dc91` and Web `021a70c4-5d15-49be-bd33-e31afd3a92f7` report SUCCESS. Web's old-context builds failed; a fresh source build using root `/` and `services/web/Dockerfile` copied `shared/` and built successfully. Candidate UAT is green (Web 8/8, admin/theme/AI pass); overall Check still has portfolio gaps and Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: verify a fresh Railway Web build from corrected config, then continue the remaining acceptance.
+SIGUIENTE PASO: continue database, CRUD, native, accessibility and tenant-selected runtime acceptance.
 
 # Current 5.1.81 Check — exact Web UAT is green; portfolio gaps remain
 
