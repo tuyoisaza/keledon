@@ -1,6 +1,8 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.4 (Web commit `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`, deployment `228369da-23e8-49e0-8345-2469f9fd4863`). UAT-112 pasa muestras planas del CTA, UAT-117 pasa el estado visible de copia anónima más contrato de fuente sin hostname, UAT-118 pasa una muestra limitada de teclado/foco, UAT-119 pasa el orden público de teclado del login y UAT-120 confirma `lang` para ES/EN/PT en `/login`. La aceptación integral continúa abierta; foco, lector de pantalla, otras rutas, RBAC autenticado y audio siguen pendientes.
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Baseline actual: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. UAT-112–129 cubren muestras públicas limitadas en producción: CTA/disclosure, responsive, copia, teclado/foco, tamaños táctiles, árbol accesible y locale. UAT-129 confirma únicamente orden/foco en una secuencia pt/dark; no cubre lector de pantalla ni conformidad WCAG integral. Diagnóstico protegido/RBAC, persistencia, otras rutas/temas/locales y audio siguen pendientes o bloqueados por falta de fixtures permitidos.
+
+El detalle 5.2.4 de la sección siguiente es el baseline histórico de esta PIA; las revalidaciones vigentes se agregan al final.
 
 ## Resultado esperado
 
@@ -73,3 +75,8 @@ UAT-127 confirma presencia de los elementos semánticos públicos en el árbol a
 ## Revalidación UAT-128 — post-merge producción 5.2.6 (2026-10-17)
 
 Tras el merge documental #244 y despliegues Web/API SUCCESS, una sesión anónima nueva volvió a exponer versión, landmark principal, aviso ilustrativo y controles/enlaces nombrados. La primera navegación cargó correctamente. Esto confirma presencia AX únicamente; no cubre voz de lector, interacción, WCAG completa ni rutas autenticadas. Evidencia: `50-uat/evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`.
+
+
+## Revalidación UAT-129 — teclado/foco público en producción (2026-10-17)
+
+El recorrido anónimo de 11 Tab atravesó controles del encabezado y llegó al CTA principal sin activar elementos. Foco visible confirmado en “Casos de uso” y CTA; sin trampa de header observada. UAT-129 pasa únicamente orden/foco de esta secuencia pt/dark; no cubre lector de pantalla ni conformance WCAG integral. Evidence: `50-uat/evidence/uat-129-production-public-keyboard-focus-2026-10-17.json`.

@@ -1,3 +1,7 @@
+## UAT-129 — recorrido público de teclado en producción
+
+11 Tab avanzaron desde marca/copiar/limpiar hacia navegación, tema, idioma, login/alta y CTA. El foco fue visible en “Casos de uso” y “Abrir KELEDON”; el foco siguió al contenido principal. No se observó trampa del encabezado. No se activaron controles. PASS solo para esta secuencia en pt/dark. Evidencia: `evidence/uat-129-production-public-keyboard-focus-2026-10-17.json`.
+
 ## UAT-128 — post-merge production AX presence
 
 After PR #244's docs-only deploy settled, a fresh anonymous tab served KELEDON v5.2.6 at product source `e7257a7`. The accessibility tree exposed title, main landmark, illustrative-demo disclosure, diagnostic/theme/language controls, navigation, headings and public links. Web/API deployments `3688c933-9806-4546-aa2e-a1aa4515e4b7` / `27dba245-5425-47d4-a1cf-cdc3aee2f480` were SUCCESS for main `870e6db`. UAT-128 passes presence only. No controls were activated; no screen reader, full keyboard, WCAG, auth or device behavior is claimed. See `evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`.

@@ -1,6 +1,6 @@
 ## Revalidación CMT-003C — 5.2.6 (2026-10-17)
 
-Estado: **BLOCKED** para aceptación autenticada/cola/egress. Producto candidato: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. Remote `main` incluye después el PR documental #242 (`269b0717`), que no cambia el source desplegado.
+Estado: **BLOCKED** para aceptación autenticada/cola/egress. Producto candidato: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. Remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` tras PR #245 (docs/evidencia); el source desplegado no cambia.
 
 La ruta de identidad se conserva: login normal y actor/tenant derivados por servidor desde BD. No se preparará un bypass, endpoint público de fixture, token manual, secreto de seed persistente ni alta de identidad privilegiada productiva. El owner exige pruebas de aplicación en producción; por tanto, antes de aprovisionar recursos se requiere una vía existente, auditada y autorizada que permita crear/desactivar solo fixtures sintéticos bajo prefijo/run ID y verificar su cleanup sin tocar settings del IdP ni clientes activos.
 
@@ -8,7 +8,7 @@ Para CMT-003A se necesitan dos tenants/devices sintéticos y un workflow inerte;
 
 Entrada actual: PIA CMT-003C en `20-plan/pias/PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md`. Ninguna cuenta, token, sesión, tenant, device, CRM, llamada o dato productivo se creó/consultó en esta revalidación estática. No se ejecutan pruebas/builds locales de aplicación.
 
-# Plan de autenticación UAT — KELEDON 5.2.4
+## Historial del plan — KELEDON 5.2.4
 
 Estado: **PARTIAL / BLOCKED** · Fecha: 2026-10-17 · PHDK: 2.53.1.
 
@@ -22,7 +22,7 @@ Estado: **PARTIAL / BLOCKED** · Fecha: 2026-10-17 · PHDK: 2.53.1.
 
 La ruta admitida para un UAT autenticado es el login normal del producto y autorización derivada por API de identidad/rol/tenant persistidos. No se fabrican tokens, no se suplanta actor, no se usa UI de rol simulada como autenticación ni se activa un test adapter en producción. OAuth/Google se excluye porque depende de cada proveedor de cliente.
 
-No hay identidades, tenants ni devices sintéticos de producción disponibles. La norma [`PHDK_UAT_PREP.md`](../../../../../phdk-standards/PHDK_UAT_PREP.md) prohíbe provisionar identidades de prueba privilegiadas en producción; el usuario autorizó el entorno de pruebas, pero todavía no autorizó la expansión concreta de acceso ni existe owner de provisioning/cleanup asignado. Por ello Prep no provisiona usuarios, cambia roles, escribe configuración del IdP ni toca datos live.
+El seeder `uat-prep-companyco` solo acepta DB PostgreSQL `keledon_phdk_uat` por loopback y env development/test; rechaza production/staging y contiene fixture superadmin local. No hay identidades, tenants ni devices sintéticos productivos disponibles ni mecanismo permitido para crearlos. La norma [`PHDK_UAT_PREP.md`](../../../../../phdk-standards/PHDK_UAT_PREP.md) prohíbe provisionar identidades de prueba privilegiadas en producción; el usuario autorizó el entorno de pruebas, pero todavía no autorizó la expansión concreta de acceso ni existe owner de provisioning/cleanup asignado. Por ello Prep no provisiona usuarios, cambia roles, escribe configuración del IdP ni toca datos live.
 
 ## Plan de prueba cuando exista fixture autorizado
 

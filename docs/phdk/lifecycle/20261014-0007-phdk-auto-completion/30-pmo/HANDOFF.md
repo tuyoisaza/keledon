@@ -1,3 +1,13 @@
+## Revalidación vigente — UAT-129 / UAT Prep CMT-003C (2026-10-17)
+
+PHDK 2.53.1; KELEDON 5.2.6 product source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` after docs-only PR #245. Railway Web/API deployments for #245 report SUCCESS. UAT-127/128 cover public AX presence; UAT-129 sampled 11 Tab through public header to main CTA with visible focus on one header link and the CTA. No control activated; no broader WCAG/screen-reader claim.
+
+Source audit confirms the existing fixture seeder rejects production/staging and only accepts loopback `keledon_phdk_uat` in development/test; it includes a local superadmin fixture and has no Browser device or CRM sandbox provisioning. PHDK UAT Prep forbids privileged production identities and auth bypass, so authenticated UAT remains BLOCKED; this protection is not weakened. No local application tests/builds were run.
+
+Overall Auto remains PARTIALLY DELIVERED. Next: continue safe production-public acceptance/source review; CMT-003A/B and CMT-004 authenticated tests remain gated by a PHDK-compatible sandbox fixture/provisioning/cleanup path.
+
+---
+
 # PHDK Lifecycle Handoff — PMO / continuación
 
 Run ID: `20261014-0007-phdk-auto-completion`

@@ -1,3 +1,7 @@
+## UAT-129 — producción: orden y foco público por teclado (2026-10-17 20:54 UTC)
+
+Sobre main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` tras despliegue documental #245, producción Web v5.2.6 en source `e7257a7` recibió 11 pulsaciones Tab desde el foco inicial. El foco recorrió marca, copiar, limpiar cache, navegación, temas/idioma, acceso/alta y avanzó al CTA principal. Se observó foco visible en “Casos de uso” y “Abrir KELEDON”; no se observó trampa en el encabezado. UAT-129 **PASA solo el muestreo de orden y foco visible**. Ningún control se activó. Evidencia: `evidence/uat-129-production-public-keyboard-focus-2026-10-17.json`.
+
 ## UAT-128 — post-merge public accessibility-tree presence (2026-10-17 20:49 UTC)
 
 After PR #244 merged at `870e6db73b5706d8469b2d9a49e575bf735a9a3f`, Railway Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` and API `27dba245-5425-47d4-a1cf-cdc3aee2f480` reached SUCCESS. A fresh anonymous production homepage exposed v5.2.6, title, main landmark, demo disclosure, named diagnostic/theme/language controls, public navigation and headings. UAT-128 **PASSES presence only**. No controls or links were activated. This does not establish screen-reader output, keyboard, WCAG conformance, authenticated RBAC, persistence or audio/device. Product source remains `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; deployed Git SHA `870e6db` contains documentation only. Evidence: `evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`.

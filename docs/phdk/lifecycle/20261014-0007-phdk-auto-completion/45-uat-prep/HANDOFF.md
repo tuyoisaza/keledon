@@ -1,9 +1,19 @@
+## Revalidación vigente — UAT Prep CMT-003C / 5.2.6 (2026-10-17)
+
+Main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`; product source v5.2.6 `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; Web/API docs-only deploy #245 SUCCESS. UAT-129 advances public CMT-002 keyboard evidence; it does not close auth.
+
+`uat-prep-companyco` permits only `keledon_phdk_uat` on loopback in development/test and rejects production/staging. It provisions six local fixtures including superadmin, no Browser devices/CRM; cleanup is local DB scoped. PHDK UAT Prep forbids privileged production identities/auth bypass. Therefore no supported production provisioning/cleanup path exists, and FIXTURE-01..05 remain BLOCKED. Keep the guard intact; do not seed production or mutate identity-provider settings. No app tests/builds ran locally.
+
+Next: continue independent public UAT and source review; authenticated CMT-003/004 remain BLOCKED until a compliant isolated sandbox path is available.
+
+---
+
 # PHDK Lifecycle Handoff — UAT Prep
 
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `45-uat-prep`
 Status: `BLOCKED / PARTIAL`
-Candidate: KELEDON Web 5.2.4, source/main `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`
+Historical candidate at handoff start: KELEDON Web 5.2.4, source/main `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`
 Date: 2026-10-17
 
 ## Goal / scope
