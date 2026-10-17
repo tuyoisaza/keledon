@@ -1,3 +1,12 @@
+# UAT Retest — candidate 5.1.85
+
+UAT-095 retest of the CMT-002 agent-selection control passed scoped source acceptance across Web and Landing. The local production-built Web page loaded successfully in the connected in-app browser. Build/typecheck/lint and all relevant regression suites passed as listed in PHDK_CHECK_REPORT-5.1.85.md.
+
+Still MANUAL: populated authenticated agent-card keyboard interaction and screen-reader behavior; no synthetic socket fixture is available in this checkout.
+
+SIGUIENTE PASO: retain those rows as manual and continue to versioned PR delivery.
+
+---
 # UAT retest — run `20261013-1900-phdk-auto`
 
 ## Candidate 5.1.73 — UAT-083 flow-configuration API/Cloud HTTP retest

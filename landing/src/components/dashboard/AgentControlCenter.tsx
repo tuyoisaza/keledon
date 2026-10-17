@@ -111,10 +111,9 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                 <div
                   key={agent.id}
                   className={cn(
-                    "p-4 rounded-lg border bg-card cursor-pointer transition-all hover:border-primary/30",
+                    "p-4 rounded-lg border bg-card transition-all hover:border-primary/30",
                     agent.id === selectedAgent && "border-primary bg-primary/5"
                   )}
-                  onClick={() => selectAgent(agent.id)}
                 >
                   {/* Agent Header */}
                   <div className="flex justify-between items-start mb-3">
@@ -130,6 +129,16 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                       <span>{agent.status}</span>
                     </div>
                   </div>
+
+                  <button
+                    type="button"
+                    aria-label={`Select agent ${agent.name}`}
+                    aria-pressed={agent.id === selectedAgent}
+                    onClick={() => selectAgent(agent.id)}
+                    className="mb-3 min-h-11 rounded border border-border px-3 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  >
+                    {agent.id === selectedAgent ? 'Selected' : 'Select agent'}
+                  </button>
 
                   {/* Audio Level Indicator */}
                   {agent.status === 'listening' && (

@@ -138,3 +138,10 @@ API and Cloud `AgentMonitoringService` now share the same contract: unprobed TTS
 SIGUIENTE PASO: UAT-090 verifies the health contract; then continue Check and final delivery gates.
 
 ---
+## Candidate 5.1.85 — CHK-AUTO-025 integration review PASS
+
+Web and Landing now implement the same accessible native selection-button contract in AgentControlCenter. The fix is isolated to pointer-only dashboard card selection; no tenant, auth, API, persistence or customer integration behavior changed. Package/lock/renderer versions align at 5.1.85. Review details: `INTEGRATION_REPORT-5.1.85.md`.
+
+SIGUIENTE PASO: UAT/Fix and Check handoffs are complete for the scoped candidate; deliver by the normal PR flow and verify remote main.
+
+---

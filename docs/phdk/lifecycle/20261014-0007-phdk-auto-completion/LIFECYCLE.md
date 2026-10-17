@@ -1,3 +1,23 @@
+## Current candidate — 5.1.85 keyboard-accessible agent selection
+
+Run 20261014-0007-phdk-auto-completion; repository tuyoisaza/keledon; target main; branch fix/phdk-auto-5-1-85-keyboard-agent-selection based on 29a1ba592d1244b7f00676677b642d8857318103.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | REVALIDATED | PHDK 2.52.2 current, updater CURRENT, coherence 63/63; readiness reports captured. |
+| Capture / Plan | REUSED | Four ordered owner-confirmed commitments and approved policies are unchanged. |
+| PMO / Workstreams | ACTIVE / PARTIAL | CMT-002 advanced; other gates remain open. |
+| Integration | PASS FOR SOURCE SLICE | Web/Landing selection parity reviewed; report 40-integration/INTEGRATION_REPORT-5.1.85.md. |
+| UAT / UAT Fix | PASS_SCOPED | UAT-095 source contract 2/2, local built Web navigation; populated authenticated card and screen reader remain MANUAL. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | Authenticated dashboard control only; no public content, route or metadata changed. |
+| Check / Remediation | PASS FOR SCOPE | API 43/43, Cloud 20/20, Web diagnostics 19/19, Browser 16/16, app builds/types/lint, version alignment and coherence 63/63. |
+| Delivery | IN PROGRESS | Versioned source commit, PR, merge and remote-main readback pending. |
+
+Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Manual, database, native, deployed-discovery and customer-specific gates remain open.
+
+SIGUIENTE PASO: complete final source review and deliver candidate 5.1.85 through the normal PR flow; verify the merged main SHA and preserve partial portfolio status.
+
+---
 ## Current delivery readback — 5.1.84 dashboard controls merged (2026-10-17)
 
 PR [#206](https://github.com/tuyoisaza/keledon/pull/206) squash-merged source `631b12132570631e2ef1c20ff08029423b27fb6b` at remote `main` `eb5f5b47b7cd4a6de6354486603df4233341cab4`; candidate tree `59d95ef1f4506f91e709c2fab495f41c1cacf982` matches remote. Five package/lock roots and Browser renderer read 5.1.84; PHDK coherence 63/63. API/Cloud builds and regressions 43/43 and 20/20, Web/Landing build/typecheck/lint, diagnostics 19/19, Browser build/lint/focused tests 16/16 pass. UAT-094 passes. Railway Web and API report SUCCESS. API logs confirm PostgreSQL connection and Nest startup; no LLM provider is configured and the service reports degraded mode. Whole Auto remains PARTIALLY DELIVERED, 0/4 commitments DONE; UAT 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.

@@ -1,3 +1,10 @@
+# PMO Status — 5.1.85 candidate
+
+Candidate fix/phdk-auto-5-1-85-keyboard-agent-selection advances CMT-002. Native button selection controls are implemented in Web/Landing and pass source contract checks 2/2. Product versions align at 5.1.85; app/backend/browser tests and builds are passing. Candidate PR is not open yet. CMT-001, CMT-003 and CMT-004 remain active; no commitment is closed. Whole Auto remains PARTIALLY DELIVERED (93 PASS / 0 BLOCKED / 1 MANUAL).
+
+SIGUIENTE PASO: final diff review, versioned source commit and PR delivery; keep manual accessibility and other acceptance open.
+
+---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered; portfolio partial
 
 PR [#206](https://github.com/tuyoisaza/keledon/pull/206) merged product source `631b12132570631e2ef1c20ff08029423b27fb6b` to `main` at `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote tree `59d95ef1f4506f91e709c2fab495f41c1cacf982` matches the tested candidate tree. It removes unsupported agent start/stop controls and an empty realtime button from Web and Landing. Five package/lock roots and Browser renderer are 5.1.84. API/Cloud builds and regressions pass 43/43 and 20/20; Web/Landing builds, typechecks and lint pass; diagnostics 19/19; Browser build/lint and focused version/security tests 16/16; PHDK coherence 63/63. Railway Web and API report SUCCESS; bounded API logs confirm Nest started and PostgreSQL connected. No public request was made; no LLM provider is configured, so API reports degraded mode.

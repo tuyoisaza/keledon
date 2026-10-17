@@ -116,3 +116,9 @@ Stage: 67-aeo-geo. Consume this current-candidate SEO handoff, public `/` indexa
 For source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df`, the SEO stage is NOT APPLICABLE to the candidate diff: only authenticated integration telemetry/UI, tests, version metadata and changelog changed; public routes and discoverability signals are unchanged. The existing project-wide 25-control review is preserved in `snapshots/candidate-5.1.80/`. No live host or search measurement was used; deployed SEO remains unmeasured. Exact candidate note: `snapshots/candidate-5.1.80/CANDIDATE_SCOPE.md`.
 
 Next: AEO/GEO applicability reuse for unchanged public answers, then integrated Check.
+
+## Candidate 5.1.85 reuse — private dashboard accessibility only
+
+CHK-AUTO-025 modifies the authenticated agent monitoring widget only. No public routes, metadata, robots/sitemap, marketing copy, structured data or answer claims changed. Existing SEO evidence is reused; deployed SEO measurements remain separate and open.
+
+SIGUIENTE PASO: preserve the broad deployed SEO/AEO acceptance gates while delivering the checked source candidate.

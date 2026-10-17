@@ -1,3 +1,12 @@
+# Current PHDK Auto — 5.1.85 keyboard selection candidate; portfolio partial
+
+Run 20261014-0007-phdk-auto-completion; repository tuyoisaza/keledon; branch fix/phdk-auto-5-1-85-keyboard-agent-selection, based on verified main 29a1ba592d1244b7f00676677b642d8857318103. Product package/lock roots and Browser renderer are 5.1.85. CHK-AUTO-025 makes Web/Landing agent cards keyboard-selectable through a native named button with selected state, visible focus, and 44px minimum target. UAT-095 passes scoped source acceptance, contract tests 2/2, Web diagnostics 19/19, API/Cloud regression 43/43 and 20/20, Browser 16/16, all relevant builds/typechecks/lint and PHDK coherence 63/63. The local built Web candidate loaded in the connected in-app browser. Authenticated card interaction and screen-reader acceptance remain MANUAL; no PR or merge yet.
+
+Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: complete diff review and version-prefixed commit, then publish the scoped PR and verify remote main; retain the broader open acceptance gates.
+
+---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered; portfolio partial
 
 Current run: `20261014-0007-phdk-auto-completion`; PR [#206](https://github.com/tuyoisaza/keledon/pull/206) delivered candidate source `631b12132570631e2ef1c20ff08029423b27fb6b` to remote main `eb5f5b47b7cd4a6de6354486603df4233341cab4`, tree `59d95ef1f4506f91e709c2fab495f41c1cacf982`, matching the tested candidate tree. Candidate 5.1.84 removes unsupported agent start/stop commands and an empty realtime toggle from Web and Landing dashboards. Five package/lock roots and Browser renderer align at 5.1.84. Web/Landing build/typecheck/lint, API/Cloud build/regressions 43/43 and 20/20, Web diagnostics 19/19, Browser build/lint/focused tests 16/16, and PHDK coherence 63/63 pass. Railway Web `65ffff07-d497-4ff1-b77f-1ba9d7631857` and API `89541838-9f48-40b2-b2d7-8db3e0489c5a` report SUCCESS. Logs confirm Nginx workers started and API/Nest connected to PostgreSQL; API reports no LLM provider configured and is running degraded. No public request was made.

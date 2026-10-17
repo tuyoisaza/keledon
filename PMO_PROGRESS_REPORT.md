@@ -1,3 +1,17 @@
+# PMO Progress — 5.1.85 candidate
+
+| Commitment | Verified progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PRs | 5.1.84 and its post-merge record verified; candidate package/lock/renderer versions align at 5.1.85. | Deliver 5.1.85 through PR and continue the backlog/baseline gates. |
+| CMT-002 widget/diagnostics | UAT-095 source contract 2/2; Web diagnostics 19/19; local built candidate opened in connected browser. | Authenticated populated agent card, screen reader, full routes/locales/themes, and native surfaces. |
+| CMT-003 voice→Cloud→Browser→CRM | No customer runtime changed; API/Cloud 43/43 and 20/20; Browser 16/16 including tenant-private allowlist coverage. | Each customer-selected call platform and CRM acceptance remains customer-specific. |
+| CMT-004 administration/permissions | No permission behavior changed; least-privilege regression suites remain passing. | Persisted migrations/restart, remaining CRUD, audit and retention acceptance. |
+
+All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Overall UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: deliver the checked 5.1.85 candidate through the normal PR path and verify remote main.
+
+---
 # Current PHDK Auto — 5.1.84 dashboard control repair candidate; portfolio partial
 
 PR #204 delivered 5.1.83; PR #205 recorded its post-merge evidence. PR #206 merged product source 5.1.84 (`631b12132570631e2ef1c20ff08029423b27fb6b`) at remote main `eb5f5b47b7cd4a6de6354486603df4233341cab4`; its tree matches the tested candidate. This change removes unsupported agent start/stop controls and their unhandled events, plus Web's empty realtime toggle. Five package/lock roots and Browser renderer align at 5.1.84. API/Cloud builds and regressions 43/43 and 20/20; Web/Landing builds/typechecks/lint; Web diagnostics 19/19; Browser build/lint/focused tests 16/16; PHDK coherence 63/63 pass. UAT-094 passes. Railway Web/API report SUCCESS; API logs confirm PostgreSQL connection and Nest startup but show no LLM provider is configured, so the runtime is degraded. No live HTTP probe was made.

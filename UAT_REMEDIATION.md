@@ -1,3 +1,12 @@
+# UX/UI Remediation — candidate 5.1.85
+
+Finding UX-A11Y-025 / CHK-AUTO-025: Web and Landing agent cards used pointer-only click handlers on div elements. Replaced that interaction with a native selection button per card, explicit accessible name, aria-pressed state, visible Selected label, focus ring and 44px minimum hit size.
+
+Retest: services/web/test/agent-selection-accessibility.test.cjs passes 2/2. Web and Landing production builds, typechecks and lint pass; local built Web candidate navigation passes. The authenticated dashboard card and screen-reader journey could not be exercised without a safe synthetic socket fixture and remain MANUAL.
+
+SIGUIENTE PASO: resume the populated-card keyboard and screen-reader retest when the synthetic fixture is available.
+
+---
 # UAT remediation — run `20261013-1900-phdk-auto`
 
 ## Candidate 5.1.73 — AI workflow UAT fixture missing managed metadata (RESOLVED)

@@ -335,3 +335,10 @@ UAT is **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; CRUD is uncha
 SIGUIENTE PASO: Check the integrated 5.1.79 candidate; retain live dependency, database and external acceptance as unverified.
 
 ---
+## Candidate 5.1.85 — UAT-095 PASS_SCOPED
+
+Web and Landing agent-card selection now uses an accessible native button with explicit name/state, 44px minimum target and visible keyboard focus. Source contract tests pass 2/2; Web and Landing build/typecheck/lint, Web diagnostics 19/19, full local Web UAT 8/8 plus standalone admin-settings/theme-template/AI-admin journeys, API/Cloud regressions 43/43 and 20/20, Browser build/lint/focused tests 16/16, PHDK coherence 63/63. The local built candidate was opened in the connected in-app browser. Authenticated populated-card interaction and screen-reader acceptance remain MANUAL. Evidence: `evidence/uat-095-agent-selection-keyboard-5.1.85.json`.
+
+UAT portfolio: 93 PASS / 0 BLOCKED / 1 MANUAL. All four commitments remain ACTIVE/PARTIAL; whole Auto remains PARTIALLY DELIVERED. SIGUIENTE PASO: complete Check, then deliver 5.1.85 by PR and verify remote main.
+
+---

@@ -1,5 +1,15 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Browser Readiness — Auto UAT-095, candidate 5.1.85
+
+- Permission: `ACTIVE_UAT_EXCEPTION`; actual browser capability: `AVAILABLE_VERIFIED`.
+- Candidate/revision: local production build of `fix/phdk-auto-5-1-85-keyboard-agent-selection`, package version 5.1.85; source candidate is under test. Browser verification was performed 2026-10-17 12:27 UTC.
+- Target: `http://127.0.0.1:4173/`, local Web production preview. The connected Codex in-app browser navigated to the page and exposed title “KELEDON | Cloud-governed contact center runtime” plus visible version `v5.1.85` in the accessibility tree.
+- Data/identity: public landing page only; no account, credentials, live API, production/customer data, or provider endpoint. The authenticated agent dashboard was not loaded because no safe synthetic socket fixture exists in this checkout.
+- Spend disposition: `NO_NEW_SPEND`. No external traffic was required.
+- Executed: local candidate navigation and source-contract assertions UAT-095 2/2. Authenticated populated-card keyboard action and screen-reader behavior remain `MANUAL`; no browser PASS is claimed for those behaviors.
+- Owner action/resume: no action is required for the source slice; resume the manual journey when a safe synthetic socket fixture and accessible test actor are available, then run the UAT-095 populated-card and screen-reader checks.
+
 ## Candidate 5.1.73 — UAT-081 local synthetic superadmin
 
 Target: production-built Web SPA served on ephemeral loopback by Playwright. The synthetic `superadmin@company-co.invalid` actor, two companies and flow API responses exist only in an in-memory fixture; non-local HTTP and WebSockets are blocked. No real user, database, customer endpoint or provider account was accessed. This does not authenticate a real account or prove backend superadmin authorization.

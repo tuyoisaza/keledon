@@ -266,3 +266,10 @@ Scoped lint/build/typecheck/version/Prisma-schema/coherence checks pass. One dat
 The integrated candidate removes unsupported `ready` claims for TTS/STT/AI and disconnects aggregate health from dashboard socket count. API regression 42/42, Cloud regression 19/19, paired health contracts 2/2 each, API/Cloud builds and targeted lint, Web/Landing typecheck/build, full Web UAT 8/8 plus standalone admin/theme/AI, Browser build and focused tests 4/4, and PHDK coherence 63/63 pass. Full API database e2e, persisted health probes, migrations/restart, broad CRUD, native accessibility, Railway deployment and customer-selected live integration remain unverified. Detailed report: `PHDK_CHECK_REPORT-5.1.79.md`.
 
 SIGUIENTE PASO: deliver the versioned candidate through PR #198, then verify merge and remote `main`; retain deployment and database gates separately.
+## Candidate 5.1.85 Check — scoped PASS; whole Auto partial
+
+CHK-AUTO-025 fixes keyboard access to Web/Landing agent selection. All five app package/lock roots and Browser renderer align at 5.1.85. API/Cloud builds and regressions (43/43, 20/20), Web/Landing builds/typechecks/lint, Web diagnostics 19/19, selection contract tests 2/2, Browser build/lint/focused tests 16/16, PHDK coherence 63/63 and local built-page navigation pass. The authenticated populated dashboard and screen-reader behavior remain MANUAL. Details: `PHDK_CHECK_REPORT-5.1.85.md`; UAT evidence `../50-uat/evidence/uat-095-agent-selection-keyboard-5.1.85.json`.
+
+All four commitments remain ACTIVE/PARTIAL; whole Auto is PARTIALLY DELIVERED (93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS). SIGUIENTE PASO: publish the checked versioned candidate through the normal PR flow and verify remote main.
+
+---
