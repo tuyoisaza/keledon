@@ -2,7 +2,7 @@
 
 ## Candidato en revisión — KELEDON 5.2.11 / UAT-141 (2026-10-17)
 
-La producción continúa en KELEDON 5.2.10. El candidato `fix/phdk-login-touch-targets-5-2-11` corrige los cuatro objetivos táctiles del login detectados por UAT-141, alinea las cinco raíces package/lock y el renderer, y deja UAT-142 preparado como retest exclusivamente productivo. No se afirma aceptación antes de revisión, merge, despliegue y UAT-142. Evidencia y estado: [PIA-CMT-002](PIA-CMT-002-WIDGET-DIAGNOSTICO.md), [casos UAT-141/142](../../50-uat/UAT_CASES.md), [UAT Fix](../../60-uat-fix/UAT_RETEST_REPORT.md).
+La producción continúa en KELEDON 5.2.10. El candidato `fix/phdk-login-touch-targets-5-2-11`, PR #259 (abierto y mergeable, con revisión pendiente), corrige los cuatro objetivos táctiles del login detectados por UAT-141, alinea las cinco raíces package/lock y el renderer, y deja UAT-142 preparado como retest exclusivamente productivo. No se afirma aceptación antes de revisión, merge, despliegue y UAT-142. Evidencia y estado: [PIA-CMT-002](PIA-CMT-002-WIDGET-DIAGNOSTICO.md), [casos UAT-141/142](../../50-uat/UAT_CASES.md), [UAT Fix](../../60-uat-fix/UAT_RETEST_REPORT.md).
 
 ## Estado vigente — KELEDON 5.2.10, PHDK 2.53.1 (2026-10-17)
 

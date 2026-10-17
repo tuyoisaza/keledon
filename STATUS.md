@@ -1,6 +1,6 @@
 # Current Auto status — KELEDON 5.2.11 candidate / 2026-10-17
 
-Production remains KELEDON 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. UAT-141 found undersized mobile login targets; the 5.2.11 candidate fixes the brand link, email/password fields and signup toggle and aligns five package/lock roots plus Browser renderer. Static checks pass; application tests/build/lint were not run. UAT-142, merge and deployment are pending. PHDK 2.53.1 coherence baseline remains 64/64. Whole Auto remains PARTIAL across the four approved commitments.
+Production remains KELEDON 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. UAT-141 found undersized mobile login targets; the 5.2.11 candidate fixes the brand link, email/password fields and signup toggle and aligns five package/lock roots plus Browser renderer. PR #259 is open/mergeable with review pending. Static checks pass; application tests/build/lint were not run. UAT-142 and deployment are pending. PHDK 2.53.1 coherence baseline remains 64/64. Whole Auto remains PARTIAL across the four approved commitments.
 
 SIGUIENTE PASO: publish the scoped PR for review, then perform UAT-142 only on deployed production.
 

@@ -7,7 +7,7 @@ Production baseline remains 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f4086
 | Preflight / Check | STATIC CANDIDATE PASS | Review package/lock alignment, focused source diff and PHDK artifacts; 64/64 standard baseline unchanged. |
 | Integration Review | COMPLETE FOR SOURCE CANDIDATE | `40-integration/INTEGRATION_REPORT-5.2.11.md`; no auth/provider/runtime integration behavior changed. |
 | UAT / UAT Fix | UAT-141 FAIL TARGET SIZE; UAT-142 PENDING | Review and deploy candidate, then measure corrected targets and reflow on production only. |
-| Delivery | PR / REVIEW PENDING | Keep candidate separate from docs-only PR #258; no production acceptance before UAT-142. |
+| Delivery | PR #259 OPEN / MERGEABLE; REVIEW PENDING | Keep candidate separate from docs-only PR #258; no production acceptance before UAT-142. |
 
 The four ordered commitments remain active as previously approved. CMT-003 authenticated/runtime and CMT-004 tenant/role acceptance remain behind their existing synthetic-fixture and cleanup PIAs.
 

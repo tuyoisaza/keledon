@@ -1,6 +1,6 @@
 # Current Auto continuation — KELEDON 5.2.11 candidate / 2026-10-17
 
-Production remains KELEDON 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; PR #258 is a separate documentation reconciliation. PHDK 2.53.1 coherence baseline is 64/64. Production UAT-141 found four login controls below the 44px target-size rule at 320px, while reflow passed. Candidate `fix/phdk-login-touch-targets-5-2-11` fixes these controls, aligns all five package/lock roots and Browser renderer, and records PIA-CMT-002 plus UAT-142 as the production-only retest. Candidate PR/review/deployment remain pending; no acceptance pass is claimed.
+Production remains KELEDON 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; PR #258 is a separate documentation reconciliation. PHDK 2.53.1 coherence baseline is 64/64. Production UAT-141 found four login controls below the 44px target-size rule at 320px, while reflow passed. Candidate `fix/phdk-login-touch-targets-5-2-11` fixes these controls, aligns all five package/lock roots and Browser renderer, and records PIA-CMT-002 plus UAT-142 as the production-only retest. PR #259 is open and mergeable; review and deployment are pending, with no acceptance pass claimed.
 
 The four owner-approved fronts remain in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 tenant-specific voice→Cloud→Browser→CRM; CMT-004 administration/permissions. CMT-003C fixture/provisioning is still gated by PIA-CMT-003C1. No local app tests/builds/lint, credentials, customer data, provider-settings writes or private egress.
 
