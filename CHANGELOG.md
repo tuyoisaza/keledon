@@ -1,10 +1,18 @@
+## v5.2.6 — 2026-10-17
+
+### Fixed
+- Give the KELEDON home link in the shared Web/Landing mobile header a 44px minimum touch target.
+
+### Verification
+- Production UAT-125 found this adjacent header target after the v5.2.5 menu retest. Revalidate all header/menu controls at 320×720 and 375×812 in production.
+
 ## v5.2.5 — 2026-10-17
 
 ### Fixed
 - Meet PHDK's 44px minimum touch target for public mobile navigation links and shared theme/language selectors, and keep authenticated menu actions aligned in Web and Landing.
 
 ### Verification
-- Production UAT-125 found the undersized controls at 320×720. Revalidate the deployed Web menu and Web/Landing version alignment in production; no local application tests or builds are used.
+- Production UAT-125 confirms the menu links and preference selectors meet the 44px minimum at 320×720 and 375×812, with no horizontal overflow. The separate KELEDON home-link target remains tracked in UAT-126.
 
 ## v5.2.4 — 2026-10-17
 
