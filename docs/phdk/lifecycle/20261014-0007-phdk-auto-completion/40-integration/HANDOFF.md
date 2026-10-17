@@ -15,11 +15,13 @@ Confirm the tenant-scoped team interface selector and race fix form one coherent
 - Prior source validation and version alignment for 5.2.1.
 - Prior focused request-sequence regression and API/Cloud/schema evidence recorded in stage 70.
 - Current tenant, role, secret-display and customer-configured origin decisions.
+- Read-only follow-up review of the API/Cloud CRUD guards, tenant assignment service paths, legacy MVP route scope and additive migration.
 
 ## Work performed
 
 - Reconciled candidate implementation commits `b8c481a16f2c015f3b4d1e9b0ff3dd2012c1d663` and `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39`.
 - Documented current source-level integration evidence and limitations in `INTEGRATION_REPORT-5.2.1.md`.
+- Recorded that `companyId` is nullable with no backfill; tenant-owned interface provisioning and legacy-row ownership must be confirmed before acceptance.
 - No source code changed and no application test ran in this continuation.
 
 ## Deliverables
@@ -31,6 +33,7 @@ Confirm the tenant-scoped team interface selector and race fix form one coherent
 
 - [x] Tenant/team ownership and stale-response source contracts have prior candidate evidence.
 - [x] PHDK, security and current customer-configured integration boundaries are reconciled.
+- [x] Follow-up source review recorded API/Cloud parity and the no-backfill provisioning limitation.
 - [ ] Database migration/readback and exact candidate authenticated UI integration.
 
 ## Risks / blockers

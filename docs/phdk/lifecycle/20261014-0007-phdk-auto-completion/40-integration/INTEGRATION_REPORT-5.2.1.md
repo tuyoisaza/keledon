@@ -18,7 +18,13 @@ The Admin/Coordinator Web flow selects tenant-owned `ManagedInterface` entries a
 
 ## Boundary / exit gate
 
-Source contracts are integrated for this candidate; no source-level cross-service mismatch is reported by prior evidence. **Persisted and rendered integration is not verified**: migration, DB readback, role login, browser selection and foreign-tenant denial need synthetic identities on an isolated candidate target. No database, production user/data or customer call/CRM endpoint was touched.
+## Follow-up source review — 2026-10-17
+
+Read-only review of the PR diff confirms API/Cloud parity for the focused CRUD path. Both resolve the current actor from the user row, permit tenant managers only to list company-owned interfaces and use the team assignment endpoints, check the team belongs to that company, and validate every assigned interface against that company. The service replaces assignments transactionally and excludes credential values from list/detail projections. The legacy `/api/interfaces` MVP route does not become a tenant catalog: `ResourceScopeGuard` denies it to tenant managers, while the existing superadmin bypass remains.
+
+The additive migration introduces nullable `managed_interfaces.companyId` with a foreign key and index, but has no data backfill. Existing rows therefore remain unowned and do not appear in the tenant selector. No migration was run and no production counts were queried in this review. Before candidate acceptance, the owner must verify how the intended tenant interfaces are provisioned and whether any existing rows need an explicitly authorized ownership mapping; do not infer ownership or expose null-company rows globally to tenants.
+
+This source review found no clear API/Cloud mismatch in the reviewed paths, but it is not runtime proof. **Persisted and rendered integration is not verified**: migration/readback, intended interface provisioning, role login, browser selection and foreign-tenant denial still need acceptance against an exact candidate. No database, production user/data or customer call/CRM endpoint was touched.
 
 ## Next stage
 
