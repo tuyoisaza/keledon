@@ -1,3 +1,15 @@
+## v5.1.75 — 2026-10-17 (accessible, localized team voice settings)
+
+- Associate labels with every team voice setting, announce loading and save results, restore visible keyboard focus, and make the controls at least 44px tall.
+- Translate the Team Settings page, provider options, Vosk model list and save feedback into English, Spanish and Portuguese.
+- Extend production-built Web UAT with role boundaries, three-locale labels, keyboard focus, touch-target sizes, light-theme field contrast, and successful/failed save announcements; make the superadmin legacy-flow locator tolerate its full accessible name.
+- Align all five app package/lock roots and the Browser renderer at 5.1.75.
+
+### Verification
+- Web typecheck and production build pass; Web UAT passes 7/7 suites plus admin settings, theme-template and AI-admin UAT.
+- Team Settings UAT passes 47 scoped assertions; focused ESLint passes. Contrast covers the five fields in the default light theme only; no screen-reader session was run.
+- PHDK remains 2.51.5 and coherence is 61/61. Whole PHDK Auto remains partial.
+
 ## v5.1.74 — 2026-10-17 (tenant admin routing and audit attribution)
 
 - Align admin settings and team settings routes with the approved admin/coordinator/superadmin policy; ordinary users remain denied, and translate settings/theme editor copy in English, Spanish and Portuguese.

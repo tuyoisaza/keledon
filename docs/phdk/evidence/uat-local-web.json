@@ -1,9 +1,9 @@
 {
-  "version": "5.1.74",
-  "date": "2026-10-17T06:37:05.048Z",
-  "candidateRevision": "0dd405d930c518537ecea17ca363e95a5b99a9fd",
-  "candidateSourceFingerprint": "sha256:34111b00accf92f54c7682b5098a2f99ecfbce9fa7f21333c30b65189e933be3",
-  "dirtyUntrackedSourceFiles": 21,
+  "version": "5.1.75",
+  "date": "2026-10-17T07:19:10.671Z",
+  "candidateRevision": "85d83a130da506607972c868f3a4dd83d85b018b",
+  "candidateSourceFingerprint": "sha256:b9b5072bb1cfe4a59068aee55a8edb7dff47617cf5abf4230b9ce97027dbcc6e",
+  "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
     "cloud",
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:56433",
+  "origin": "http://127.0.0.1:58829",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-067 diagnostics widget exposes named keyboard-operable actions, 44x44 hit targets, visible 2px focus and polite live status in production-built Web PASS",
@@ -37,7 +37,7 @@
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.74 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)",
+    "UAT-002 5.1.75 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)",
     "UAT-067 selected WCAG AA text contrast scan passes on server status, brands, teams, vendors and create dialog, users (admin/superadmin), Knowledge (es/en/pt/admin), dashboard (es/en/pt), sessions (live/history/detail), profile (es/en/pt), devices, launcher, company details (three roles), providers, Brain and protected diagnostics (automated production-browser sample)"
   ],
   "themeTokens": {

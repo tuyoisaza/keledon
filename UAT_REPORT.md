@@ -1,8 +1,8 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
-## Candidate 5.1.74 — current PHDK Auto UAT recheck (2026-10-17)
+## Candidate 5.1.75 — current PHDK Auto UAT recheck (2026-10-17)
 
-The production-built Web suite passes 7/7 browser journeys; standalone admin-settings, theme-template and AI-admin UAT also pass with synthetic APIs and outbound traffic blocked. The admin-settings case verifies superadmin platform links in English, tenant admin links in Spanish with platform-only links hidden, and ordinary-user denial. Candidate-bound evidence includes `docs/phdk/evidence/uat-local-web.json`, `docs/phdk/evidence/uat-flow-config-superadmin-web-5.1.74.json`, and lifecycle evidence `50-uat/evidence/admin-settings-uat.json` and `50-uat/evidence/uat-085-theme-templates-5.1.74.json`. UAT-073 tenant-admin flow definition, draft-version, availability and routing controls pair with UAT-079 API/Cloud PostgreSQL persistence; UAT-081 superadmin flow-editor lifecycle/legacy assignment pairs with UAT-083. UAT-086/087 cover Company, Brand, Team and User browser lifecycles paired with UAT-071/075/076 persistence. AI-admin UI evidence is `docs/phdk/workstreams/AI-ADMIN-UAT.json`.
+The production-built Web suite passes 7/7 browser journeys; standalone admin-settings, theme-template and AI-admin UAT pass with synthetic APIs and outbound traffic blocked. The 5.1.75 Team Settings journey adds 47 scoped assertions for role-aware navigation, en/es/pt control names, keyboard focus, 44px targets, five-field WCAG AA contrast in the default light theme, and announced success/error saves. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-settings-uat-5.1.75.json`. No screen-reader session or database/customer integration was performed.
 
 Portfolio tally: **85 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix is **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Migration acceptance for audit-event tenant snapshots, wider role/resource coverage, and the existing native device/audio manual gate remain open.
 

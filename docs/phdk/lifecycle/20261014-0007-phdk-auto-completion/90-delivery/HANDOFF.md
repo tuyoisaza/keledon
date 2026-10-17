@@ -1,3 +1,10 @@
+## Candidate 5.1.75 — accessibility/localization UAT pass; delivery pending (2026-10-17)
+
+Branch `fix/web-team-settings-accessibility-5-1-75`, based on verified main `85d83a130da506607972c868f3a4dd83d85b018b`. All five app package/lock roots and Browser renderer are 5.1.75. Web typecheck/build pass; full Web UAT passes 7/7 suites plus admin-settings, theme-template and AI-admin UAT; focused Team Settings UAT passes 53 assertions for role links, localized labels, keyboard focus, 44px controls, five-field contrast in the light theme, and live save success/error; locale keys 32/32 align in en/es/pt; focused ESLint and PHDK coherence 61/61 pass. The superadmin flow UAT selector was made tolerant of its accessible name and now passes. Candidate commit/PR delivery is pending. No screen-reader session, database migration, customer integration or deployment was performed. Whole Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: versioned commit and normal PR, verify remote readback; keep remaining accessibility and environment-bound acceptance open.
+
+---
 ## Candidate 5.1.74 — source delivered; portfolio acceptance remains partial (2026-10-17)
 
 Candidate `5.1.74` source commit `1266d2c728391800a8615b78013f60cee6da985e` was delivered from `fix/phdk-auto-uat-082` by PR [#192](https://github.com/tuyoisaza/keledon/pull/192). Verified remote main merge commit is `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a`, tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`; all six version reads match.

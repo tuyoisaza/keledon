@@ -1,11 +1,11 @@
-## Current PHDK Auto recheck — 5.1.74 delivered / PHDK 2.51.5 (2026-10-17)
+## Current PHDK Auto recheck — 5.1.75 candidate / PHDK 2.51.5 (2026-10-17)
 
-Checkout `C:\KELEDON\keledon`, PR #192 merged from `fix/phdk-auto-uat-082`; verified main `d1b95cd01d51b3b33b59b85d9ec9d1410a4d7e1a`, tree `dc0eb9e08bea909fa05de472353112cd56ff6f62`. Latest verification: API build/regression 42/42, API ESLint 0 errors/0 warnings, Cloud build/regression 18/18 and lint clean, PHDK coherence 61/61; Web UAT 7/7, Browser 43/43, Agent theme 2/2 and Landing/SEO pass. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; whole Auto remains partial.
+Checkout `C:\KELEDON\keledon`, branch `fix/web-team-settings-accessibility-5-1-75`, based on main `85d83a130da506607972c868f3a4dd83d85b018b`; PR #192 previously delivered 5.1.74. Candidate 5.1.75 aligns all five app package/lock roots and Browser renderer. Web typecheck/build, full UAT 7/7, admin/theme/AI-admin focused UAT, 47 Team Settings accessibility assertions and focused ESLint pass; PHDK 2.51.5 coherence is 61/61. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.
 
 | Commitment | Current progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | Source slice 5.1.74 delivered by PR #192; exact remote main SHA/tree/version readback verified. | Continue baseline/version maintenance for future changes. |
-| CMT-002 widget/diagnostics | Existing diagnostics/widget coverage remains; selected UI and theme journeys pass on the built local Web app. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
+| CMT-001 baseline/version/PR | 5.1.74 delivered in PR #192; 5.1.75 candidate is versioned and locally verified. | Commit/push candidate, merge through a normal PR and verify remote main/version. |
+| CMT-002 widget/diagnostics | Team Settings now has labels in three locales, visible keyboard focus, 44px targets, live save feedback and a light-theme contrast sample; full Web UAT remains green. | Native device/audio, screen-reader session and broader route/theme/localization review. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow configuration, validated per-tenant private-origin allowlists, theme runtime and managed API AI contracts have source/synthetic coverage. Railway production deploys `services/api`; the separate `cloud/` legacy LLM package is not deployed there. | Preserve Cloud source parity and complete runtime integration checks. Live call/CRM acceptance requires each tenant's selected stack and test environment. |
 | CMT-004 administration/permissions | Restricted role policy and tenant boundaries remain; audit history is redacted and paged, role denials and successful API/Cloud mutations preserve tenant snapshots, and nine Web rows for tenant flows and Company/Brand/Team/User pair browser UAT with persisted API acceptance. | Apply and verify both additive PostgreSQL migrations; remaining 396 blocked CRUD rows, other authorization-denial paths, audit export/retention and other admin capabilities remain open. |
 

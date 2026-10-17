@@ -1,4 +1,10 @@
-## Candidate 5.1.72 — source AEO/GEO PASS; deployed answer visibility unmeasured
+# Candidate 5.1.75 — source AEO/GEO PASS; external visibility unmeasured
+
+The Team Settings accessibility/localization candidate changes no public homepage text, claims, routes, metadata or crawl directives. The existing 15-control public-answer review remains applicable and is snapshotted under `snapshots/candidate-5.1.75/`; Web/Landing source SEO tests pass 1/1 each. No external answer engine, crawler, public host or paid query was used. Citation, retrieval, market/language and deployed visibility remain unmeasured.
+
+SIGUIENTE PASO: carry the source review and unresolved external evidence into Check.
+
+---## Candidate 5.1.72 — source AEO/GEO PASS; deployed answer visibility unmeasured
 
 The current source change is limited to management UI text contrast and diagnostics/test evidence; public answer content, claims, routes and metadata are unchanged. The public homepage remains the applicable answer-source surface and its existing copy is retained. No public host, crawler or answer engine was queried, so deployed citations and visibility remain unmeasured.
 
