@@ -1,8 +1,8 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
-## Candidate 5.1.75 — current PHDK Auto UAT recheck (2026-10-17)
+## Candidate 5.1.75 - delivered by PR #194; functional UAT evidence (2026-10-17)
 
-The production-built Web suite passes 7/7 browser journeys; standalone admin-settings, theme-template and AI-admin UAT pass with synthetic APIs and outbound traffic blocked. The 5.1.75 Team Settings journey adds 47 scoped assertions for role-aware navigation, en/es/pt control names, keyboard focus, 44px targets, five-field WCAG AA contrast in the default light theme, and announced success/error saves. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-settings-uat-5.1.75.json`. No screen-reader session or database/customer integration was performed.
+The production-built Web suite passes 7/7 browser journeys; standalone admin-settings, theme-template and AI-admin UAT pass with synthetic APIs and outbound traffic blocked. The 5.1.75 Team Settings journey adds 53 scoped assertions for role-aware navigation, en/es/pt control names, keyboard focus, 44px targets, five-field WCAG AA contrast in the default light theme, and announced success/error saves. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-settings-uat-5.1.75.json`. No screen-reader session or database/customer integration was performed.
 
 Portfolio tally: **85 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix is **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Migration acceptance for audit-event tenant snapshots, wider role/resource coverage, and the existing native device/audio manual gate remain open.
 

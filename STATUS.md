@@ -1,3 +1,11 @@
+# Current PHDK Auto — 5.1.76 corrective documentation release; portfolio partial
+
+PR [#194](https://github.com/tuyoisaza/keledon/pull/194) delivered the 5.1.75 Team Settings accessibility/localization source at verified main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. A follow-up 5.1.76 candidate restores the full historical Check handoff that was accidentally removed in #194 and keeps the 5.1.75 scoped recheck at its head; all five package/lock roots and Browser renderer are aligned. PHDK remains 2.51.5 with 61/61 manifest mappings. The correction is on `fix/restore-check-handoff-5-1-76`; PR/remote readback are pending. Whole portfolio remains partial (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS). No deployment is claimed.
+
+SIGUIENTE PASO: versioned commit, PR, and remote-main verification for the restored lifecycle record.
+
+---
+
 ## Current PHDK Auto — 5.1.75 accessibility candidate; portfolio partial
 
 PR #192 delivered source 5.1.74. The active 5.1.75 candidate improves Team Settings accessible names, keyboard focus, 44px targets, save announcements, and en/es/pt labels. Web typecheck/build and UAT 7/7 pass; focused UAT passes 53 assertions including five-field WCAG AA contrast in the light theme. PHDK 2.51.5 coherence is 61/61. Portfolio remains PARTIALLY DELIVERED (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS). Candidate 5.1.75 still needs commit/PR/remote readback; screen-reader and wider environment-bound gates remain open.

@@ -1,8 +1,8 @@
-## Candidate 5.1.75 — accessibility/localization UAT pass; delivery pending (2026-10-17)
+## 5.1.75 delivered by PR #194; 5.1.76 handoff correction pending
 
-Branch `fix/web-team-settings-accessibility-5-1-75`, based on verified main `85d83a130da506607972c868f3a4dd83d85b018b`. All five app package/lock roots and Browser renderer are 5.1.75. Web typecheck/build pass; full Web UAT passes 7/7 suites plus admin-settings, theme-template and AI-admin UAT; focused Team Settings UAT passes 53 assertions for role links, localized labels, keyboard focus, 44px controls, five-field contrast in the light theme, and live save success/error; locale keys 32/32 align in en/es/pt; focused ESLint and PHDK coherence 61/61 pass. The superadmin flow UAT selector was made tolerant of its accessible name and now passes. Candidate commit/PR delivery is pending. No screen-reader session, database migration, customer integration or deployment was performed. Whole Auto remains PARTIALLY DELIVERED.
+PR #194 squash-merged at remote main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`, delivering 5.1.75. Web typecheck/build, UAT 7/7, focused admin/theme/AI-admin UAT, 53 Team Settings assertions, Web/Landing SEO 1/1 each, focused ESLint and PHDK coherence 61/61 passed. Synthetic APIs only; no screen-reader session, migration, customer integration or deployment was performed.
 
-SIGUIENTE PASO: versioned commit and normal PR, verify remote readback; keep remaining accessibility and environment-bound acceptance open.
+The 5.1.76 correction restores the complete historical `70-check/HANDOFF.md` and retains the 5.1.75 Check recheck. Corrective PR and remote verification are pending. Whole Auto remains PARTIALLY DELIVERED.
 
 ---
 ## Candidate 5.1.74 — source delivered; portfolio acceptance remains partial (2026-10-17)

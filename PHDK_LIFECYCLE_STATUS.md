@@ -1,6 +1,6 @@
-## Current PHDK Auto — 5.1.75 accessibility candidate; portfolio partial (2026-10-17)
+## Current PHDK Auto - 5.1.75 delivered; 5.1.76 handoff correction pending (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; active candidate branch `fix/web-team-settings-accessibility-5-1-75`, based on main `85d83a130da506607972c868f3a4dd83d85b018b`. Prior 5.1.74 source delivery is verified by PR #192. Candidate 5.1.75 improves Team Settings labels, keyboard focus, touch targets, status announcements and en/es/pt copy; Web build/typecheck, 7/7 UAT suites and 53 focused accessibility assertions pass. Canonical PHDK remains 2.51.5 with 61/61 mappings. CMT-001 candidate delivery is pending; CMT-002–004 and overall acceptance remain partial. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered 5.1.75 at verified main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. Team Settings accessibility/localization passes Web build/typecheck, UAT 7/7 and 53 focused assertions. PHDK 2.51.5 remains coherent at 61/61. The 5.1.76 correction restores historical Check handoff and awaits normal PR/remote verification. CMT-002 through CMT-004 and overall acceptance remain partial. No deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|

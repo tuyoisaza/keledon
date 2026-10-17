@@ -1,3 +1,7 @@
+## v5.1.76 — preserve Check lifecycle history
+
+- Restore the complete historical Check handoff while retaining the 5.1.75 candidate recheck at the top.
+- Align all five app package/lock roots and the Browser renderer at 5.1.76 for this corrective documentation release.
 ## v5.1.75 — 2026-10-17 (accessible, localized team voice settings)
 
 - Associate labels with every team voice setting, announce loading and save results, restore visible keyboard focus, and make the controls at least 44px tall.
