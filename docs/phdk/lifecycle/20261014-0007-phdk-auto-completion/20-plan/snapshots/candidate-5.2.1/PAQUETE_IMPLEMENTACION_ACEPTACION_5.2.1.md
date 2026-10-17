@@ -10,12 +10,12 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 
 - Repositorio: `tuyoisaza/keledon`.
 - Rama: `feature/tenant-interface-selector-5.2.0`.
-- Candidato de producto: 5.2.1; selector base `ef6fe6dbf7eca04708c7200615e7538812751f7e`; cifrado de credenciales y redacción de auditoría añadidos hasta `fd7af3b963505fd7756c78ecfa7d8469096a9d84`; head actual del PR `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01` también incluye evidencia y documentación PHDK.
+- Candidato de producto: 5.2.1; selector base `ef6fe6dbf7eca04708c7200615e7538812751f7e`; cifrado de credenciales `b9ce5fe3` y redacción de auditoría `fd7af3b9`; head verificado local/remoto del PR al 2026-10-17: `13866671e0290519924efbb030b77101e95aa66f`.
 - Base `main` registrada: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
 - PHDK actualizado: 2.53.1 desde upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64.
 - Tras la reparación de credenciales: `npm run build:typescript` y lint sobre los archivos API/Cloud modificados pasan; no se ejecutaron tests de aplicación locales.
 - Fuentes relevantes: `services/web/src/pages/ManagementTeamsPage.tsx`, `services/web/src/lib/request-sequence.ts`, guards y servicios API/Cloud de asignación tenant/equipo, y la regresión `services/web/test/team-interface-request-sequence.test.cjs`.
-- El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto, no fusionado; producción continúa en v5.1.85.
+- El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto y mergeable, sin checks alojados ni decisión de revisión; producción continúa en v5.1.85. La siguiente aceptación funcional debe ejecutarse sobre la versión candidata que se observe desplegada en el sitio de producción.
 
 ## Hallazgos PHDK 2.53.1 que condicionan la continuación
 
@@ -43,12 +43,12 @@ Este plan no cambia el alcance confirmado ni habilita acceso a datos/secretos de
 
 ## Orden ejecutable
 
-1. Mantener Preflight y este Plan revalidados contra PHDK 2.53.1.
-2. Cerrar Integration Review para la revisión exacta `ef6fe6d` y enlazar reportes ya existentes.
-3. Completar UAT Prep solo en PostgreSQL dedicado aislado. No reutilizar la BD de Railway/producción.
-4. Ejecutar UAT web/API con roles sintéticos y evidencias de permiso, persistencia, denegación cross-tenant, estados vacíos/error y accesibilidad.
-5. Reparar hallazgos; después cerrar SEO/AEO-GEO aplicable, Check y remediación.
-6. Versionar/publicar mediante PR y verificar revisión, merge, `main` y despliegue real; no declarar completa la meta mientras las cuatro líneas y gates obligatorios sigan abiertos.
+1. Mantener Preflight, Integration Review, este Plan y Check enlazados al SHA actual `13866671e0290519924efbb030b77101e95aa66f`.
+2. Completar la integración por PR #210 según MAIN_DELIVERY_STANDARD; el merge permite observar el candidato mediante el autodeploy ya conectado.
+3. Confirmar desde el sitio de producción la versión exacta y el estado de despliegue antes de iniciar aceptación funcional. No ejecutar pruebas de aplicación localmente.
+4. Ejecutar UAT con cuenta/tenant de prueba sintético autorizado, pruebas de permisos y persistencia, rechazo cross-tenant, vacíos/errores, secretos cifrados y limpieza; conservar evidencia redactada. No usar ni alterar datos de clientes.
+5. Corregir hallazgos mediante PR, repetir aceptación únicamente en producción para el SHA desplegado, y verificar el gate PHDK posterior a merge.
+6. Mantener los cuatro frentes como PARTIAL mientras queden compromisos o aceptaciones abiertos; la promoción de fuente a `main` y el estado de producto en producción se registran como hechos separados.
 
 ## Condiciones de seguridad y bloqueo
 

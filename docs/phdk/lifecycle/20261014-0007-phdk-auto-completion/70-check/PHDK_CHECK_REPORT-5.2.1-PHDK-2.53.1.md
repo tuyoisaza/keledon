@@ -1,6 +1,6 @@
 # PHDK Check — candidate 5.2.1 with PHDK 2.53.1 (2026-10-17)
 
-**Result: PASS FOR DOCUMENTATION/PHDK ALIGNMENT; PRODUCT PORTFOLIO PARTIAL.** Selector base source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; credential-encryption and audit-redaction source through `fd7af3b963505fd7756c78ecfa7d8469096a9d84`; PR #210 current head `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01` is open, not merged.
+**Result: PASS FOR DOCUMENTATION/PHDK ALIGNMENT; PRODUCT PORTFOLIO PARTIAL.** Selector base source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; credential-encryption and audit-redaction source through `b9ce5fe3`/`fd7af3b9`; PR #210 head `13866671e0290519924efbb030b77101e95aa66f` is verified on the local branch and remote PR, open and mergeable, not merged.
 
 ## Checks performed in this continuation
 
@@ -15,7 +15,7 @@
 | UAT evidence integrity | PASS, LIMITED | UAT-098/099 checked the anonymous homepage and `/management/teams` redirect; UAT-100 confirmed the version/actions widget. UAT-102 rechecked production at 16:53 UTC and confirmed v5.1.85 while PR #210 was OPEN without checks. UAT-101 defines, but does not run, credential-storage acceptance. These observations do not accept candidate 5.2.1 or authenticated behavior. |
 | Application test suites in this continuation | NOT RUN | User requested production-site testing; source test results cited in the prior candidate report were not rerun. |
 | Production tenant/database mutation | NOT RUN | No account, record, assignment, DB, migration, provider setting or secret was touched. |
-| Branch/PR synchronization at re-entry | PASS | Local branch, remote branch and PR #210 all reported head `f91c54d458f9b122a2706a0208c5bdb260efc9e6` before this documentation-only re-entry; PR remains OPEN with no check runs or review decision. This re-entry adds documentation/evidence commits only. |
+| Branch/PR synchronization at re-entry | PASS | `git rev-parse HEAD`, `origin/feature/tenant-interface-selector-5.2.0`, and GitHub PR #210 all report `13866671e0290519924efbb030b77101e95aa66f`. PR is OPEN and MERGEABLE with no hosted checks or review decision. |
 | Candidate source check reuse | PARTIAL | Previous `PHDK_CHECK_REPORT-5.2.1.md` records broader candidate checks for the prior product commit. Current API/Cloud typecheck and changed-file lint now pass; application regression suites remain unrun under the production-only testing instruction and historical suites do not cover the current source. |
 | Automation hygiene audit | PARTIAL / REMOTE READBACK COMPLETE | Static collector reports no findings but correctly returns `remote_state: UNVERIFIED`; bounded GitHub/Railway metadata below resolves only the fields explicitly observed. |
 | Theme token audit | STATIC PASS | `py -3 phdk-standards/scripts/phdk_theme_audit.py --root . --json` returned `STATIC_PASS` with no findings; runtime/role/persistence behavior remains unverified. |
@@ -49,7 +49,7 @@ The findings and evidence limits are summarized in `ADMIN_CAPABILITY_MATRIX.md`.
 - UAT-096/097: safe DB-backed role/tenant/persistence/browser acceptance remains BLOCKED; production serves 5.1.85 and the candidate is 5.2.1. UAT-100 is limited to anonymous widget presence on deployed v5.1.85.
 - UAT-101: ManagedInterface secret storage acceptance is BLOCKED / NOT RUN until exact candidate 5.2.1 is deployed and an approved synthetic production fixture plus redacted ciphertext evidence path exists.
 - UAT-102 confirms production remains on v5.1.85 and PR #210 has no hosted checks at the observed candidate head; it is release-readiness evidence only.
-- Delivery: PR #210 is open; GitHub reports no check runs or review decision. No merge or main readback exists for 5.2.1.
+- Delivery: PR #210 is open and mergeable; GitHub reports no check runs or review decision. No merge or main readback exists for 5.2.1. Since the user requires application testing on production, functional candidate acceptance follows observation of the connected production deployment; no local app suite was run.
 - Four confirmed commitments remain ACTIVE/PARTIAL; do not report whole Auto complete.
 - Automation configuration is not fully verified: GitHub has no workflow or branch protection/ruleset, Railway `checkSuites` is false, Web has recent failed deployments, and wait-for-CI/restart/watch/cost fields remain unverified. Current API/Web deployments are successful.
 - PHDK's current administration-console standard now has a source-mapped gap baseline, not full conformity; safe implementation and isolated acceptance are still required.
