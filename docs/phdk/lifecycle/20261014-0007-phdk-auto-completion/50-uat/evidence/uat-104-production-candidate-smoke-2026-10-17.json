@@ -2,11 +2,13 @@
   "runId": "20261014-0007-phdk-auto-completion",
   "caseId": "UAT-104",
   "stage": "50-uat",
-  "timestampUtc": "2026-10-17T17:12:30Z",
+  "timestampUtc": "2026-10-17T17:15:53Z",
   "candidate": {
     "version": "5.2.1",
     "pr": 210,
     "mergeCommit": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+    "postMergeDocumentationPr": 211,
+    "postMergeDocumentationCommit": "4e19f97866d3fb98b595ecb0cdb4e37a0850dba9",
     "targetBranch": "main"
   },
   "target": {
@@ -31,8 +33,14 @@
     "anonymousCatalogStatus": 401,
     "anonymousCatalogAuthorizationHeader": false,
     "anonymousCatalogBodyCaptured": false,
-    "railwayApiDeployment": "SUCCESS",
-    "railwayWebDeployment": "SUCCESS"
+    "railwayApiDeployment": {
+      "id": "980a582e-68cc-4126-b36b-54a6d370bcfb",
+      "status": "SUCCESS"
+    },
+    "railwayWebDeployment": {
+      "id": "5a0b66a3-5a99-4f97-8d4e-2f3b647cc3d7",
+      "status": "SUCCESS"
+    }
   },
   "result": "PASS_FOR_PUBLIC_AVAILABILITY_VERSION_AND_ANONYMOUS_DENIAL_ONLY",
   "notProven": [

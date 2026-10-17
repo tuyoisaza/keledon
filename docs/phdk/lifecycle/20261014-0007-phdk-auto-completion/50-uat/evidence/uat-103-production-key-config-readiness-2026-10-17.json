@@ -22,6 +22,13 @@
     "namePresent": false,
     "variableValuesRead": false
   },
+  "postCandidateDeploymentReadback": {
+    "timestampUtc": "2026-10-17T17:16:42Z",
+    "apiDeploymentId": "980a582e-68cc-4126-b36b-54a6d370bcfb",
+    "apiDeploymentStatus": "SUCCESS",
+    "requiredVariableNamePresent": false,
+    "variableValuesRead": false
+  },
   "result": "BLOCKED: required key name is absent from the production API service metadata; new ManagedInterface credential writes fail closed until owner-managed configuration is present",
   "actions": "read service description and variable names only; no variable value endpoint, provider mutation, deployment, customer data, or database access",
   "notProven": [
