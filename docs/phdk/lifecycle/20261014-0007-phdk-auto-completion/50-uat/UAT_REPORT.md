@@ -1,3 +1,15 @@
+## UAT-135–139 — KELEDON 5.2.9 production route acceptance (2026-10-17)
+
+Candidate main `1a7216dfd5431c712b3968bce93099b2196da93e`; Railway Web/API deploys `8c7ab848-a86c-4ba2-bb67-641512055856` / `554fa13f-65a6-44f8-a71c-8ed58691db75` both report SUCCESS and 1/1 replica. Browser permission was active and CUA access was verified against the anonymous production homepage.
+
+- **UAT-135 PASS:** `/` returned 200, index/follow, the exact root canonical and a semantic H1 in the initial response; the browser rendered the 5.2.9 product overview.
+- **UAT-136 PASS:** `/login` returned the application shell with meta/header noindex and no canonical; after React, the login form rendered with two fields and no public overview. No credentials were entered.
+- **UAT-137 PASS:** `/sessions/phdk-uat-137` returned 200 with the private shell; React redirected the anonymous visitor to `/login` without a customer record.
+- **UAT-138 PARTIAL:** an unknown path retained HTTP 404, noindex, no canonical and a not-found page without redirecting home. The static page remained English while Portuguese was saved. Source fix is prepared in 5.2.10; retest UAT-140.
+- **UAT-139 PASS:** `/robots.txt` and `/sitemap.xml` returned 200; sitemap contains only the canonical root.
+
+Evidence: `evidence/uat-135-139-production-routes-2026-10-17.json`. No credentials, customer records, writes or private endpoints were used. No local application tests/builds/lint were run. This closes the route HTTP/metadata contract except the explicitly retained 404 locale retest; it does not establish crawler indexing, ranking or citations.
+
 ## UAT-133/134 — v5.2.8 initial Web HTML and React route handoff (2026-10-17)
 
 PR #253 merged as `9aa0d452684d4bcf1b00bdb3321649ae4675877a`. Railway Web `4134bb32-8bbf-4401-b86f-c7bb72e26ea8` and API `823151d4-e820-4077-a538-2b26670226d4` are SUCCESS; production environment has no pending work, 0 issues and 0 recent failures.

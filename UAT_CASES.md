@@ -2,11 +2,12 @@
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
-| UAT-135 | Public discovery / anonymous visitor | GET `/`; inspect initial response and rendered homepage. | 200/index-follow, root canonical, approved overview; React removes fallback after startup. | Anonymous production HTTP + browser. | PENDING deployment. |
-| UAT-136 | Login shell / anonymous visitor | GET `/login`; inspect response and app without entering data. | Initial application title, noindex/nofollow, no canonical; header stays noindex; no public fallback in app shell. | Anonymous production HTTP + browser. | PENDING deployment. |
-| UAT-137 | Valid deep link / anonymous visitor | GET `/sessions/phdk-uat-137`; inspect the route handoff. | 200 private shell; noindex; React redirects anonymous visitor to login without customer data. | Anonymous production HTTP + browser. | PENDING deployment. |
-| UAT-138 | Unknown path / anonymous visitor | GET `/phdk-uat-unknown-138`. | Real 404, noindex, no homepage canonical, not-found page, no redirect to `/`. | Anonymous production HTTP + browser. | PENDING deployment. |
-| UAT-139 | Discovery controls / anonymous visitor | GET `/robots.txt` and `/sitemap.xml`. | Both remain available; sitemap lists only `/`. | Anonymous production HTTP. | PENDING deployment. |
+| UAT-135 | Public discovery / anonymous visitor | GET `/`; inspect initial response and rendered homepage. | 200/index-follow, root canonical, approved overview; React removes fallback after startup. | Anonymous production HTTP + browser. | PASS on main `1a7216df`; deploy `8c7ab848`; one H1 and public overview; evidence `evidence/uat-135-139-production-routes-2026-10-17.json`. |
+| UAT-136 | Login shell / anonymous visitor | GET `/login`; inspect response and app without entering data. | Initial application title, noindex/nofollow, no canonical; header stays noindex; no public fallback in app shell. | Anonymous production HTTP + browser. | PASS on main `1a7216df`; initial and React app shells match; two fields; no credentials entered; same evidence file. |
+| UAT-137 | Valid deep link / anonymous visitor | GET `/sessions/phdk-uat-137`; inspect the route handoff. | 200 private shell; noindex; React redirects anonymous visitor to login without customer data. | Anonymous production HTTP + browser. | PASS on main `1a7216df`; 200 private shell and React redirect to login; same evidence file. |
+| UAT-138 | Unknown path / anonymous visitor | GET `/phdk-uat-unknown-138`. | Real 404, noindex, no homepage canonical, localized not-found page, no redirect to `/`. | Anonymous production HTTP + browser. | PARTIAL on main `1a7216df`: HTTP 404/noindex/no-canonical/no-redirect pass; static text stayed English with Portuguese saved. Retest UAT-140 after 5.2.10; same evidence file. |
+| UAT-139 | Discovery controls / anonymous visitor | GET `/robots.txt` and `/sitemap.xml`. | Both remain available; sitemap lists only `/`. | Anonymous production HTTP. | PASS on main `1a7216df`; both 200 and sitemap contains only `/`; same evidence file. |
+| UAT-140 | 404 locale / anonymous visitor | Repeat the unknown-path case with Portuguese saved; do not activate links. | HTTP 404 and noindex contract remains; UI and `<html lang>` match Portuguese. | Anonymous production HTTP + browser. | PENDING 5.2.10 deployment. |
 
 ## Production v5.2.8 — public HTML and SPA login fallback
 

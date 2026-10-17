@@ -1,3 +1,24 @@
+## PHDK Auto checkpoint — KELEDON 5.2.10 candidate / 2026-10-17
+
+Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; candidate branch `fix/phdk-5-2-10-localized-404` is based on verified remote `main` `1a7216dfd5431c712b3968bce93099b2196da93e`; candidate KELEDON 5.2.10. PHDK 2.53.1 coherence 64/64. Owner requires application acceptance on production; no local application tests/builds/lint.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REUSED | PHDK v2.53.1; static coherence 64/64. |
+| Capture / Plan / PMO | REUSED / CURRENT | Four commitments and all tenant, role, client CRM and interface-selector decisions remain the approved baseline. PIA-AUTO-SEO-002 is still open pending localized production 404 acceptance. |
+| Integration Review | COMPLETED FOR 5.2.10 CANDIDATE | `40-integration/INTEGRATION_REPORT-5.2.10.md`; static 404 localization uses saved `keledon-locale`, supported browser language fallback, then English; title, document language and visible copy match. |
+| UAT Prep | PARTIAL / BLOCKED FOR AUTH | Synthetic identity/device fixture and cleanup gate remains; unrelated anonymous route UAT can proceed. |
+| UAT / UAT Fix | PARTIAL; UAT-140 PENDING | UAT-135/136/137/139 pass on 5.2.9 production. UAT-138 confirms HTTP 404/noindex/no-canonical/no-redirect but localization failed; publish 5.2.10 then verify Portuguese through anonymous production HTTP/browser. |
+| SEO / AEO-GEO | REVALIDATED WITH OPEN UAT-140 | Production route contracts are evidence-backed; crawler, ranking, provenance, market policy and citation behavior remain unmeasured. |
+| Check | PENDING 5.2.10 POST-MERGE | Static coherence/version/diff review only; production deploy and UAT-140 are required to close this slice. |
+| Delivery | SOURCE PR PENDING | Branch changes limited to 404 localization and PHDK evidence/status records. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. CMT-003 lease/idempotency, tenant-bound private-destination enforcement, safe fixture lifecycle, CRM-specific acceptance, CMT-004 persisted tenant/role negative cases, broad CMT-002 accessibility/audio and Landing runtime target remain open.
+
+SIGUIENTE PASO: publish the reviewed 5.2.10 change, read back its production deployment and run UAT-140 only against the live site.
+
+---
+
 ## PHDK Auto checkpoint — KELEDON 5.2.9 candidate / 2026-10-17
 
 Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` is based on remote `main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; KELEDON 5.2.9 is prepared but not yet committed/published. PHDK 2.53.1 static coherence 64/64. User instruction remains production-only application acceptance; no local app tests/builds/lint.

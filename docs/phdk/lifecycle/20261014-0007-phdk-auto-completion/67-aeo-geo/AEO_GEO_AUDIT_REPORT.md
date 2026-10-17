@@ -1,3 +1,7 @@
+## Candidate 5.2.9 — production answer and privacy revalidation (2026-10-17)
+
+Production initial HTML for `/` retains the approved direct answer, Cloud/Browser distinction, client-configured call/CRM statement and illustrative disclaimer. Private `/login` and a valid app deep link now expose noindex/no-canonical metadata before React; unknown routes return a noindex 404 and the sitemap still contains only `/`. This is a technical source/HTTP revalidation, not crawler or AI-engine evidence. UAT-138 found the static unknown-page copy remained English with Portuguese saved; 5.2.10 adds the existing locale preference and UAT-140 will retest. Provenance, public market/locale URL strategy, citations and ranking remain unverified/unmeasured. Evidence: `../50-uat/evidence/uat-135-139-production-routes-2026-10-17.json`.
+
 # AEO/GEO source audit — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.2.8 revalidation — deployed Web answer surface

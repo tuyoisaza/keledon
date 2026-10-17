@@ -1,3 +1,12 @@
+## Browser Readiness — UAT-135–139, KELEDON 5.2.9 production routes (2026-10-17)
+
+- Run/stage: Auto `20261014-0007-phdk-auto-completion`, stage `50-uat`; permission `ACTIVE_UAT_EXCEPTION`; production target `https://keledon.tuyoisaza.com`.
+- Candidate: main `1a7216dfd5431c712b3968bce93099b2196da93e`, KELEDON 5.2.9. Railway Web `8c7ab848-a86c-4ba2-bb67-641512055856` and API `554fa13f-65a6-44f8-a71c-8ed58691db75` report SUCCESS, each 1/1; no pending work, issues or recent failures.
+- Runtime: CUA in-app browser `AVAILABLE_VERIFIED`; anonymous homepage navigation displayed v5.2.9 and the expected product content. HTTP GET observations are recorded in `evidence/uat-135-139-production-routes-2026-10-17.json`.
+- Access: public root, login, one synthetic session path, one synthetic unknown path, robots and sitemap only. No credentials, OAuth/signup action, customer data, private destination, write, clipboard read or cache clear.
+- Result: UAT-135, 136, 137 and 139 PASS. UAT-138 passes 404/noindex/no-canonical/no-redirect but is PARTIAL because the static 404 text ignored saved Portuguese. Follow-up UAT-140 retests localization on 5.2.10.
+- Spend: `NO_NEW_SPEND`.
+
 ## Browser Readiness — UAT-131 production public theme/locale matrix (2026-10-17)
 
 - Stage/run: Auto `50-uat`, `20261014-0007-phdk-auto-completion`; authorized production-only public UAT; anonymous homepage.

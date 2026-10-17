@@ -1,3 +1,11 @@
+## v5.2.10 — 2026-10-17
+
+### Fixed
+- Localize the static production 404 page using the saved KELEDON language or browser language.
+
+### Verification
+- Re-run the 404 and language cases on the deployed production site; do not run application tests, builds, or lint locally.
+
 ## v5.2.9 — 2026-10-17
 
 ### Fixed
