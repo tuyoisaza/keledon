@@ -50,6 +50,7 @@
   ],
   "remediation": {
     "branch": "fix/production-mobile-landing-overflow",
+    "pullRequest": "https://github.com/tuyoisaza/keledon/pull/213",
     "status": "source candidate prepared; not deployed",
     "scope": ["mobile hero min-width and stats layout", "mobile hero top inset", "44x44 menu-button target"],
     "productionRevalidationRequired": true

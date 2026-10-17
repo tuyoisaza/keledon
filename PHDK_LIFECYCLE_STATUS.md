@@ -1,6 +1,6 @@
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; current documentation branch `docs/phdk-auto-pias` based on verified `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. Product PR #210 is merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; PR #211 advanced main documentation. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are split by commitment under `20-plan/pias/`. Production UAT-105/106 now covers public widget presence plus ES/EN selection, light/corporate themes, visible keyboard focus, 44×44 controls, copy status and a disposable anonymous app-state reset. Authenticated behavior, responsive/contrast/screen-reader acceptance and audio remain open.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; current documentation branch `docs/phdk-auto-pias` based on verified `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. Product PR #210 is merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; PR #211 advanced main documentation. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are split by commitment under `20-plan/pias/`. Production UAT-105/106 confirms narrow public widget behavior; UAT-107 fails at mobile widths due to clipped hero content, nav overlap and undersized menu target. The correction candidate is in PR #213, not deployed. Authenticated behavior, contrast/screen-reader acceptance and audio remain open.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -16,9 +16,9 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; curren
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
 | Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. UAT-106 is narrow public-widget acceptance only. Current PR #212 is open with no hosted status checks. Admin and authenticated feature gates remain open. |
 | Remediation | PENDING | This continuation adds actionable PIA packages and current production evidence; source remediation remains tied to verified acceptance findings. |
-| Delivery | PIA PR OPEN / WHOLE GOAL PARTIAL | PR #212 targets `main`; GitHub compare reports the branch ahead of its recorded base, with no hosted checks. Product PR #210 and production version 5.2.1 remain separately verified. Whole-goal gate remains open. |
+| Delivery | 2 PRs OPEN / MERGEABLE / WHOLE GOAL PARTIAL | GitHub currently reports PR #212 (PIAs/UAT evidence) and PR #213 (mobile source fix) open and mergeable against `main`; neither has hosted checks or a review decision. Neither PR is merged; production remains 5.2.1. |
 
-Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
+Overall Auto remains **PARTIALLY DELIVERED**. UAT-107 fails in production and PR #213 is not deployed; authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
 SIGUIENTE PASO: review the mobile correction, merge/deploy its candidate and rerun UAT-107 on production at 320/375/768px and desktop; then continue contrast and screen-reader acceptance. Keep authenticated/audio gates behind authorized synthetic identities/hardware. CMT-003 source mapping is ready for queue recovery/idempotency and tenant DNS/CIDR design; keep CRM writes disabled until these contracts have a deployed-candidate acceptance path.
 

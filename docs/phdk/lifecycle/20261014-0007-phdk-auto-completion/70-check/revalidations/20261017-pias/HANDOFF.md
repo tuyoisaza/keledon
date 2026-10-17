@@ -14,8 +14,8 @@ Validate PHDK documentation and production read-only evidence added for the four
 
 - PHDK 2.53.1 coherence 64/64.
 - Product PR #210 and post-merge documentation PR #211 are merged; exact current base is `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`.
-- PR #212 targets `main`, is open, and points to head `38141045c3beb3a0a543c0955ad727727fada54f`; compare reports three commits ahead/zero behind; combined status is empty.
-- UAT-103, UAT-104, UAT-105 and delivery evidence JSON parse; `git diff --check` passes.
+- PR #212 targets `main`, is open and mergeable at `03caaa5abc8a73ef9b17fbd930128dbf4fc3068e`. PR #213 targets `main`, is open and mergeable at `4f24c7747e5231dd89e01c82898bfe18c92e6cf7`; it contains the source fix for the UAT-107 finding. Neither has hosted checks or a recorded review decision.
+- UAT-103/104/105/106/107 and delivery evidence JSON parse; `git diff --check` passes.
 
 ## Work performed
 
@@ -26,10 +26,10 @@ Validate PHDK documentation and production read-only evidence added for the four
 ## Exit gate
 
 - [x] PHDK baseline and documentation consistency verified.
-- [x] PR/base/head and absence of hosted status checks recorded.
+- [x] Current PR/base/head/mergeability and absence of hosted status checks recorded.
 - [x] No local application tests/builds or production writes were run.
 - [ ] Whole Auto completion remains blocked by missing production-only authenticated/action/persistence acceptance and open commitments.
 
 ## Next stage
 
-Stage: `80-remediation` for documentation scope, then `90-delivery` for PR #212 reconciliation. Product remediation returns to source integration only when production UAT or code/security review provides a concrete defect.
+Stage: `80-remediation` for documentation scope, then `90-delivery` for PR #212 reconciliation. PR #213 is the concrete source remediation for UAT-107; merge/deploy and production revalidation are required before closing CMT-002 responsive acceptance.
