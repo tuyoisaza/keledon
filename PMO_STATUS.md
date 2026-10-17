@@ -1,4 +1,21 @@
-# PMO Status — candidate 5.2.1 / PHDK 2.53.1; portfolio partial
+# PMO Status — 5.2.1 PIA continuation / PHDK 2.53.1; portfolio partial
+
+## Current continuation — 2026-10-17
+
+The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. Production UAT-105/106 cover public widget presence, ES/EN/PT localization, light/corporate/dark selection, named copy/reset outcomes and keyboard access to 44×44 controls with a visible focus outline. UAT-107 then found reproducible mobile clipping at 320/375px, the demo warning under the fixed nav and a 24×24px menu button. The proposed correction is [PR #213](https://github.com/tuyoisaza/keledon/pull/213), not deployed yet. Clipboard was not read; reset used a fresh anonymous IAB. Screen-reader, RBAC, private diagnostics, contrast and audio remain open. PR #212 carries the PIAs and production evidence.
+
+| Commitment | Status | Next executable gate |
+|---|---|---|
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | Deliver PIA docs through PR; preserve main/version/deployment readback per each source PR. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL — CURRENT | UAT-107 fails mobile responsive acceptance on production 5.2.1. Review/merge/deploy [PR #213](https://github.com/tuyoisaza/keledon/pull/213) and re-run production at 320/375/768px + desktop. Then complete contrast/screen-reader; authenticated diagnostics/audio require authorized synthetic identity/hardware. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Source path is mapped. Design recovery/idempotency for permanent command claims and DNS/CIDR protection before accepting tenant-private CRM; end-to-end still waits for customer sandbox. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Keep `KELEDON_VENDOR_KEY` and synthetic tenant/catalog prerequisites; no inferred legacy ownership. |
+
+Overall: **4 confirmed / 0 complete / 4 active-partial**. Continue in the owner's established order; do not mark a PIA or public smoke as product acceptance.
+
+SIGUIENTE PASO: review/merge PR #213, verify its Railway production deployment, and rerun UAT-107 at 320/375/768px plus desktop. Keep the PIA/evidence package in PR #212 and both the workstream and full Auto partial until the remaining gates pass.
+
+---
 
 ## Current Auto continuation — 2026-10-17
 

@@ -7,10 +7,13 @@
   "version_property": "version",
   "source_commit_sha": "683f7b84b07af8b4edad38b6d7fe0ce42218c14a",
   "source_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
-  "merged_commit_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
-  "merge_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
-  "final_remote_main_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+  "merged_commit_sha": "4e19f97866d3fb98b595ecb0cdb4e37a0850dba9",
+  "merge_tree_sha": "5c7327c6e98d048489d7f8e01003f48cfd211ca9",
+  "product_merge_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
+  "final_remote_main_sha": "4e19f97866d3fb98b595ecb0cdb4e37a0850dba9",
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/210",
+  "post_merge_documentation_pr_url": "https://github.com/tuyoisaza/keledon/pull/211",
+  "product_merge_commit_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
   "checks": {
     "version_alignment": {
       "status": "PASS",
@@ -18,7 +21,7 @@
     },
     "pr_merge_remote_readback": {
       "status": "PASS",
-      "evidence": "PR #210 is MERGED at 9c4c143abba911261f8c881cfc1b3c4e32c373a9; origin/main and git ls-remote match. GitHub reported no hosted checks or review decision."
+      "evidence": "Product PR #210 merged at 9c4c143abba911261f8c881cfc1b3c4e32c373a9; post-merge documentation PR #211 merged at 4e19f97866d3fb98b595ecb0cdb4e37a0850dba9. origin/main and git ls-remote match the latter. Both PRs had no hosted checks or review decision."
     },
     "lint": {
       "status": "PASS",
@@ -57,10 +60,15 @@
     "expected_version": "5.2.1",
     "branch": "feature/tenant-interface-selector-5.2.0",
     "source_commit_sha": "683f7b84b07af8b4edad38b6d7fe0ce42218c14a",
-    "merged_commit_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
+    "merged_commit_sha": "4e19f97866d3fb98b595ecb0cdb4e37a0850dba9",
+    "product_merge_commit_sha": "9c4c143abba911261f8c881cfc1b3c4e32c373a9",
     "pull_request": "https://github.com/tuyoisaza/keledon/pull/210",
     "pull_request_state": "MERGED",
-    "merge_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
+    "merge_tree_sha": "5c7327c6e98d048489d7f8e01003f48cfd211ca9",
+    "product_merge_tree_sha": "442c34393f199bf9669154594eb1b7379470b353",
+    "post_merge_documentation_pr": 211,
+    "production_api_deployment_id": "980a582e-68cc-4126-b36b-54a6d370bcfb",
+    "production_web_deployment_id": "5a0b66a3-5a99-4f97-8d4e-2f3b647cc3d7",
     "production_api_and_web": "SUCCESS",
     "production_public_smoke": "PASS UAT-104, scoped to HTTP availability and version",
     "production_secret_readiness": "BLOCKED UAT-103; required variable name absent, no value read",

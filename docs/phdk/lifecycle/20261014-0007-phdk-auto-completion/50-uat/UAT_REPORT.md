@@ -1,3 +1,15 @@
+## Current re-entry — UAT-107, production mobile responsive layout (2026-10-17)
+
+At 375×812 and 320×720 CSS px, production 5.2.1 visibly clips the hero copy/CTA; read-only geometry at 320px shows 439px hero content, a fixed 97px nav overlapping the disclaimer (y=64..80px), and a 24×24px mobile menu target. UAT-107 is **FAIL**. A source remediation candidate is prepared on `fix/production-mobile-landing-overflow`; it is not deployed and has no production acceptance. The retest gate is recorded in `revalidations/20261017-uat107/HANDOFF.md`. Evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`.
+
+## Prior re-entry — UAT-106, production widget actions (2026-10-17)
+
+In a fresh anonymous in-app browser context on production 5.2.1, Spanish/English and light/corporate theme selections changed the rendered page. Keyboard navigation reached copy and reset buttons; each measured 44×44 CSS px and showed a solid teal focus outline. Copy announced “Diagnóstico copiado”; clipboard was not read. Reset announced its application-only scope, reloaded `/`, and restored pt/dark defaults. UAT-106 is **PASS FOR THIS PUBLIC WIDGET SCOPE**. It does not accept private diagnostics, role permissions, server sessions, screen-reader quality, mobile layouts, contrast pairs or audio/device behavior. Evidence: `evidence/uat-106-production-widget-actions-and-keyboard-2026-10-17.json`.
+
+## Prior re-entry — UAT-105, production widget tree (2026-10-17)
+
+Read-only browser inspection of `https://keledon.tuyoisaza.com/` observed v5.2.1 in Portuguese, a public illustrative-demo disclaimer, accessibility-tree names for the diagnostic-copy and app-cache-clear buttons, theme/language selectors and public navigation. UAT-105 is **PASS FOR ELEMENT PRESENCE ONLY**. No buttons were activated, no clipboard/cache/session was changed and no private diagnostics or user data were read. Keyboard/focus, screen-reader quality, copy/cache behavior, other themes/locales/viewports, authenticated diagnostics and audio/device behavior remain unverified. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`.
+
 ## Candidate 5.1.77 — UAT-067 production-built widget geometry retest PASS
 
 Run date: 2026-10-17. Candidate source commit: `0da085bddbb7157453ddca3951960209a94c9e9b` on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Intent: reduce developer/customer debugging back-and-forth through a safe, visible, copyable and resettable diagnostics row (CMT-002). The affected UAT story remains aligned with the confirmed project intent.

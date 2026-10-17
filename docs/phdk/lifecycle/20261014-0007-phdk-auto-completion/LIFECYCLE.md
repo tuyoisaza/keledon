@@ -570,3 +570,11 @@ UAT-104 confirms HTTP 200 for the public page, its JavaScript bundle and API `/h
 | Delivery | SOURCE MERGED / PRODUCTION SMOKE PASS / WHOLE GOAL PARTIAL | `90-delivery/DELIVERY_REPORT.md`, `PHDK_COMPLETION_AUDIT.md`, `PHDK_DELIVERY_EVIDENCE-5.2.1.json`, and `HANDOFF.md`. |
 
 All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Next: owner-managed key setup and authorized synthetic tenant/catalog provisioning, then production-only UAT for the deployed candidate; continue remaining widget, per-client integration and administration gaps.
+
+---
+
+## Continuation PIAs and production widget re-entry — 2026-10-17
+
+The current Plan continuation adds one PIA per confirmed commitment under `20-plan/pias/`; the historical candidate PIA was corrected to reflect that PR #210 is merged and production serves 5.2.1. PMO retains the approved order and all four commitments remain ACTIVE/PARTIAL. UAT-105 read only the production 5.2.1 public accessibility tree and observed the widget controls, theme/language selectors and illustrative-demo disclaimer. It does not accept actions, accessibility interactions, authenticated diagnostics, or hardware/audio. Its revalidation handoff and JSON evidence are under `50-uat/revalidations/20261017-uat105/` and `50-uat/evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`.
+
+PHDK v2.53.1 coherence was rechecked at 64/64. This documentation continuation does not run local application tests or builds. The next workstream is CMT-002 production UAT in a dedicated disposable browser profile; authenticated/device and CMT-004 acceptance remain gated by synthetic fixture/hardware and owner-managed secret configuration.

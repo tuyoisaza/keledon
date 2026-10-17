@@ -1,4 +1,6 @@
-# PMO Progress — 5.2.1 continuation / PHDK 2.53.1 (2026-10-17)
+# PMO Progress — current PIA continuation / PHDK 2.53.1 (2026-10-17)
+
+The Plan now has one execution package per confirmed commitment under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. Source PR #210 and documentation PR #211 are already merged; the current PIA-only branch is based on remote main `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. PHDK coherence remains 64/64. UAT-105 adds read-only public browser evidence for the 5.2.1 homepage accessibility tree: copy-diagnostic and cache-clear actions, theme/language selectors and explicit demo wording are present in pt. No action, login, private diagnostic or cache mutation occurred. CMT-002 is the current PMO workstream; all four remain active/partial.
 
 PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; Railway API/Web deployments succeeded and UAT-104 observed the public bundle and API liveness at version 5.2.1. This is a limited availability smoke, not authenticated feature acceptance. UAT-103 found `KELEDON_VENDOR_KEY` absent from production API metadata, and no Web catalog-provisioning UI was found. PHDK 2.53.1 Check also established admin-console gaps: settings is a link hub; invitation/session lifecycle, permission editor, backup/recovery, and AI graph edges remain incomplete. Registries remain in place to support the next implementation slices.
 

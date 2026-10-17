@@ -1,26 +1,26 @@
-# Current PHDK Auto — PHDK 2.53.1 / 5.2.1 tenant interface selector continuation
+# Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; source branch `feature/tenant-interface-selector-5.2.0`; PR #210 squash-merged at remote `main` SHA `9c4c143abba911261f8c881cfc1b3c4e32c373a9`. PHDK v2.53.1 is installed from upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherence passes 64/64 and root managed instructions match canonical bytes. Railway API/Web deployments report success; UAT-104 observes public 5.2.1 availability only. Four confirmed fronts and approved tenant/role/private-origin/interface policy remain unchanged.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; current documentation branch `docs/phdk-auto-pias` based on verified `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. Product PR #210 is merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; PR #211 advanced main documentation. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are split by commitment under `20-plan/pias/`. Production UAT-105/106 confirms narrow public widget behavior; UAT-107 fails at mobile widths due to clipped hero content, nav overlap and undersized menu target. The correction candidate is in PR #213, not deployed. Authenticated behavior, contrast/screen-reader acceptance and audio remain open.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
 | Preflight | COMPLETED | `PHDK_PREFLIGHT_REPORT.md`; 13 standards synchronized; 64/64 static coherence; exact managed block. |
 | Capture | REUSED | Existing product intent and four-front confirmation remain current. |
-| Plan | REUSED / EXTENDED | Existing brownfield architectures plus `20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`. |
-| PMO / Workstreams | REUSED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; no scope removed. |
-| Integration Review | COMPLETED FOR SOURCE REVIEW | API/Cloud role and tenant guards, secret projections, legacy route boundary and assignment service were reviewed. Migration has nullable `companyId` and no backfill; tenant interface provisioning/legacy ownership remain acceptance items. |
+| Plan | COMPLETED / EXTENDED | Added four commitment PIAs and reconciled the candidate PIA with merged PR #210 and current production evidence. See `20-plan/pias/`. |
+| PMO / Workstreams | COMPLETED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; four PIAs assign the ordered next gates. CMT-002 is the active workstream. |
+| Integration Review | SOURCE REVIEW PARTIAL / UPDATED | API/Cloud role guards and the voice→Brain→TTS→Browser command path are mapped. Command claims have no lease/recovery; result dedupe is not external-effect idempotency. Tenant origin guard lacks resolved-IP/DNS-rebinding protection. See `40-integration/revalidations/20261017-runtime-contract/`; no client sandbox is selected. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
-| UAT | ACCEPTANCE INCOMPLETE | UAT-104 verifies public page/bundle/API health return 200 at v5.2.1. UAT-103 found `KELEDON_VENDOR_KEY` absent from the API service; UAT-096/097/101 authenticated and persistence cases remain blocked. No production writes. |
-| UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
+| UAT | FAIL / RUNNING | UAT-105/106 confirm a narrow public-widget scope. UAT-107 reproduces hero clipping, fixed-nav/demo overlap and a 24×24px mobile menu on production 5.2.1 at 320/375px. Evidence and geometry are in `50-uat/evidence/uat-107-production-mobile-layout-2026-10-17.json`. |
+| UAT Fix | ACTIVE / SOURCE CANDIDATE PREPARED | Branch `fix/production-mobile-landing-overflow` updates active `services/web` and synchronized duplicate `landing`; it is not deployed. The fix must be merged/deployed then revalidated only on production at mobile/tablet/desktop sizes. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | PARTIAL / ADMIN STANDARD GAPS RECORDED | PHDK 2.53.1 coherence 64/64; theme-token audit `STATIC_PASS`; root managed block pass. Admin architecture, capability/settings registry and AI catalog document ADM-001…006 gaps. GitHub has no workflows, branch protection or rulesets; PR #210 had no checks/review decision. Railway auto-deploy succeeded for API/Web; `checkSuites:false` and wait-for-CI/restart/watch/cost remain unverified. No app tests or production writes. |
-| Remediation | COMPLETED FOR CURRENT DOCUMENT GAPS | Corrected PIA source links, UAT scope, provisioning limitation, and current PMO/lifecycle state; no safe source change was justified without ownership data or candidate acceptance. |
-| Delivery | SOURCE MERGED / REMOTE VERIFIED; WHOLE GOAL PARTIAL | PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; `origin/main` and `git ls-remote` match. UAT-104 confirms 5.2.1 production availability only. Completion gate is blocked by unauthenticated/unpersisted UAT and open portfolio commitments. |
+| Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. UAT-106 is narrow public-widget acceptance only. Current PR #212 is open with no hosted status checks. Admin and authenticated feature gates remain open. |
+| Remediation | PENDING | This continuation adds actionable PIA packages and current production evidence; source remediation remains tied to verified acceptance findings. |
+| Delivery | 2 PRs OPEN / MERGEABLE / WHOLE GOAL PARTIAL | GitHub currently reports PR #212 (PIAs/UAT evidence) and PR #213 (mobile source fix) open and mergeable against `main`; neither has hosted checks or a review decision. Neither PR is merged; production remains 5.2.1. |
 
-Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
+Overall Auto remains **PARTIALLY DELIVERED**. UAT-107 fails in production and PR #213 is not deployed; authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
-SIGUIENTE PASO: obtain owner-managed `KELEDON_VENDOR_KEY` configuration and an authorized synthetic tenant/catalog fixture; then execute the blocked candidate UAT on production and continue the remaining three fronts.
+SIGUIENTE PASO: review the mobile correction, merge/deploy its candidate and rerun UAT-107 on production at 320/375/768px and desktop; then continue contrast and screen-reader acceptance. Keep authenticated/audio gates behind authorized synthetic identities/hardware. CMT-003 source mapping is ready for queue recovery/idempotency and tenant DNS/CIDR design; keep CRM writes disabled until these contracts have a deployed-candidate acceptance path.
 
 Automation hygiene and acceptance details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md`; production smoke evidence is UAT-104 and key-configuration blocker is UAT-103. Deployment success does not accept authenticated behavior.
 

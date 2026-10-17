@@ -4,6 +4,24 @@
 |---|---|---|---|---|---|
 | UAT-104 | CMT-001/CMT-004 / anonymous release observer | After PR #210 merge and connected autodeploy, GET the public homepage, referenced JavaScript bundle, API `/health`, and guarded `/api/crud/interfaces` without an Authorization header. Do not log in or submit application data. | HTTP 200 from page/bundle/health; API and bundle report 5.2.1; unauthenticated catalog access is denied (401). This is availability/version and anonymous-denial smoke only. | Production HTTPS GET, no session | **PASS (scoped smoke):** homepage, bundle and API health returned 200; the API and bundle identify v5.2.1; anonymous catalog GET returned 401 with no authorization header. No authenticated selector, role-specific tenant scope, database, migration, or credential behavior was tested. Evidence: `evidence/uat-104-production-candidate-smoke-2026-10-17.json`. |
 
+## Candidate 5.2.1 — UAT-105 production widget accessibility-tree presence
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-105 | CMT-002 / anonymous public visitor | Open production `/` in a browser and inspect only the accessibility tree; do not click controls, log in, clear storage, copy clipboard or submit data. | Candidate version, truthful illustrative-demo disclaimer, localized named diagnostic/cache controls, theme/language selectors and public navigation are exposed to accessibility APIs. | Production browser read-only tree | **PASS (presence only):** observed version 5.2.1 in pt locale, demo disclaimer, named copy/cache buttons, theme/language selectors and public content. Does not prove interaction, focus, screen-reader announcements or RBAC. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`. |
+
+## Candidate 5.2.1 — UAT-107 mobile responsive production revalidation
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-107 | CMT-002 / anonymous public visitor | Open production `/` with isolated viewport overrides 375×812 and 320×720 CSS px; inspect visual page and read-only element geometry. | Header does not cover the demo disclaimer; copy and CTA fit within viewport; menu target is at least 44×44; no clipped content/horizontal overflow. | Production UI / isolated anonymous IAB | **FAIL ON 5.2.1:** hero content measures 439px wide at both viewports and clips at right; 97px fixed nav overlaps disclaimer at y=64..80px; menu is 24×24px. Copy/reset remain 44×44px. Candidate remediation is on `fix/production-mobile-landing-overflow` but is not deployed. Evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`. |
+
+## Candidate 5.2.1 — UAT-106 production widget actions, theme/locale and keyboard
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-106 | CMT-002 / anonymous visitor in a fresh browser context | On production 5.2.1, switch locale/theme, keyboard-tab to copy/reset controls, copy report without inspecting clipboard, clear only the disposable app context, and confirm the public route recovers. | Locale and theme update; controls retain visible focus and 44×44 targets; copy/reset announce truthful outcome; public page reloads with default local preferences. No application record/server session is touched. | Production UI / isolated anonymous IAB | **PASS FOR THIS PUBLIC SCOPE:** ES and EN rendered translated content; light/corporate theme selected; keyboard reached both 44×44 buttons with a solid teal focus outline; copy announced “Diagnóstico copiado”; app reset announced its exact scope and returned to the public page with pt/dark defaults. Clipboard was not read. Does not prove RBAC, screen-reader quality, mobile, backend state or audio/device acceptance. Evidence: `evidence/uat-106-production-widget-actions-and-keyboard-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-103 production key-config readiness
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

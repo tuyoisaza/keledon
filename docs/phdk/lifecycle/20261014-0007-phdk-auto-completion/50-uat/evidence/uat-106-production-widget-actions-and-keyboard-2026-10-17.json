@@ -1,0 +1,48 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-106",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:28:31Z",
+  "target": "https://keledon.tuyoisaza.com/",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.1",
+  "channel": "isolated, disposable in-app browser session",
+  "identity": "anonymous",
+  "observations": {
+    "languageSelection": {
+      "spanish": "selected; page and action labels rendered in Spanish",
+      "english": "selected; page and action labels rendered in English",
+      "portuguese": "default selected after application reset"
+    },
+    "themeSelection": {
+      "light": "selected in UI",
+      "corporate": "selected; document theme state applied",
+      "dark": "default selected after application reset"
+    },
+    "copyDiagnostic": {
+      "status": "Diagnóstico copiado",
+      "clipboardRead": false
+    },
+    "keyboard": {
+      "copyButton": {"reachable": true, "focusIndicator": "solid teal outline", "widthCssPx": 44, "heightCssPx": 44},
+      "clearButton": {"reachable": true, "focusIndicator": "solid teal outline", "widthCssPx": 44, "heightCssPx": 44}
+    },
+    "clearApplicationState": {
+      "status": "Datos accesibles y sesión local limpiados; la caché del navegador, las sesiones del servidor y las cookies HttpOnly pueden permanecer",
+      "returnedToSamePublicRouteAfterReload": true,
+      "localeAndThemeDefaultsRestored": true
+    }
+  },
+  "result": "PASS_FOR_PUBLIC_WIDGET_ACTIONS_LOCALE_THEME_AND_KEYBOARD_SCOPE",
+  "notProven": [
+    "clipboard contents or private diagnostic content",
+    "screen-reader announcement quality beyond observed status text",
+    "authenticated role-gated diagnostics or deep health",
+    "cross-tenant behavior or persistence",
+    "mobile/tablet layout and all contrast pairs",
+    "microphone permission, audio capture, native device behavior",
+    "server-side sessions or HttpOnly cookies were cleared"
+  ],
+  "actions": "Used a fresh anonymous in-app browser context. Changed only local theme/language preferences, invoked the widget's copy action without reading clipboard, used its application-state reset, and verified the public page returned. No sign-in, application records, forms, customer data, or provider/database settings were accessed.",
+  "privacy": "No clipboard data, credentials, cookies, customer data, private diagnostics, or server state was collected or modified."
+}
