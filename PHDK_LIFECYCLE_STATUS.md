@@ -1,12 +1,8 @@
-## Verified current readback — KELEDON 5.2.3 / 2026-10-17
+## Verified current readback — KELEDON 5.2.4 / 2026-10-17
 
-This readback supersedes the earlier 5.2.1/5.2.2 candidate summaries below; those remain historical. PR #229 merged at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; evidence PR #230 merged at `85d792321445da6ba6a744e79d7128fed8717d3d`. Five package/lock roots and Browser renderer align at 5.2.3; PHDK 2.53.1 coherence is 64/64 static. Latest Web deployment `51d32a43-e3ea-4961-a4ea-b5ac8fd68621` and API `567027ff-9d5f-411f-b073-3b6eed4eeb2f` both report `SUCCESS` for `85d7923`. UAT-117 observed anonymous copy success after hostname withholding; UAT-118 sampled diagnostic keyboard/focus; UAT-119 sampled login keyboard order and found `lang=en` while Portuguese is selected. Clipboard was not read; no autofill value was captured. Prep artifacts for 5.2.3 are present; authenticated/device tests remain blocked. Overall Auto remains PARTIALLY DELIVERED.
+This readback supersedes earlier 5.2.1–5.2.3 candidate summaries below; those remain historical. PR #232 merged at `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`. Five package/lock roots and Browser renderer align at 5.2.4; PHDK 2.53.1 coherence is 64/64 static. Railway Web deployment `228369da-23e8-49e0-8345-2469f9fd4863` and API deployment `367eb4ae-a101-448a-ac0a-361e7efee620` both report `SUCCESS` on `6715ea9`; production `/login` serves asset `index-COWg4nKb.js`. UAT-120 confirms `<html lang>` matches visible ES/EN/PT; initial Portuguese preference was restored. UAT-117 confirmed copy status/source hostname withholding; UAT-118 sampled public keyboard/focus; UAT-119 sampled login keyboard order and detected the now-fixed language mismatch. Clipboard was not read; no autofill value was captured. Successful deployment does not accept API behavior. Overall Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: fix the login document-language metadata in the next candidate and revalidate in production; continue CMT-002 public cases. Authenticated/audio UAT remains gated on synthetic identities and a test device.
-
-## Candidate remediation — KELEDON 5.2.4
-
-On `fix/phdk-5.2.4-login-lang`, both Web and Landing i18n providers now set the root document `lang` to the selected `es`/`en`/`pt` locale. Five product package roots and their lockfile root metadata are versioned to 5.2.4. UAT-120 is planned for production-only validation after merge/deploy; no local app tests/builds are run. Candidate has not yet been published or deployed.
+SIGUIENTE PASO: continue CMT-002’s route/focus/a11y coverage and prepare API behavior acceptance only with authorized synthetic fixtures. Authenticated/audio UAT remains gated on synthetic identities and a test device.
 
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 

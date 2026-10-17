@@ -1,6 +1,6 @@
-# Reporte UAT Prep — KELEDON 5.2.3
+# Reporte UAT Prep — KELEDON 5.2.4
 
-**Estado: PARTIAL / BLOCKED.** Candidato Web de producto 5.2.3 source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; PHDK 2.53.1; main actual `85d792321445da6ba6a744e79d7128fed8717d3d`. Railway Web/API ambos `SUCCESS` sobre main `85d7923`; esto no acepta el comportamiento autenticado ni los contratos API.
+**Estado: PARTIAL / BLOCKED.** Candidato Web de producto 5.2.4, main `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`; PHDK 2.53.1. Railway Web/API ambos `SUCCESS` sobre main `6715ea9`; esto no acepta el comportamiento autenticado ni los contratos API. UAT-120 solo cubre locale/`lang` público en `/login`.
 
 ## Trabajo de Prep
 
@@ -11,7 +11,7 @@
 
 | Gate | Estado | Evidencia / faltante |
 |---|---|---|
-| Home/widget público v5.2.3 | PARTIAL | UAT-117; solo estado de copia y contrato de hostnames. |
+| Home/widget público v5.2.4 | PARTIAL | UAT-117/120; solo estado de copia, contrato de hostnames y metadatos de idioma en login. |
 | Auth normal por rol | BLOCKED | No hay identidades sintéticas autenticables; no usar owner. |
 | Tenant A/B persistente | BLOCKED | No hay tenants sintéticos ni autorización/owner de provisioning. |
 | Device A/B y lease | BLOCKED | No pairing sintético ni heartbeat/recovery implementados. |

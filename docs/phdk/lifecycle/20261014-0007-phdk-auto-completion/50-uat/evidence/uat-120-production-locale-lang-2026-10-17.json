@@ -1,0 +1,40 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-120",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T19:46:50Z",
+  "target": "https://keledon.tuyoisaza.com/login",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.4",
+  "deployedSourceCommit": "6715ea986bf9058b8f7d50edae1efe2ed4f65b81",
+  "deploymentId": "228369da-23e8-49e0-8345-2469f9fd4863",
+  "assetsObserved": ["/assets/index-COWg4nKb.js", "/assets/index-CV49ph3H.css"],
+  "channel": "production in-app browser; accessibility tree and read-only DOM after selecting the visible locale control",
+  "context": {
+    "route": "/login",
+    "theme": "dark",
+    "identity": "anonymous",
+    "initialLocale": "pt",
+    "restoredLocale": "pt"
+  },
+  "result": "PASS_FOR_PRODUCTION_LOCALE_LANG_SYNC",
+  "observations": {
+    "localeSamples": [
+      {"selectedLocale": "es", "documentLang": "es", "visibleHeading": "Bienvenido de nuevo"},
+      {"selectedLocale": "en", "documentLang": "en", "visibleHeading": "Welcome back"},
+      {"selectedLocale": "pt", "documentLang": "pt", "visibleHeading": "Bem-vindo de volta"}
+    ],
+    "selectorUsed": "visible native language selector",
+    "formSubmitted": false,
+    "authenticationActionsActivated": false,
+    "diagnosticOrCacheControlsActivated": false,
+    "initialLocaleRestored": true
+  },
+  "privacy": "Anonymous public login only; locale preference restored to its initial Portuguese value. No form values were entered or captured, no authentication/OAuth/account action, API probe, customer data or clipboard access.",
+  "notProven": [
+    "all routes and screen-reader announcements",
+    "locale changes on unauthenticated/protected routes beyond this login sample",
+    "other themes, viewports, zoom levels or full WCAG conformance",
+    "authenticated diagnostics/RBAC or audio/device behavior"
+  ]
+}

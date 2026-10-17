@@ -3,7 +3,7 @@
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `45-uat-prep`
 Status: `BLOCKED / PARTIAL`
-Candidate: KELEDON Web 5.2.3, source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; current main `85d792321445da6ba6a744e79d7128fed8717d3d`
+Candidate: KELEDON Web 5.2.4, source/main `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`
 Date: 2026-10-17
 
 ## Goal / scope
@@ -14,15 +14,15 @@ Prepare safe authentication and device inputs for the CMT-003A lease/idempotency
 
 - Integration source: Browser command polling is protected by normal auth/device access; API records `browser.command.claimed`, and a prior claim permanently excludes the command. No persisted lease, TTL or heartbeat exists.
 - Existing normal-login auth and DB-derived role checks; existing guarded `uat-prep-companyco` seeder.
-- Canonical artifacts: `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md`; all updated for 5.2.3.
-- Production URL: `https://keledon.tuyoisaza.com/`; latest Railway Web/API deployments `51d32a43-e3ea-4961-a4ea-b5ac8fd68621` / `567027ff-9d5f-411f-b073-3b6eed4eeb2f` both `SUCCESS` on main `85d7923` at 18:52:04Z. This confirms deploy settlement only, not API behavior acceptance.
+- Canonical artifacts: `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md`; all updated for 5.2.4.
+- Production URL: `https://keledon.tuyoisaza.com/`; latest Railway Web/API deployments `228369da-23e8-49e0-8345-2469f9fd4863` / `367eb4ae-a101-448a-ac0a-361e7efee620` both `SUCCESS` on main `6715ea9`. This confirms deploy settlement only, not API behavior acceptance.
 
 ## Work performed
 
-- Rebound the four Prep artifacts to candidate 5.2.3 / PHDK 2.53.1 and mapped the requested minimum tenant/role/device fixture set.
+- Rebound the four Prep artifacts to candidate 5.2.4 / PHDK 2.53.1 and mapped the requested minimum tenant/role/device fixture set.
 - Confirmed no synthetic identity/tenant/device or CRM sandbox is available; no credentials/accounts/data were created.
 - Confirmed production is rejected by the seeder and PHDK UAT Prep prohibits production privileged test identities. No seeder or local app tests were run under the owner's environment/test instructions.
-- Preserved the prior 5.2.1 Prep artifacts and captured current 5.2.3 snapshots.
+- Preserved the prior 5.2.1 and 5.2.3 Prep artifacts as historical snapshots; canonical files are current at 5.2.4.
 
 ## Deliverables
 
@@ -47,11 +47,11 @@ Honor production-only testing for public, anonymous observations. Do not create 
 
 ## Evidence
 
-- `UAT_PREP_REPORT.md`, `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md` (current 5.2.3).
+- `UAT_PREP_REPORT.md`, `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md` (current 5.2.4).
 - `PHDK_PREFLIGHT_REPORT.md` and `UAT_ACCESS_REPORT.md`.
 - No DB, login, migration or cleanup command was run.
 
 ## Next stage
 
 Stage: `50-uat` — continue safe anonymous production cases and source review. Authenticated role/lease cases stay BLOCKED until the required identities/devices/tenant fixture and cleanup are allowed and provisioned.
-Required inputs: this blocked Prep handoff and the four canonical 5.2.3 artifacts.
+Required inputs: this blocked Prep handoff and the four canonical 5.2.4 artifacts.

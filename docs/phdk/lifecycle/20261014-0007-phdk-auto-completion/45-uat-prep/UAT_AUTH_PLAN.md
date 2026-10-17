@@ -1,11 +1,11 @@
-# Plan de autenticación UAT — KELEDON 5.2.3
+# Plan de autenticación UAT — KELEDON 5.2.4
 
 Estado: **PARTIAL / BLOCKED** · Fecha: 2026-10-17 · PHDK: 2.53.1.
 
 ## Candidato y entorno
 
-- Candidato Web: v5.2.3, source merge `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; PR #229. `main` documental actual: `85d792321445da6ba6a744e79d7128fed8717d3d`.
-- Producción declarada: `https://keledon.tuyoisaza.com/`; latest Web `51d32a43-e3ea-4961-a4ea-b5ac8fd68621` y API `567027ff-9d5f-411f-b073-3b6eed4eeb2f` reportaron `SUCCESS` sobre main `85d7923` al 18:52:04Z. No se afirma acceptance API funcional por el estado del deploy.
+- Candidato Web: v5.2.4, merge `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`; PR #232. `main` actual: `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`.
+- Producción declarada: `https://keledon.tuyoisaza.com/`; latest Web `228369da-23e8-49e0-8345-2469f9fd4863` y API `367eb4ae-a101-448a-ac0a-361e7efee620` reportaron `SUCCESS` sobre main `6715ea9`. Esto no acepta comportamiento autenticado ni contratos API.
 - El usuario indicó pruebas funcionales únicamente en producción y no ejecutar pruebas locales de aplicación. Se sigue esa restricción; PHDK estático y parseo/version alignment no cuentan como app tests.
 
 ## Límite de identidad y confianza

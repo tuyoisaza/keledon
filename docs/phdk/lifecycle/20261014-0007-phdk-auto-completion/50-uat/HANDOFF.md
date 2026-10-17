@@ -3,7 +3,7 @@
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `50-uat`
 Status: `PARTIAL / ACCEPTANCE INCOMPLETE`
-Candidate: KELEDON 5.2.3, production Web source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`
+Candidate: KELEDON 5.2.4, production Web source `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`
 Date: 2026-10-17
 
 ## Goal / scope
@@ -25,14 +25,15 @@ Verify the production public entry safely and determine whether the tenant inter
 - UAT-117 on the deployed v5.2.3 Web observed the anonymous copy action's accessible success status “Diagnóstico copiado”. Source review confirms the copied report withholds configured API/OAuth hostnames. Clipboard contents were intentionally not read or exported; API service was still building at the Railway readback.
 - UAT-118 on the same production Web candidate traversed the public diagnostic controls by Tab/Shift+Tab; copy/clear were 44×44px with a 2px solid teal focus outline. No control was activated and no screen reader was run.
 - UAT-119 on production `/login` confirmed the public keyboard order E-mail → Senha → Entrar → Google → Criar conta and reverse Tab back to Google. An autofill suggestion appeared but was not selected; no field content was recorded. The selected Portuguese interface retained HTML `lang=en`, and the focused account-creation style measured only `outline:auto` 0.666667px, so focus visibility and language metadata are open findings.
+- UAT-120 after PR #232 confirmed production v5.2.4 updates `<html lang>` and visible locale together when selecting ES, EN and PT on `/login`; initial PT preference was restored. Web deployment is `228369da-23e8-49e0-8345-2469f9fd4863` / source `6715ea9`.
 - No sign-in, form submission, manual API call, data mutation, storage operation, external integration or DB access occurred.
 - Created current stories, journey map, acceptance cases and UX/UI audit; preserved evidence snapshots.
-- Updated CMT-002 PIA, UAT case/report, PMO coverage/progress, lifecycle state and evidence JSON for UAT-117–119.
+- Updated CMT-002 PIA, UAT case/report, PMO coverage/progress, lifecycle state and evidence JSON for UAT-117–120.
 
 ## Deliverables
 
 - `UAT_STORIES.md`, `UAT_JOURNEY_MAP.md`, `UAT_CASES.md`, `UAT_ACCESS_REPORT.md`, `UAT_REPORT.md`, `UX_UI_AUDIT_REPORT.md`.
-- Evidence: `evidence/uat-117-production-copy-status-2026-10-17.json`, `evidence/uat-119-production-login-keyboard-2026-10-17.json`; historical snapshots remain under `snapshots/`.
+- Evidence: `evidence/uat-117-production-copy-status-2026-10-17.json`, `evidence/uat-119-production-login-keyboard-2026-10-17.json`, `evidence/uat-120-production-locale-lang-2026-10-17.json`; historical snapshots remain under `snapshots/`.
 - Browser readiness: capability `AVAILABLE_VERIFIED`; target content loaded, but target version does not match candidate.
 
 ## Exit gate
@@ -43,6 +44,7 @@ Verify the production public entry safely and determine whether the tenant inter
 - [x] UAT-117 passes anonymous copy-status/source-host-withholding scope only; clipboard was not inspected.
 - [x] UAT-118 passes keyboard order and focus/target-size sample only; no controls were activated.
 - [x] UAT-119 passes public login keyboard order only; `lang` mismatch/focus style are recorded as open findings.
+- [x] UAT-120 passes locale/`lang` sync for ES/EN/PT on public production `/login` only.
 - [ ] Exact-candidate role-based browser journeys, persistence and cross-tenant denials.
 
 ## Risks / blockers
