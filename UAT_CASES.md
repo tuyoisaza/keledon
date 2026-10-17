@@ -1,3 +1,9 @@
+## Candidate 5.1.83 — UAT-093 root-context Dockerfile selects the Web server config
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-093 | CMT-001 / Web deployment | On candidate 5.1.83, inspect the repository-root Dockerfile source and run the Web SEO/Nginx regression. Build the production Web assets and typecheck. | The image copies `services/web/nginx.conf` into Nginx `conf.d`; it does not copy the repository root's main `nginx.conf`. Existing root indexability and private SPA noindex headers remain valid. | Source regression `services/web/test/seo-headers.test.cjs`; Web build/typecheck. Container runtime confirmation is pending Railway autodeploy. | PASS for source/build only, not live runtime. Local Docker engine is unavailable. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-093-web-nginx-config-5.1.83.json`, bound to source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`. |
+
 ## Candidate 5.1.82 — UAT-092 credentialed CORS uses the tenant-configured origin set
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

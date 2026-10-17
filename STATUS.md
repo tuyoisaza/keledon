@@ -1,3 +1,15 @@
+# Current PHDK Auto — 5.1.83 Web runtime fix candidate
+
+PR #203 delivered the 5.1.82 CORS allowlist to remote `main` at `4c2882029b35494e011318f6b87c6b429f5dd820`; all five product roots and Browser renderer were 5.1.82 at that merge. API deployment reports SUCCESS. Railway labels the Web deployment SUCCESS but bounded startup logs show repeated Nginx errors from a root-context Dockerfile copying the wrong config. No live request or UI health check was made.
+
+Candidate branch `fix/web-nginx-config-5.1.83` changes the Dockerfile to copy `services/web/nginx.conf`, adds a source regression, and aligns all five package/lock roots and renderer at 5.1.83. API/Cloud full regressions 43/43 and 20/20, builds, Web/Landing builds/typechecks/lint, Web UAT 8/8 plus admin/theme/AI, Browser tests 15/15, Nginx/SEO 2/2 and PHDK 63/63 pass. Candidate source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` is committed; Docker engine is unavailable locally.
+
+All four owner-confirmed commitments remain active (0/4 done). UAT is 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: open the normal PR for `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`, then verify Railway startup logs.
+
+---
+
 # Current PHDK Auto — 5.1.82 CORS candidate; whole portfolio partial
 
 PHDK 2.52.2 is installed and static coherence is 63/63. API and Cloud now enforce configured exact-origin CORS for HTTP and Socket.IO; the legacy allow-all variable is inert. Candidate package/lock roots and Browser renderer are 5.1.82. API regressions 43/43, Cloud regressions 20/20, both backend builds and targeted lint pass. CORS tests prove an approved origin receives the credentialed grant and an unlisted origin does not.

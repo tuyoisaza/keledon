@@ -1,3 +1,9 @@
+## Candidate 5.1.83 — UAT-093 Web Nginx config path (2026-10-17)
+
+The 5.1.82 Railway Web deployment repeatedly failed at Nginx startup: the root build context copied the repository-level main `nginx.conf` into `/etc/nginx/conf.d/default.conf`, where `worker_processes` is illegal. Candidate 5.1.83 changes the Dockerfile to copy `services/web/nginx.conf` and adds a regression that checks the exact source path while preserving SEO/header expectations. Web production build and typecheck pass; the SEO/Nginx suite passes 2/2; complete Web UAT passes 8/8 plus standalone admin-settings/theme-template/AI-admin. This proves the source and build, not the container runtime. No local Docker engine is available. Railway startup verification remains required after merge.
+
+UAT total is **91 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. CRUD remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**.
+
 ## Candidate 5.1.82 — UAT-092 exact-origin CORS allowlist (2026-10-17)
 
 API and Cloud middleware regressions pass with production-managed configuration, two synthetic allowed origins and the legacy allow-all flag set. The configured web origin receives `Access-Control-Allow-Origin` and credentials; an unrelated origin receives no CORS grant. API and Cloud HTTP middleware and Socket.IO gateway source no longer reads the legacy bypass. These isolated tests use the installed CORS middleware without opening a socket, calling a provider, connecting to a database or sending external traffic. Evidence is bound to source commit `3b060a1bcc58089c6405f254f530c68581883934` in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-092-cors-allowlist-api-5.1.82.json` and `.../uat-092-cors-allowlist-cloud-5.1.82.json`. Full regressions pass API 43/43 and Cloud 20/20.

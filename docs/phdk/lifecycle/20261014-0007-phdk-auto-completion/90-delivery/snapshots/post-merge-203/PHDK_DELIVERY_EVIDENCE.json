@@ -1,0 +1,80 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; deliver 5.1.82 exact-origin CORS security slice and retain partial portfolio status",
+  "target_branch": "main",
+  "expected_version": "5.1.82",
+  "version_file": "services/api/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "3b060a1bcc58089c6405f254f530c68581883934",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/203",
+  "merged_commit_sha": "4c2882029b35494e011318f6b87c6b429f5dd820",
+  "remote_main_tree": "verified at merge commit",
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "npm run test:regression; 43/43 suites on candidate source."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "npm run test:regression; 20/20 suites on candidate source."
+    },
+    "backend_builds": {
+      "status": "PASS",
+      "evidence": "API and Cloud production builds pass at v5.1.82."
+    },
+    "focused_lint": {
+      "status": "PASS",
+      "evidence": "Changed API and Cloud TypeScript source passes focused ESLint."
+    },
+    "uat_092": {
+      "status": "PASS",
+      "evidence": "API and Cloud exact-origin CORS regressions pass; evidence JSON files are in lifecycle 50-uat/evidence; no live traffic."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.52.2 coherence checker reports 63/63 manifest mappings."
+    },
+    "hosted_ci": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "PR #203 reported an empty hosted statusCheckRollup and no enabled GitHub workflows; main is unprotected. Local checks were run."
+    }
+  },
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "commitments_done": 0,
+    "commitments_total": 4,
+    "uat_tally": {
+      "pass": 90,
+      "blocked": 0,
+      "manual": 1
+    },
+    "crud_tally": {
+      "pass": 29,
+      "blocked": 396,
+      "not_applicable": 132,
+      "decision_needed": 3
+    },
+    "open_gates": [
+      "PostgreSQL persistence/restart",
+      "remaining CRUD operations",
+      "native device/audio",
+      "broad accessibility/localization",
+      "deployed SEO/AEO",
+      "customer-selected call/CRM acceptance"
+    ]
+  },
+  "deployment_observation": {
+    "provider": "Railway",
+    "api_deployment_id": "efe3cef0-c66c-4eb2-8f40-a92c1c03edb1",
+    "api_status": "BUILDING",
+    "web_deployment_id": "6baf1249-c797-4ffd-9088-e502801ea817",
+    "web_status": "BUILDING",
+    "observed_at": "2026-10-17T11:54:42Z",
+    "live_application_test": "not performed"
+  },
+  "limitations": [
+    "GitHub reports no branch protection, no enabled workflow and no hosted PR checks/review decision.",
+    "Railway API/Web deployments were BUILDING at last read; no production runtime or UI verification is claimed.",
+    "Whole PHDK Auto remains PARTIALLY DELIVERED; all four confirmed commitments still have open gates."
+  ]
+}

@@ -1,3 +1,17 @@
+# Current PHDK Auto delivery — 5.1.83 Web config candidate
+
+PR #203 merged the 5.1.82 exact-origin CORS fix at remote `main` `4c2882029b35494e011318f6b87c6b429f5dd820`. Railway API reports SUCCESS. Railway labels Web SUCCESS, but the bounded deploy logs for that same revision contain repeated Nginx startup failures (`worker_processes` invalid in `conf.d`) and restart attempts; this does not prove Web health.
+
+Candidate 5.1.83 is committed on `fix/web-nginx-config-5.1.83` at source SHA `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`. Its repository-root Docker build copies `services/web/nginx.conf` into `conf.d`; regression 2/2 passes. Full API/Cloud regressions pass 43/43 and 20/20; both builds, Web/Landing lint/typecheck/build, Browser build/tests 15/15, Web UAT 8/8 plus admin/theme/AI, PHDK coherence 63/63 and all six app/renderer version reads pass. UAT-093 source/build evidence is recorded in the current lifecycle.
+
+No local Docker engine is installed. Candidate 5.1.83 is not yet in a PR or deployed; Railway runtime startup evidence for the corrected config remains pending.
+
+Whole Auto remains **PARTIALLY DELIVERED** (0/4 commitments DONE). UAT is 91 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL persistence/restart, remaining CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and each client's configured call/CRM acceptance remain open.
+
+SIGUIENTE PASO: publish and merge 5.1.83 through the normal PR flow, then read the Railway startup logs for the new Web deployment.
+
+---
+
 # Delivery report - PHDK Auto 5.1.76 corrective handoff delivered
 
 PR [#194](https://github.com/tuyoisaza/keledon/pull/194) squash-merged at remote `main` `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`, with product version 5.1.75 and no hosted checks or required branch review (main was unprotected). It delivers Team Settings accessible names/help, keyboard focus, 44px controls, live save/loading feedback and en/es/pt copy, plus scoped UAT evidence. Web typecheck/build and UAT 7/7, focused settings/theme/AI-admin UAT, 53 Team Settings assertions, Web/Landing SEO 1/1 each, focused ESLint and PHDK coherence 61/61 passed. UAT used synthetic APIs; no screen reader, database, customer integration, or deployment was tested.

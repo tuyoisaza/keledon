@@ -1,3 +1,12 @@
+## Candidate 5.1.83 — Web Nginx source/build UAT PASS_SCOPED; runtime pending
+
+Source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` changes the root-context Web Dockerfile to copy `services/web/nginx.conf` into `conf.d`, addressing the Nginx startup errors observed in bounded Railway logs for 5.1.82. UAT-093 passes source/config assertions and Web SEO/Nginx tests 2/2; Web typecheck/build and production-built UAT 8/8 plus admin-settings, theme-template and AI-admin pass. Evidence: `evidence/uat-093-web-nginx-config-5.1.83.json` and candidate snapshot `snapshots/candidate-5.1.83/`.
+
+The container was not started locally because Docker is unavailable. Railway startup verification is pending delivery. UAT uses synthetic API fixtures; no live application request was made. Whole Auto remains PARTIALLY DELIVERED, 0/4 confirmed commitments DONE; UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: deliver the candidate through the normal PR flow, then inspect bounded Railway startup logs.
+
+---
 ## Candidate 5.1.77 — UAT-067 widget geometry PASS; portfolio partial
 
 Built Web UAT passes 7/7 suites plus standalone admin-settings, theme-template and AI-admin journeys. Landing desktop/mobile Playwright measured 44×44 non-overlapping targets and exactly 4px between 28×28 visible tiles; Web diagnostics remains 19/19 and Browser widget/boundary tests pass 4/4. An initial run used stale `dist` files; rebuilt Web/Landing 5.1.77 artifacts and the full retest passed. Evidence and limitations are in `UAT_REPORT.md` and `INTEGRATION_REPORT-5.1.77.md`.

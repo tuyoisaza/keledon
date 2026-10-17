@@ -1,3 +1,15 @@
+# Current PHDK Auto task — restore Web startup after 5.1.82 CORS delivery
+
+PR #203 merged source 5.1.82 to `main` (`4c2882029b35494e011318f6b87c6b429f5dd820`). API deployment reports SUCCESS. Railway also reports Web SUCCESS, but bounded startup logs show repeated Nginx restarts because the repository-root Docker build copied root `nginx.conf` into `conf.d`; runtime health is not verified.
+
+Candidate `fix/web-nginx-config-5.1.83` selects `services/web/nginx.conf` explicitly, with all five app package/lock roots and Browser renderer at 5.1.83. Web build/typecheck, SEO/Nginx test 2/2, full Web UAT 8/8 plus admin-settings/theme/AI UAT, Browser 15/15, API regression 43/43, Cloud 20/20, API/Cloud builds, Web/Landing lint/typecheck/build, and PHDK coherence 63/63 pass. Docker engine is unavailable locally; final container proof will come from the existing Railway autodeploy readback after merge.
+
+Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE); UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: open the normal PR for source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`, then inspect the new Railway deployment and bounded startup logs.
+
+---
+
 # Current PHDK Auto task — remove CORS wildcard bypass in 5.1.82
 
 Keep the four owner-confirmed fronts active in order. This scoped security repair addresses credentialed CORS in API and Cloud: all HTTP and Socket.IO paths now use configured exact origins; `KELEDON_ALLOW_ALL_CORS` no longer widens access. Candidate version roots align at 5.1.82. Full local regressions pass (API 43/43, Cloud 20/20); both backend builds and targeted lint pass. PHDK v2.52.2 coherence passes 63/63. Check found no currently enabled GitHub workflows, no main protection, and Railway API/Web autodeploy from main with `checkSuites=false`; provider settings were not changed.

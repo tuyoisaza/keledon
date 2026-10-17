@@ -1,3 +1,12 @@
+## Candidate 5.1.83 — delivery pending
+
+Candidate `fix/web-nginx-config-5.1.83` is based on verified remote `main` 5.1.82 (`4c2882029b35494e011318f6b87c6b429f5dd820`) and source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`. It fixes the Web root-context Dockerfile to install the service-scoped Nginx server config into `conf.d`, with regression coverage. Applicable local builds, regressions, UAT and PHDK coherence pass; evidence is in `../50-uat/snapshots/candidate-5.1.83/` and `../50-uat/evidence/uat-093-web-nginx-config-5.1.83.json`.
+
+PR, merge, remote-main verification and Railway runtime startup readback remain pending. Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE), UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: publish and merge 5.1.83 through the normal PR flow, then verify its exact Railway Web deployment logs.
+
+---
 ## 5.1.76 corrective record delivered; whole Auto remains partial
 
 PR #195 squash-merged at verified remote main `e3706537a43af58bc97f2b58b0a80b0173342bef`. It restores all 32,810 bytes of the previous Check handoff behind the new candidate 5.1.75 Check entry. PR #194 separately delivered the 5.1.75 source slice. All five app roots and Browser renderer read 5.1.76; PHDK coherence passes 61/61. Whole Auto remains PARTIALLY DELIVERED.

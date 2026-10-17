@@ -1,3 +1,22 @@
+## Current PHDK Auto — 5.1.83 Web runtime fix candidate; portfolio partial
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REVALIDATED | PHDK 2.52.2 refreshed; static coherence 63/63. |
+| Capture / Plan | REUSED | Four confirmed commitments and approved policies remain current. |
+| PMO / Workstreams | ACTIVE / PARTIAL | 5.1.82 CORS hardening merged; Web runtime startup defect found and scoped for repair. |
+| Integration Review | COMPLETED FOR NGINX CONTEXT FIX | Repository-root Docker build explicitly selects service-scoped server config; source regression added. |
+| UAT / UAT Fix | PASS FOR 5.1.83 SOURCE SLICE | Web build/typecheck, Nginx/SEO 2/2, UAT 8/8 plus standalone admin/theme/AI, API 43/43, Cloud 20/20, Browser 15/15 pass. |
+| SEO / AEO-GEO | NOT AFFECTED BY FIX | Nginx root and private SPA headers are preserved; SEO/Nginx source regression passes. |
+| Check / Remediation | COMPLETED FOR SOURCE SLICE | All five builds/locks align; relevant lint/typechecks, PHDK 63/63 and source diff pass. No local Docker engine. |
+| Delivery | RUNNING | Candidate branch `fix/web-nginx-config-5.1.83` at source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`; PR creation and Railway settlement remain. |
+
+PR #203 merged 5.1.82 at `4c2882029b35494e011318f6b87c6b429f5dd820`. API deployment reports SUCCESS. Web's provider state says SUCCESS, while bounded startup logs show repeated `worker_processes` errors and Nginx restarts from the root-context config mismatch. This status does not prove application health. Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments done; UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: open the normal PR for `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`, then verify the new Web deployment logs.
+
+---
+
 ## Current PHDK Auto — 5.1.82 CORS candidate; whole portfolio partial
 
 | Stage | Status | Evidence / next gate |
