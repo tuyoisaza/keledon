@@ -17,3 +17,9 @@ test('nginx serves the public root in its indexable location and SPA routes as n
   assert.match(spa, /try_files \$uri \$uri\/ \/index\.html;/);
   assert.match(spa, /X-Robots-Tag "noindex, nofollow" always;/);
 });
+
+test('nginx Docker build loads the service-scoped server configuration from the repository-root context', () => {
+  const dockerfile = fs.readFileSync(path.resolve(__dirname, '../Dockerfile'), 'utf8');
+  assert.match(dockerfile, /COPY services\/web\/nginx\.conf \/etc\/nginx\/conf\.d\/default\.conf/);
+  assert.doesNotMatch(dockerfile, /COPY nginx\.conf \/etc\/nginx\/conf\.d\/default\.conf/);
+});

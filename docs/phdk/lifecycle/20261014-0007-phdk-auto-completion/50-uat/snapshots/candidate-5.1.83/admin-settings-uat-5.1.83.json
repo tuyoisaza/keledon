@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-17T12:01:36.871Z",
+  "candidate": "5.1.83",
+  "target": "production-built Web SPA with synthetic identity API",
+  "result": "PASS_SCOPED",
+  "assertions": 53,
+  "checks": [
+    "superadmin sees platform configuration links in English",
+    "tenant admin sees tenant links and voice configuration in Spanish but no platform-only links",
+    "team settings fields expose associated accessible names and helper copy in Spanish, English and Portuguese",
+    "keyboard navigation receives a visible focus state",
+    "interactive controls meet 44px minimum touch-target height",
+    "labels and control text meet WCAG AA 4.5:1 contrast in the light theme",
+    "successful and failed save feedback are announced with status and alert semantics",
+    "ordinary user cannot enter management settings"
+  ],
+  "contrast": [
+    {
+      "id": "team-settings-company",
+      "label": 17.01,
+      "control": 16.17
+    },
+    {
+      "id": "team-settings-stt-provider",
+      "label": 17.01,
+      "control": 16.17
+    },
+    {
+      "id": "team-settings-tts-provider",
+      "label": 17.01,
+      "control": 16.17
+    },
+    {
+      "id": "team-settings-vosk-server-url",
+      "label": 17.01,
+      "control": 16.17
+    },
+    {
+      "id": "team-settings-vosk-model",
+      "label": 17.01,
+      "control": 16.17
+    }
+  ],
+  "limitations": [
+    "synthetic identity/API only; route authorization and backend CRUD are verified separately",
+    "no customer data or external endpoints",
+    "screen-reader announcement was inferred from DOM semantics; no assistive-technology session was run",
+    "contrast check covers only the five fields on Team Settings in the default light theme"
+  ]
+}

@@ -1,3 +1,13 @@
+## Current delivery readback — 5.1.82 CORS source merged (2026-10-17)
+
+PR [#203](https://github.com/tuyoisaza/keledon/pull/203) squash-merged source `3b060a1bcc58089c6405f254f530c68581883934` at remote `main` `4c2882029b35494e011318f6b87c6b429f5dd820`. All five app package/lock roots and Browser renderer are 5.1.82. PHDK v2.52.2 coherence passes 63/63. API/Cloud regressions pass 43/43 and 20/20; builds, focused lint and UAT-092 pass. Railway labels API `efe3cef0-c66c-4eb2-8f40-a92c1c03edb1` SUCCESS and Web `6baf1249-c797-4ffd-9088-e502801ea817` SUCCESS; bounded Web startup logs show repeated Nginx `worker_processes` errors and restarts. No live app test is claimed.
+
+Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments DONE. UAT is 90 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Open gates include PostgreSQL/restart, CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected integration acceptance.
+
+SIGUIENTE PASO: verify deployment settlement and continue the open acceptance gates.
+
+---
+
 ## Current delivery readback — 5.1.81 source and deploy verified (2026-10-17)
 
 PR [#200](https://github.com/tuyoisaza/keledon/pull/200) delivered product source to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`. PR #201 recorded the post-merge readback at `507085a118a064ab209ca0e31568b4033346676a` (tree `6a885b758601945abdfd13a9211dc64bdc8ffcf6`). All five package/lock roots and Browser renderer read 5.1.81; PHDK v2.52.2 coherence passes 63/63. GitHub reports no hosted checks/reviews and main is unprotected. Railway API `9264c007-3f37-4879-bf6a-caf7d3b4dc91` and Web `021a70c4-5d15-49be-bd33-e31afd3a92f7` are SUCCESS. Web's initial deployment and old-snapshot redeploys failed at `COPY shared/`; a fresh source build using root `/` and `services/web/Dockerfile` included `shared/` and succeeded.

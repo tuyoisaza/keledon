@@ -1,3 +1,20 @@
+## 5.1.83 Web runtime remediation — 2026-10-17
+
+PR #203 merged CORS hardening 5.1.82 at `4c2882029b35494e011318f6b87c6b429f5dd820`. API deployment reports SUCCESS. Railway labels Web SUCCESS, but bounded startup logs show repeated Nginx failures: the repository-root Docker context copies root `nginx.conf` into `conf.d`, where `worker_processes` is invalid. The new `fix/web-nginx-config-5.1.83` candidate copies `services/web/nginx.conf` instead and adds a regression. Web build/typecheck/lint, SEO/Nginx 2/2, full UAT 8/8 and standalone admin/theme/AI UAT pass. API/Cloud regressions 43/43 and 20/20, builds, Browser 15/15, Landing build/typecheck/lint and PHDK 63/63 pass. No local Docker engine is available; Railway runtime confirmation is pending a new main merge.
+
+All four commitments remain ACTIVE/PARTIAL (0/4 DONE). UAT is 91 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS.
+
+| Workstream | Progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | PHDK refreshed; 5.1.82 merged; 5.1.83 candidate version-aligned. | Deliver 5.1.83, verify main/deployment, continue baseline gates. |
+| CMT-002 widget/diagnostics | Web UAT 8/8 plus admin/theme/AI pass. | Native device/audio and broad accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | API/Cloud CORS allowlist passed and merged. | PostgreSQL/native call path and tenant-selected provider/CRM acceptance. |
+| CMT-004 administration/permissions | Existing least-privilege behavior unchanged. | DB/restart, remaining CRUD and audit/retention. |
+
+SIGUIENTE PASO: open the normal PR for `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`, then verify Railway startup logs; keep Auto partial.
+
+---
+
 ## 5.1.82 CORS source candidate — 2026-10-17
 
 The production CORS bypass was removed from API and Cloud HTTP and Socket.IO paths. Their shared resolver limits credentialed CORS to configured exact origins; the legacy variable is inert. API and Cloud full regression suites pass 43/43 and 20/20, builds and targeted lint pass, and PHDK coherence is 63/63. UAT-092 passes for both backends on exact source commit `3b060a1bcc58089c6405f254f530c68581883934`; evidence is recorded in the lifecycle evidence directory. Five app package/lock roots and Browser renderer align at 5.1.82. The source commit is on `fix/explicit-cors-allowlist-5.1.82`; PR #203 is open against `main`; merge and remote readback remain.

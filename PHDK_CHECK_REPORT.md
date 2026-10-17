@@ -1,3 +1,25 @@
+# Current Auto Check — 5.1.83 Web runtime remediation
+
+Candidate: `fix/web-nginx-config-5.1.83`; base remote main `4c2882029b35494e011318f6b87c6b429f5dd820`. PHDK 2.52.2; coherence 63/63. Scope: verify current CORS delivery plus repair the observed Web container startup failure.
+
+## Finding and remediation
+
+PR #203 merged the exact-origin CORS fix. Railway API deployment reports SUCCESS. Web deployment metadata reports SUCCESS, but the bounded startup log window records repeated Nginx `worker_processes` errors because the repository-root build context selected root `nginx.conf` for `/etc/nginx/conf.d/default.conf`. Candidate 5.1.83 changes the Dockerfile COPY to `services/web/nginx.conf` and adds a regression against this context mismatch. Web SEO/Nginx test passes 2/2. No Docker engine is installed locally, so final container startup proof requires the existing Railway build/deploy logs after merge. No provider settings changed and no HTTP/UI probe was performed.
+
+## Automation and delivery hygiene
+
+Local static automation collector reports no findings. GitHub exposes zero enabled workflows and no main branch protection; PR #203 had no hosted checks or review decision. Railway API/Web remain connected to `main` with `checkSuites=false`; no cron is configured. Existing autodeploy is preserved.
+
+## Validation
+
+API regression 43/43, Cloud 20/20; API/Cloud builds; Web build/typecheck/lint; Landing build/typecheck/lint; Browser build and 15 tests; Web SEO/Nginx 2/2; Web UAT 8/8 plus standalone admin/theme/AI; PHDK coherence 63/63. All roots/Browser renderer read 5.1.83.
+
+Whole Auto remains PARTIALLY DELIVERED. UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL/restart, remaining CRUD, native/audio, broad accessibility/localization, deployed SEO/AEO and each customer's integration acceptance remain open.
+
+SIGUIENTE PASO: versioned PR delivery, then read back Railway's new deployment status and bounded startup logs.
+
+---
+
 # Current Auto Check — 5.1.82 CORS source and automation slice
 
 Audit target: `fix/explicit-cors-allowlist-5.1.82`; PHDK 2.52.2 (canonical and installed); static coherence 63/63. Date: 2026-10-17. This is the final source check for the CORS security slice and automation hygiene evidence; it does not close the project's remaining Auto acceptance gates.

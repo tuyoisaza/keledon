@@ -1,3 +1,18 @@
+# Current PMO — 5.1.83 Web runtime fix candidate; portfolio partial
+
+5.1.82 CORS source is merged at main `4c2882029b35494e011318f6b87c6b429f5dd820` via PR #203. API deployment reports SUCCESS; Railway labels Web SUCCESS, but logs show repeated Nginx startup errors due to a repository-root Dockerfile copying root `nginx.conf` into `conf.d`. Candidate `fix/web-nginx-config-5.1.83` now selects the service-scoped `services/web/nginx.conf`; Web/SEO regression passes 2/2. All five roots are aligned at 5.1.83. API/Cloud regressions 43/43 and 20/20, all app builds/typechecks and Web UAT 8/8 plus admin/theme/AI pass. Candidate commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` is verified; PR and deployment log verification remain. All four commitments remain ACTIVE/PARTIAL (0/4 DONE).
+
+| Commitment | Current evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | 5.1.82 merged; 5.1.83 roots aligned locally. | Deliver 5.1.83 and verify main/versions; continue baseline gates. |
+| CMT-002 widget/diagnostics | Web UAT 8/8 plus admin/theme/AI passes. | Native device/audio and broad accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | CORS allowlist source merged and tested API/Cloud. | PostgreSQL/native path and each customer's provider/CRM acceptance. |
+| CMT-004 administration/permissions | Existing least-privilege coverage remains; broad CRUD unchanged. | DB migration/restart, remaining CRUD and audit/retention. |
+
+SIGUIENTE PASO: open the normal PR for `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`, then inspect deployment startup logs; keep Auto partial.
+
+---
+
 # Current PMO — 5.1.82 CORS source candidate; portfolio partial
 
 PHDK 2.52.2; coherence 63/63. API and Cloud credentialed HTTP/Socket.IO CORS now use the configured origin list; the legacy allow-all flag cannot bypass it. Full regressions pass API 43/43 and Cloud 20/20; backend builds and targeted lint pass. Candidate branch is `fix/explicit-cors-allowlist-5.1.82`, source commit `3b060a1bcc58089c6405f254f530c68581883934` is committed; PR is pending. Four commitments remain ACTIVE/PARTIAL (0/4 DONE).
