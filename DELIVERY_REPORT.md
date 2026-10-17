@@ -1,14 +1,14 @@
-# Current PHDK Auto delivery — 5.1.83 Web config candidate
+# Current PHDK Auto delivery — 5.1.83 Web Nginx fix merged
 
-PR #203 merged the 5.1.82 exact-origin CORS fix at remote `main` `4c2882029b35494e011318f6b87c6b429f5dd820`. Railway API reports SUCCESS. Railway labels Web SUCCESS, but the bounded deploy logs for that same revision contain repeated Nginx startup failures (`worker_processes` invalid in `conf.d`) and restart attempts; this does not prove Web health.
+PR [#204](https://github.com/tuyoisaza/keledon/pull/204) squash-merged source `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` at remote `main` `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba` (tree `a7571475a608e7f72937ccd386112004e8f739ab`). All five app package/lock roots and Browser renderer are 5.1.83. PHDK v2.52.2 coherence passes 63/63.
 
-Candidate 5.1.83 is committed on `fix/web-nginx-config-5.1.83` at source SHA `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`. Its repository-root Docker build copies `services/web/nginx.conf` into `conf.d`; regression 2/2 passes. Full API/Cloud regressions pass 43/43 and 20/20; both builds, Web/Landing lint/typecheck/build, Browser build/tests 15/15, Web UAT 8/8 plus admin/theme/AI, PHDK coherence 63/63 and all six app/renderer version reads pass. UAT-093 source/build evidence is recorded in the current lifecycle.
+The Web Dockerfile now copies `services/web/nginx.conf` into Nginx `conf.d`. Railway's exact Web deployment `7fb6f47b-3629-483c-a9b7-79a522658e81` is SUCCESS with 1/1 replica; bounded logs show Nginx configuration complete and workers started, with no prior `worker_processes` directive failure. API deployment `639b6329-b279-47e8-bec0-7fb7bd266937` is SUCCESS with 1/1 replica; logs show Nest started and Prisma connected. Initial API dependency reachability logged a timeout before successful startup. No live HTTP/UI probe was performed.
 
-No local Docker engine is installed. Candidate 5.1.83 is not yet in a PR or deployed; Railway runtime startup evidence for the corrected config remains pending.
+API/Cloud regressions 43/43 and 20/20, builds, Web/Landing build/typecheck/lint, Browser build/tests 15/15, Web Nginx/SEO 2/2 and Web UAT 8/8 plus admin/theme/AI pass. UAT-093 runtime readback is recorded at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-093-web-nginx-config-5.1.83.json`.
 
-Whole Auto remains **PARTIALLY DELIVERED** (0/4 commitments DONE). UAT is 91 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL persistence/restart, remaining CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and each client's configured call/CRM acceptance remain open.
+Whole Auto remains **PARTIALLY DELIVERED** (0/4 commitments DONE). UAT is 91 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL/restart acceptance, remaining CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and each client's configured call/CRM acceptance remain open.
 
-SIGUIENTE PASO: publish and merge 5.1.83 through the normal PR flow, then read the Railway startup logs for the new Web deployment.
+SIGUIENTE PASO: continue the four confirmed Auto fronts from verified main `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; keep the whole portfolio partial.
 
 ---
 

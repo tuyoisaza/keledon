@@ -1,3 +1,13 @@
+## Current delivery — PR #204 merged; Web/API Railway startup readback recorded
+
+PR [#204](https://github.com/tuyoisaza/keledon/pull/204) squash-merged source `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` to `main` at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer read 5.1.83. PHDK v2.52.2 coherence passes 63/63. Railway Web `7fb6f47b-3629-483c-a9b7-79a522658e81` and API `639b6329-b279-47e8-bec0-7fb7bd266937` report SUCCESS with 1/1 replicas. Web logs show Nginx configuration complete/workers started with no prior directive failure. API logs show Nest startup and Prisma connection after an initial dependency reachability timeout. No live HTTP/UI probe was performed.
+
+Scoped delivery gate evidence is `PHDK_DELIVERY_EVIDENCE.json`; deterministic completion gate passes for this 5.1.83 source slice. Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE, UAT 91 PASS / 0 BLOCKED / 1 MANUAL, CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: continue the four owner-confirmed acceptance fronts from verified main; keep whole Auto partial.
+
+---
+
 ## Candidate 5.1.83 — delivery pending
 
 Candidate `fix/web-nginx-config-5.1.83` is based on verified remote `main` 5.1.82 (`4c2882029b35494e011318f6b87c6b429f5dd820`) and source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`. It fixes the Web root-context Dockerfile to install the service-scoped Nginx server config into `conf.d`, with regression coverage. Applicable local builds, regressions, UAT and PHDK coherence pass; evidence is in `../50-uat/snapshots/candidate-5.1.83/` and `../50-uat/evidence/uat-093-web-nginx-config-5.1.83.json`.
