@@ -5,9 +5,9 @@
 | WS | Current status | Open gate |
 |---|---|---|
 | WS-001 / CMT-001 | PHDK v2.53.1 installed; candidate 5.2.1 source is on PR #210, open and unmerged; coherence 64/64. | Complete acceptance/review controls, then verify main and deployment. |
-| WS-002 / CMT-002 | Prior 5.1.85 widget evidence remains scoped. | Authenticated populated-card and screen-reader evidence remains MANUAL. |
+| WS-002 / CMT-002 | UAT-100 confirms anonymous homepage/login widget presence on production v5.1.85; candidate source evidence remains scoped. | Candidate/authenticated surfaces, action behavior, populated-card and screen-reader evidence remain open/MANUAL. |
 | WS-003 / CMT-003 | Provider-neutral client-specific contracts remain intact. | Live call/CRM acceptance awaits each client's chosen stack. |
-| WS-004 / CMT-004 | Owner-approved tenant selector implemented across API/Cloud/Web; tenant guards and secret projections reviewed. Migration adds nullable company ownership with no backfill. | Confirm superadmin provisioning and ownership for existing interfaces; run migration, seeded-role permission checks and candidate browser UAT. |
+| WS-004 / CMT-004 | Owner-approved tenant selector implemented across API/Cloud/Web; tenant guards and secret projections reviewed. Migration adds nullable company ownership with no backfill. New PHDK admin capability/settings registries now record broader console gaps. | Confirm superadmin provisioning and ownership for existing interfaces; run migration, seeded-role permission checks and candidate browser UAT; resolve settings, invitation, permission-editor and backup/recovery gaps. |
 | WS-X | Stage 45 UAT Prep seeder rejects production. | A safe isolated database/persona target is unavailable; no production identity/data mutation. |
 
 The approval changes the former TeamInterface selector decision. Global catalog entries remain hidden from tenant roles; each tenant sees only its own catalog and no credential values. Whole Auto remains partial.

@@ -1,24 +1,37 @@
 # KELEDON Administration Architecture
 
-Updated for candidate 5.1.73 / PHDK 2.51.4.
+**Audit baseline:** PHDK 2.53.1; candidate KELEDON 5.2.1; branch `feature/tenant-interface-selector-5.2.0` (current audited source basis `ef6fe6db`; subsequent branch commits are documentation only). This is a source architecture record; it is not runtime or persisted-data acceptance.
 
 ## Tenancy and authority
 
-KELEDON is multi-tenant. `Company` is the tenant boundary; users receive company/team membership from persisted `User.companyId` and `User.teamId`. Platform-wide authority is the existing DB role `superadmin`. `admin`, `coordinator` and `user` remain tenant-scoped roles. The API must resolve actor and tenant from the authenticated user row and stored relationships, never from request-supplied role or tenant IDs. New accounts remain least-privileged `user`; only a current superadmin may grant elevated roles. Provider credentials are write-only and omitted from ordinary responses.
+KELEDON is a multi-tenant contact-center product: independent customer Companies own Teams, users, provider/CRM configuration, flows and related operating records. Platform-level `superadmin` is therefore justified. Tenant `admin` and `coordinator` roles operate within their current Company. `user` and `agent` are lower-privilege product roles. Exact capabilities remain resource/action specific; a role hierarchy alone is not authorization.
 
-## Surface mapping
+The owner-approved invariants are: new email/Google registrations default to `user`; only a current database-authorized superadmin may elevate a role or assign a Company; tenant managers cannot elevate roles or create/delete Companies; actor and Company scope come from current database state; ordinary API projections never return stored credentials, and secret replacement is write-only. A tenant may configure private/local CRM destinations only after URL validation and tenant-scoped origin allowlisting. An Admin/Coordinator may associate only interfaces owned by the same Company with Teams in that Company.
 
-- `/admin/settings` is the role-filtered Configuración directory.
-- `/admin/settings/templates` is platform-superadmin-only and persists shared theme tokens and corporate visibility.
-- `/admin/team-settings` retains the prior team voice/STT/TTS editor for coordinator access.
-- `/management/*` contains company, member, flow, provider, vendor and operations pages. Each existing API must retain its own DB-derived company and resource scope.
-- `/admin/prompts` and `/admin/ai-consumption` are platform-superadmin-only AI administration.
-- Live backup restore, provider writes, global custom-role creation and simulated identity switching are not represented as implemented by this architecture document.
+## Trust boundaries and current implementation map
 
-## Security boundaries
+| Boundary | Authority / data flow | Source anchors | Evidence limit |
+|---|---|---|---|
+| Public and authenticated Web/Landing | Anonymous routes expose public content; protected routes use Web auth and role guards. | `services/web/src/AppRouter.tsx`, `landing/src/AppRouter.tsx`, `services/web/src/context/AuthContext.tsx` | Deployed public behavior only is observed in UAT-098–100 on 5.1.85. |
+| API and Cloud control plane | Authentication re-reads active actor/role from DB; guards and resource services enforce company and relationship scope. | `services/api/src/guards/`, `services/api/src/crud/`, API auth and Cloud mirrored modules | Candidate tests are historical source evidence; no 5.2.1 production auth/persistence acceptance. |
+| PostgreSQL / Prisma | Stores Companies, Teams, Users, tenant configurations, operational records, audit and managed AI definitions. Migrations are additive. | `services/api/prisma/schema.prisma`, `services/api/prisma/migrations/` | No production DB inspection or migration is authorized. |
+| Browser/Electron execution | Cloud/API chooses bounded actions; Browser enforces configured-origin/navigation and session scope. Customer selects call and CRM systems. | `browser/renderer/`, Browser command and tenant-origin services, `services/api/src/controllers/planner.controller.ts` | Real call/CRM/device journeys require the customer's selected safe environment. |
+| External providers | OAuth, voice, AI, vector store and CRM are configured per platform or tenant; values are secret. | provider/auth/LLM services; `services/api/src/crud/crud-vendor.service.ts` | No customer provider or secret-value access was performed. |
 
-Protected system roles cannot be self-assigned by a tenant administrator. Tenant admins/coordinators must not read, mutate or enumerate a different company. Secrets remain outside generalized settings and appear only as safe metadata. Audit records for consequential changes must not include secrets or raw AI payloads. Isolated UAT uses disposable fixtures and never a customer endpoint or live database.
+## Administrative routes and authorities
 
-## Known incomplete capabilities
+- `/admin/settings` is the discoverable settings landing page. It links to Companies (platform admin), Users, Flows, Providers, CRM, AI Prompts, theme templates, Audit, system status, and tenant voice settings where applicable.
+- `/management/*` contains company, user, team, vendor, provider, flow and interface management. Server routes/guards remain authoritative if a link is hidden.
+- `/admin/prompts`, `/admin/ai-consumption`, `/admin/settings/templates` and `/admin/audit` are platform-superadmin surfaces.
+- `/admin/team-settings` is scoped to tenant managers and platform superadmin, with the active Company derived by the server.
+- Safe UAT profile switching is source-implemented for an existing superadmin and explicitly allowlisted synthetic `.invalid` users in development/staging only. API issues a short-lived reduced-role token, records start/end audit events and refuses production. This is a UAT facility, not consent to impersonate real users.
 
-The current Configuración directory links to existing management capabilities; it is not evidence that general localization, invitations, permission templates, backup/restore, security policy, or all operations have a complete end-to-end workflow. See `ADMIN_CAPABILITY_MATRIX.md` and `ADMIN_SETTINGS_REGISTRY.md` for current implementation evidence and residual work.
+## Security and data lifecycle boundaries
+
+Company ownership and current user/team membership are the primary tenant boundary. Direct identifiers, client-provided `companyId`, stale JWT role claims and hidden UI controls are not authority. Private CRM targets require both syntactic URL validation and a matching tenant allowlist entry. Audit/telemetry must exclude credential values and customer payloads unless specifically sanitized.
+
+The 5.2.1 migration adds nullable `ManagedInterface.companyId` with an FK/index and deliberately does not backfill legacy interfaces. Existing ownerless rows must remain unavailable to tenant selectors until their Company is established through an authoritative process. No inventory, ownership assignment, data migration, production login or production write was performed.
+
+## Decisions and unresolved architectural acceptance
+
+The four owner-confirmed fronts and role/private-origin policy are fixed for this Auto goal. Remaining architecture evidence is tracked in `ADMIN_CAPABILITY_MATRIX.md` and `ADMIN_SETTINGS_REGISTRY.md`: invitation/lifecycle controls, editable permission templates, backups/recovery, full general settings and operations controls, and a proper secret-manager boundary are incomplete or unverified. The required data- and service-owner choices must be resolved before claiming compliance; this document does not invent provider, backup, retention or migration settings.

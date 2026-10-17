@@ -10,17 +10,17 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | PMO / Workstreams | REUSED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; no scope removed. |
 | Integration Review | COMPLETED FOR SOURCE REVIEW | API/Cloud role and tenant guards, secret projections, legacy route boundary and assignment service were reviewed. Migration has nullable `companyId` and no backfill; tenant interface provisioning/legacy ownership remain acceptance items. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
-| UAT | ACCEPTANCE INCOMPLETE | Production anonymous homepage and protected-route redirect checks UAT-098/099 pass narrowly on v5.1.85; candidate cases UAT-096/097 remain blocked. No production writes. |
+| UAT | ACCEPTANCE INCOMPLETE | UAT-098/099/100 pass narrowly on deployed v5.1.85 (anonymous public page, redirect, and homepage/login widget presence); candidate 5.2.1 cases UAT-096/097 remain blocked. No production writes. |
 | UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | PARTIAL / REMOTE HYGIENE READBACK ADDED | PHDK 2.53.1 coherence 64/64 and root managed block pass. GitHub has no workflows, branch protection or rulesets; PR #210 has no checks/review. Railway API/Web current deployments succeed, but Web has 12 recent failures (three sampled failures trace to missing `shared/` in an older build context; later root-context deployments succeed). `checkSuites:false`; wait-for-CI/restart/watch/cost fields remain unverified. No app tests or production writes in this continuation. |
+| Check | PARTIAL / ADMIN STANDARD GAPS RECORDED | PHDK 2.53.1 coherence 64/64; theme-token audit `STATIC_PASS`; root managed block pass. New admin architecture, capability/settings registry and AI catalog record ADM-001…006 gaps; documentation does not close them. GitHub has no workflows, branch protection or rulesets; PR #210 has no checks/review. Railway API/Web current deployments succeed, but Web has 12 recent failures (three sampled failures trace to missing `shared/` in an older build context; later root-context deployments succeed). `checkSuites:false`; wait-for-CI/restart/watch/cost fields remain unverified. No app tests or production writes in this continuation. |
 | Remediation | COMPLETED FOR CURRENT DOCUMENT GAPS | Corrected PIA source links, UAT scope, provisioning limitation, and current PMO/lifecycle state; no safe source change was justified without ownership data or candidate acceptance. |
 | Delivery | PR #210 OPEN; NOT MERGED | GitHub reports no checks or review decision. No merge/main verification for 5.2.1. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance, PR review/check evidence and merge/main verification remain open.
 
-SIGUIENTE PASO: provision an isolated PostgreSQL UAT target and obtain an authoritative tenant-ownership map for existing interfaces; then exercise the 5.2.1 role/assignment flows with synthetic Admin/Coordinator/Superadmin accounts. Keep PR #210 open until that acceptance and review gates are resolved.
+SIGUIENTE PASO: continue source-mapping ADM-001…006 against the real admin/API routes and identify safely implementable gaps; keep PR #210 open until candidate acceptance and delivery controls pass.
 
 Automation hygiene details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` records the bounded GitHub/Railway metadata, sampled build failure and unverified provider fields. Current production service status is not acceptance of the unmerged candidate.
 

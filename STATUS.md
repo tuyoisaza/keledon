@@ -2,9 +2,9 @@
 
 The four owner-confirmed fronts remain active in order. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) carries product source 5.2.1 on `feature/tenant-interface-selector-5.2.0`; it is open, unmerged, and GitHub reports no checks or review decision. Production still displays v5.1.85.
 
-PHDK coherence passes 64/64. Read-only production UAT-098/099 verifies only the public homepage and anonymous redirect to login. The selector source has tenant guards and stale-response handling; the migration adds nullable interface ownership without backfilling old rows. A superadmin-only provision route exists, but persisted data/ownership is not verified. All four commitments remain active/partial.
+PHDK coherence passes 64/64. Read-only production UAT-098/099 verifies the public homepage and anonymous redirect to login; UAT-100 confirms the anonymous homepage/login widget on deployed v5.1.85. None accepts candidate 5.2.1. The selector source has tenant guards and stale-response handling; the migration adds nullable interface ownership without backfilling old rows. A superadmin-only provision route exists, but persisted data/ownership is not verified. The PHDK 2.53.1 admin-console audit and source registries identify settings, permission, backup and AI-graph gaps. All four commitments remain active/partial.
 
-SIGUIENTE PASO: reconcile each confirmed front with current product source and acceptance evidence; keep PR #210 open pending required UAT and delivery controls.
+SIGUIENTE PASO: continue source-auditing and safely remediating the newly documented admin-console gaps; keep PR #210 open pending candidate acceptance and required delivery controls.
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered
 

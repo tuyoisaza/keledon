@@ -1,3 +1,9 @@
+## Production read-only re-entry — public widget on v5.1.85 (2026-10-17)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-100 | CMT-002 / anonymous public visitor | Open the production homepage and `/login` without authenticating, submitting forms, or activating either diagnostic action. | Both public and login surfaces display the deployed semantic version and the adjacent named clipboard/trash actions. This accepts only the currently deployed v5.1.85 mount, not candidate 5.2.1 or button behavior. | Connected in-app browser; accessibility-tree observation only. | PASS, scoped/read-only. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json`. |
+
 ## Candidate 5.1.83 — UAT-093 root-context Dockerfile selects the Web server config
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

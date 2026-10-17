@@ -1,11 +1,11 @@
 ## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
 
-PHDK 2.53.1; product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is OPEN, not merged. Production is v5.1.85. UAT-098/099 are anonymous read-only smoke checks only. The source review confirmed tenant filtering and credential redaction; `ManagedInterface.companyId` remains nullable with no backfill. Superadmin provisioning route exists, but production ownership/configuration was not inspected.
+PHDK 2.53.1; product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is OPEN, not merged. Production is v5.1.85. UAT-098/099/100 are narrow anonymous read-only checks; UAT-100 confirms the homepage/login widget only. The source review confirmed tenant filtering and credential redaction; `ManagedInterface.companyId` remains nullable with no backfill. Superadmin provisioning route exists, but production ownership/configuration was not inspected. PHDK admin-console source baseline is now recorded in four root registries; full configuration, lifecycle, backup and graph acceptance remains open.
 
 | Commitment | Current continuation evidence | Open gate |
 |---|---|---|
 | CMT-001 | Standards updated; PHDK coherence 64/64; PR #210 open without checks/review. | Required acceptance, review, merge, exact `main` and deployment verification. |
-| CMT-002 | Prior scoped source/UAT records retained at their original revisions. | Native hardware/audio and broad accessibility/localization. |
+| CMT-002 | UAT-100 confirms anonymous homepage/login widget presence on deployed v5.1.85; prior source evidence retained at its original revisions. | Candidate/authenticated surfaces, action behavior, native hardware/audio and broad accessibility/localization. |
 | CMT-003 | Provider-neutral tenant contracts retained; no client stack selected. | Per-client configured call/CRM sandbox acceptance. |
 | CMT-004 | Selector, stale-response handling and API/Cloud tenant contracts reviewed. | Verify interface provisioning/ownership, migration persistence, role sessions and cross-tenant denial; remaining CRUD. |
 

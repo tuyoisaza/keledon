@@ -21,6 +21,7 @@ Verify the production public entry safely and determine whether the tenant inter
 - Opened `https://keledon.tuyoisaza.com/` anonymously in the connected in-app browser.
 - Observed page title `KELEDON | Cloud-governed contact center runtime`, visible version 5.1.85, public links and content.
 - Opened `/management/teams` without a session; production redirected to `/login`. The email/password form rendered and no authentication was submitted.
+- Re-entered UAT read-only on 2026-10-17 and opened production `/` and `/login` anonymously. Both accessibility trees showed the version and the two named debug actions (UAT-100); neither action was activated.
 - No sign-in, form submission, manual API call, data mutation, storage operation, external integration or DB access occurred.
 - Created current stories, journey map, acceptance cases and UX/UI audit; preserved evidence snapshots.
 
@@ -32,7 +33,7 @@ Verify the production public entry safely and determine whether the tenant inter
 
 ## Exit gate
 
-- [x] Harmless production public-entry navigation and anonymous protected-route redirect completed; UAT-098/099 PASS only for those narrow checks.
+- [x] Harmless production public-entry navigation, anonymous protected-route redirect, and public/login widget presence completed; UAT-098/099/100 PASS only for those narrow checks on v5.1.85.
 - [x] Target mismatch documented: production 5.1.85 vs branch candidate 5.2.1.
 - [x] UAT-096/097 remain BLOCKED; no synthetic identities or persisted role acceptance.
 - [ ] Exact-candidate role-based browser journeys, persistence and cross-tenant denials.

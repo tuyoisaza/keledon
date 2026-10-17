@@ -102,3 +102,13 @@ Actual Nest in-process HTTP test22 exercises real decorators/guards with isolate
 - Result: production public-entry smoke UAT-098 PASS (narrow scope); sanitized observation: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-098-production-public-smoke-5.2.1.json`. UAT-096/097 BLOCKED because candidate 5.2.1 is not deployed and there is no isolated DB-backed synthetic role target.
 - Additional read-only operation at 2026-10-17 16:22 UTC: anonymous `/management/teams` navigation redirected to `/login` on v5.1.85. UAT-099 PASS for redirect only; sanitized evidence at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-099-production-anonymous-management-redirect.json`. No login or mutation.
 - Next action: obtain a dedicated non-production PostgreSQL test target and a candidate deployment through normal reviewed delivery; then seed only synthetic `.invalid` roles and rerun UAT-096/097.
+
+## Browser Readiness — Auto UAT re-entry, deployed public/login widget (2026-10-17)
+
+- Run/stage: `20261014-0007-phdk-auto-completion`, stage 50 UAT; candidate under development remains 5.2.1 at PR #210; target is production v5.1.85.
+- Timestamp and target: `2026-10-17T16:35Z`; `https://keledon.tuyoisaza.com/` and `https://keledon.tuyoisaza.com/login`.
+- Permission: `ACTIVE_UAT_EXCEPTION`; browser capability `AVAILABLE_VERIFIED` through the connected in-app browser.
+- Operation and data: anonymous page navigation and accessibility-tree reading only. No authentication, form submission, diagnostic-button activation, manual API request, session/cache reset or mutation.
+- Spend: `NO_NEW_SPEND`; billing remains unverified.
+- Result: UAT-100 PASS only for public and login widget presence on deployed v5.1.85. Both pages exposed `v5.1.85`, `Copiar diagnóstico completo`, and `Limpar cache do aplicativo`; no behavior of either action was exercised. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json`.
+- Candidate match: FAIL for 5.2.1 acceptance; production remains 5.1.85. UAT-096/097 stay BLOCKED pending candidate target plus safe synthetic roles/persistence.

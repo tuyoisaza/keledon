@@ -1,0 +1,48 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-100",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T16:35:28Z",
+  "candidate": {
+    "version": "5.2.1",
+    "branch": "feature/tenant-interface-selector-5.2.0",
+    "pr": 210,
+    "acceptanceTargetMatch": false
+  },
+  "target": {
+    "environment": "production",
+    "versionObserved": "5.1.85",
+    "pages": [
+      {
+        "url": "https://keledon.tuyoisaza.com/",
+        "observed": [
+          "text v5.1.85",
+          "button Copiar diagnóstico completo",
+          "button Limpar cache do aplicativo"
+        ]
+      },
+      {
+        "url": "https://keledon.tuyoisaza.com/login",
+        "observed": [
+          "text v5.1.85",
+          "button Copiar diagnóstico completo",
+          "button Limpar cache do aplicativo",
+          "email and password fields rendered"
+        ]
+      }
+    ]
+  },
+  "channel": "connected in-app browser accessibility tree",
+  "identity": "anonymous",
+  "actions": "read-only navigation and accessibility-tree observation; no form submission or widget action activation",
+  "result": "PASS_SCOPED: public and login widget mount presence only on deployed v5.1.85",
+  "notProven": [
+    "candidate 5.2.1 behavior",
+    "clipboard contents or success/failure feedback",
+    "cache/session reset behavior",
+    "authenticated app/admin mounts",
+    "role/tenant isolation or persistence"
+  ],
+  "spend": "NO_NEW_SPEND",
+  "redaction": "No credentials, customer data, tokens, identifiers, or private diagnostics collected."
+}
