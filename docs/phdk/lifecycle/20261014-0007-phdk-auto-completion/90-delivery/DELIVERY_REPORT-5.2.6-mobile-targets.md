@@ -11,3 +11,8 @@ Static verification: PHDK 2.53.1 coherence 64/64; 15/15 package/lock version fie
 This report closes only the 5.2.6 UI target-size slice. CMT-001 is complete for this cut; CMT-002 remains partial; CMT-003A/B source implementation and CMT-004 authenticated persistence/cross-tenant acceptance remain open. No overall completion audit is issued while these commitments remain active.
 
 SIGUIENTE PASO: continue CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR implementation; keep Auto PARTIALLY DELIVERED until all four confirmed fronts pass their gates.
+
+
+## Follow-up UAT-127 — public accessibility-tree presence (2026-10-17)
+
+A fresh anonymous production tab exposed the v5.2.6 title/version, main landmark, illustrative-demo disclosure, named diagnostic/theme/language controls, navigation and headings. The first fresh navigation returned Cloudflare 502; a subsequent fresh navigation loaded successfully. Railway Web/API reported SUCCESS, but the initial 502 cause is unknown. This passes presence only; it does not claim screen-reader output or full accessibility conformance. Evidence: `50-uat/evidence/uat-127-production-public-ax-presence-2026-10-17.json`.

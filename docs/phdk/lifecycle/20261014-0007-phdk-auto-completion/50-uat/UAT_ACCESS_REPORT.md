@@ -1,5 +1,14 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Browser Readiness — UAT-127 production public AX re-entry (2026-10-17)
+
+- Stage/run: Auto UAT, `20261014-0007-phdk-auto-completion`; browser permission `ACTIVE_UAT_EXCEPTION`.
+- Candidate/target: product source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`, version 5.2.6; `https://keledon.tuyoisaza.com/` anonymous homepage; current Railway Web/API deployments both SUCCESS and 1/1 replicas running, no recent failures/pending work in bounded provider status read.
+- Capability: CUA in-app browser **AVAILABLE_VERIFIED**. First fresh anonymous navigation showed Cloudflare 502 at 20:44:13Z; a second fresh navigation loaded the current v5.2.6 page and its AX tree. Cause of first response is unknown.
+- Data/identity: anonymous only; no credentials, customer data, API writes, CRM/private host, account action or local application test/build.
+- Spend: `NO_NEW_SPEND`.
+- Executed: accessibility-tree presence check for version/title, main landmark, demo disclosure, diagnostic/theme/language labels, navigation, headings and public links. No control was activated.
+- Result: UAT-127 PASS for AX presence only. Screen reader, keyboard, zoom, full route/locale/theme coverage, diagnostic RBAC and audio remain open.
 ## Browser Readiness — UAT-125/126 production mobile acceptance (2026-10-17)
 
 - Permission: current owner instruction requires acceptance on production; browser scope is active for this Auto UAT. Actual CUA in-app browser access was verified and the named public production origin loaded successfully.

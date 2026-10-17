@@ -1,17 +1,18 @@
-## Verified current readback — KELEDON 5.2.6 / 2026-10-17
+## Verified current readback — KELEDON 5.2.6 / UAT-127 (2026-10-17)
 
-## Continuación Auto — CMT-003 source/PIA revalidación (2026-10-17)
+Producto desplegado: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. PR #243 actualizó documentación y PIAs; remote `main` es `5c9393851389a3b7291597acf3d01678251449de`, sin cambio al source de producto. Railway Web `546bedfd-c6b4-deb8-bfd8-0511351d0437` y API `2ff4cdde-e05f-4ab3-af72-d489cb3fa142` reportan SUCCESS.
 
-Producto: KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (Railway Web/API SUCCESS). Remote `main`: `269b0717109121e3a2c02eaf91867dd1e45439bd` tras merge del PR documental #242; sin cambios al source desplegado.
+UAT-127 **PASA únicamente presencia del árbol de accesibilidad público**: versión, título, landmark main, aviso demo, controles nombrados y navegación. Hubo un 502 de Cloudflare en la primera navegación; la segunda cargó correctamente. Causa desconocida. No hubo acciones, login ni datos de cliente.
 
-- 20 Plan: **COMPLETADO / extendido** con CMT-003C, gate de fixtures sintéticos productivos y cleanup.
-- 40 Integration: **REVALIDADA PARA FUENTE**; claim de Browser command no expira y no es atómico; filtro de egress valida orígenes pero no IP/socket/DNS pinning.
-- 45 UAT Prep: **BLOCKED** hasta confirmar un aprovisionamiento/desactivación autenticado, auditado y de bajo privilegio para fixtures productivos. Egress privado también necesita sandbox DNS/CRM y hostname/puerto/CIDR aprobados.
-- No se ejecutaron pruebas/builds locales ni pruebas de aplicación productiva durante la revalidación. Todo Auto permanece **PARCIALMENTE ENTREGADO**.
+PHDK 2.53.1: coherencia estática 64/64. Auto global **PARCIALMENTE ENTREGADO**: CMT-001 completo para este corte; CMT-002 parcial; CMT-003/004 abiertos. UAT autenticada sigue bloqueada por falta de provisioning/cleanup auditado de fixtures sintéticos (PIA CMT-003C). No se ejecutaron suites ni builds locales de aplicación.
 
-SIGUIENTE PASO: cerrar la preparación CMT-003C y sus entradas de aprobación/cleanup; después abrir implementación con validación desplegada exclusivamente en producción.
+SIGUIENTE PASO: integrar este registro de UAT por PR y continuar CMT-003A/B; abrir UAT autenticada solo cuando exista el camino aprobado de fixtures y limpieza.
 
-This readback supersedes earlier summaries below; those remain historical. Product PR #240/#241 merged; product source remains `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Documentation PR #242 is merged; remote `main` is `269b0717109121e3a2c02eaf91867dd1e45439bd`. Five package/lock roots and Browser renderer align at 5.2.6; PHDK 2.53.1 coherence is 64/64 static. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 passes the scoped anonymous mobile menu/header target-size checks at 320/375px; the baseline failures are retained in evidence. CMT-001 is complete for this cut; CMT-002 remains partial for broad accessibility, diagnostic RBAC and audio; CMT-003A/B are implementation-not-started; CMT-004 authenticated persistence/cross-tenant proof remains blocked by synthetic fixtures. Overall Auto remains PARTIALLY DELIVERED.
+This readback supersedes earlier summaries below; those remain historical.
+
+## Historical readback before PR #243 — 2026-10-17
+
+Product PR #240/#241 merged; product source remains `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Documentation PR #242 is merged; remote `main` is `269b0717109121e3a2c02eaf91867dd1e45439bd`. Five package/lock roots and Browser renderer align at 5.2.6; PHDK 2.53.1 coherence is 64/64 static. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 passes the scoped anonymous mobile menu/header target-size checks at 320/375px; the baseline failures are retained in evidence. CMT-001 is complete for this cut; CMT-002 remains partial for broad accessibility, diagnostic RBAC and audio; CMT-003A/B are implementation-not-started; CMT-004 authenticated persistence/cross-tenant proof remains blocked by synthetic fixtures. Overall Auto remains PARTIALLY DELIVERED.
 
 SIGUIENTE PASO: complete UAT Prep CMT-003C with the approved audited provisioning/cleanup path; then implement the lease and socket-level egress controls, with application acceptance only on the deployed production candidate.
 

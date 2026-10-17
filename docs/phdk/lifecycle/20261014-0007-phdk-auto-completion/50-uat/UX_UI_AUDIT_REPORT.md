@@ -1,5 +1,10 @@
 # UX/UI UAT audit — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.6 — public accessibility-tree presence (UAT-127)
+
+A fresh anonymous production read exposed the current version, main landmark, illustrative-demo disclosure, named diagnostic/theme/language controls, navigation, headings and public links. This is semantic presence only; no screen-reader speech or WCAG-wide acceptance is claimed. The initial navigation returned Cloudflare 502, and a second navigation loaded the page while Railway reported Web/API healthy; cause is undetermined. Evidence: `evidence/uat-127-production-public-ax-presence-2026-10-17.json`.
+
+
 ## Production v5.2.6 — public mobile header/menu target sizes (UAT-125/126)
 
 Production UAT-125/126 on the anonymous homepage in Portuguese/dark measured the expanded navigation and visible header controls at 320×720 and 375×812. After PR #240/#241, all measured public targets (brand link, diagnostics/cache buttons, menu button, navigation links, theme/language selectors and sign-in/create-account links) are at least 44px high. No horizontal overflow was measured; screenshots were visually inspected. Evidence: `evidence/uat-125-production-mobile-menu-targets-retest-2026-10-17.json` and `evidence/uat-126-production-mobile-brand-target-retest-2026-10-17.json`. This closes only the sampled public mobile target-size findings. Focus/screen-reader behavior, other routes, other locale/theme combinations, authentication/RBAC, zoom and audio/device flows remain unaccepted.

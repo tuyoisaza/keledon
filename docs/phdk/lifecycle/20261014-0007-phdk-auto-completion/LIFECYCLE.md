@@ -1,23 +1,22 @@
-## Current continuation — 5.2.6 / PHDK 2.53.1 (2026-10-17)
+## Current continuation — UAT-127 / PHDK 2.53.1 (2026-10-17)
 
-PR #240 merged as `fb2e4b4c5c4c869ae2962c2eadb49a4673fffdbe`; PR #241 merged as verified remote `main` `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Five package/lock roots and the Browser renderer align at 5.2.6. Railway Web `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` and API `da84fde5-06fd-4bc8-be2f-2cafe409d979` report `SUCCESS`. Production UAT-125/126 records the mobile menu/home-link target-size remediation at 320/375px with no horizontal overflow. The production retest is scoped to the anonymous public Web header; authenticated controls and broad accessibility remain open.
+Product candidate remains KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. PR #243 merged documentation/PIA updates at remote `main` `5c9393851389a3b7291597acf3d01678251449de`; it did not change product source. Railway Web `546bedfd-c6b4-deb8-bfd8-0511351d0437` and API `2ff4cdde-e05f-4ab3-af72-d489cb3fa142` report `SUCCESS` for the same product candidate.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
-| Preflight | REUSED / REVALIDATED | PHDK v2.53.1 installed; coherence 64/64 static. |
-| Capture | REUSED | Four owner-confirmed ordered commitments and earlier security decisions remain current. |
-| Plan | REUSED / UPDATED | CMT-002 PIA and UAT-125/126; CMT-003A/B implementation PIAs retained. |
-| PMO / Workstreams | ACTIVE / PARTIAL | CMT-001 complete for 5.2.6 cut; CMT-002 advances; CMT-003/004 remain open. |
-| Integration Review | PASS FOR UI SLICE | Web/Landing navbar and shared preference controls have aligned 44px targets; app versions and Browser renderer are synchronized. |
-| UAT Prep | PARTIAL / BLOCKED | Synthetic identity and device fixtures remain unavailable for authenticated/audio gates. |
-| UAT / UAT Fix | PASS SCOPED | Production UAT-125/126 pass the measured anonymous mobile header/menu scope at 320/375. |
-| SEO / AEO-GEO | NOT AFFECTED FOR THIS SLICE | Only target geometry changed; public content, routes, metadata and structured data did not. |
-| Check | PASS FOR 5.2.6 SLICE | See `70-check/PHDK_CHECK_REPORT-5.2.6-mobile-targets.md`: PHDK coherence 64/64, 15/15 version roots, four JSON records, and `git diff --check`. No local app tests/builds per owner instruction; full Auto Check remains pending. |
-| Delivery | PASS FOR 5.2.6 SLICE | PRs #240/#241 merged to main and Web/API deployments `SUCCESS`; production UAT passed. |
+| Preflight | REVALIDATED | PHDK 2.53.1 coherence 64/64 static. |
+| Capture / Plan | REUSED / EXTENDED | Four ordered commitments retained; CMT-003A/B implementation PIAs and CMT-003C production fixture/cleanup gate are current. |
+| PMO | ACTIVE / PARTIAL | CMT-001 complete for 5.2.6; CMT-002 advances; CMT-003/004 remain open. |
+| Integration | REVALIDATED FOR SOURCE | 5.2.6 review still finds non-expiring/non-atomic browser-command claims and origin-only egress checks; see `40-integration/revalidations/20261017-runtime-contract-5.2.6/`. |
+| UAT Prep | PARTIAL / BLOCKED | Authenticated tenant/device acceptance awaits an approved, audited synthetic fixture provisioning and cleanup path. |
+| UAT | PASS SCOPED | UAT-127 observed public accessibility-tree presence on v5.2.6. First navigation returned Cloudflare 502; a second loaded successfully; cause unknown. No control activated. |
+| SEO / AEO-GEO | NOT AFFECTED | This evidence-only public AX observation changed no product content, routes, metadata or structured data. |
+| Check | PASS FOR DOCUMENTATION SLICE | PHDK coherence 64/64, JSON parse and `git diff --check`; no local application tests/builds. |
+| Delivery | IN PROGRESS | Documentation candidate based on remote `main` `5c939385`; PR/merge and remote readback pending. |
 
-The Auto goal remains **PARTIALLY DELIVERED**: CMT-001 is complete for the current cut; CMT-002 still needs broad accessibility, diagnostics RBAC and audio/device evidence; CMT-003A/B implementation is next; CMT-004 authenticated tenant persistence and cross-tenant proof remain gated by synthetic fixtures. No customer CRM, private target, account or customer data was used. No local application tests or builds were run.
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. UAT-127 establishes presence only; it does not establish screen-reader speech, keyboard behavior, full WCAG conformance, authenticated RBAC, persistence, or audio/device behavior. No login, production write, customer data, CRM, private endpoint or local application suite/build was used.
 
-SIGUIENTE PASO: continue CMT-003A lease/idempotency implementation and CMT-003B tenant DNS/CIDR enforcement, then prepare production acceptance with tenant-owned synthetic endpoints; keep authenticated/device UAT behind authorized fixtures.
+SIGUIENTE PASO: deliver the evidence-only documentation update through the normal PR path; then continue CMT-003A/B and keep authenticated UAT gated on CMT-003C fixtures/cleanup.
 
 ---
 
