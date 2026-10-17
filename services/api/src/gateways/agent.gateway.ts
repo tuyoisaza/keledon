@@ -42,8 +42,7 @@ import {
   newAgentMessageId,
 } from './agent-gateway-contracts';
 
-const gatewayCorsOrigins =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true' ? true : resolveCorsOrigins();
+const gatewayCorsOrigins = resolveCorsOrigins();
 
 @WebSocketGateway({
   cors: {

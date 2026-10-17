@@ -23,6 +23,7 @@ import {
   resolveRuntimeIdentity,
   RuntimeIdentity,
 } from './runtime-identity';
+import { resolveCorsOrigins } from '../config/runtime-tier';
 
 interface DeviceSocketData {
   deviceId?: string;
@@ -41,10 +42,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-const deviceCorsOrigins =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-    ? true
-    : process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
+const deviceCorsOrigins = resolveCorsOrigins();
 
 @WebSocketGateway({
   cors: {

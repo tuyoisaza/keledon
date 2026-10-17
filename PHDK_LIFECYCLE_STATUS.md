@@ -1,3 +1,22 @@
+## Current PHDK Auto — 5.1.82 CORS candidate; whole portfolio partial
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REVALIDATED | PHDK 2.52.2 refreshed from canonical main; coherence 63/63. |
+| Capture / Plan | REUSED | Four confirmed commitments and approved least-privilege/private-origin policies remain current. |
+| PMO / Workstreams | ACTIVE / PARTIAL | Security hardening advances CMT-001/003/004; all four fronts remain open. |
+| Integration Review | COMPLETED FOR CORS SOURCE | API and Cloud use the shared exact-origin resolver for HTTP and Socket.IO. |
+| UAT / UAT Fix | PASS FOR CORS SOURCE SLICE | Exact allowlist middleware regressions pass; full API 43/43, Cloud 20/20. No live app request was made. |
+| SEO / AEO-GEO | NOT AFFECTED | No public routes, metadata, copy or answer content changed. |
+| Check / Remediation | COMPLETED FOR SOURCE SLICE | Builds, targeted lint, PHDK 63/63 and automation hygiene evidence recorded; live provider settings remain read-only. |
+| Delivery | RUNNING | Branch `fix/explicit-cors-allowlist-5.1.82`; source commit `3b060a1bcc58089c6405f254f530c68581883934` is verified. PR creation and delivery remain. |
+
+Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE. UAT portfolio: 90 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. GitHub has no active workflows and main is unprotected; Railway API/Web autodeploy remains connected to main with checkSuites disabled. Latest API deployment is SLEEPING; Web is SUCCESS. No 5.1.82 candidate deployment is claimed.
+
+SIGUIENTE PASO: merge PR #203 under the existing repository controls, then verify remote `main`.
+
+---
+
 ## Current PHDK Auto — 5.1.81 source and Web deployment verified; portfolio partial
 
 PR [#200](https://github.com/tuyoisaza/keledon/pull/200) merged to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all five package/lock roots and Browser renderer read 5.1.81; PHDK coherence is 63/63. Railway API `9264c007-3f37-4879-bf6a-caf7d3b4dc91` and Web `021a70c4-5d15-49be-bd33-e31afd3a92f7` are SUCCESS. Web's old context failed, then a fresh source build using root `/` and `services/web/Dockerfile` found `shared/` and built successfully. Full 5.1.81 Web UAT passes 8/8 plus three standalone admin/theme/AI UATs. Overall Auto remains PARTIALLY DELIVERED, 0/4 commitments closed.

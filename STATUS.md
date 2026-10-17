@@ -1,3 +1,13 @@
+# Current PHDK Auto — 5.1.82 CORS candidate; whole portfolio partial
+
+PHDK 2.52.2 is installed and static coherence is 63/63. API and Cloud now enforce configured exact-origin CORS for HTTP and Socket.IO; the legacy allow-all variable is inert. Candidate package/lock roots and Browser renderer are 5.1.82. API regressions 43/43, Cloud regressions 20/20, both backend builds and targeted lint pass. CORS tests prove an approved origin receives the credentialed grant and an unlisted origin does not.
+
+Branch `fix/explicit-cors-allowlist-5.1.82` contains source commit `3b060a1bcc58089c6405f254f530c68581883934`; PR #203 is open against `main`; main remains 5.1.81. Railway latest API and Web deployments are both from main SHA `734bf0a` (API currently SLEEPING, Web SUCCESS); no 5.1.82 deployment exists. Four confirmed commitments remain active, 0/4 DONE. Portfolio UAT is 90 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL/restart, broad CRUD, native/accessibility and per-customer integration acceptance remain open.
+
+SIGUIENTE PASO: merge PR #203 under the existing repository controls, then verify remote `main`.
+
+---
+
 # Current PHDK Auto — 5.1.77 diagnostics widget candidate; portfolio partial
 
 Candidate branch `fix/diagnostics-widget-visual-spacing-5-1-77` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; source commit is `0da085bddbb7157453ddca3951960209a94c9e9b`. Web/Landing/Browser visible diagnostic tiles are 28×28 with exactly 4px spacing and separate 44×44 hit targets. Web UAT 7/7 plus standalone admin/theme/AI, Browser widget/boundary 4/4, Web diagnostics 19/19, builds/typechecks, SEO 1/1 each and PHDK coherence 61/61 pass. Product roots and Browser renderer are 5.1.77. PR delivery is pending. Whole portfolio remains partial: UAT 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No deployment is claimed.

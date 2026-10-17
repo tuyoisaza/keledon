@@ -13,6 +13,7 @@ import { randomUUID } from 'crypto';
 import { TTSService } from '../tts/tts.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { LocalAuthService } from '../auth-local/auth-local.service';
+import { resolveCorsOrigins } from '../config/runtime-tier';
 import {
   isRuntimeIdentityCurrent,
   ownsRuntimeSession,
@@ -20,10 +21,7 @@ import {
   RuntimeIdentity,
 } from '../gateways/runtime-identity';
 
-const voiceCorsOrigins =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-    ? true
-    : process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
+const voiceCorsOrigins = resolveCorsOrigins();
 
 export interface VoiceSession {
   deviceId: string;

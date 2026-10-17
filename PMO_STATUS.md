@@ -1,3 +1,18 @@
+# Current PMO — 5.1.82 CORS source candidate; portfolio partial
+
+PHDK 2.52.2; coherence 63/63. API and Cloud credentialed HTTP/Socket.IO CORS now use the configured origin list; the legacy allow-all flag cannot bypass it. Full regressions pass API 43/43 and Cloud 20/20; backend builds and targeted lint pass. Candidate branch is `fix/explicit-cors-allowlist-5.1.82`, source commit `3b060a1bcc58089c6405f254f530c68581883934` is committed; PR is pending. Four commitments remain ACTIVE/PARTIAL (0/4 DONE).
+
+| Commitment | Current evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | Candidate roots align at 5.1.82; Auto hygiene Check recorded. | Commit/PR/main readback; continue baseline gates. |
+| CMT-002 widget/diagnostics | Existing Web UAT remains 8/8 at 5.1.81. | Native device/audio and broad accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | API/Cloud CORS allowlist regressions pass; tenant private-origin policy retained. | PostgreSQL/native path and each customer's configured provider/CRM sandbox. |
+| CMT-004 administration/permissions | Existing least-privilege suite remains covered; no auth semantics changed. | DB migration/restart, remaining CRUD and audit/retention acceptance. |
+
+SIGUIENTE PASO: finish the normal PR delivery for source commit `3b060a1bcc58089c6405f254f530c68581883934`; keep all broader gates open.
+
+---
+
 ## Current PMO board — 5.1.81 source/deploy verified; whole Auto partial
 
 | Workstream | State | Evidence / open gate |
@@ -209,7 +224,7 @@ Source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` shipped through PR [#11
 
 ## Previous merged baseline — 5.1.35 (2026-10-14)
 
-Verified `origin/main` is `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. The active candidate `fix/phdk-device-revoke-ui-5-1-36` aligns all app package/lock roots and Browser renderer at 5.1.36. It adds tenant-bound, company-required device registration and confirmed manager revoke UI. API build/regression pass 35/35; Web typecheck/build and synthetic UAT 2/2; focused ESLint, locale parity, matrix 35 models/168 rows, and coherence 52/52 pass. PR delivery remains pending.
+Verified `origin/main` is `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. The active candidate `fix/phdk-device-revoke-ui-5-1-36` aligns all app package/lock roots and Browser renderer at 5.1.36. It adds tenant-bound, company-required device registration and confirmed manager revoke UI. API build/regression pass 35/35; Web typecheck/build and synthetic UAT 2/2; focused ESLint, locale parity, matrix 35 models/168 rows, and coherence 52/52 pass. PR #203 is open against `main`; merge and remote readback remain.
 
 | WS | Candidate state | Evidence / next gate |
 |---|---|---|

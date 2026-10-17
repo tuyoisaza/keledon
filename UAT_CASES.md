@@ -1,3 +1,9 @@
+## Candidate 5.1.82 — UAT-092 credentialed CORS uses the tenant-configured origin set
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-092 | CMT-001/003/004 / browser client | On source commit `3b060a1bcc58089c6405f254f530c68581883934`, run the API and Cloud isolated middleware regressions with an explicit web/extension origin list and the legacy allow-all flag set. Exercise approved and unrelated synthetic origins. | Only an explicitly configured origin receives the credentialed CORS grant. The legacy flag cannot widen HTTP or Socket.IO origins. | API and Cloud `50-cors-allowlist.test.js`; source inspection. No listening socket or external network. | PASS in API and Cloud. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-092-cors-allowlist-api-5.1.82.json` and `.../uat-092-cors-allowlist-cloud-5.1.82.json`. No provider, DB, or customer integration used. |
+
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.80 — UAT-091 integration telemetry is unknown until measured

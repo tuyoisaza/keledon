@@ -22,7 +22,8 @@ gcloud run services update keledon-cloud --region us-central1 --new-revision
 ```
 
 ## ⚙️ Configuration Applied
-- **CORS_ORIGINS**: chrome-extension://*,https://keledon-landing-demo-fghij-67890.a.run.app
+- **KELEDON_CLOUD_CORS_ORIGINS**: https://keledon-landing-demo-fghij-67890.a.run.app
+  - Add a browser extension only by its exact published `chrome-extension://<id>` origin. Never use `*` or `KELEDON_ALLOW_ALL_CORS`.
 - **NODE_ENV**: production
 - **PORT**: 8080
 - **Supabase**: https://isoyzcvjoevyphnaznkl.supabase.co

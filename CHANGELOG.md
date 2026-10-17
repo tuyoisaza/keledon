@@ -1,3 +1,15 @@
+## v5.1.82 — 2026-10-17
+
+### Changed
+- Enforce the configured exact-origin allowlist for credentialed HTTP and Socket.IO CORS in API and Cloud; the legacy allow-all flag no longer widens access.
+- Replace wildcard CORS defaults in the local container launcher and deployment examples with explicit web origins.
+
+### Verification
+- API and Cloud CORS allowlist regressions verify an approved origin is reflected and an unlisted origin receives no CORS grant, even when the legacy flag is set.
+
+### Migration / limitations
+- Existing deployment variables were not changed. Browser extensions that connect directly must use their exact published extension origin in the configured allowlist.
+
 ## v5.1.81 — keep flow editor data aligned with the selected tenant
 
 - Resolve each flow refresh against the currently selected company, including refreshes resumed after an in-flight write.

@@ -82,9 +82,8 @@ async function bootstrap() {
     });
 
     const corsOrigins = resolveCorsOrigins(runtimeTier);
-    const allowAllCors = process.env.KELEDON_ALLOW_ALL_CORS === 'true';
     app.enableCors({
-      origin: allowAllCors ? true : corsOrigins,
+      origin: corsOrigins,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true,
       exposedHeaders: ['x-correlation-id', 'x-trace-id'],
@@ -123,7 +122,7 @@ async function bootstrap() {
       `🌐 Cloud Run service: ${process.env.K_SERVICE || 'not-detected'}`,
     );
     console.log(
-      `🌐 CORS enabled for: ${allowAllCors ? 'ALL ORIGINS (MVP)' : corsOrigins.join(', ')}`,
+      `🌐 CORS enabled for configured origins (${corsOrigins.length})`,
     );
     console.log(
       '⚙️ Managed runtime compatibility: stateless process; no local persistence assumptions',

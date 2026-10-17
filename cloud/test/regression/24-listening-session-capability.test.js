@@ -69,6 +69,8 @@ function loadGateway(logs) {
         ? new Proxy({}, { get: () => (..._args) => () => undefined })
         : name === 'socket.io'
           ? {}
+          : name === '../config/runtime-tier'
+            ? { resolveCorsOrigins: () => ['http://localhost:3000'] }
           : require(name),
   });
   return module.exports.ListeningSessionGateway;

@@ -24,11 +24,9 @@ import { EscalationService } from '../services/escalation.service';
 import { TTSService } from '../tts/tts.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DeviceEscalationHandlers } from './device-escalation.handlers';
+import { resolveCorsOrigins } from '../config/runtime-tier';
 
-const deviceCorsOrigins =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-    ? true
-    : process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
+const deviceCorsOrigins = resolveCorsOrigins();
 
 @WebSocketGateway({
   cors: {

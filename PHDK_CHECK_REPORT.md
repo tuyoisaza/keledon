@@ -1,3 +1,25 @@
+# Current Auto Check — 5.1.82 CORS source and automation slice
+
+Audit target: `fix/explicit-cors-allowlist-5.1.82`; PHDK 2.52.2 (canonical and installed); static coherence 63/63. Date: 2026-10-17. This is the final source check for the CORS security slice and automation hygiene evidence; it does not close the project's remaining Auto acceptance gates.
+
+## Result
+
+- CORS source finding is remediated: configured exact origins are centralized across API/Cloud gateways and HTTP middleware; legacy allow-all bypass removed. API/Cloud middleware tests pass.
+- Local automation collector: no findings; remote plane is separate.
+- GitHub read-only metadata: 0 enabled workflows currently listed; last 10 historic runs end with failed Version Bump run 36600654277 (2026-09-29) titled “Disable automated bot: remove .github/workflows/release.yml”; other recent listed runs are older completed successes. No checked-in workflow files are present. `main` branch protection endpoint returns 404 (unprotected).
+- Railway read-only metadata: KELEDON production has API and Web connected to `tuyoisaza/keledon@main`, with no staged changes, sleep enabled, no cron schedule, and `checkSuites=false`. Latest deployment IDs: API `a88a4639-419e-410b-8b45-72b3b1a4bd7b` is SLEEPING; Web `608a33c7-f06d-4552-8993-b6d56450ce0d` is SUCCESS. This is deployment/configuration metadata only; no service request, UI probe, database connection or runtime health was tested. No provider settings were changed.
+- `PHDK_AUTOMATION_HYGIENE.md` local static audit returns no findings; remote controls are observed above. Full billing/usage trend and third-party app/webhook inventory were not established and remain UNVERIFIED.
+
+## Validation
+
+API regression 43/43; Cloud regression 20/20; API and Cloud builds pass; focused ESLint passes; PHDK coherence 63/63. All five application package/lock roots and Browser renderer are 5.1.82.
+
+## Remaining scope
+
+Whole Auto remains PARTIALLY DELIVERED (0/4 confirmed commitments DONE). UAT is 90 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS. PostgreSQL persistence/restart, remaining CRUD, native/audio, broad accessibility/localization, deployed SEO/AEO and customer-configured integration acceptance remain open. PR #203 is open and not merged; source commit `3b060a1bcc58089c6405f254f530c68581883934` is not deployed.
+
+---
+
 # PHDK Check report — 5.1.81 source and deployment verified
 
 PR #200 merged at remote `main` `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all five roots and Browser renderer read 5.1.81; PHDK coherence passes 63/63. Railway API `9264c007-3f37-4879-bf6a-caf7d3b4dc91` and Web `021a70c4-5d15-49be-bd33-e31afd3a92f7` report SUCCESS. Web's old-context builds failed; a fresh source build using root `/` and `services/web/Dockerfile` copied `shared/` and built successfully. Candidate UAT is green (Web 8/8, admin/theme/AI pass); overall Check still has portfolio gaps and Auto remains PARTIALLY DELIVERED.

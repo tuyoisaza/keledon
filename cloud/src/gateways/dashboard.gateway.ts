@@ -17,10 +17,13 @@ import { authorizeDashboardSocket } from './dashboard.gateway.auth';
 
 export type { DashboardSocketData } from './dashboard.gateway.types';
 import type { DashboardSocketData } from './dashboard.gateway.types';
+import { resolveCorsOrigins } from '../config/runtime-tier';
+
+const dashboardCorsOrigins = resolveCorsOrigins();
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: dashboardCorsOrigins,
     methods: ['GET', 'POST'],
     credentials: true,
   },

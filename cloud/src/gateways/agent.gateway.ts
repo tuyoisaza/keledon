@@ -49,8 +49,7 @@ import {
   isValidAgentEvent,
 } from './agent-gateway.utils';
 
-const gatewayCorsOrigins =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true' ? true : resolveCorsOrigins();
+const gatewayCorsOrigins = resolveCorsOrigins();
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

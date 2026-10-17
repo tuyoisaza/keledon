@@ -15,6 +15,9 @@ import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
 import { FlowExecutionService } from '../services/flow-execution.service';
+import { resolveCorsOrigins } from '../config/runtime-tier';
+
+const dashboardCorsOrigins = resolveCorsOrigins();
 
 export interface DashboardSocketData {
   type: string;
@@ -37,7 +40,7 @@ export interface DashboardSocketData {
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: dashboardCorsOrigins,
     methods: ['GET', 'POST'],
     credentials: true,
   },
