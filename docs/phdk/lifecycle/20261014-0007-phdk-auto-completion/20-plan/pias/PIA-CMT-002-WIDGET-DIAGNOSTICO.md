@@ -53,3 +53,5 @@ No guardar transcripción, grabación, IDs de clientes, token/cookie, campos de 
 ## Production readback — 2026-10-17
 
 UAT-122 confirms with fresh HTTPS requests that `/` and `/login` serve the same current 5.2.4 content-hashed bundle, matching Railway SUCCESS for current main. The older `v5.2.3` visible in an already-open browser page was stale page state, not the current served asset. This closes only a CMT-001/002 route-version reconciliation check. It does not add browser interaction, accessibility, diagnostic-RBAC, authenticated, or audio acceptance. See `50-uat/evidence/uat-122-production-served-asset-version-2026-10-17.json`.
+
+UAT-123 on the current production homepage confirms basic accessibility-tree presence at v5.2.4: demo disclosure, named public actions/selectors, main landmark, headings and navigation. This adds no keyboard, screen-reader, contrast, diagnostic-RBAC or audio acceptance. See `50-uat/evidence/uat-123-production-public-accessibility-tree-2026-10-17.json`.
