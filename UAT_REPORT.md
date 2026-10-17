@@ -2,9 +2,9 @@
 
 ## Current candidate 5.1.78 — managed Cloud AI parity
 
-UAT-088 candidate scope is the Cloud managed-AI runtime and matching source contracts. Cloud managed runtime 6/6, Cloud cross-backend regression 19/19, API managed-AI contract 9/9, API regression 42/42 and focused RolesGuard 3/3 pass. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-cloud-managed-ai-5.1.78.md.
+UAT-088 candidate scope is the Cloud managed-AI runtime and matching source contracts. Cloud managed runtime 6/6, Cloud cross-backend regression 19/19 and API managed-AI contract 9/9 pass. The 5.1.78 continuation also hardens current-database actor resolution and replaces the Google OAuth access-token query with a one-use exchange code; OAuth abuse regression, API HTTP wiring and local browser exchange UAT pass. See `UAT_AUTH_PLAN.md` and `UAT_ACCESS_REPORT.md` for auth scope and limits. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-cloud-managed-ai-5.1.78.md.
 
-Navegador UAT: permiso de fase ACTIVO; acceso real NO NECESARIO para esta superficie backend-only. No browser URL was selected or visited. Spend is NO_NEW_SPEND; no provider, database, customer call or CRM endpoint was used. The API full Jest test has one remaining database-dependent e2e case that needs a disposable PostgreSQL target; migrations/restart are not accepted. The existing portfolio tally remains 85 PASS, 0 BLOCKED, 1 MANUAL with 396 BLOCKED CRUD rows; candidate UAT does not close these global gates.
+Navegador UAT: permiso de fase ACTIVO; Web local 8/8 más admin-settings, theme-templates y AI-admin pasan. El callback OAuth usa solo código/respuestas sintéticos, APIs interceptadas y tráfico externo bloqueado; no hubo login real. API regression 42/42 suites y los builds API/Web pasan. No se usó proveedor, base de datos, llamada de cliente ni CRM. El e2e que requiere PostgreSQL y la migración/reinicio siguen bloqueados por falta de un destino desechable. El inventario global permanece en 85 PASS, 0 BLOCKED, 1 MANUAL y 396 filas CRUD bloqueadas; este candidato no cierra esas puertas.
 
 ---
 

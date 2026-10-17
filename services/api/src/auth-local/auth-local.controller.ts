@@ -138,19 +138,23 @@ export class LocalAuthController {
         name: googleUser.name,
       });
 
-      const token = this.authService.generateToken(
+      const exchangeCode = await this.authService.issueGoogleExchangeCode(
         user.id,
-        user.email,
-        user.role,
       );
 
-      return res.redirect(
-        `/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`,
-      );
+      return res.redirect(303, `/login#oauth_code=${exchangeCode}`);
     } catch (error) {
       console.error('[Auth] Google login failed:', error?.name || 'Error');
       return res.status(500).json({ message: 'Google login failed' });
     }
+  }
+
+  @Public()
+  @Post('google/exchange')
+  @ApiOperation({ summary: 'Exchange a one-time Google sign-in code' })
+  async exchangeGoogleCode(@Body() body: { code?: string }) {
+    const result = await this.authService.exchangeGoogleCode(body?.code || '');
+    return { success: true, ...result };
   }
 
   @Public()

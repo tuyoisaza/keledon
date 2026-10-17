@@ -16,6 +16,7 @@
   "auth": {
     "login": "Iniciar Sesión",
     "loginWithGoogle": "Continuar con Google",
+    "googleLoginFailed": "No se pudo completar el inicio de sesión con Google. Inténtalo de nuevo.",
     "logout": "Cerrar Sesión",
     "welcome": "Bienvenido",
     "welcomeBack": "Bienvenido de nuevo",

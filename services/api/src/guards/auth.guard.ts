@@ -151,10 +151,19 @@ export class AuthGuard implements CanActivate {
         return this.validateUatTestProfileToken(payload);
       }
 
+      // Resolve the current account on every request so deleted users and
+      // stale or forged role/email claims never remain authoritative until expiry.
+      if (!this.prisma) return null;
+      const actor = await this.prisma.user.findUnique({
+        where: { id: payload.userId },
+        select: { id: true, email: true, role: true },
+      });
+      if (!actor) return null;
+
       return {
-        userId: payload.userId,
-        email: payload.email,
-        role: payload.role,
+        userId: actor.id,
+        email: actor.email,
+        role: actor.role,
         expiresAt: payload.expiresAt,
       };
     } catch {

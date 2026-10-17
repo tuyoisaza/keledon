@@ -16,6 +16,7 @@
   "auth": {
     "login": "Login",
     "loginWithGoogle": "Continue with Google",
+    "googleLoginFailed": "Google sign-in could not be completed. Please try again.",
     "logout": "Logout",
     "welcome": "Welcome",
     "welcomeBack": "Welcome back",

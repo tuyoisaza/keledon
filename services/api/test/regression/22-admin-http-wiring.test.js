@@ -544,7 +544,7 @@ async function main() {
     await request(http)
       .get('/api/flows/flow-a')
       .set('Authorization', token('deleted-actor'))
-      .expect(403);
+      .expect(401);
     await request(http)
       .get('/api/tts-config')
       .set('Authorization', token('member'))

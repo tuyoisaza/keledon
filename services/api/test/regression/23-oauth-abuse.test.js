@@ -10,6 +10,7 @@ class HttpError extends Error {
     this.status = status;
   }
 }
+class UnauthorizedException extends HttpError {}
 const decorator = () => () => {};
 function load(file, adapters = {}) {
   const module = { exports: {} };
@@ -67,6 +68,7 @@ const { LocalAuthController } = load('auth-local/auth-local.controller.ts', {
   './oauth-state': challenge,
   '../guards/auth-attempt.guard': { AuthAttemptGuard },
   '../guards/public.decorator': { Public: decorator },
+  '@nestjs/common': { UnauthorizedException },
 });
 async function main() {
   process.env.KELEDON_AUTH_SECRET = 'isolated-oauth-secret';
@@ -120,7 +122,7 @@ async function main() {
   );
   let verified = 0,
     status,
-    redirected,
+    redirectArgs,
     cleared;
   const controller = new LocalAuthController(
     {
@@ -131,6 +133,14 @@ async function main() {
         name: 'Fixture',
       }),
       generateToken: () => 'isolated-user-token',
+      issueGoogleExchangeCode: async () => 'isolated-one-time-code',
+      exchangeGoogleCode: async (code) => {
+        assert.equal(code, 'isolated-one-time-code');
+        return {
+          token: 'isolated-user-token',
+          user: { id: 'u-a', email: 'fixture@example.invalid', role: 'user' },
+        };
+      },
     },
     {
       verifyCode: async (_code, nonce) => {
@@ -150,8 +160,8 @@ async function main() {
       return res;
     },
     json: (value) => value,
-    redirect: (value) => {
-      redirected = value;
+    redirect: (...args) => {
+      redirectArgs = args;
     },
   };
   await controller.googleCallback(
@@ -171,7 +181,48 @@ async function main() {
   assert.equal(verified, 1);
   assert.equal(expectedNonce, issued.nonce);
   assert.equal(cleared, challenge.oauthCookie.name);
-  assert.equal(redirected.startsWith('/login?token='), true);
+  assert.deepEqual(redirectArgs, [303, '/login#oauth_code=isolated-one-time-code']);
+
+  const { LocalAuthService } = load('auth-local/auth-local.service.ts', {
+    bcrypt: {},
+    '@nestjs/common': { UnauthorizedException },
+  });
+  const rows = [];
+  let rowId = 0;
+  const auth = new LocalAuthService({
+    auditLog: {
+      create: async ({ data }) => rows.push({ ...data, id: `code-${++rowId}` }),
+      findFirst: async ({ where }) => rows.find((row) =>
+        row.entity === where.entity && row.entityId === where.entityId && row.action === where.action,
+      ) || null,
+      updateMany: async ({ where, data }) => {
+        const row = rows.find((item) => item.id === where.id && item.action === where.action);
+        if (!row) return { count: 0 };
+        Object.assign(row, data);
+        return { count: 1 };
+      },
+    },
+    user: {
+      findUnique: async ({ where }) => where.id === 'u-a'
+        ? { id: 'u-a', email: 'fixture@example.invalid', name: 'Fixture', role: 'user', companyId: 'c-a', teamId: 't-a' }
+        : null,
+    },
+  });
+  const exchangeCode = await auth.issueGoogleExchangeCode('u-a');
+  assert.match(exchangeCode, /^[A-Za-z0-9_-]{43}$/);
+  assert.equal(rows[0].entityId.includes(exchangeCode), false);
+  const exchanges = await Promise.allSettled([
+    auth.exchangeGoogleCode(exchangeCode),
+    auth.exchangeGoogleCode(exchangeCode),
+  ]);
+  assert.equal(exchanges.filter((result) => result.status === 'fulfilled').length, 1);
+  assert.equal(exchanges.filter((result) => result.status === 'rejected').length, 1);
+  await assert.rejects(() => auth.exchangeGoogleCode(exchangeCode));
+  await assert.rejects(() => auth.exchangeGoogleCode('invalid'));
+
+  const expiredCode = await auth.issueGoogleExchangeCode('u-a');
+  rows[1].changes = JSON.stringify({ expiresAt: Date.now() - 1 });
+  await assert.rejects(() => auth.exchangeGoogleCode(expiredCode));
   const throttle = new AuthAttemptGuard();
   const context = (ip) => ({
     getHandler: () => ({ name: 'pairDevice' }),
@@ -187,7 +238,7 @@ async function main() {
   for (let i = 0; i < 2100; i++) throttle.canActivate(context('fixture-' + i));
   assert.equal(throttle.attempts.size <= 2048, true);
   console.log(
-    'PASS OAuth/abuse: callback browser binding/state/signature/expiry/nonce/verified-email negatives, safe valid callback, wired guard finite per-IP limit and bounded memory. No OAuth/provider request executed.',
+    'PASS OAuth/abuse: callback state/nonce/verified-email checks, no URL bearer token, hashed one-use code expiry/concurrent replay, and bounded per-IP abuse guard. No OAuth/provider request executed.',
   );
 }
 main().catch((error) => {
