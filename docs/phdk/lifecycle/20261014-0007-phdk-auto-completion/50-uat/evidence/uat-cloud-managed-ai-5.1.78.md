@@ -1,7 +1,7 @@
 # UAT evidence — managed Cloud AI parity, 5.1.78
 
 - Run: `20261014-0007-phdk-auto-completion`
-- Candidate: branch `fix/phdk-auto-continuation-5-1-78`, based on `383fd84f2fd1c7218882dc840db7e5be1957246a`; working-tree candidate is not yet committed.
+- Candidate: source commit `db4b4657133bafb75b4313ab378759c0f9eae1b5` on branch `fix/phdk-auto-continuation-5-1-78`, based on `383fd84f2fd1c7218882dc840db7e5be1957246a`.
 - Stage: UAT / UAT Fix, local source and synthetic fixtures.
 - Browser permission: `ACTIVE_UAT_EXCEPTION`; browser capability: `NOT_NEEDED` for this candidate because it changes only backend runtime, schema and server tests and has no browser-facing journey. No browser session or URL was used.
 - Spend: `NO_NEW_SPEND`.

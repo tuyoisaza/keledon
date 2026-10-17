@@ -1,6 +1,6 @@
 ## Current PHDK Auto — 5.1.78 managed Cloud AI parity; portfolio partial (2026-10-17)
 
-Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch fix/phdk-auto-continuation-5-1-78, based on fetched and verified origin/main 383fd84f2fd1c7218882dc840db7e5be1957246a (5.1.77). PHDK v2.52.2 is installed and static coherence passes 63/63. All five package/lock roots and Browser renderer are 5.1.78. The candidate adds managed AI runtime parity to the legacy Cloud source, validates tenant-bound workflow inputs/outputs and records safe usage; API test expectation alignment also passes focused tests. No candidate commit/PR exists yet.
+Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch fix/phdk-auto-continuation-5-1-78, based on fetched and verified origin/main 383fd84f2fd1c7218882dc840db7e5be1957246a (5.1.77). PHDK v2.52.2 is installed and static coherence passes 63/63. All five package/lock roots and Browser renderer are 5.1.78. The source candidate is committed at db4b4657133bafb75b4313ab378759c0f9eae1b5; a lifecycle-report formatting follow-up is committed at 14a81c0669a824ff998669c527542eb9baa63e1f. It adds managed AI runtime parity to the legacy Cloud source, validates tenant-bound workflow inputs/outputs and records safe usage; API test expectation alignment also passes focused tests. PR creation and remote branch push are pending.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -14,7 +14,7 @@ Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch fix/
 | AEO/GEO | REUSED / NOT AFFECTED | No public claim or answer content changes. |
 | Check | ALIGNMENT INCOMPLETE / EXTERNAL-MANUAL | Source checks pass, but Railway Web auto-deploy is failing because its live root directory omits the shared theme tokens. Source repair is prepared; provider root/config path, successful Web deployment, restart policy and billing remain external/unverified. API full Jest also needs disposable PostgreSQL. |
 | Remediation | COMPLETED FOR OBSERVED SOURCE FINDINGS | Managed Cloud parity implemented; stale API guard expectation fixed. DB migration/restart and external acceptance remain open. |
-| Delivery | PENDING | Candidate is uncommitted. Complete Check, commit, push, open/review/merge normal PR, verify remote main SHA/tree. |
+| Delivery | PENDING | Candidate is committed locally. Push branch, open/review normal PR, resolve Railway external configuration, merge when deployment path is ready, verify remote main SHA/tree. |
 
 Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed.
 

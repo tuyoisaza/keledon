@@ -1,6 +1,6 @@
 # PHDK Check — 5.1.78 candidate
 
-Run `20261014-0007-phdk-auto-completion`; candidate branch `fix/phdk-auto-continuation-5-1-78`, fetched base `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a`; product version 5.1.78; installed PHDK 2.52.2, coherence 63/63.
+Run `20261014-0007-phdk-auto-completion`; source candidate `db4b4657133bafb75b4313ab378759c0f9eae1b5` on branch `fix/phdk-auto-continuation-5-1-78`, fetched base `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a`; product version 5.1.78; installed PHDK 2.52.2, coherence 63/63.
 
 ## Checks passed
 
