@@ -1,8 +1,8 @@
-## Current PHDK Auto candidate — 5.1.75 accessible, localized Team Settings; portfolio partial
+## Current PHDK Auto - 5.1.75 delivered; 5.1.76 handoff correction pending; portfolio partial
 
-Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch `fix/web-team-settings-accessibility-5-1-75`, based on verified `main` `85d83a130da506607972c868f3a4dd83d85b018b`. The previous 5.1.74 source slice is delivered in PR #192; this 5.1.75 candidate adds associated labels, announced loading and save outcomes, visible keyboard focus, 44px controls, three-locale Team Settings, and a scoped WCAG contrast sample. Web typecheck/build pass, UAT 7/7 suites, focused admin/theme/AI UAT pass, Team Settings accessibility UAT 53 assertions, and focused ESLint passes. All five package/lock roots and Browser renderer are 5.1.75; PHDK 2.51.5 coherence is 61/61. Candidate commit and PR delivery are pending. CMT-002 remains partial; CMT-003/004 remain partial. No screen-reader session, production database, customer integration, or deployment was used.
+Date: 2026-10-17. Run: `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered 5.1.75 at verified remote main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. Team Settings labels/help, keyboard focus, 44px controls, announced outcomes and three-locale copy passed Web typecheck/build, UAT 7/7, 53 focused assertions and ESLint. Candidate 5.1.76 restores historical Check handoff content; PR and remote verification are pending. PHDK 2.51.5 coherence is 61/61. CMT-002 through CMT-004 and whole Auto remain partial. No screen-reader session, database, customer integration or deployment was used.
 
-SIGUIENTE PASO: versioned commit and normal PR, then record delivery evidence; keep the wider four-front goal partial.
+SIGUIENTE PASO: deliver the 5.1.76 handoff correction by PR and verify remote main; keep the four-front goal partial.
 
 ---
 ## Last delivered source audit — 5.1.74; portfolio partial

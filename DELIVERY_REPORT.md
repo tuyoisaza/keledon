@@ -1,3 +1,15 @@
+# Delivery report — PHDK Auto candidate 5.1.75 and corrective record 5.1.76
+
+PR [#194](https://github.com/tuyoisaza/keledon/pull/194) squash-merged at remote `main` `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`, with product version 5.1.75 and no hosted checks or required branch review (main was unprotected). It delivers Team Settings accessible names/help, keyboard focus, 44px controls, live save/loading feedback and en/es/pt copy, plus scoped UAT evidence. Web typecheck/build and UAT 7/7, focused settings/theme/AI-admin UAT, 53 Team Settings assertions, Web/Landing SEO 1/1 each, focused ESLint and PHDK coherence 61/61 passed. UAT used synthetic APIs; no screen reader, database, customer integration, or deployment was tested.
+
+During PR #194 integration, `70-check/HANDOFF.md` was mistakenly replaced instead of prepended. The present 5.1.76 corrective candidate restores all 32,810 bytes of its parent revision and prepends the 5.1.75 Check handoff, preserving the full older history. All five app package/lock roots and Browser renderer are aligned at 5.1.76. Corrective branch: `fix/restore-check-handoff-5-1-76`; remote delivery is pending.
+
+Whole Auto remains **PARTIALLY DELIVERED**. Existing database/migration, CRUD, broad accessibility/localization, native device/audio, customer-specific call/CRM, legacy Cloud AI and deployed SEO/AEO gates remain open. No release tag or production deployment is claimed.
+
+SIGUIENTE PASO: merge the corrective 5.1.76 PR and verify remote main; then continue the remaining authorized Auto acceptance fronts.
+
+---
+
 ## Current delivery — 5.1.73 orphan-session safeguard merged; Auto remains partial
 
 PR [#180](https://github.com/tuyoisaza/keledon/pull/180) squash-merged source commit `cee3cc10a5568766001fbdbeccfa9b77fa5b4181` to verified remote `main` `2bb4a7dc84075d4b43be43e88aa19334c21d0f2c`, tree `f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9`, matching the tested candidate tree. All five application package/lock roots and Browser renderer read 5.1.73. API regressions pass 40/40, Cloud 18/18, both TypeScript builds pass, and PHDK v2.51.2 coherence passes 56/56. The completion evidence is in [PHDK_DELIVERY_EVIDENCE.json](PHDK_DELIVERY_EVIDENCE.json) and the dated copy `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.73-post-merge-180.json`.

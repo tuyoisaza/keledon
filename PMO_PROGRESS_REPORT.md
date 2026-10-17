@@ -1,10 +1,10 @@
-## Current PMO progress — 5.1.75 Team Settings accessibility candidate; portfolio partial (2026-10-17)
+## Current PMO progress - 5.1.75 delivered; 5.1.76 handoff correction pending (2026-10-17)
 
-The 5.1.75 candidate builds on PR #192 and improves Team Settings accessibility and localization: associated labels, 44px targets, visible keyboard focus, live success/error feedback, and English/Spanish/Portuguese copy. Production-built Web UAT passes 7/7 suites; focused Team Settings UAT passes 53 assertions including five-field WCAG AA contrast in the light theme. API 42/42, Cloud 18/18, PHDK coherence 61/61 and prior flow/persistence evidence remain valid. Portfolio: 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate 5.1.75 remains uncommitted; no new PR or deployment is claimed.
+PR #194 delivered the 5.1.75 accessibility/localization update at `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. Web UAT passes 7/7; Team Settings passes 53 scoped assertions. API 42/42, Cloud 18/18, PHDK coherence 61/61 and prior flow/persistence evidence remain valid. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate 5.1.76 restores Check handoff history; no production deployment is claimed.
 
 | Workstream | Progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | Prior 5.1.74 source delivered in PR #192; candidate 5.1.75 locally verified. | Versioned commit, normal PR and remote readback for 5.1.75. |
+| CMT-001 baseline/version/PR | PR #194 delivered 5.1.75; 5.1.76 corrective handoff record is versioned. | Merge corrective PR and verify remote main/version. |
 | CMT-002 widget/diagnostics | Team Settings accessibility and en/es/pt UAT added in 5.1.75; full Web suite 7/7. | Native device/audio, screen-reader, full contrast/themes/routes. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant flow configuration, URL allowlists and managed API AI input validation covered in source tests. | Cloud legacy AI path, integrated runtime, per-customer stack acceptance. |
 | CMT-004 administration/permissions | API/Cloud audit events preserve event-time tenant; nine Web rows now pair lifecycle/configuration UAT with persisted API evidence. | DB migration/restart acceptance, 396 remaining blocked CRUD rows, other denial paths and audit export/retention. |
