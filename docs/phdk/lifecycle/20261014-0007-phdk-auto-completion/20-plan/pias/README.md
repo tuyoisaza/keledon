@@ -1,5 +1,9 @@
 # PIAs de continuación — PHDK Auto / KELEDON 5.2.1+
 
+## Extensión 5.2.8 — producción y HTML SEO inicial (2026-10-17)
+
+La lectura anónima del Web de producción encontró `#root` vacío en el HTML inicial; el producto solo ofrecía H1 y explicación después de ejecutar JavaScript. [PIA-AUTO-SEO-001](PIA-AUTO-SEO-001-WEB-HTML-INICIAL.md) cubre el resumen de contenido ya aprobado, la sustitución por React y la aceptación anónima posterior al despliegue. El cambio afecta el runtime Web, por eso coordina el patch a 5.2.8 en los cinco paquetes versionados y el renderer. Se respetan las pruebas exclusivamente en producción; no se permiten suites ni builds locales de aplicación.
+
 ## Estado vigente — KELEDON 5.2.7 (2026-10-17)
 
 Baseline remoto `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON 5.2.7; PR #247 integrado; PHDK 2.53.1 coherence 64/64; Railway Web/API `SUCCESS`. El usuario mantiene las pruebas de aplicación exclusivamente en producción y prohíbe suites/builds locales. CMT-001 completo para el corte 5.2.7; CMT-002 parcial: UAT-130 pasa estado de copia Web y fuente Landing, pero runtime Landing está bloqueado al no haber destino de producción verificado; CMT-003A/B siguen pendientes; CMT-003C y CMT-004 autenticado bloqueados por falta de provisioning/cleanup sintético compatible con PHDK.

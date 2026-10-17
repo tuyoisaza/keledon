@@ -1,3 +1,11 @@
+## Candidate 5.2.8 — Web initial HTML fallback
+
+Production GET proved the deployed Web response had an empty React root. `services/web/index.html` now contains the same previously approved semantic overview as the standalone Landing shell, with CSS limited to the `no-js` state. `services/web/src/main.tsx` removes that state before mounting React, so the live app replaces the static overview. Package/lock metadata and the Browser diagnostic renderer are coordinated at v5.2.8. No application test/build was run locally. Acceptance is **PENDING production deployment**: verify the anonymous homepage response contains the H1/copy and the production UI replaces the fallback cleanly. No crawling/indexation/ranking claim is made.
+
+Separate findings retained: unknown SPA paths return 200 with noindex (soft-404); raw private-route HTML contains root index/canonical metadata until client route metadata runs, while deployed response header is noindex. Those require route-aware server HTML behavior and a distinct follow-up, not scope expansion in this repair.
+
+---
+
 # SEO remediation report — run 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.2.7 — no SEO remediation required (2026-10-17)

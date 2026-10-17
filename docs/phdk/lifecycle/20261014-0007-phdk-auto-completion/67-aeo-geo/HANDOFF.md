@@ -1,3 +1,11 @@
+## Candidate 5.2.8 — public answer content in initial Web HTML
+
+PIA-AUTO-SEO-001 moves the existing product overview into the deployed Web's initial HTML. Its claims already match the prior source review: Cloud policy decisions, Browser execution and client-configured call/CRM interfaces. No provider, outcome, author, market, citation or visibility claim was added. Reuse the existing 15-control answer audit after production acceptance; HTML delivery does not prove citations, crawler selection or answer-engine visibility. Those remain unmeasured. Do not run app tests/builds locally.
+
+SIGUIENTE PASO: after production verifies initial HTML and React replacement, reconcile this source answer review and external visibility limits in the AEO/GEO checklist.
+
+---
+
 ## Candidate 5.2.7 — source answer review reused (2026-10-17)
 
 PR #247 did not alter public answer content; reuse the existing 15-control source review. No answer engines, crawlers or paid queries were used. Provenance, market/language decisions, citations and deployed visibility remain open/unmeasured. The standalone Landing runtime is not deployed by the verified Railway Web service. Overall AEO/GEO remains PARTIAL.

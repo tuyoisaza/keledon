@@ -1,3 +1,11 @@
+## v5.2.8 — 2026-10-17
+
+### Fixed
+- Include the existing, factual product overview in the deployed Web document's initial HTML so the public home has a semantic H1 and useful content before JavaScript runs.
+
+### Verification
+- Do not run application tests or builds locally. Accept the initial response and React handoff on the production site under `PIA-AUTO-SEO-001`.
+
 ## v5.2.7 — 2026-10-17
 
 ### Fixed

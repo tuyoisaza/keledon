@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/keledon.svg" />
@@ -8,10 +8,44 @@
     <meta name="description" content="KELEDON coordinates cloud-governed voice assistance and deterministic browser workflows, using each client's configured call and CRM interfaces." />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://keledon.tuyoisaza.com/" />
+    <style>
+      .no-js body { margin: 0; background: #0b1020; color: #f8fafc; font-family: system-ui, sans-serif; }
+      .no-js #root { min-height: 100vh; }
+      .no-js .seo-fallback { box-sizing: border-box; max-width: 76rem; margin: 0 auto; padding: clamp(3rem, 9vw, 7rem) 1.5rem; }
+      .no-js .seo-fallback .eyebrow { color: #5eead4; font-size: .875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+      .no-js .seo-fallback h1 { max-width: 58rem; margin: 1rem 0; font-size: clamp(2.5rem, 7vw, 5rem); line-height: 1.05; }
+      .no-js .seo-fallback .lead { max-width: 48rem; color: #cbd5e1; font-size: clamp(1.125rem, 2.5vw, 1.5rem); line-height: 1.6; }
+      .no-js .seo-fallback .disclaimer { color: #94a3b8; font-size: .875rem; }
+      .no-js .seo-fallback .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; margin-top: 3rem; }
+      .no-js .seo-fallback article { padding: 1.25rem; border: 1px solid #334155; border-radius: .75rem; background: #111827; }
+      .no-js .seo-fallback h2 { margin: 0 0 .5rem; font-size: 1.125rem; }
+      .no-js .seo-fallback article p { margin: 0; color: #cbd5e1; line-height: 1.6; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <noscript>KELEDON is a cloud-governed contact center runtime. Enable JavaScript to use its application. Call and CRM interfaces are configured per client.</noscript>
+    <div id="root">
+      <main class="seo-fallback" aria-labelledby="landing-title">
+        <p class="eyebrow">Cloud-governed contact center runtime</p>
+        <h1 id="landing-title">The Cloud Decides. The Agent Executes.</h1>
+        <p class="lead">KELEDON coordinates voice, cloud decisions and browser execution through workflows configured for each client.</p>
+        <p class="disclaimer">Illustrative interface; no live session or service metrics.</p>
+        <div class="pillars">
+          <article>
+            <h2>Cloud policy decisions</h2>
+            <p>The cloud decides which policy and workflow actions to take.</p>
+          </article>
+          <article>
+            <h2>Browser execution</h2>
+            <p>The browser executes approved actions in the interfaces configured by each client.</p>
+          </article>
+          <article>
+            <h2>Client-configured interfaces</h2>
+            <p>Call and CRM interfaces are configured per client.</p>
+          </article>
+        </div>
+      </main>
+    </div>
+    <noscript><p>JavaScript is required for interactive application flows; this product overview remains available above.</p></noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
