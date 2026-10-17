@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.service';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
@@ -193,8 +197,9 @@ export class CrudService {
 
   // ========== MANAGED INTERFACES ==========
 
-  async getManagedInterfaces() {
+  async getManagedInterfaces(companyId?: string) {
     const rows = await this.prisma.managedInterface.findMany({
+      where: companyId ? { companyId } : undefined,
       orderBy: { name: 'asc' },
     });
     return rows.map(({ credentials, ...record }) => ({
@@ -204,6 +209,7 @@ export class CrudService {
   }
 
   async createManagedInterface(data: {
+    companyId?: string;
     name: string;
     baseUrl: string;
     category?: string;
@@ -237,9 +243,17 @@ export class CrudService {
     return this.prisma.managedInterface.delete({ where: { id } });
   }
 
-  async getTeamInterfaces(teamId: string) {
+  async getTeamInterfaces(teamId: string, companyId?: string) {
     const teamInterfaces = await this.prisma.teamInterface.findMany({
-      where: { teamId },
+      where: {
+        teamId,
+        ...(companyId
+          ? {
+              team: { brand: { companyId } },
+              managedInterface: { companyId },
+            }
+          : {}),
+      },
       include: { managedInterface: true },
     });
     return teamInterfaces.map(
@@ -250,7 +264,11 @@ export class CrudService {
     );
   }
 
-  async setTeamInterfaces(teamId: string, interfaceIds: string[]) {
+  async setTeamInterfaces(
+    teamId: string,
+    interfaceIds: string[],
+    companyId?: string,
+  ) {
     if (
       !Array.isArray(interfaceIds) ||
       interfaceIds.some(
@@ -265,14 +283,26 @@ export class CrudService {
       throw new BadRequestException('interfaceIds must not contain duplicates');
     }
     const existing = await this.prisma.managedInterface.findMany({
-      where: { id: { in: uniqueIds } },
+      where: { id: { in: uniqueIds }, ...(companyId ? { companyId } : {}) },
       select: { id: true },
     });
     if (existing.length !== uniqueIds.length) {
       throw new BadRequestException('One or more interfaces do not exist');
     }
     return this.prisma.$transaction(async (tx) => {
-      await tx.teamInterface.deleteMany({ where: { teamId } });
+      if (companyId) {
+        const team = await tx.team.findFirst({
+          where: { id: teamId, brand: { companyId } },
+          select: { id: true },
+        });
+        if (!team) throw new ForbiddenException('Resource access denied');
+      }
+      await tx.teamInterface.deleteMany({
+        where: {
+          teamId,
+          ...(companyId ? { managedInterface: { companyId } } : {}),
+        },
+      });
       if (uniqueIds.length === 0) return { count: 0 };
       return tx.teamInterface.createMany({
         data: uniqueIds.map((interfaceId) => ({ teamId, interfaceId })),

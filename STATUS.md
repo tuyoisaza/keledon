@@ -1,11 +1,10 @@
-# Current task status — PHDK Auto candidate 5.1.85
+# Current PHDK Auto — candidate 5.2.0; portfolio partial
 
-The keyboard-selection candidate is locally validated on branch fix/phdk-auto-5-1-85-keyboard-agent-selection, based on verified remote main 29a1ba592d1244b7f00676677b642d8857318103. Web/Landing builds, typechecks, lint and source contract tests pass; API/Cloud builds and regressions pass 43/43 and 20/20; Web diagnostics 19/19; Browser 16/16; PHDK coherence 63/63. The local built candidate loaded in the connected in-app browser. No populated authenticated dashboard interaction or screen-reader test is claimed.
+Remote `main` is `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`; candidate branch `feature/tenant-interface-selector-5.2.0` is based on it. The 5.2.0 change implements the owner-approved tenant-scoped Admin/Coordinator interface selector and guarded Company Co UAT Prep seeder. API/Cloud regressions pass 45/45 and 21/21; backend builds/typechecks, Prisma validation/generation, Web/Landing lint/build/typecheck and Browser build/lint/focused tests pass. PHDK v2.53.0 coherence is 64/64.
 
-PR/merge/readback remain pending. Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL).
+UAT Prep remains PARTIAL/BLOCKED: no isolated PostgreSQL listener is available and Windows Application Control blocked local PostgreSQL startup. Database-backed provisioning/login/role/Test-as/cleanup and browser UAT have not run. Whole Auto remains PARTIALLY DELIVERED (0/4 commitments complete; prior UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 29 PASS / 406 BLOCKED / 122 N/A / 3 DECISION NEEDED). Candidate source commit and PR delivery remain pending.
 
-SIGUIENTE PASO: perform final diff review and normal versioned PR delivery, then verify the exact remote-main SHA/content.
-
+SIGUIENTE PASO: complete normal versioned PR delivery for 5.2.0 while carrying forward the blocked database and browser acceptance gates.
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered
 

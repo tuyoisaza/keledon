@@ -163,16 +163,24 @@ export class CrudController {
   }
 
   @Get('teams/:id/interfaces')
-  getTeamInterfaces(@Param('id') id: string) {
-    return this.crud.getTeamInterfaces(id);
+  getTeamInterfaces(@Param('id') id: string, @Req() req: CrudRequestContext) {
+    return this.crud.getTeamInterfaces(
+      id,
+      req.actor?.role === 'superadmin' ? undefined : req.actor?.companyId,
+    );
   }
 
   @Put('teams/:id/interfaces')
   setTeamInterfaces(
     @Param('id') id: string,
     @Body() data: { interfaceIds: string[] },
+    @Req() req: CrudRequestContext,
   ) {
-    return this.crud.setTeamInterfaces(id, data.interfaceIds);
+    return this.crud.setTeamInterfaces(
+      id,
+      data.interfaceIds,
+      req.actor?.role === 'superadmin' ? undefined : req.actor?.companyId,
+    );
   }
 
   // ========== USERS ==========
@@ -264,8 +272,10 @@ export class CrudController {
   // ========== MANAGED INTERFACES ==========
 
   @Get('interfaces')
-  getManagedInterfaces() {
-    return this.crud.getManagedInterfaces();
+  getManagedInterfaces(@Req() req: CrudRequestContext) {
+    return this.crud.getManagedInterfaces(
+      req.actor?.role === 'superadmin' ? undefined : req.actor?.companyId,
+    );
   }
 
   @Get('interfaces/:id')

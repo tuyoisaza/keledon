@@ -37,3 +37,9 @@ The accessibility result is scoped to the rendered control contract and source c
 Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS.
 
 SIGUIENTE PASO: complete the final candidate diff review and deliver 5.1.85 through the normal PR path; preserve the manual accessibility and whole-Auto acceptance gates.
+
+## Continuation — PHDK 2.53.0 and tenant interface selector
+
+PHDK 2.53.0 is installed and coherence passes 64/64. The owner approved tenant-specific ManagedInterface assignment by Admin/Coordinator, superseding the previous open Web-selector decision while keeping the global catalog superadmin-only. API and Cloud scope interface reads/assignments by DB-derived company and reject foreign tenant/team IDs; projections omit credentials. Web exposes assignment in the team editor. Prisma migrations are prepared. API regressions 22/25/56 cover source wiring and tenant rejection; DB migration/restart and Web browser UAT remain unverified.
+
+Stage-45 UAT Prep now includes a guarded Company Co seeder and isolated database target-policy tests. Target-policy tests pass; live seeding/login/Test-as/cleanup remain BLOCKED because Windows Application Control rejected local PostgreSQL 16.15 and no local listener exists. The current CRUD matrix has 560 rows: 406 BLOCKED, 122 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Whole Auto remains partial.

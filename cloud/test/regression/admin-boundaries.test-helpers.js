@@ -65,6 +65,7 @@ const { CrudController } = load('crud/crud.controller.ts');
 const { CrudAccessGuard } = load('guards/crud-access.guard.ts');
 const { TeamController } = load('controllers/team.controller.ts');
 const { CrudKeledonService } = load('crud/crud-keledon.service.ts');
+const { CrudService } = load('crud/crud.service.ts');
 
 module.exports = {
   assert,
@@ -81,4 +82,5 @@ module.exports = {
   CrudAccessGuard,
   TeamController,
   CrudKeledonService,
+  CrudService,
 };

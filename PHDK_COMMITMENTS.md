@@ -1,8 +1,27 @@
-## Current ledger status — 5.1.85 keyboard selection candidate
+## Current PHDK Auto — 5.1.85 delivered; portfolio partial (2026-10-17)
 
-CMT-002 advances with CHK-AUTO-025/UAT-095: Web and Landing agent selection has native keyboard-accessible controls with visible focus and selection state. Version 5.1.85 validations pass, but source delivery is not yet published. The other three commitments remain active; all four are ACTIVE/PARTIAL (0/4 DONE). Portfolio tally is 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS.
+## Current continuation — PHDK 2.53.0 Prep and tenant interface assignment (2026-10-17)
 
-SIGUIENTE PASO: finish Check, publish by PR and verify main; continue remaining accepted work only after this slice is delivered.
+Candidate continuation: 5.2.0 is versioned locally with the approved Admin/Coordinator tenant interface selector and guarded UAT Prep source. API/Cloud regression suites pass 45/45 and 21/21, backend builds/typechecks pass, Prisma validation/generation passes, and Web lint/build passes. The CRUD matrix is 406 BLOCKED / 122 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS. UAT Prep remains PARTIAL/BLOCKED because no isolated PostgreSQL database could be started; browser UAT was not run. Candidate has not been committed or pushed; normal PR delivery follows final Check.
+
+PHDK was upgraded to v2.53.0; coherence is 64/64. Stage 45 UAT Prep is now required before browser UAT. The guarded Company Co seeder and target-policy tests are implemented, but live seeding, DB-backed login, cleanup and profile-session proof are blocked because Windows Application Control rejected local PostgreSQL 16.15 and no database listener is available. No hosted, customer or production database was contacted. See `UAT_PREP_REPORT.md` and the stage-45 handoff.
+
+The owner has now approved a tenant-scoped TeamInterface Web selector for Admin/Coordinator. This is a new decision after the earlier approval to keep the **global** catalog hidden: it authorizes company-specific entries only, DB-derived team/company checks, no credential values and no global catalog access. API, Cloud, Prisma migration and Web source are being updated; database migration execution and browser acceptance remain open. Overall Auto remains partial and prior acceptance totals are unchanged by source regressions.
+
+PR [#208](https://github.com/tuyoisaza/keledon/pull/208) delivered source 5.1.85 at merge SHA `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; documentation PR [#209](https://github.com/tuyoisaza/keledon/pull/209) is merged and current `main` is `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50` (tree `096589d3716e76d05df9b64c196c06b92a88fd34`). Five application package/lock roots and Browser renderer are 5.1.85. PHDK 2.52.2 coherence is 63/63. PR #208's scoped tests and source gate passed; PR #209 recorded the post-merge evidence.
+
+Railway redeployed `main` after #209: current Web `e57641b9-bfd6-45e8-9519-f40520e7488e` and API `17bf708d-6472-456f-956a-41d3fda762e3` are both SUCCESS with 1/1 replicas; API logs confirm PostgreSQL connectivity, database validation, Nest startup and healthcheck. AI is degraded because no LLM provider is configured. The Web service reports 11 older failed deployments in the prior 24h, while current deployment is healthy. No live HTTP probe was made.
+
+| Commitment | Current evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | PRs #208/#209 merged; current remote SHA/tree and all six version reads reconciled. | Continue baseline, version, PR and deploy readbacks. |
+| CMT-002 widget/diagnostics | Keyboard-selectable Web/Landing agent cards shipped; diagnostics 19/19; UAT-095 source contract 2/2 and local built navigation pass. | Authenticated populated-card and screen-reader acceptance is MANUAL; native device/audio and broad accessibility/localization remain. |
+| CMT-003 voice→Cloud→Browser→CRM per client | Provider-neutral contracts, tenant flow configuration, private-origin allowlists and Browser request/navigation scope have source and synthetic coverage. | Live acceptance requires each client to select and configure its call/CRM stack; no customer endpoint was contacted. |
+| CMT-004 administration/permissions | Approved restrictive actor/tenant policy, tenant-owned flow configuration, selected PostgreSQL-backed role and CRUD journeys are recorded. | 396/560 CRUD rows remain BLOCKED; broader resource-role-operation coverage, audit/export/retention and selected migration/restart gates remain open. |
+
+Whole Auto remains **PARTIALLY DELIVERED**: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. TeamInterface Web assignment affordance remains a recorded owner decision; FlowRunEvidence remains dormant and unnecessary for current execution.
+
+SIGUIENTE PASO: advance the next approved CMT-003/CMT-004 acceptance slice; preserve tenant allowlists and do not claim full portfolio acceptance.
 
 ---
 ## Current ledger status — 5.1.84 delivered by PR #206 / UAT-094

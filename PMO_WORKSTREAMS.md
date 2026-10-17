@@ -1,15 +1,28 @@
 # Workstreams
+
+## Current update — stage 45 and owner-approved tenant interface selector (2026-10-17)
+
+| WS | Current status | Open gate |
+|---|---|---|
+| WS-001 / CMT-001 | PHDK v2.53.0 installed; candidate 5.2.0 version reconciled; API/Cloud regressions and build checks pass. | Run final candidate coherence/diff review, then normal versioned PR delivery. |
+| WS-002 / CMT-002 | Prior 5.1.85 widget evidence remains scoped. | Authenticated populated-card and screen-reader evidence remains MANUAL. |
+| WS-003 / CMT-003 | Provider-neutral client-specific contracts remain intact. | Live call/CRM acceptance awaits each client's chosen stack. |
+| WS-004 / CMT-004 | Owner-approved company-specific Admin/Coordinator interface selector implemented across API/Cloud/Web with catalog migrations and masked projections. | Run database migration, seeded-role permission tests and browser UAT; local PostgreSQL launch is blocked by Windows Application Control. |
+| WS-X | Stage 45 UAT Prep seeder and safe target policy implemented. | Real isolated seed/login/Test-as/cleanup run blocked; no production/provider action. |
+
+The approval changes the former TeamInterface selector decision. Global catalog entries remain hidden from tenant roles; each tenant sees only its own catalog and no credential values. Whole Auto remains partial.
 ## Active integrated portfolio — 20261014-0007-phdk-auto-completion
 
-| WS | Commitment / outcome | Scope | Owner/status | Acceptance / dependency |
+| WS | Commitment / outcome | Scope | Current status | Acceptance / dependency |
 |---|---|---|---|---|
-| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / 5.1.78 SOURCE READY; PR #198 OPEN | PR branch is synchronized; no reviews or hosted checks. Railway `keledon-web` root `/services/web` still fails build; owner must set `/` and `/services/web/railway.toml`, then verify a successful deploy before merge/readback. |
-| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, mounts, redaction/reset/accessibility | Root / SELECTED UAT PASS; PORTFOLIO PARTIAL | Current Web UAT 8/8, diagnostics, Browser security/runtime 22/22 and prior widget geometry pass; native packaged Browser/device/audio and broad screen-reader/route/locale acceptance remain. |
-| WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud flow configuration, per-tenant adapters and Browser origin enforcement | Root / SOURCE PARITY PASS; CUSTOMER ACCEPTANCE OPEN | Managed Cloud AI contracts, synthetic Browser call lifecycle and tenant-owned flow editor/private-origin allowlist are covered. Run live call/CRM acceptance only after each tenant selects/configures its stack; migrations/restart remain untested. |
-| WS-004 | CMT-004 administration and permissions | API/Cloud RBAC, secret projection, Prisma resources, migrations | Root / AUTH SOURCE PASS; MATRIX PARTIAL | Current DB role/email, OAuth exchange and explicit AI revision publish checks pass; additive publish migrations await DB application. 396 of 560 CRUD matrix rows remain BLOCKED, with PostgreSQL persistence, audit/export/retention and remaining admin workflows open. FlowRunEvidence remains dormant/N/A. |
-| WS-X | Cross-cutting PHDK conformance | Plan/Integration, UAT, SEO/AEO, Check and lifecycle evidence | Root / SOURCE CHECK PASS; DELIVERY OPEN | PHDK v2.52.2 coherence 63/63; source checks and local UAT pass. Railway root/config, deploy, PostgreSQL, native/manual and customer acceptance keep the portfolio partial. |
+| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Current main `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`; candidate 5.2.0 versioned and locally checked | Complete final diff review, version-prefixed commit, push, PR and remote verification. |
+| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, mounts, redaction/reset/accessibility | 5.1.85 keyboard selection shipped; UAT-095 scoped PASS; portfolio partial | Authenticated populated-card/screen-reader and native device/audio gates remain. |
+| WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud flow configuration, per-tenant adapters and Browser origin enforcement | Source contracts and tenant-origin policy PASS; customer acceptance open | Run live acceptance only after each tenant selects/configures its stack; no universal provider is assumed. |
+| WS-004 | CMT-004 administration and permissions | API/Cloud RBAC, secret projection, Prisma resources, migrations | Tenant selector implementation and migration source verified; CRUD matrix 29 PASS, 406 BLOCKED, 122 N/A, 3 decisions | Database-backed Prep/migration, broad persisted role/surface coverage, audit/export/retention remain. FlowRunEvidence is dormant/N/A. |
+| WS-X | Cross-cutting PHDK conformance | Plan/Integration, UAT, SEO/AEO, Check and lifecycle evidence | PHDK 2.53.0 coherence 64/64; candidate 5.2.0 integrated source checks pass | Portfolio remains partial pending database, browser, manual, client and deployed acceptance. |
 
-No workers are assigned. Execution order follows the owner-confirmed sequence; cross-cutting Integration Review, UAT/Fix, SEO/AEO, Check and delivery gates apply to all four workstreams. Current handoff: resolve the owner-managed Railway root/config, then verify Web deployment; continue source-resolvable CRUD and tenant runtime coverage in parallel when source scope permits.
+Four owner-confirmed fronts remain active in their agreed order. No worker is assigned. TeamInterface Web assignment remains a recorded decision; keep global ManagedInterface catalog hidden from tenant roles.
+
 
 ## Current continuation — 2026-10-13, candidate 5.1.16
 

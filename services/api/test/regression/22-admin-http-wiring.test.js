@@ -120,6 +120,10 @@ async function main() {
       findFirst: async ({ where }) =>
         ['team-a', 'team-c'].includes(where.id) ? { id: where.id } : null,
     },
+    managedInterface: {
+      findFirst: async () => null,
+      findMany: async () => [],
+    },
     flow: {
       findUnique: async ({ where }) => ({
         id: where.id,
@@ -148,6 +152,7 @@ async function main() {
     lastVectorScope,
     userListScope,
     managedInterfaceReads = 0,
+    managedInterfaceListScopes = [],
     updatedUser,
     auditReads = 0,
     launchedActor;
@@ -195,6 +200,12 @@ async function main() {
           getManagedInterface: async (id) => {
             managedInterfaceReads++;
             return { id, name: 'CRM fixture', hasCredentials: true };
+          },
+          getManagedInterfaces: async (companyId) => {
+            managedInterfaceListScopes.push(companyId);
+            return companyId === 'co-a'
+              ? [{ id: 'tenant-interface', companyId, name: 'Tenant CRM', hasCredentials: true }]
+              : [];
           },
           updateUser: async (id, data) => {
             updatedUser = { id, ...data };
@@ -401,6 +412,19 @@ async function main() {
       .get('/api/crud/interfaces/interface-a')
       .set('Authorization', token('admin'))
       .expect(403);
+    const tenantInterfaces = await request(http)
+      .get('/api/crud/interfaces')
+      .set('Authorization', token('admin'))
+      .expect(200);
+    assert.equal(managedInterfaceListScopes.at(-1), 'co-a');
+    assert.deepEqual(tenantInterfaces.body, [
+      {
+        id: 'tenant-interface',
+        companyId: 'co-a',
+        name: 'Tenant CRM',
+        hasCredentials: true,
+      },
+    ]);
     const managedInterface = await request(http)
       .get('/api/crud/interfaces/interface-a')
       .set('Authorization', token('superadmin'))

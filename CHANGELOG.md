@@ -757,3 +757,15 @@
 
 ### Migration / limitations
 - TTS/STT/AI health probes remain unimplemented. Their status is intentionally `unknown` until measured; this change does not claim runtime health or persistence acceptance.
+## v5.2.0 — 2026-10-17
+
+### Added
+- Add tenant-owned managed interface catalogs and an Admin/Coordinator team selector. Catalog reads, interface assignments and team targets are derived from the authenticated database company; tenant users cannot read the platform catalog, assign foreign interfaces or teams, or see credential values. Existing global assignments remain managed by superadmin.
+- Add a guarded Company Co UAT Prep seeder for synthetic role/tenant identities and authentication checks. The seeder requires explicit confirmation, development/test mode, a dedicated loopback PostgreSQL database and ownership-safe cleanup.
+
+### Verification
+- API regressions 45/45 and Cloud regressions 21/21; API and Cloud builds/typechecks pass.
+- Prisma API/Cloud schemas validate and clients generate; Web lint/build pass.
+- Live database migration/seeding and browser UAT remain blocked by the unavailable isolated PostgreSQL runtime and are not claimed as passed.
+
+\n

@@ -1,11 +1,10 @@
-# Current PHDK Auto task — keyboard-accessible agent selection, 5.1.85
+# Current PHDK Auto — candidate 5.2.0 on four approved fronts
 
-Active run 20261014-0007-phdk-auto-completion continues the four user-confirmed fronts in order. This candidate repairs CMT-002: Web and Landing use native accessible agent-selection buttons with aria-pressed, visible selected label, keyboard focus ring and 44px minimum target. Scoped tests/builds pass and UAT-095 records the limits. Current branch: fix/phdk-auto-5-1-85-keyboard-agent-selection; base 29a1ba592d1244b7f00676677b642d8857318103. Delivery is still pending; do not mark the candidate integrated.
+The candidate adds the owner-approved company-scoped interface selector for Admin/Coordinator, plus guarded synthetic UAT Prep provisioning and role checks. Five product package/lock roots and Browser renderer read 5.2.0. API/Cloud regressions pass 45/45 and 21/21; API/Cloud builds and typechecks, Prisma validation/generation, Web/Landing checks, Browser build/lint/focused tests and PHDK 64/64 coherence pass.
 
-All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Whole Auto remains PARTIALLY DELIVERED: UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+The candidate is source-verified but not accepted end to end. The local isolated database is unavailable because Windows Application Control blocked PostgreSQL startup; UAT Prep is PARTIAL/BLOCKED and browser UAT has not started. The 560-row CRUD matrix is 29 PASS / 406 BLOCKED / 122 NOT APPLICABLE / 3 DECISION NEEDED. All four commitments remain active; no customer-specific call or CRM system was selected or contacted.
 
-SIGUIENTE PASO: complete final review, commit with the 5.1.85 version prefix, create the PR, then merge and verify remote main under existing controls.
-
+SIGUIENTE PASO: deliver candidate 5.2.0 through normal versioned branch/PR workflow; resume database-backed Prep and browser acceptance when the isolated loopback database is available.
 ---
 # Current PHDK Auto — 5.1.83 delivered; portfolio partial
 

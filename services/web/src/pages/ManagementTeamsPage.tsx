@@ -5,7 +5,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, type Team, type Company, type CompanyCountry, type Brand } from '@/lib/crud-api';
+import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, getManagedInterfaces, getTeamInterfaces, setTeamInterfaces, type Team, type Company, type CompanyCountry, type Brand, type ManagedInterface } from '@/lib/crud-api';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },
@@ -31,6 +31,11 @@ export default function ManagementTeamsPage() {
     const [showForm, setShowForm] = useState(false);
     const [editingTeam, setEditingTeam] = useState<Team | null>(null);
     const [saving, setSaving] = useState(false);
+    const [savingInterfaces, setSavingInterfaces] = useState(false);
+    const [loadingInterfaces, setLoadingInterfaces] = useState(false);
+    const [tenantInterfaces, setTenantInterfaces] = useState<ManagedInterface[]>([]);
+    const [selectedInterfaceIds, setSelectedInterfaceIds] = useState<string[]>([]);
+    const [assignedInterfaceIds, setAssignedInterfaceIds] = useState<string[]>([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -69,10 +74,13 @@ export default function ManagementTeamsPage() {
     const openCreateForm = () => {
         resetForm();
         setEditingTeam(null);
+        setTenantInterfaces([]);
+        setSelectedInterfaceIds([]);
+        setAssignedInterfaceIds([]);
         setShowForm(true);
     };
 
-    const openEditForm = (team: Team) => {
+    const openEditForm = async (team: Team) => {
         const brand = brands.find(b => b.id === team.brandId);
         setFormData({
             name: team.name || '',
@@ -82,6 +90,40 @@ export default function ManagementTeamsPage() {
         });
         setEditingTeam(team);
         setShowForm(true);
+        setLoadingInterfaces(true);
+        try {
+            const [available, assigned] = await Promise.all([
+                getManagedInterfaces(),
+                getTeamInterfaces(team.id),
+            ]);
+            const assignedIds = assigned.map(item => item.id);
+            setTenantInterfaces(available);
+            setAssignedInterfaceIds(assignedIds);
+            setSelectedInterfaceIds(assignedIds);
+        } catch (error) {
+            console.error('Failed to load tenant interfaces:', error);
+            toast.error(t('keledons.interfacesLoadFailed'));
+            setTenantInterfaces([]);
+            setAssignedInterfaceIds([]);
+            setSelectedInterfaceIds([]);
+        } finally {
+            setLoadingInterfaces(false);
+        }
+    };
+
+    const saveTeamInterfaces = async () => {
+        if (!editingTeam) return;
+        setSavingInterfaces(true);
+        try {
+            await setTeamInterfaces(editingTeam.id, selectedInterfaceIds);
+            setAssignedInterfaceIds(selectedInterfaceIds);
+            toast.success(t('keledons.interfacesUpdated'));
+        } catch (error) {
+            console.error('Failed to save tenant interfaces:', error);
+            toast.error(t('keledons.interfacesSaveFailed'));
+        } finally {
+            setSavingInterfaces(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -314,6 +356,49 @@ export default function ManagementTeamsPage() {
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 />
                             </div>
+                            {editingTeam && (
+                                <fieldset className="space-y-3 rounded-lg border border-border p-4">
+                                    <legend className="px-1 text-sm font-medium">{t('keledons.uiInterfaces')}</legend>
+                                    <p className="text-sm text-muted-foreground">{t('keledons.tenantInterfacesOnly')}</p>
+                                    {loadingInterfaces ? (
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            {t('keledons.interfacesLoading')}
+                                        </div>
+                                    ) : tenantInterfaces.length === 0 ? (
+                                        <p className="text-sm text-muted-foreground">{t('keledons.interfacesEmpty')}</p>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {tenantInterfaces.map((item) => (
+                                                <label key={item.id} className="flex min-h-11 items-center gap-3 text-sm">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedInterfaceIds.includes(item.id)}
+                                                        onChange={(event) => setSelectedInterfaceIds((current) =>
+                                                            event.target.checked
+                                                                ? [...current, item.id]
+                                                                : current.filter((id) => id !== item.id),
+                                                        )}
+                                                        className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                                                    />
+                                                    <span>{item.name}</span>
+                                                    <span className="text-xs text-muted-foreground">{item.category || item.status}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <div className="flex justify-end">
+                                        <button
+                                            type="button"
+                                            onClick={saveTeamInterfaces}
+                                            disabled={loadingInterfaces || savingInterfaces || tenantInterfaces.length === 0 || selectedInterfaceIds.slice().sort().join('|') === assignedInterfaceIds.slice().sort().join('|')}
+                                            className="min-h-11 rounded-lg bg-secondary px-4 py-2 text-secondary-foreground hover:bg-secondary/80 disabled:opacity-50"
+                                        >
+                                            {savingInterfaces ? t('records.saving') : t('records.save')}
+                                        </button>
+                                    </div>
+                                </fieldset>
+                            )}
                             <div className="flex justify-end gap-3 mt-6">
                                 <button
                                     type="button"

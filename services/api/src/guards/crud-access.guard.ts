@@ -93,8 +93,15 @@ export class CrudAccessGuard implements CanActivate {
       'voice-profiles',
       'sessions',
       'knowledge',
+      'interfaces',
     ];
     if (!superadmin && !scoped.includes(resource)) return deny();
+    if (
+      !superadmin &&
+      resource === 'interfaces' &&
+      !(req.method === 'GET' && ['admin', 'coordinator'].includes(actor.role))
+    )
+      return deny();
     if (
       !management &&
       !launch &&
@@ -122,6 +129,13 @@ export class CrudAccessGuard implements CanActivate {
       return deny();
 
     const company = actor.companyId ?? '';
+    if (!superadmin && resource === 'interfaces' && req.params?.id) {
+      const record = await this.prisma.managedInterface.findFirst({
+        where: { id: req.params.id, companyId: company },
+        select: { id: true },
+      });
+      if (!record) return deny();
+    }
     const teamScope = superadmin ? {} : { brand: { companyId: company } };
     const assertTeam = async (id: string) => {
       if (
@@ -230,6 +244,24 @@ export class CrudAccessGuard implements CanActivate {
         Object.keys(data).some((key) => !fields[resource].includes(key))
       )
         deny();
+      if (
+        !superadmin &&
+        resource === 'teams' &&
+        handler === 'setTeamInterfaces'
+      ) {
+        if (
+          !Array.isArray(data.interfaceIds) ||
+          data.interfaceIds.some((interfaceId) => typeof interfaceId !== 'string') ||
+          new Set(data.interfaceIds).size !== data.interfaceIds.length
+        )
+          deny();
+        const interfaceIds = data.interfaceIds as string[];
+        const permitted = await this.prisma.managedInterface.findMany({
+          where: { id: { in: interfaceIds }, companyId: company },
+          select: { id: true },
+        });
+        if (permitted.length !== interfaceIds.length) deny();
+      }
       if (
         data.countries !== undefined &&
         (!Array.isArray(data.countries) ||

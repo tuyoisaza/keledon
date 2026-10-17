@@ -1,9 +1,25 @@
-# PMO Status — 5.1.85 candidate
+# PMO Status — candidate 5.2.0 based on current main 5.1.85; portfolio partial
 
-Candidate fix/phdk-auto-5-1-85-keyboard-agent-selection advances CMT-002. Native button selection controls are implemented in Web/Landing and pass source contract checks 2/2. Product versions align at 5.1.85; app/backend/browser tests and builds are passing. Candidate PR is not open yet. CMT-001, CMT-003 and CMT-004 remain active; no commitment is closed. Whole Auto remains PARTIALLY DELIVERED (93 PASS / 0 BLOCKED / 1 MANUAL).
+## Current continuation — PHDK 2.53.0 and approved tenant interface selector
 
-SIGUIENTE PASO: final diff review, versioned source commit and PR delivery; keep manual accessibility and other acceptance open.
+Candidate 5.2.0 includes the approved selector and guarded UAT Prep seeder. API regression is 45/45; Cloud is 21/21; API/Cloud builds, Prisma validation/generation and Web lint/build pass. Candidate changes remain local on `docs/phdk-auto-current-state-5-1-85`; no commit, push or PR exists yet. UAT Prep is PARTIAL/BLOCKED because the dedicated loopback database is unavailable, so database-backed role proofs and browser UAT remain open.
 
+PHDK 2.53.0 coherence passes 64/64. The new stage-45 Company Co seeder is implemented, with loopback/database/environment safeguards and target-policy tests; actual DB provisioning and authentication remain BLOCKED because Windows Application Control rejected local PostgreSQL 16.15. No external database was contacted.
+
+The owner approved a Web selector for Admin/Coordinator that lists only interfaces configured for the actor's company, assigns them only to that company's teams and never exposes credential values or a global catalog. API/Cloud authorization, masked projections, Prisma migrations and the Web editor are implemented. API/Cloud regression suites, Prisma schema checks, API/Cloud builds/typechecks and Web lint/build pass. Persisted migration and browser UAT remain required. This supersedes the prior open selector decision while retaining the restriction on tenant access to the global catalog. Overall Auto remains PARTIALLY DELIVERED.
+
+PR #208 delivered the keyboard-accessible agent selection source slice; PR #209 recorded its post-merge evidence. Current main is `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50` (tree `096589d3716e76d05df9b64c196c06b92a88fd34`), all app/package-lock roots plus Browser renderer read 5.1.85, and PHDK coherence passes 63/63. Current Railway Web/API redeploys report SUCCESS with 1/1 replicas; API validates PostgreSQL. No LLM provider is configured and AI remains degraded.
+
+| Commitment | Current position | Next acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | #208/#209 merged and remote baseline verified; candidate 5.2.0 metadata reconciled locally. | Complete final Check and normal versioned PR delivery for this candidate. |
+| CMT-002 widget/diagnostics | UAT-095 scoped source and local build pass. | Authenticated populated card, screen reader, native device/audio, broad route/localization. |
+| CMT-003 voice/Cloud/Browser/CRM | Provider-neutral tenant contracts and origin guards are covered. | Live acceptance only for each configured customer stack. |
+| CMT-004 administration/permissions | Restrictive role policy and selected persisted journeys pass; selector code and migrations are source-verified. | Broad CRUD matrix, actual migrations/restart, Prep and selector browser acceptance, and audit/retention decisions. |
+
+Whole Auto remains PARTIALLY DELIVERED: 0/4 done; prior UAT portfolio 93 PASS / 0 BLOCKED / 1 MANUAL (candidate 5.2.0 browser UAT not started); CRUD 29 PASS / 406 BLOCKED / 122 N/A / 3 DECISION NEEDED. TeamInterface Web selector owner decision is implemented; FlowRunEvidence remains dormant/N/A.
+
+SIGUIENTE PASO: continue the ordered CMT-003/CMT-004 work and retain all unverified gates.
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered; portfolio partial
 

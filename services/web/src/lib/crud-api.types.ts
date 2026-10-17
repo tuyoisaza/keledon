@@ -80,6 +80,7 @@ export interface Keledon {
 
 export interface ManagedInterface {
     id: string;
+    companyId?: string | null;
     name: string;
     baseUrl: string;
     category?: string;
