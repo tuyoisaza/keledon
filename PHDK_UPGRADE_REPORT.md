@@ -1,10 +1,16 @@
 # PHDK upgrade report — current PHDK 2.53.1
 
-## Current Auto preflight sync — 2.53.1 verified (2026-10-17)
+## Revalidación actual — KELEDON 5.2.10 / PHDK 2.53.1 (2026-10-17)
 
-KELEDON `main` is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2` / product 5.2.4. Installed PHDK is 2.53.1; the conservative upstream updater fetched canonical `main` `94f583635d295ae0f227726718904d952cadb8ab`, reported `UPDATED` for 64 mappings at the same version, and the subsequent static coherence checker passed 64/64. The resulting working-tree differences were line-ending-only (`git diff --ignore-space-at-eol` had no content diff), so tracked repository line endings were restored; no PHDK semantic or product source change was introduced by this preflight.
+KELEDON remote `main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; product source remains 5.2.10 at `fd429298a85bdcf3b5c20791f9b1598c132aabcb`. Installed PHDK is 2.53.1, and the canonical upstream remains `94f583635d295ae0f227726718904d952cadb8ab`. Current static coherence passes 64/64 mappings. No standards update is available; the installed tree is already current. The four-front Auto portfolio remains partial; see current Check and delivery evidence.
 
-SIGUIENTE PASO: keep PHDK 2.53.1 active for this Auto continuation; no additional upgrade is indicated.
+SIGUIENTE PASO: retain PHDK 2.53.1 and continue the open PIAs; do not treat the standards sync as product acceptance.
+
+---
+
+## Histórico — preflight PHDK 2.53.1 sobre KELEDON 5.2.4
+
+KELEDON main was `26e1fe1452cffb97164d65917b3c9a4308bdbdc2` / product 5.2.4. The conservative upstream updater fetched canonical main `94f583635d295ae0f227726718904d952cadb8ab`, reported UPDATED for 64 mappings at the same version, and the static coherence checker passed 64/64. Differences were line-ending-only; no semantic PHDK or product change was introduced.
 
 ---
 

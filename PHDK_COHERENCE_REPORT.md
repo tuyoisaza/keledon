@@ -1,4 +1,16 @@
 # PHDK Coherence report — KELEDON candidate
+
+## Revalidación actual — KELEDON 5.2.10 / PHDK 2.53.1 (2026-10-17)
+
+- Baseline: remote main `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; product source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`.
+- Canonical PHDK main `94f583635d295ae0f227726718904d952cadb8ab`, versión 2.53.1; installed coherence checker PASS, 64 manifest mappings (static install check only).
+- API, Cloud, Web, Landing and Browser package/lock roots plus Browser renderer read 5.2.10.
+- Theme static audit: STATIC_PASS, zero findings; runtime remains unverified. Automation static collector: zero findings; provider plane remains UNVERIFIED, see PHDK_CHECK_REPORT.md.
+- Railway Web/API deploy the current documentation commit with SUCCESS; this does not prove application functionality. The root delivery evidence explicitly keeps whole Auto PARTIAL.
+- No local application tests, builds or lint were run. This report verifies PHDK mapping/version coherence only and is not a product completion audit.
+
+---
+
 ## Current installed-standard recheck — 2026-10-13, KELEDON 5.1.22 candidate
 
 - Baseline: main 5.1.21 at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; candidate branch `fix/provider-error-redaction`.
