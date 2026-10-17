@@ -8,7 +8,7 @@
 ### Verification
 - API/Cloud integration-health service contracts pass 2/2 each; shared health-model tests pass 2/2; focused ESLint passes.
 - API/Cloud regressions pass 42/42 and 19/19; API/Cloud/Web/Landing/Browser production builds pass; Web/Landing typechecks pass.
-- Full production-built Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin; Browser renderer version sync is `v5.1.80`; PHDK coherence passes 63/63.
+- Latest full production-built Web UAT run passes 7/8; the superadmin flow-editor test times out only in the combined suite and passes 1/1 in isolation. Standalone admin-settings, theme-template and AI-admin UAT pass; Browser renderer version sync is `v5.1.80`; PHDK coherence passes 63/63.
 
 ## v5.1.78 — managed Cloud AI runtime parity
 

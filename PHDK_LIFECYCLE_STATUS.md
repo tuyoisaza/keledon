@@ -14,7 +14,7 @@ Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; PR #198 rem
 | AEO/GEO | REUSED / NOT AFFECTED | No public claim or answer content changes. |
 | Check | COMPLETED FOR 5.1.80 SOURCE SLICE; DELIVERY PENDING | PHDK coherence 63/63; API/Cloud regressions 42/42 and 19/19, exact service/shared contracts, builds, targeted lint, UI builds/typechecks and Browser version build pass. Latest whole Web UAT is intermittent at 7/8; source-slice contract is green. |
 | Remediation | COMPLETED FOR VERIFIED SOURCE FINDING | Removes hard-coded healthy values where no TTS/STT/AI probes exist; paired contract tests pass. Other source-checkable gaps remain under review. |
-| Delivery | 5.1.80 PR PENDING; LIVE WEB BLOCKED | PR #198 remains merged at `8deb6d7f`; 5.1.80 is a source candidate on a delivery branch. Railway Web root `/services/web` omits `/shared` from Docker build context. |
+| Delivery | PR #199 OPEN / MERGEABLE; WEB DEPLOY BLOCKED | Versioned source and evidence are pushed to `fix/integration-health-unknown-5-1-80`; no hosted checks/reviews, `main` unprotected. Merge readback remains. Railway Web root `/services/web` omits `/shared` from Docker build context. |
 
 Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally is 88 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed for 5.1.80.
 

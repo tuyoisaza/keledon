@@ -1,6 +1,6 @@
 ## PHDK Auto completion audit — candidate 5.1.80 (2026-10-17)
 
-Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances the five product roots and Browser renderer to 5.1.80. UAT-091 closes one scoped source/UAT case for truthful unmeasured integration health. Candidate delivery is pending; the latest full Web UAT passed 7/8 and needs a stable complete run. PHDK coherence passes 63/63. Overall Auto remains **PARTIALLY DELIVERED**, with 0/4 commitments fully closed and PostgreSQL, full CRUD, native/accessibility, deployed Web and customer-selected integration acceptance still open.
+Candidate source `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances the five product roots and Browser renderer to 5.1.80. UAT-091 closes one scoped source/UAT case for truthful unmeasured integration health. PR #199 is open and mergeable; hosted checks and reviews are absent. The latest full Web UAT passed 7/8; its superadmin flow-editor timeout passes 1/1 in isolation. PHDK coherence passes 63/63. Overall Auto remains **PARTIALLY DELIVERED**, with 0/4 commitments fully closed and PostgreSQL, full CRUD, native/accessibility, deployed Web and customer-selected integration acceptance still open.
 
 ## Current PHDK Auto continuation — source 5.1.79 delivered; portfolio partial (2026-10-17)
 

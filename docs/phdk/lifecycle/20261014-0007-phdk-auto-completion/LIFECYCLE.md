@@ -12,9 +12,9 @@ Source candidate `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` is on branch `fix/in
 | SEO | NOT APPLICABLE TO CANDIDATE DIFF | Authenticated UI/backend only; existing project audit copied to `65-seo/snapshots/candidate-5.1.80/`. |
 | AEO/GEO | NOT APPLICABLE TO CANDIDATE DIFF | Public answer content unchanged; existing project review copied to `67-aeo-geo/snapshots/candidate-5.1.80/`. |
 | Check / Remediation | CHECKS PASS WITH UAT FLAKE RECORDED | PHDK 63/63, regressions, builds, targeted lint and diff check pass; exact Web UAT limitation remains. |
-| Delivery | PENDING | Rename branch, final diff/security review, commit documentation/evidence, open PR and verify merge/deployment separately. |
+| Delivery | PR #199 OPEN / MERGEABLE | Source and evidence are versioned and pushed; no hosted checks/reviews and `main` is unprotected. Merge readback and observed deployment remain. |
 
-SIGUIENTE PASO: finalize candidate review and normal PR delivery while retaining the full-suite UAT limitation and PARTIALLY DELIVERED status.
+SIGUIENTE PASO: merge through PR #199 after final review, verify remote `main` and observe the connected deployment; retain the full-suite UAT limitation and PARTIALLY DELIVERED status.
 
 ---
 
