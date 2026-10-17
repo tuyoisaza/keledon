@@ -10,11 +10,11 @@ SIGUIENTE PASO: continue the remaining four-front acceptance from verified main;
 
 # Current PHDK Auto task — truthful dashboard controls, 5.1.84
 
-Candidate branch `fix/phdk-auto-5-1-84-agent-controls` is based on local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Web and Landing no longer show Start/Stop Agent actions or a blank real-time toggle that the runtime does not support; dashboard hooks no longer emit unhandled agent-control events. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing builds, typechecks and lint pass; Web diagnostics passes 19/19; PHDK coherence passes 63/63. Browser checks and PR delivery are pending.
+PR [#206](https://github.com/tuyoisaza/keledon/pull/206) merged candidate `631b12132570631e2ef1c20ff08029423b27fb6b` to `main` at `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote tree matches candidate tree. Web and Landing no longer show Start/Stop Agent actions or a blank real-time toggle that the runtime does not support; dashboard hooks no longer emit unhandled agent-control events. Five package/lock roots and Browser renderer align at 5.1.84. API/Cloud builds and regressions 43/43 and 20/20; Web/Landing builds, typechecks and lint; diagnostics 19/19; Browser build/lint and focused tests 16/16; PHDK coherence 63/63 pass. Railway Web and API deployments report SUCCESS; API logs confirm PostgreSQL connection and Nest startup. No public request was made; API logs warn that no LLM provider is configured.
 
-Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE); portfolio UAT remains 91 PASS / 0 BLOCKED / 1 MANUAL until the new candidate is added; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE); portfolio UAT is 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
-SIGUIENTE PASO: finish Browser validation, record UAT-094 and Check evidence, then open and deliver the normal PR for 5.1.84.
+SIGUIENTE PASO: continue outstanding acceptance gates from verified `main`.
 
 ---
 

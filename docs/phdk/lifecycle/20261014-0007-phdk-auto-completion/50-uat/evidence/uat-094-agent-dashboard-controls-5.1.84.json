@@ -30,7 +30,7 @@
   ],
   "limitations": [
     "This source acceptance does not implement or claim remote agent start/stop behavior.",
-    "No packaged Electron run, live deployment, customer runtime, or device/audio acceptance was performed."
+    "No packaged Electron run, live customer runtime, or device/audio acceptance was performed; Railway deployment status is tracked separately in delivery evidence."
   ],
   "portfolio": {
     "confirmedCommitments": 4,

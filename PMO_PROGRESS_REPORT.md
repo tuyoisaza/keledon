@@ -1,10 +1,10 @@
 # Current PHDK Auto — 5.1.84 dashboard control repair candidate; portfolio partial
 
-PR #204 delivered 5.1.83 to main; documentation PR #205 is at 73f8db9ab9bcf6d23687690dc8893407d313a87f. Candidate fix/phdk-auto-5-1-84-agent-controls removes unsupported Start/Stop Agent actions, their unhandled Socket.IO events, and an empty realtime toggle from Web and Landing. All five package/lock roots and Browser renderer are 5.1.84. Web/Landing build, typecheck and lint pass; Web diagnostics 19/19; API/Cloud regressions 43/43 and 20/20; Browser build/lint and focused tests 16/16; PHDK coherence 63/63. UAT-094 passes.
+PR #204 delivered 5.1.83; PR #205 recorded its post-merge evidence. PR #206 merged product source 5.1.84 (`631b12132570631e2ef1c20ff08029423b27fb6b`) at remote main `eb5f5b47b7cd4a6de6354486603df4233341cab4`; its tree matches the tested candidate. This change removes unsupported agent start/stop controls and their unhandled events, plus Web's empty realtime toggle. Five package/lock roots and Browser renderer align at 5.1.84. API/Cloud builds and regressions 43/43 and 20/20; Web/Landing builds/typechecks/lint; Web diagnostics 19/19; Browser build/lint/focused tests 16/16; PHDK coherence 63/63 pass. UAT-094 passes. Railway Web/API report SUCCESS; API logs confirm PostgreSQL connection and Nest startup but show no LLM provider is configured, so the runtime is degraded. No live HTTP probe was made.
 
 Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments DONE; UAT 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
-SIGUIENTE PASO: deliver 5.1.84 through the normal PR path and verify remote main.
+SIGUIENTE PASO: continue the remaining ordered acceptance fronts from verified `main`.
 
 ---
 
@@ -342,3 +342,9 @@ Branch `fix/phdk-auto-5-1-84-agent-controls` is based on local main `73f8db9ab9b
 Overall: 0/4 DONE; 4/4 ACTIVE/PARTIAL. UAT 92 PASS / 0 BLOCKED / 1 MANUAL. CRUD 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS. Overall Auto remains PARTIALLY DELIVERED.
 
 SIGUIENTE PASO: deliver 5.1.84 through normal PR controls and verify remote `main`.
+
+## 5.1.84 source delivery — PR #206 merged (2026-10-17)
+
+PR #206 delivered 5.1.84 at remote main `eb5f5b47b7cd4a6de6354486603df4233341cab4`; the candidate and remote trees match. Scoped validation passes: API/Cloud 43/43 and 20/20, Web diagnostics 19/19, Browser focused tests 16/16, all five builds, applicable typechecks/lint and PHDK coherence 63/63. Railway Web `65ffff07-d497-4ff1-b77f-1ba9d7631857` is SUCCESS; API `89541838-9f48-40b2-b2d7-8db3e0489c5a` remains BUILDING as of the latest readback. No live HTTP probe or agent operation was performed. All four commitments remain active/partial; whole Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: proceed through the remaining database/CRUD, native, accessibility, discovery and tenant-specific integration gates.

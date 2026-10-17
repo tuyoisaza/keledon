@@ -32,6 +32,6 @@ Web and Landing builds emit the existing Vite warning for chunks over 500 kB; bo
 
 ## Delivery state
 
-Candidate Check passes for the scoped change. PR, merge and remote main readback are pending. UAT-094 records this source-level acceptance; it does not claim live agent control.
+Candidate Check passes for the scoped change. PR #206 merged at `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote main tree matches the tested candidate tree. Railway Web and API autodeploys report SUCCESS. Bounded API logs confirm PostgreSQL connection and Nest startup; no LLM provider is configured and no public HTTP/UI request was made. UAT-094 records source-level acceptance; it does not claim live agent control.
 
-SIGUIENTE PASO: deliver the candidate by the normal PR path and verify remote `main`.
+SIGUIENTE PASO: continue the remaining PHDK Auto gates from verified `main`.

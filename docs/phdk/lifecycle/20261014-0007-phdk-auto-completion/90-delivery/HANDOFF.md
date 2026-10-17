@@ -1,4 +1,14 @@
-## Current delivery — PR #204 merged; Web/API Railway startup readback recorded
+## Current delivery readback — 5.1.84 dashboard control repair merged
+
+PR [#206](https://github.com/tuyoisaza/keledon/pull/206) squash-merged source `631b12132570631e2ef1c20ff08029423b27fb6b` at remote `main` `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote tree `59d95ef1f4506f91e709c2fab495f41c1cacf982` matches the tested candidate tree. All five package/lock roots and Browser renderer read 5.1.84. PHDK v2.52.2 coherence passes 63/63. API/Cloud builds and regressions 43/43 and 20/20; Web/Landing builds, typechecks and lint; Web diagnostics 19/19; Browser build/lint and focused version/security tests 16/16 pass.
+
+Railway Web deployment `65ffff07-d497-4ff1-b77f-1ba9d7631857` and API deployment `89541838-9f48-40b2-b2d7-8db3e0489c5a` report SUCCESS. Bounded Web logs show Nginx workers started. API logs confirm PostgreSQL connection and Nest startup, and note that no LLM provider is configured (degraded mode). No live application request was made. Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE, UAT 92 PASS / 0 BLOCKED / 1 MANUAL, CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: continue database/CRUD, native, accessibility, discovery and customer-selected integration acceptance.
+
+---
+
+## Historical delivery readback — 5.1.83 source merge
 
 PR [#204](https://github.com/tuyoisaza/keledon/pull/204) squash-merged source `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` to `main` at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer read 5.1.83. PHDK v2.52.2 coherence passes 63/63. Railway Web `7fb6f47b-3629-483c-a9b7-79a522658e81` and API `639b6329-b279-47e8-bec0-7fb7bd266937` report SUCCESS with 1/1 replicas. Web logs show Nginx configuration complete/workers started with no prior directive failure. API logs show Nest startup and Prisma connection after an initial dependency reachability timeout. No live HTTP/UI probe was performed.
 

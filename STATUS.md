@@ -1,10 +1,10 @@
-# Current PHDK Auto — 5.1.84 widget control repair candidate
+# Current PHDK Auto — 5.1.84 dashboard control repair delivered
 
-Candidate `fix/phdk-auto-5-1-84-agent-controls` is based on main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Unsupported Start/Stop Agent controls and an empty realtime toggle are removed from Web and Landing; unhandled hook events are removed. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing builds, typechecks and lint pass; diagnostics is 19/19; PHDK coherence is 63/63. Browser tests, Check handoff and PR/main readback remain.
+PR #206 merged product source `631b12132570631e2ef1c20ff08029423b27fb6b` at main `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote tree matches the candidate tree. Unsupported Start/Stop Agent controls and an empty realtime toggle are removed from Web and Landing; unhandled hook events are removed. Five package/lock roots and Browser renderer align at 5.1.84. API/Cloud builds and regressions 43/43 and 20/20, Web/Landing builds/typechecks/lint, diagnostics 19/19, Browser build/lint/focused tests 16/16 and PHDK coherence 63/63 pass. Railway Web/API report SUCCESS; API logs confirm DB connection and Nest startup. No public request was made; no LLM provider is configured.
 
-All four commitments remain active/partial (0/4 DONE). Whole Auto remains PARTIALLY DELIVERED; UAT portfolio is 91 PASS / 0 BLOCKED / 1 MANUAL before this candidate; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+All four commitments remain active/partial (0/4 DONE). Whole Auto remains PARTIALLY DELIVERED; UAT portfolio is 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
-SIGUIENTE PASO: finish Browser checks and standard PR delivery for 5.1.84; preserve all broader acceptance gates.
+SIGUIENTE PASO: continue all broader acceptance gates from verified `main`.
 
 ---
 

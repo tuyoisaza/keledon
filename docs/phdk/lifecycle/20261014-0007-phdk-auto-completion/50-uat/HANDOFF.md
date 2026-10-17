@@ -1,4 +1,12 @@
-## Candidate 5.1.83 — source and Railway startup readback PASS_SCOPED
+## Candidate 5.1.84 — UAT-094 PASS_SCOPED
+
+Web and Landing dashboard controls now reflect implemented runtime capabilities. Unsupported Start/Stop Agent controls and the no-op realtime toggle are removed; the corresponding unhandled agent-control events are no longer emitted. Web/Landing production builds, typechecks and lint pass; API/Cloud builds and regressions pass 43/43 and 20/20; Web diagnostics passes 19/19; Browser build/lint and focused tests pass 16/16; version roots align at 5.1.84; PHDK coherence is 63/63. PR #206 merged at `eb5f5b47b7cd4a6de6354486603df4233341cab4`. Evidence: `evidence/uat-094-agent-dashboard-controls-5.1.84.json`.
+
+No packaged Electron behavior or live agent control was tested. This case does not claim remote agent start/stop functionality. Overall acceptance remains incomplete: 0/4 commitments DONE, UAT 92 PASS / 0 BLOCKED / 1 MANUAL. SIGUIENTE PASO: continue remaining ordered acceptance gates; deployment status is recorded in Delivery.
+
+---
+
+## Historical UAT delivery readback — 5.1.83
 
 PR #204 merged to `main` at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`. Railway Web deployment `7fb6f47b-3629-483c-a9b7-79a522658e81` reports SUCCESS with 1/1 replica; bounded logs show Nginx configuration complete and worker processes started, without the previous `worker_processes` directive failure. API deployment `639b6329-b279-47e8-bec0-7fb7bd266937` reports SUCCESS with 1/1 replica; logs show Nest started and Prisma connected after an initial dependency timeout. No live HTTP/UI probe was made. Source/build UAT-093 is supplemented by this provider-log readback; whole Auto acceptance remains incomplete.
 
@@ -327,8 +335,3 @@ UAT is **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; CRUD is uncha
 SIGUIENTE PASO: Check the integrated 5.1.79 candidate; retain live dependency, database and external acceptance as unverified.
 
 ---
-## Candidate 5.1.84 — UAT-094 PASS_SCOPED
-
-Web and Landing dashboard controls now reflect implemented runtime capabilities. Unsupported Start/Stop Agent controls and the no-op realtime toggle are removed; the corresponding unhandled agent-control events are no longer emitted. Web/Landing production builds, typechecks and lint pass; Web diagnostics passes 19/19; Browser build/lint and focused tests pass 16/16; version roots align at 5.1.84; PHDK coherence is 63/63. Evidence: `evidence/uat-094-agent-dashboard-controls-5.1.84.json`.
-
-No packaged Electron behavior or live runtime was tested. This case does not claim remote agent start/stop functionality. Overall acceptance remains incomplete: 0/4 commitments DONE, UAT 92 PASS / 0 BLOCKED / 1 MANUAL. SIGUIENTE PASO: complete Check and normal PR delivery.
