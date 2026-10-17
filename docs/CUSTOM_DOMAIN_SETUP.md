@@ -107,8 +107,10 @@ Update the backend service with new domain:
 ```bash
 gcloud run services update keledon-cloud \
   --region=us-central1 \
-  --set-env-vars "CORS_ORIGINS=https://app.your-domain.com,chrome-extension://*,https://api.your-domain.com"
+  --set-env-vars "KELEDON_CLOUD_CORS_ORIGINS=https://app.your-domain.com"
 ```
+
+If a browser extension connects directly, add only its exact published `chrome-extension://<id>` origin. Never set `KELEDON_ALLOW_ALL_CORS` or use `*`.
 
 ### Frontend Environment
 

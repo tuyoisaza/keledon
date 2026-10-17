@@ -71,7 +71,7 @@ keledon/
 
 ### For Cloud
 - `DATABASE_URL` - SQLite/PostgreSQL connection
-- `KELEDON_ALLOW_ALL_CORS` - Enable CORS
+- `KELEDON_CLOUD_CORS_ORIGINS` - Comma-separated exact origins allowed to call the API; never use `*`. Local defaults allow `http://localhost:5173` and `http://localhost:3000`.
 
 ## Submodule Setup
 

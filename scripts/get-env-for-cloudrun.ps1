@@ -35,7 +35,8 @@ if ($supabaseService) {
 }
 
 Write-Host ""
-Write-Host "CORS_ORIGINS=https://YOUR-SERVICE-URL.run.app,chrome-extension://*" -ForegroundColor Yellow
+Write-Host "KELEDON_CLOUD_CORS_ORIGINS=https://YOUR-WEB-ORIGIN.example" -ForegroundColor Yellow
+Write-Host "If needed, add the exact published chrome-extension://<id> origin; never use a wildcard." -ForegroundColor Yellow
 Write-Host "(Replace YOUR-SERVICE-URL with actual Cloud Run URL after deployment)" -ForegroundColor Yellow
 Write-Host ""
 

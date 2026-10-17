@@ -9,15 +9,11 @@ import { Server, Socket } from 'socket.io';
 import { ListeningSessionService } from './listening-session.service';
 import { Worker } from 'worker_threads';
 import * as path from 'path';
+import { resolveCorsOrigins } from '../config/runtime-tier';
 
 // Note: Namespace '/listen' might need client adjustment if using the same port.
 // For simplicity with existing setup, we'll try to use a namespace.
-const listeningCorsOrigin =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-    ? true
-    : process.env.NODE_ENV === 'production'
-      ? process.env.CORS_ORIGINS?.split(',') || ['chrome-extension://*']
-      : '*';
+const listeningCorsOrigin = resolveCorsOrigins();
 
 @WebSocketGateway({
   namespace: 'listen',

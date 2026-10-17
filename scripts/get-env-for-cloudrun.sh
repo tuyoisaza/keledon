@@ -31,7 +31,8 @@ if grep -q "^SUPABASE_SERVICE_KEY=" "$ENV_FILE"; then
 fi
 
 echo ""
-echo "CORS_ORIGINS=https://YOUR-SERVICE-URL.run.app,chrome-extension://*"
+echo "KELEDON_CLOUD_CORS_ORIGINS=https://YOUR-WEB-ORIGIN.example"
+echo "If needed, add the exact published chrome-extension://<id> origin; never use a wildcard."
 echo "(Replace YOUR-SERVICE-URL with actual Cloud Run URL after deployment)"
 echo ""
 

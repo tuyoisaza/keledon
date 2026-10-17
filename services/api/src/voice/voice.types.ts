@@ -1,7 +1,6 @@
-export const voiceCorsOrigins: true | string[] =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-    ? true
-    : process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
+import { resolveCorsOrigins } from '../config/runtime-tier';
+
+export const voiceCorsOrigins = resolveCorsOrigins();
 
 export interface CallContext {
   companyName: string;

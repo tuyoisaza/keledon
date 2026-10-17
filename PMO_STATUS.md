@@ -1,3 +1,18 @@
+# Current PMO — 5.1.82 CORS source candidate; portfolio partial
+
+PHDK 2.52.2; coherence 63/63. API and Cloud credentialed HTTP/Socket.IO CORS now use the configured origin list; the legacy allow-all flag cannot bypass it. Full regressions pass API 43/43 and Cloud 20/20; backend builds and targeted lint pass. Candidate branch is `fix/explicit-cors-allowlist-5.1.82`, not yet committed or in a PR. Four commitments remain ACTIVE/PARTIAL (0/4 DONE).
+
+| Commitment | Current evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | Candidate roots align at 5.1.82; Auto hygiene Check recorded. | Commit/PR/main readback; continue baseline gates. |
+| CMT-002 widget/diagnostics | Existing Web UAT remains 8/8 at 5.1.81. | Native device/audio and broad accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | API/Cloud CORS allowlist regressions pass; tenant private-origin policy retained. | PostgreSQL/native path and each customer's configured provider/CRM sandbox. |
+| CMT-004 administration/permissions | Existing least-privilege suite remains covered; no auth semantics changed. | DB migration/restart, remaining CRUD and audit/retention acceptance. |
+
+SIGUIENTE PASO: finalize 5.1.82 candidate evidence, review, and normal PR delivery; keep all broader gates open.
+
+---
+
 ## Current PMO board — 5.1.81 source/deploy verified; whole Auto partial
 
 | Workstream | State | Evidence / open gate |
