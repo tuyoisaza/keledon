@@ -1,6 +1,6 @@
 # Sub-PIA CMT-003C — fixtures sintéticos para aceptación productiva
 
-Estado: INPUT GATE / PREPARATION NOT STARTED · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6).
+Estado: INPUT GATE / PREPARATION NOT STARTED · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). El owner reiteró el 2026-10-17 que la aceptación de la meta debe ocurrir en el sitio productivo y pidió crear los artefactos necesarios para continuar; esto autoriza continuar preparación/documentación y UAT público permitido, sujeto a los límites vigentes de UAT Prep.
 
 ## Hallazgo y objetivo
 
@@ -30,6 +30,7 @@ Preparar una ruta de UAT que permita ejecutar Q-LEASE-01..Q-TENANT-06 y NET-DNS-
 ## Invariantes y límites
 
 - Esta PIA no aprueba aún una escritura en el entorno productivo. La autorización previa “usar producción para aceptación” no fija qué identidades/datos puede crear ni el procedimiento de borrado; obtener autorización explícita para el fixture y cleanup concretos antes de provisionar.
+- La instrucción del owner del 2026-10-17 no cambia el límite explícito de `PHDK_UAT_PREP.md`: no aprovisionar identidades de prueba privilegiadas en producción ni crear un auth bypass. No existe en esta inspección evidencia de una vía administrativa productiva auditada y reversible. Continuar cambios de fuente/documentación que no dependan de cuentas; mantener autenticación persistida y acciones privadas externas en BLOCKED hasta resolver una ruta que cumpla el estándar.
 - No se requieren credenciales de clientes para preparar mocks/sandboxes sintéticos. No pedir ni registrar secretos en conversación; usar un flujo de alta seguro ya existente.
 - No ejecutar suites, builds ni pruebas de aplicación locales. La aceptación funcional y de seguridad se ejecuta en la instancia productiva, con casos y evidencia de UAT.
 - No hacer llamadas a Genesys, Salesforce, CallPicker, CRM real, hosts privados de cliente o metadata cloud. Un sandbox externo necesita owner, alcance y hostname/puerto/CIDR autorizados.

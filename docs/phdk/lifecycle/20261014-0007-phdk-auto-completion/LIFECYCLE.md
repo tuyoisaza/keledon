@@ -1,6 +1,6 @@
 ## Current continuation — candidate v5.2.7 / CMT-002 privacy fix (2026-10-17)
 
-Remote production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON Web 5.2.7; PR #247 merged and Railway Web/API SUCCESS. UAT-130 passes Web copy status and source-level Landing redaction. Standalone `landing/` runtime is BLOCKED because the verified Railway environment has no Landing service and Web builds `services/web` only. PHDK 2.53.1 coherence 64/64. Current documentation/evidence follow-up is on `docs/phdk-5-2-7-check-uat-130`, based on the merged main.
+Remote production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON Web 5.2.7; PR #247 merged and Railway Web/API SUCCESS. UAT-130 passes Web copy status and source-level Landing redaction; UAT-131 passes the public homepage locale/theme AX matrix and four visual samples; UAT-132 passes the public login locale/theme AX matrix and one keyboard sequence. Standalone `landing/` runtime is BLOCKED because the verified Railway environment has no Landing service and Web builds `services/web` only. PHDK 2.53.1 coherence 64/64. Current UAT-132 documentation/evidence follows from merged PR #249 at `c9de2f2f7f7387bba9f6b68624db657dc58b0a4a`.
 
 | Stage | Current status | Evidence / next gate |
 |---|---|---|

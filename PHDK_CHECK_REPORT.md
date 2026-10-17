@@ -2,7 +2,7 @@
 
 Current main: `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, PR #247 merged. **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL.** Full current audit, stable findings, mandatory PHDK gates, provider evidence and next execution order: [PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md).
 
-Verified: PHDK coherence 64/64; theme static audit 0 findings (runtime unverified); automation no static findings (remote unverified); Web/API Railway deployments SUCCESS but `checkSuites=false`; production UAT-130 passed the anonymous Web diagnostic copy-status interaction; UAT-131 passed all 9 public theme/locale selections and 4 sampled visual states. No local app test/build/lint ran. CMT-003C, CMT-003A/B, tenant admin CRUD and Landing runtime acceptance remain open.
+Verified: PHDK coherence 64/64; theme static audit 0 findings (runtime unverified); automation no static findings (remote unverified); Web/API Railway deployments SUCCESS but `checkSuites=false`; production UAT-130 passed anonymous Web diagnostic copy status; UAT-131 passed all 9 homepage theme/locale AX states and 4 visual samples; UAT-132 passed all 9 `/login` theme/locale AX states and one keyboard sequence. No local app test/build/lint ran. CMT-003C, CMT-003A/B, tenant admin CRUD and Landing runtime acceptance remain open.
 
 ---
 

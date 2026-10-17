@@ -37,3 +37,6 @@ This closes the target-size finding for Web/Landing only. Native packaged Browse
 
 ---
 
+## Production v5.2.7 — login locale/theme and keyboard sample (UAT-132)
+
+The anonymous `/login` page exposed localized email/password fields and sign-in, Google and account-creation actions across all nine ES/EN/PT × dark/light/corporate states. One Spanish/dark forward Tab sequence reached the language selector, email, password, sign-in, Google and account creation. Preferences were restored to Portuguese/dark. This slice does not measure visual contrast, reverse keyboard behavior, screen-reader output, mobile layout, WCAG conformance or authenticated behavior. Evidence: `evidence/uat-132-production-login-locale-keyboard-2026-10-17.json`.
