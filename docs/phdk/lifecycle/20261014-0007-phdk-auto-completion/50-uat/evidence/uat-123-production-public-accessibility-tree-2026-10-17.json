@@ -1,0 +1,34 @@
+{
+  "case": "UAT-123",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:10:31Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-123=20261017",
+  "deployedVersion": "5.2.4",
+  "mainCommitAtObservation": "63addaecd9b8f7b0a85cf8042cd013c23c74f0f7",
+  "webDeploymentId": "3bfe7402-0ae5-4ae1-8002-a838a28cd0f9",
+  "apiDeploymentId": "d017afd9-39f2-445f-b846-087dca514f7b",
+  "deploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "actions": [
+    "Opened the public homepage in a new in-app browser tab.",
+    "Inspected the browser accessibility tree without activating controls or submitting data."
+  ],
+  "observations": {
+    "versionVisible": true,
+    "visibleVersion": "v5.2.4",
+    "demoDisclosurePresent": true,
+    "demoDisclosure": "Interface ilustrativa; sem sessões ou métricas de serviço em tempo real.",
+    "namedDiagnosticAndCacheActions": true,
+    "themeAndLanguageControlsNamed": true,
+    "mainLandmarkPresent": true,
+    "headingsExposed": true,
+    "navigationLinksExposed": true
+  },
+  "result": "PASS_LIMITED_PUBLIC_ACCESSIBILITY_TREE_PRESENCE",
+  "limitations": [
+    "Accessibility tree presence only; no keyboard traversal, focus, screen-reader speech, contrast, viewport, interaction, or other locale/theme was tested.",
+    "Does not validate diagnostic content/redaction, role-based API access, audio, tenant security, or authenticated behavior.",
+    "No login, account creation, persistent preference change, clipboard read, cache clearing, API mutation, customer data, paid call, or external submission was used."
+  ]
+}

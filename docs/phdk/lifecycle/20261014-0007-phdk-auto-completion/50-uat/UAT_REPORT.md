@@ -587,3 +587,7 @@ La ruta directa `/management/teams?phdk-uat-121=20261017` terminó en `/login`; 
 ## UAT-122 — current production route/asset version (2026-10-17 20:05 UTC)
 
 Fresh HTTPS GETs to production `/` and `/login` both returned 200 and referenced the same content-hashed JavaScript bundle. The bundle returned 200, measured 871,909 bytes with SHA-256 `c887bae8f955bc79c08ace8431ace643c855015fac08aec80c4d0797a6c6fae6`, and contains version 5.2.4 but not 5.2.3. Railway Web/API deployments for current main `46ac94e194f8f9827f3fe9b1d2df2f85ffb00192` both report SUCCESS. This resolves the older displayed version in the already-open browser tab as stale loaded page state; it is not a served-production regression. Scope is limited to route/asset version, not browser interactions, accessibility, auth, API security or tenant behavior. Evidence: `evidence/uat-122-production-served-asset-version-2026-10-17.json`.
+
+## UAT-123 — public accessibility-tree presence (2026-10-17 20:10 UTC)
+
+An anonymous production homepage tab exposes the current `v5.2.4` version, truthful illustrative-demo disclaimer, named diagnostic/cache/theme/language controls, a main landmark, headings and public navigation links. Scope is accessibility-tree presence only; no controls were activated, no persistent preferences changed, and no focus, speech, contrast or complete route coverage is claimed. Evidence: `evidence/uat-123-production-public-accessibility-tree-2026-10-17.json`.
