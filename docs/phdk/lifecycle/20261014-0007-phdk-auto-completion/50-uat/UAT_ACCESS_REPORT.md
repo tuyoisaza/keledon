@@ -1,5 +1,9 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-081 local synthetic superadmin
+
+Target: production-built Web SPA served on ephemeral loopback by Playwright. The synthetic `superadmin@company-co.invalid` actor, two companies and flow API responses exist only in an in-memory fixture; non-local HTTP and WebSockets are blocked. No real user, database, customer endpoint or provider account was accessed. This does not authenticate a real account or prove backend superadmin authorization.
+
 ## UAT-071 — 5.1.73 persisted superadmin Company access
 
 API and Cloud each authenticated a synthetic superadmin whose role was read from its disposable PostgreSQL database. Each service passed 12 assertions covering global Company list, direct detail, Company create/update/delete with country relations, user role/company assignment, normal response credential omission, and verification that test Company/country rows were deleted. Temporary test superadmin and assigned user were removed; a pre-existing API synthetic superadmin was unchanged. No hosted target or real identity was used. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`.

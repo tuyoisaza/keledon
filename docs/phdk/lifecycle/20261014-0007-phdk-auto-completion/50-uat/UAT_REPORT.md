@@ -1,3 +1,35 @@
+## Candidate 5.1.73 — UAT-086/087 superadmin Web CRUD PASS
+
+Production-built Web UAT passes superadmin User, Brand and Team create/edit/detail/confirmed-delete journeys against intercepted synthetic APIs; UAT-072 Company coverage now also asserts detailed country/industry readback. New users begin as `user`; a superadmin explicitly assigns `admin` and a selected company. The tests verify payloads, list/detail readback and cleanup of synthetic records. API/Cloud PostgreSQL authorization and persistence for these resources is proven separately by UAT-071/075/076; the Web fixture is not database evidence. Evidence: `docs/phdk/evidence/uat-local-web.json` and `docs/phdk/evidence/uat-superadmin-{company,brand,team,user}-detail.png`.
+
+## Current UAT-081/083 — superadmin flow configuration Web/API pair PASS
+
+UAT-073 passes tenant-admin flow definition create/edit/deactivate, draft-version update/approval, availability enable/disable and mapping add/remove in the production-built Web SPA with synthetic APIs; UAT-079 provides paired API/Cloud scope and PostgreSQL restart evidence for all four configuration models. UAT-081 passes superadmin tenant switching, flow-definition lifecycle, version approval, availability, intent routing and legacy ownership assignment; UAT-083 supplies corresponding API/Cloud authorization and persistence through real HTTP routes against disposable PostgreSQL. The tenant-admin Web rows for definition, version, permission and mapping, plus the superadmin definition Web row, now pass. Nine Web rows pair browser journeys with persisted API/Cloud acceptance; all other open role/resource rows remain blocked. Current matrix: **560 rows = 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Portfolio remains **85 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+
+---
+
+Portfolio: **85 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. CRUD inventory: **560 rows = 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Nine newly accepted Web rows are backed by corresponding persisted API/Cloud rows; remaining role/resource rows stay open.
+
+---
+
+## Candidate 5.1.73 — UAT-083 superadmin flow API HTTP acceptance PASS
+
+API and Cloud passed 24 assertions each through real Nest HTTP routes against separate fresh PostgreSQL 16 databases. The test proves unauthenticated denial, DB-derived role/company scope against forged token/query/body values, superadmin cross-company configuration, coordinator foreign-flow denial, definition lifecycle and legacy assignment, draft approval/immutability, permission enable/disable, mapping replacement/removal, and second-client persistence. API/Cloud applied 9/7 migrations. Dedicated databases, synthetic rows, app processes and temp data were cleaned; the previous PostgreSQL cluster databases were preserved. Evidence: `evidence/uat-083-superadmin-flow-config-http-5.1.73.json`; repeatable runner: `services/api/scripts/uat-083-http-flow-config.cjs`.
+
+At the UAT-083 checkpoint, portfolio tally was 81 PASS, 0 BLOCKED, 1 MANUAL and the 547-row matrix was 391 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 20 PASS. Later UAT-081/083 paired Web and persisted API evidence for the superadmin flow-definition row; see the current recheck at the top of this report.
+
+## Candidate 5.1.73 — UAT-082 superadmin flow API persistence PASS
+
+Fresh disposable PostgreSQL databases applied 9 API and 7 Cloud migrations. Built AuthGuard, ResourceScopeGuard, MvpDataController and TenantFlowConfigService classes ran against real Prisma clients. A synthetic superadmin created definitions across two companies and read them globally; a coordinator token forging superadmin role and foreign company filter was re-resolved from DB, limited to its own company, and denied foreign writes. Approved version and actor persisted across a second client. Ten assertions passed per package. Databases were dedicated to this UAT and removed after verification. This proves selected in-process controller/guard behavior, not HTTP transport or the full CRUD matrix. Evidence: `evidence/uat-082-superadmin-flow-config-postgres-5.1.73.json`.
+
+Tally: **80 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix remains **547 rows: 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS**.
+
+## Candidate 5.1.73 — UAT-081 superadmin flow configuration Web PASS after UAT Fix
+
+The first run passed selected-company scope and configuration writes but failed the legacy reassignment readback: after the API accepted an owner assignment, the Web editor remained in the legacy-only view and hid the moved definition. The fix lets the loader accept a destination company and switches to that company on successful assignment. Production-built Web retest passes superadmin company switching, definition create/update/deactivate, draft approval, availability enable/disable, mapping add/remove and legacy reassignment/readback. Tenant-admin flow editor UAT passes as regression. All API responses were intercepted; external HTTP/WebSockets were blocked. Superadmin API authorization/persistence remain open. Evidence: `evidence/uat-flow-config-superadmin-web-5.1.73.json`.
+
+Portfolio: **79 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 547-row CRUD matrix remains 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 16 PASS. UAT-081 does not promote matrix rows because its backend is synthetic.
+
 ## Candidate 5.1.73 — UAT-080 coordinator flow configuration PASS
 
 API and Cloud passed two-tenant persisted flow configuration using DB-derived coordinator actors. Forged company IDs were replaced by the current company, reads excluded foreign rows, and foreign definitions could not be updated or referenced by versions, permissions or mappings. Draft approval remained immutable; disabling retained its permission row, and mapping update replaced the prior allowed IDs. Restart readback preserved the archived definition, approved version and tenant configuration. Database verification found zero UAT-080 users or configuration rows. This closes four coordinator/API rows only; Web and other roles remain open. Evidence: `evidence/uat-080-coordinator-flow-config-persistence-5.1.73.json`.

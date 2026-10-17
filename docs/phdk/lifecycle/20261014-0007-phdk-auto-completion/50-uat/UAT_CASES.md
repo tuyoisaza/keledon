@@ -1,3 +1,33 @@
+## Candidate 5.1.73 — UAT-087 superadmin Brand/Team Web CRUD
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-087 | CMT-004 / synthetic superadmin | Open built Web against intercepted APIs; create, edit, inspect details, then confirm deletion for a Brand and Team. Verify company/brand/country fields and payloads. | Rows and relations read back correctly; destructive confirmation precedes deletion; synthetic store contains no deleted fixture. | Local production-built Web/headless Edge; outbound requests blocked | PASS. Paired API/Cloud PostgreSQL acceptance is UAT-075/076; Web fixture does not claim backend persistence. Evidence: `docs/phdk/evidence/uat-local-web.json`, `uat-superadmin-brand-detail.png`, `uat-superadmin-team-detail.png`. |
+
+## Candidate 5.1.73 — UAT-086 superadmin User Web CRUD and least-privilege creation
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-086 | CMT-004 / synthetic superadmin | Open built Web against intercepted APIs; create a user in another synthetic company, verify default `user`, assign `admin` as superadmin, inspect details, and confirm deletion. | The create payload uses least privilege; only explicit superadmin edit assigns the elevated role/company; detail readback is correct and delete removes the fixture. | Local production-built Web/headless Edge; outbound requests blocked | PASS. Paired API/Cloud PostgreSQL authorization/persistence is UAT-071/075/076; Web fixture does not claim backend persistence. Evidence: `docs/phdk/evidence/uat-local-web.json`, `uat-superadmin-user-detail.png`. |
+
+## Candidate 5.1.73 — UAT-083 superadmin flow configuration HTTP acceptance
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-083 | US-012/CMT-003/CMT-004 / synthetic superadmin and coordinator | Apply 9 API and 7 Cloud migrations to separate disposable PostgreSQL databases; start the built Nest apps on loopback; send signed-token requests with forged role/company claims through the flow-definition, version, availability and intent-mapping routes; verify via a second DB client. | DB scope overrides forged claims; superadmin manages configuration across tenants; coordinator is tenant-limited; approved versions reject edits; all permitted changes and legacy owner assignment persist. | Real API/Cloud HTTP plus PostgreSQL 16; external provider/customer traffic disabled | PASS: 24 assertions per backend. Closes four superadmin flow-configuration API rows; Web and other-role rows remain open. Evidence: `evidence/uat-083-superadmin-flow-config-http-5.1.73.json`; runner: `services/api/scripts/uat-083-http-flow-config.cjs`. |
+
+## Candidate 5.1.73 — UAT-082 superadmin flow API persistence
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-082 | US-012/CMT-003/CMT-004 / synthetic superadmin and coordinator | Apply migrations to fresh API/Cloud PostgreSQL databases; invoke built guards, controller and service against real Prisma clients with signed tokens carrying forged role/company claims; exercise cross-company superadmin definitions, coordinator scope and approved version persistence. | Superadmin reads/writes across tenants; DB role/company overrides token/filter values for coordinator; foreign records stay hidden or unmodifiable; version and actor persist across clients. | API/Cloud in-process class invocation with PostgreSQL 16; no HTTP listener or external integrations | PASS: 10 assertions per backend, 9 API migrations and 7 Cloud migrations. Evidence: `evidence/uat-082-superadmin-flow-config-postgres-5.1.73.json`. HTTP transport and broad matrix remain outside this case. |
+
+## Candidate 5.1.73 — UAT-081 superadmin flow configuration Web journey
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-081 | US-012/CMT-003/CMT-004 / synthetic superadmin | Open the production-built SPA with intercepted synthetic APIs; switch between two companies; read/create/update/deactivate definitions; create and approve a version; enable/disable company availability; add/remove intent routing; assign an unowned legacy definition to a company. | Reads and writes follow selected company; foreign-company records stay hidden; legacy assignment switches the editor to the new owner and keeps the record visible. | Local Web SPA/headless Edge; external HTTP and WebSockets blocked | PASS after UAT Fix. Initial run found a scope-transition defect. The Web fixture is synthetic; paired superadmin API authorization and persisted lifecycle acceptance pass in UAT-083. Evidence: `evidence/uat-flow-config-superadmin-web-5.1.73.json` and `evidence/uat-083-superadmin-flow-config-http-5.1.73.json`. |
+
 ## Candidate 5.1.73 — UAT-080 coordinator flow configuration persistence
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
@@ -50,7 +80,7 @@ Portfolio tally: **73 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
-| UAT-073 | CMT-003 / synthetic Company Co tenant admin | On the production-built SPA, create a flow, save draft and approved versions, enable company availability, add intent mapping, and test 390px reflow. | Tenant scope is derived into flow create and permission/mapping writes; reads include the company filter; no company picker appears; 390px view has no horizontal overflow. | Local Web SPA / headless Edge with intercepted API; external network blocked | PASS: flow editor browser suite 1/1. UI/request contract only; no API/Cloud auth or database persistence claim. Evidence: `evidence/uat-073-flow-editor-5.1.73.json` and screenshots. |
+| UAT-073 | CMT-003 / synthetic Company Co tenant admin | On the production-built SPA, create and edit a flow, save draft and approved versions, enable company availability, add intent mapping, confirm soft deactivation, and test 390px reflow. | Tenant scope is derived into flow create/update and permission/mapping writes; reads include the company filter; no company picker appears; deactivation persists in the synthetic store; 390px view has no horizontal overflow. | Local Web SPA / headless Edge with intercepted API; external network blocked | PASS: flow editor browser suite 1/1. Web fixture is synthetic; paired API/Cloud auth and persistence/restart acceptance is UAT-079. Evidence: `evidence/flow-editor-uat.json` and screenshots. |
 
 ## Candidate 5.1.73 — UAT-074 private CRM origin policy parity
 

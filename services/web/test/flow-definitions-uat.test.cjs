@@ -104,6 +104,15 @@ test('tenant flow definition editor uses company-scoped API contracts', { timeou
     const definitionWrite = apiRequests.find((request) => request.method === 'POST' && request.pathname === '/api/flow-definitions');
     assert.equal(definitionWrite.payload.companyId, company.id);
 
+    await page.getByRole('button', { name: 'Edit' }).click();
+    await page.getByRole('textbox', { name: 'Name' }).fill('Claims intake updated');
+    await page.getByRole('button', { name: 'Save definition' }).focus();
+    await page.keyboard.press('Enter');
+    await page.getByRole('heading', { name: 'Claims intake updated' }).waitFor();
+    const definitionUpdate = apiRequests.find((request) => request.method === 'PUT' && request.pathname === '/api/flow-definitions/flow-def-a');
+    assert.equal(definitionUpdate.payload.companyId, company.id);
+    assert.equal(definitionUpdate.payload.name, 'Claims intake updated');
+
     await page.getByRole('textbox', { name: 'Steps (JSON array)' }).fill('[{"type":"navigate","value":"https://example.invalid"}]');
     const saveVersionButton = page.getByRole('button', { name: 'Save version' });
     await saveVersionButton.focus();
@@ -112,21 +121,67 @@ test('tenant flow definition editor uses company-scoped API contracts', { timeou
     const versionWrite = apiRequests.find((request) => request.method === 'POST' && request.pathname === '/api/flow-versions');
     assert.equal(versionWrite.payload.flowDefinitionId, 'flow-def-a');
     await page.getByRole('button', { name: 'Edit draft' }).click();
+    await page.getByLabel('Steps (JSON array)').fill('[{"type":"navigate","value":"https://example.invalid"},{"type":"wait","value":"250"}]');
+    const updateDraft = page.waitForResponse((response) => {
+      const request = response.request();
+      return new URL(response.url()).pathname === '/api/flow-versions/flow-version-a' && request.method() === 'PUT';
+    });
+    await page.getByRole('button', { name: 'Save version' }).focus();
+    await page.keyboard.press('Enter');
+    await updateDraft;
+    await page.getByText('v1 · draft · 2 steps').waitFor();
+    assert.ok(apiRequests.some((request) => request.method === 'PUT' && request.pathname === '/api/flow-versions/flow-version-a' && request.payload.steps.length === 2));
+    await page.getByRole('button', { name: 'Edit draft' }).click();
     await page.getByLabel('Status').selectOption('approved');
     await page.getByRole('button', { name: 'Save version' }).focus();
     await page.keyboard.press('Enter');
-    await page.getByText('v1 · approved · 1 steps').waitFor();
+    await page.getByText('v1 · approved · 2 steps').waitFor();
 
     const availability = page.getByLabel('Available to this company');
+    const enabledResponse = page.waitForResponse((response) => {
+      const request = response.request();
+      return new URL(response.url()).pathname === '/api/tenant-flow-permissions' && request.method() === 'POST' && request.postDataJSON()[0]?.isEnabled === true;
+    });
     await availability.focus();
     await page.keyboard.press('Space');
+    await enabledResponse;
     assert.equal(await availability.isChecked(), true, 'availability can be enabled from the keyboard');
+    const disabledResponse = page.waitForResponse((response) => {
+      const request = response.request();
+      return new URL(response.url()).pathname === '/api/tenant-flow-permissions' && request.method() === 'POST' && request.postDataJSON()[0]?.isEnabled === false;
+    });
+    await availability.focus();
+    await page.keyboard.press('Space');
+    await disabledResponse;
+    assert.equal(await availability.isChecked(), false, 'availability can be disabled while retaining its row');
+    const reenabledResponse = page.waitForResponse((response) => {
+      const request = response.request();
+      return new URL(response.url()).pathname === '/api/tenant-flow-permissions' && request.method() === 'POST' && request.postDataJSON()[0]?.isEnabled === true;
+    });
+    await availability.focus();
+    await page.keyboard.press('Space');
+    await reenabledResponse;
+    assert.equal(await availability.isChecked(), true);
     await page.getByRole('textbox', { name: 'Intent' }).fill('claim');
     const toggleMapping = page.getByRole('button', { name: 'Toggle mapping' });
+    const mappingAdded = page.waitForResponse((response) => {
+      const request = response.request();
+      return new URL(response.url()).pathname === '/api/intent-flow-mappings' && request.method() === 'POST' && request.postDataJSON().allowedFlowDefinitionIds?.includes('flow-def-a');
+    });
     await toggleMapping.focus();
     await page.keyboard.press('Enter');
+    await mappingAdded;
+    const mappingRemoved = page.waitForResponse((response) => {
+      const request = response.request();
+      return new URL(response.url()).pathname === '/api/intent-flow-mappings' && request.method() === 'POST' && request.postDataJSON().allowedFlowDefinitionIds?.length === 0;
+    });
+    await toggleMapping.focus();
+    await page.keyboard.press('Enter');
+    await mappingRemoved;
     assert.ok(writes.some((write) => write.pathname === '/api/tenant-flow-permissions' && write.payload[0].companyId === company.id));
+    assert.deepEqual(writes.filter((write) => write.pathname === '/api/tenant-flow-permissions').map((write) => write.payload[0].isEnabled), [true, false, true]);
     assert.ok(writes.some((write) => write.pathname === '/api/intent-flow-mappings' && write.payload.companyId === company.id));
+    assert.deepEqual(writes.filter((write) => write.pathname === '/api/intent-flow-mappings').map((write) => write.payload.allowedFlowDefinitionIds), [['flow-def-a'], []]);
     assert.ok(apiRequests.filter((request) => request.pathname === '/api/flow-definitions').every((request) => request.search.includes(`companyId=${company.id}`) || request.method === 'POST'));
     await page.waitForTimeout(5000);
     await page.screenshot({ path: path.join(evidence, 'flow-editor-desktop.png') });
@@ -136,9 +191,16 @@ test('tenant flow definition editor uses company-scoped API contracts', { timeou
     await page.getByRole('main').first().evaluate((element) => { element.scrollTop = 0; });
     await page.getByRole('heading', { name: 'Tenant flow definitions' }).waitFor({ state: 'visible' });
     await page.screenshot({ path: path.join(evidence, 'flow-editor-mobile.png') });
-    await fs.writeFile(path.join(evidence, 'flow-editor-uat.json'), JSON.stringify({ date: new Date().toISOString(), candidateVersion: require('../package.json').version, target: 'local production SPA on loopback', persona: 'synthetic Company Co admin', actions: ['keyboard-create-definition', 'keyboard-save-version', 'keyboard-enable-availability', 'keyboard-map-intent', 'mobile-390px-overflow-check'], network: 'external HTTP and WebSockets blocked; APIs intercepted', mobileWidth }, null, 2));
+    await page.setViewportSize({ width: 1280, height: 900 });
+    page.once('dialog', (dialog) => dialog.accept());
+    const deactivateButton = page.getByRole('button', { name: 'Deactivate' });
+    await deactivateButton.click();
+    await deactivateButton.waitFor({ state: 'detached' });
+    assert.equal(flows.find((flow) => flow.id === 'flow-def-a').status, 'inactive');
+    assert.ok(apiRequests.some((request) => request.method === 'DELETE' && request.pathname === '/api/flow-definitions/flow-def-a'));
+    await fs.writeFile(path.join(evidence, 'flow-editor-uat.json'), JSON.stringify({ date: new Date().toISOString(), candidateVersion: require('../package.json').version, target: 'local production SPA on loopback', persona: 'synthetic Company Co admin', actions: ['keyboard-create-definition', 'edit-definition', 'edit-draft-version', 'approve-version', 'availability-enable-disable', 'intent-mapping-add-remove', 'confirmed-soft-deactivate', 'mobile-390px-overflow-check'], network: 'external HTTP and WebSockets blocked; APIs intercepted', mobileWidth }, null, 2));
     await context.close();
-    console.log('PASS tenant flow definition UAT: create, draft/approved versions, company availability and intent routing use synthetic API fixtures; tenant company picker is absent and external requests are blocked.');
+    console.log('PASS tenant flow definition UAT: create/edit/soft-deactivate, draft update/approval, availability enable/disable and intent mapping add/remove use synthetic API fixtures; tenant company picker is absent and external requests are blocked.');
   } finally {
     await browser.close();
     await new Promise((resolve) => server.close(resolve));

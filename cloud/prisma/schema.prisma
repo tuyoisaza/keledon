@@ -583,6 +583,7 @@ model KnowledgeDocument {
 model AuditLog {
   id        String   @id @default(uuid())
   userId    String?
+  companyId String?  // Snapshot of the actor's tenant when the event was recorded; deliberately not a relation.
   action    String
   entity    String
   entityId  String?
@@ -592,6 +593,7 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@index([userId])
+  @@index([companyId, createdAt])
   @@index([entity, entityId])
   @@map("audit_logs")
 }

@@ -103,3 +103,8 @@ Esta sección supersede el estado de la auditoría fuente anterior para el candi
 AG-02 canonical/indexable source: **PASS (fuente)**, con index hints públicos y exclusión privada server-side; respuesta desplegada/rastreo siguen sin medirse. AG-09 supporting paths: **PASS (fuente/local)**. AG-13 privacy/crawler alignment: **PASS (fuente)** para headers NGINX previstos. AG-15 regression: **PASS (fuente/local)** en los checks SEO 1/1 y SPA UAT 1/1. AG-11 localization, AG-12 respuesta sin JS/accesibilidad completa y AG-14 observación de citas externas siguen **BLOCKED / NOT MEASURED**.
 
 **Resultado: SOURCE PASS; EXTERNAL DISCOVERY ACCEPTANCE NOT MEASURED.** No hay afirmaciones de indexación, citas, ranking, descubrimiento por motores generativos o adecuación de proveedores en clientes. La evidencia no incluye observación de despliegue.
+# Candidate 5.1.73 applicability recheck — public answers unchanged (2026-10-16)
+
+AEO/GEO remains **APPLICABLE** to public `/`. The candidate's theme/admin/AI catalog work changes no public entity description, product claim, structured data, public route or language policy. Reuse the 15-control source audit; the two SEO source tests pass 1/1 each. No answer engine, search engine, public host, paid query or customer endpoint was accessed; citation visibility, author provenance, language decision and deployed discovery remain unmeasured.
+
+---

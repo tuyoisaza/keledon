@@ -1,3 +1,8 @@
+## Mandatory unified administration console gate
+
+For every administered product apply vendored `ADMIN_CONSOLE_STANDARD.md` in Capture, Plan, Auto, UAT and Check. Determine single vs multi tenancy (recommended only where justified): multi has protected platform super_admin + tenant admins; single has full-scope admin without fictitious super_admin. Demand a real Configuración console and authorized backend for users, roles, tenant lifecycle when applicable, native locale, system/debug/integrations with protected secrets, backups, audit, centrally tokenized themes and conditional Prompts/agent workflow graph. Require auditable safe Test-as-role, explicit negative authorization tests, and actual UI/API/persistence evidence. Bare `PHDK check` audits and requests remediation approval; `PHDK check --fix` explicitly authorizes audit and immediately fixable gaps with delivery, not unapproved tenancy conversion, credentials or live destructive changes. See `PHDK_CHECK.md`.
+
+
 
 ## Mandatory delivery-autonomy and personality bootstrap
 
@@ -27,6 +32,8 @@ Current owner pause/stop instructions remain effective within their scope. Re-re
 Complete the necessary steps of the current requested deliverable, including its authorized delivery, then report and stop. Do not choose the next backlog task. Status/link questions and assistant-written task summaries do not cancel an unfinished request in the same active conversation; preserve real owner stops and leave unrelated or post-conversation work inactive.
 
 ## Git and automation boundary
+
+`PHDK check` and Auto's final Check must apply `PHDK_AUTOMATION_HYGIENE.md`: source scan plus read-only GitHub workflow active/runs/check state and Railway deploy/Wait for CI/cron/restart evidence where connected. Distinguish legacy PHDK schedules/agents from justified CI and normal GitHub→Railway autodeploy. No blanket disabling or provider writes; incomplete remote access is UNVERIFIED.
 
 - A current implementation/fix/update request includes the scoped branch, version, local checks, version-prefixed commit, push, PR, required review, merge, and verified remote `main` result under `MAIN_DELIVERY_STANDARD.md`. Do not ask again for these delivery steps. Honor a narrower read/audit/plan/local/branch/PR-only request, another explicit target, and the bare `PHDK upgrade` limit.
 - Normal delivery requires assistant diff review and applicable checks. Sensitive behavior/policy decisions need owner approval under `MAIN_DELIVERY_STANDARD.md`; a well-defined current request or clear "push to main", "merge", or "aprobado" for the identified change can already supply it in this conversation. Do not invent a GitHub review-event or human-diff-opening requirement. Preserve formal/named/independent reviews actually required by current owner instructions, hooks, or server rules, and report approval separately from human inspection. A branch push/open PR is not completion for a `main` target.
@@ -64,6 +71,9 @@ For every user-facing product, follow `PHDK_UX_UI.md` for new designs and existi
 ## Design system source of truth
 
 For UI-applicable React/Next.js work follow `PHDK_DESIGN_SYSTEM.md`: shared shadcn-compatible components, Radix primitives for composite interactions, centralized Tailwind semantic tokens, Motion presets, Lucide icons and coherent light/dark/corporate palettes. Use documented en/es/pt defaults and project exceptions. No page-specific duplicate widgets/themes. Verify actual versions before choosing a dependency; preserve existing product behavior.
+
+## Mandatory theme token and template editor gate
+For UI-applicable products read PHDK_THEME_STANDARD.md in addition to PHDK_DESIGN_SYSTEM.md. Require a single semantic CSS palette source, light/dark/corporate parity, an actual Superadmin Configuración → Edición de templates section, persisted edits and corporate visibility switch. Designer Mode detects and repairs hardcoded palette values; Check records file:line findings and functional evidence. Use vendored scripts/phdk_theme_audit.py to catch static violations, but do not claim runtime compliance without the real editor, permissions and tests. Preserve role/tenancy security and the Check audit/remediation split.
 
 ## Designer Mode command
 

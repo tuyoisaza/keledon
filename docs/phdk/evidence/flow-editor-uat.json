@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-17T06:36:10.501Z",
+  "candidateVersion": "5.1.74",
+  "target": "local production SPA on loopback",
+  "persona": "synthetic Company Co admin",
+  "actions": [
+    "keyboard-create-definition",
+    "edit-definition",
+    "edit-draft-version",
+    "approve-version",
+    "availability-enable-disable",
+    "intent-mapping-add-remove",
+    "confirmed-soft-deactivate",
+    "mobile-390px-overflow-check"
+  ],
+  "network": "external HTTP and WebSockets blocked; APIs intercepted",
+  "mobileWidth": {
+    "viewport": 390,
+    "content": 390
+  }
+}

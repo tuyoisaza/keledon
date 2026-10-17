@@ -57,6 +57,12 @@ function copyDirectory(src, dest) {
 console.log('\n📁 Copying extension files...');
 copyDirectory(sourceDir, buildDir);
 
+// Package the canonical cross-surface semantic palette beside the extension UI.
+const sharedThemeTokens = path.join(__dirname, '../../shared/theme-tokens.css');
+const builtThemeTokens = path.join(buildDir, 'ui/theme-tokens.css');
+fs.copyFileSync(sharedThemeTokens, builtThemeTokens);
+console.log('📄 ui/theme-tokens.css (shared semantic palette)');
+
 // Validate critical files
 console.log('\n🔍 Validating critical files...');
 const criticalFiles = [
@@ -64,6 +70,8 @@ const criticalFiles = [
   'background/main.js',
   'background/background-service.js',
   'ui/sidepanel.html',
+  'ui/theme-tokens.css',
+  'ui/theme-runtime.js',
   'ui/sidepanel.js',
   'content_scripts/webrtc-audio-injector.js'
 ];

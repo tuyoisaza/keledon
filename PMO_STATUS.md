@@ -1,15 +1,30 @@
-## Current PMO board — 5.1.73 / UAT-080 passed; whole Auto partial
+## Current PMO board — local candidate 5.1.74 / PHDK 2.51.5; whole Auto partial
 
-Run `20261014-0007-phdk-auto-completion`; PRs #180–#190 are merged and this candidate documents UAT-080. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. Portfolio: **4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 78 PASS, 0 BLOCKED, 1 MANUAL**. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; branch `fix/phdk-auto-uat-082`, base `0dd405d930c518537ecea17ca363e95a5b99a9fd`. Candidate is local/uncommitted. Audit attribution is implemented in API/Cloud; UAT-073/079 pair tenant-admin flow definition, version, availability and routing journeys with persisted acceptance, and UAT-081/083 do the same for superadmin definition flows, alongside UAT-086/087 for Company, Brand, Team and User. API regression 42/42, Cloud 18/18, PHDK coherence 61/61. Portfolio is 85 PASS, 0 BLOCKED, 1 MANUAL; matrix is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 29 PASS. Four commitments remain active; no PR/merge/deployment is claimed.
+
+| Workstream | Status | Current progress | Open acceptance |
+|---|---|---|---|
+| WS-001 baseline, versions, PRs | ACTIVE / PARTIAL | PHDK 2.51.5 force-synchronized; local candidate is 5.1.74. | Candidate-wide review, normal PR and remote readback. |
+| WS-002 widget and safe diagnostics | PARTIAL | Existing widget/diagnostics and selected Web/theme UAT remain valid. | Native device/audio; broad route, role, screen-reader, zoom and localization acceptance. |
+| WS-003 tenant runtime and CRM | PARTIAL | Tenant flow configuration, private-origin allowlists and API AI input contracts have source/synthetic coverage. Railway production currently deploys `services/api`; the separate `cloud/` LLM source is not deployed there. | Preserve Cloud source parity, complete voice runtime and customer-selected integration acceptance. |
+| WS-004 administration/permissions | PARTIAL | Audit viewer plus role-denial events and successful mutation/auth tenant snapshots in both API and Cloud; nine Web lifecycle/configuration rows now pair browser UAT with persisted API acceptance. | Apply migrations to an authorized disposable DB; 396 blocked CRUD rows, other authorization-denial paths, export/retention and other admin workflows. |
+
+SIGUIENTE PASO: continue source-resolvable CRUD and runtime review; obtain disposable PostgreSQL acceptance before claiming persistence, then reconcile version and prepare normal PR delivery.
+
+---
+
+## Historical PMO board — 5.1.73 candidate / UAT-083 HTTP acceptance passed
+
+Run `20261014-0007-phdk-auto-completion`; PRs #180–#191 are merged. UAT-081 fixes the superadmin Web legacy-assignment path; UAT-083 passes 24 HTTP assertions per backend for persisted flow configuration and closes four superadmin API rows. PHDK v2.51.2 coherence remains 56/56 and product version remains 5.1.73. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 81 PASS, 0 BLOCKED, 1 MANUAL. The 547-row matrix is 391 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 20 PASS. No deployment is claimed.
 
 | Workstream | Status | Evidence / next milestone | Open acceptance |
 |---|---|---|---|
 | WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | 5.1.73 and PR #184 verified on `main`; coherence 56/56. | Continue release/process and remote evidence reconciliation. |
 | WS-002 widget and safe diagnostics | PARTIAL | Widget and responsive Web journeys remain covered by synthetic UAT. | Native device/audio MANUAL; broad accessibility/localization. |
-| WS-003 tenant runtime and CRM | PARTIAL | UAT-079/080 validate API/Cloud tenant flow configuration and persistence for admin/coordinator; UAT-078 validates explicitly allowlisted private Vendor origins. | Integrated live flow execution and customer-selected voice/CRM acceptance. |
-| WS-004 administration/permissions | PARTIAL | UAT-068–080 cover selected orphan cleanup, admin/coordinator CRUD, superadmin core API CRUD, Workflow admin denials, Vendor and tenant flow configuration. | 395 blocked rows, other resources/roles/surfaces, Web/backend join and Session lifecycle decisions. |
+| WS-003 tenant runtime and CRM | PARTIAL | UAT-073/081 validate editor journeys; UAT-079/080/083 validate API/Cloud persisted configuration and DB-derived scope; UAT-078 validates allowlisted private Vendor origins. | Integrated live flow execution and customer-selected voice/CRM acceptance. |
+| WS-004 administration/permissions | PARTIAL | UAT-068–083 cover selected orphan cleanup, admin/coordinator CRUD, superadmin flow API/Web, Workflow admin denials, Vendor and tenant flow configuration. | 391 blocked rows, other resources/roles/surfaces and Session lifecycle decisions. |
 
-Current activity: continue administration/permission coverage and keep all four commitments active until their acceptance gates close.
+Current activity: continue administration/permission coverage across the remaining blocked resources and roles; keep all four commitments active until their gates close.
 
 ---
 
@@ -39,8 +54,8 @@ Run `20261014-0007-phdk-auto-completion`; remote `main` `f974ab5984a20cd1b4ad742
 |---|---|---|---|
 | WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | #167 merged; SHA/tree/version readback and PHDK 56/56 verified. | Continue baseline and release reconciliation; no hosted checks/review or main protection reported. |
 | WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; synthetic Web UAT and responsive flow-editor evidence remain current. | Native device/audio MANUAL; broad accessibility/localization. |
-| WS-003 tenant runtime and CRM | PARTIAL | Tenant URL validation/allowlist, Browser offline suite, company-owned flows and scoped API reads. | Customer-selected live voice/CRM and private-network acceptance per tenant. |
-| WS-004 administration/permissions | PARTIAL | Restrictive actor/tenant policy; API 39/39, Cloud 18/18; positive provider/profile scope assertions. | CRUD map 546 rows: 410 BLOCKED, 104 N/A, 31 DECISION NEEDED, 1 PASS; UAT-060 awaits PostgreSQL. |
+| WS-003 tenant runtime and CRM | PARTIAL | UAT-073/081 validate editor journeys; UAT-079/080/083 validate API/Cloud persisted configuration and DB-derived scope; UAT-078 validates allowlisted private Vendor origins. | Integrated live flow execution and customer-selected voice/CRM acceptance. |
+| WS-004 administration/permissions | PARTIAL | UAT-068–083 cover selected orphan cleanup, admin/coordinator CRUD, superadmin flow API/Web, Workflow admin denials, Vendor and tenant flow configuration. | 391 blocked rows, other resources/roles/surfaces and Session lifecycle decisions. |
 
 Current activity: continue source-resolvable role/tenant mapping and external acceptance when environments are available. Whole Auto remains **PARTIALLY DELIVERED**.
 
@@ -54,8 +69,8 @@ Run `20261014-0007-phdk-auto-completion`; target `main` at `44a1038c2a8d8d2659bd
 |---|---|---|---|
 | WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | #163 source and #164 evidence merged; latest main SHA/tree and six version reads verified; PHDK 2.51.2 coherence 56/56. | Continue normal checks per candidate; no hosted checks/review decision or main protection reported. |
 | WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; Web UAT 6/6 plus AI-admin; responsive/keyboard flow-editor journey passes. | Native device/audio MANUAL; broad screen-reader and localization acceptance. |
-| WS-003 tenant runtime and CRM | PARTIAL | Tenant URL validation/allowlist, Browser offline 43/43, company-owned flow configuration and fail-closed API reads. | Customer-selected live voice/CRM and explicitly configured private-network acceptance per tenant. |
-| WS-004 administration/permissions | PARTIAL | Restrictive actor/tenant policy, tenant flow editor, API 39/39 and Cloud 18/18. | CRUD map 546 rows: 410 BLOCKED, 104 N/A, 31 DECISION NEEDED, 1 PASS; UAT-060 PostgreSQL migration/restart remains blocked. |
+| WS-003 tenant runtime and CRM | PARTIAL | UAT-073/081 validate editor journeys; UAT-079/080/083 validate API/Cloud persisted configuration and DB-derived scope; UAT-078 validates allowlisted private Vendor origins. | Integrated live flow execution and customer-selected voice/CRM acceptance. |
+| WS-004 administration/permissions | PARTIAL | UAT-068–083 cover selected orphan cleanup, admin/coordinator CRUD, superadmin flow API/Web, Workflow admin denials, Vendor and tenant flow configuration. | 391 blocked rows, other resources/roles/surfaces and Session lifecycle decisions. |
 
 Current activity: continue source-verifiable role/tenant mapping remediation while preserving the four ordered fronts. Whole Auto is **PARTIALLY DELIVERED**, not complete.
 

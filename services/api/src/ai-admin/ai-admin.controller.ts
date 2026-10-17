@@ -1,4 +1,13 @@
-import { Controller, Get, Put, Param, Body, Req, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Param,
+  Body,
+  Req,
+  Query,
+  Post,
+} from '@nestjs/common';
 import { AiAdminService } from './ai-admin.service';
 
 @Controller('api/admin/ai')
@@ -15,6 +24,15 @@ export class AiAdminController {
   @Put('prompts/:id')
   update(@Req() req: any, @Param('id') id: string, @Body() body: unknown) {
     return this.service.updatePrompt(req.user?.userId, id, body);
+  }
+  @Post('prompts/:id/rollback')
+  rollback(@Req() req: any, @Param('id') id: string, @Body() body: any) {
+    return this.service.rollbackPrompt(
+      req.user?.userId,
+      id,
+      body?.targetRevision,
+      body?.expectedRevision,
+    );
   }
   @Get('consumption')
   consumption(@Req() req: any, @Query('limit') limit?: string) {

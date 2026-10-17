@@ -1,6 +1,6 @@
 {
   "name": "cloud",
-  "version": "5.1.73",
+  "version": "5.1.74",
   "description": "KELEDON Backend",
   "private": true,
   "license": "UNLICENSED",
@@ -11,6 +11,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "test": "jest",
     "test:regression": "node test/regression/run.js",
+    "test:uat:flow-config-http": "node scripts/uat-083-http-flow-config.cjs",
     "build:typescript": "npx tsc --noEmit",
     "dev:vector-store": "npm run start:dev",
     "build:vector-store": "npm run build && npm run package:vector-store",

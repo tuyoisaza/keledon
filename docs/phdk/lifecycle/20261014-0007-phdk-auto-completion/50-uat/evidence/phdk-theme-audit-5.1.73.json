@@ -1,0 +1,8 @@
+{
+  "status": "STATIC_PASS",
+  "scope": "UI",
+  "findings": [],
+  "runtime_verified": false,
+  "candidate": "5.1.73",
+  "checkedAt": "2026-10-16"
+}

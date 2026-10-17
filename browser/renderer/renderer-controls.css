@@ -20,7 +20,7 @@
       padding: 4px 8px;
       border: 1px solid var(--border);
       border-radius: 6px;
-      background: #fff;
+      background: var(--browser-panel);
       color: var(--text-primary);
       font-size: 11px;
       font-weight: 600;
@@ -59,16 +59,16 @@
       border-radius: 6px;
       font-size: 12px;
       cursor: pointer;
-      background: #fff;
+      background: var(--browser-panel);
       color: var(--text-primary);
       transition: all 0.15s;
     }
     .call-btn:hover:not(:disabled) { background: var(--url-bar-bg); }
     .call-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .call-btn.start { border-color: var(--success); color: var(--success); }
-    .call-btn.start:hover:not(:disabled) { background: var(--success); color: #fff; }
+    .call-btn.start:hover:not(:disabled) { background: var(--success); color: var(--browser-panel); }
     .call-btn.end { border-color: var(--danger); color: var(--danger); }
-    .call-btn.end:hover:not(:disabled) { background: var(--danger); color: #fff; }
+    .call-btn.end:hover:not(:disabled) { background: var(--danger); color: var(--browser-panel); }
     .call-btn.active { border-color: var(--accent); color: var(--accent); }
 
     /* Version badge */
@@ -102,21 +102,21 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
+      background: var(--ui-overlay-50);
       z-index: var(--keledon-modal-z);
       align-items: center;
       justify-content: center;
     }
     .cmdlog-modal.show { display: flex; }
     .cmdlog-content {
-      background: #fff;
+      background: var(--browser-panel);
       border-radius: 12px;
       width: 85%;
       max-width: 720px;
       max-height: 80vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 32px var(--ui-overlay-20);
     }
     .cmdlog-header {
       display: flex;
@@ -159,14 +159,14 @@
     }
     .cmdlog-entry {
       padding: 3px 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--color-border);
       display: flex;
       gap: 6px;
       align-items: flex-start;
     }
     .cmdlog-entry:last-child { border-bottom: none; }
     .cmdlog-entry .time {
-      color: #999;
+      color: var(--browser-text-muted);
       white-space: nowrap;
       flex-shrink: 0;
       min-width: 70px;
@@ -183,11 +183,11 @@
       text-align: center;
       letter-spacing: 0.5px;
     }
-    .cmdlog-entry .tag-POLL  { background: #e3f2fd; color: #1565c0; }
-    .cmdlog-entry .tag-CMD   { background: #e8f5e9; color: #2e7d32; }
-    .cmdlog-entry .tag-WS    { background: #f3e5f5; color: #7b1fa2; }
-    .cmdlog-entry .tag-SYS   { background: #f5f5f5; color: #616161; }
-    .cmdlog-entry .tag-ERR   { background: #ffebee; color: #c62828; }
+    .cmdlog-entry .tag-POLL  { background: var(--browser-info-surface); color: var(--browser-info); }
+    .cmdlog-entry .tag-CMD   { background: var(--browser-success-surface); color: var(--browser-success); }
+    .cmdlog-entry .tag-WS    { background: var(--browser-accent-surface); color: var(--browser-accent); }
+    .cmdlog-entry .tag-SYS   { background: var(--browser-urlbar); color: var(--browser-text-muted); }
+    .cmdlog-entry .tag-ERR   { background: var(--browser-danger-surface); color: var(--browser-danger); }
     .cmdlog-entry .detail {
       color: var(--text-primary);
       word-break: break-word;
@@ -204,17 +204,17 @@
       padding: 5px 14px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      background: #fff;
+      background: var(--browser-panel);
       cursor: pointer;
       color: var(--text-primary);
     }
     .cmdlog-footer button:hover { background: var(--url-bar-bg); }
     .cmdlog-footer button.primary {
-      background: #1a73e8;
-      color: #fff;
-      border-color: #1a73e8;
+      background: var(--browser-accent);
+      color: var(--browser-panel);
+      border-color: var(--browser-accent);
     }
-    .cmdlog-footer button.primary:hover { background: #1557b0; }
+    .cmdlog-footer button.primary:hover { background: var(--browser-accent-hover); }
     .cmdlog-status {
       font-size: 10px;
       color: var(--text-secondary);
@@ -244,8 +244,8 @@
       min-width: 16px;
       height: 16px;
       border-radius: 8px;
-      background: #d93025;
-      color: #fff;
+      background: var(--browser-danger);
+      color: var(--browser-panel);
       font-size: 9px;
       font-weight: 700;
       line-height: 16px;
@@ -259,21 +259,21 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
+      background: var(--ui-overlay-50);
       z-index: var(--keledon-modal-z);
       align-items: center;
       justify-content: center;
     }
     .console-modal.show { display: flex; }
     .console-content {
-      background: #1e1e1e;
+      background: var(--color-background);
       border-radius: 12px;
       width: 90%;
       max-width: 800px;
       max-height: 80vh;
       display: flex;
       flex-direction: column;
-      color: #d4d4d4;
+      color: var(--browser-text);
       font-family: 'SF Mono', 'Consolas', 'Courier New', monospace;
     }
     .console-header {
@@ -281,23 +281,23 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 18px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid var(--color-border);
     }
     .console-header h3 {
       font-size: 13px;
       font-weight: 600;
-      color: #d4d4d4;
+      color: var(--browser-text);
     }
     .console-close {
       background: none;
       border: none;
-      color: #999;
+      color: var(--browser-text-muted);
       cursor: pointer;
       font-size: 16px;
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .console-close:hover { color: #fff; background: #333; }
+    .console-close:hover { color: var(--browser-panel); background: var(--color-border); }
     .console-body {
       flex: 1;
       overflow-y: auto;
@@ -309,7 +309,7 @@
     }
     .console-entry {
       padding: 2px 4px;
-      border-bottom: 1px solid #2a2a2a;
+      border-bottom: 1px solid var(--color-card);
       display: flex;
       gap: 6px;
       align-items: flex-start;
@@ -318,7 +318,7 @@
     }
     .console-entry:last-child { border-bottom: none; }
     .console-entry .time {
-      color: #666;
+      color: var(--browser-text-muted);
       white-space: nowrap;
       flex-shrink: 0;
       min-width: 65px;
@@ -335,17 +335,17 @@
       text-align: center;
       letter-spacing: 0.5px;
     }
-    .console-entry .level-tag.error   { background: #5c1a1a; color: #f48771; }
-    .console-entry .level-tag.warning { background: #5c4a1a; color: #ffd580; }
-    .console-entry .level-tag.info    { background: #1a3a5c; color: #75beff; }
-    .console-entry .level-tag.verbose { background: #2a2a2a; color: #888; }
+    .console-entry .level-tag.error   { background: var(--browser-danger-surface); color: var(--browser-danger); }
+    .console-entry .level-tag.warning { background: var(--browser-warning-surface); color: var(--browser-warning); }
+    .console-entry .level-tag.info    { background: var(--browser-info-surface); color: var(--browser-info); }
+    .console-entry .level-tag.verbose { background: var(--color-card); color: var(--browser-text-muted); }
     .console-entry .msg {
-      color: #d4d4d4;
+      color: var(--browser-text);
       word-break: break-word;
       font-size: 11px;
     }
     .console-empty {
-      color: #666;
+      color: var(--browser-text-muted);
       text-align: center;
       padding: 40px 0;
       font-size: 12px;
@@ -355,43 +355,43 @@
       gap: 8px;
       justify-content: flex-end;
       padding: 10px 18px;
-      border-top: 1px solid #333;
+      border-top: 1px solid var(--color-border);
     }
     .console-footer button {
       font-size: 11px;
       padding: 5px 14px;
       border-radius: 6px;
-      border: 1px solid #444;
-      background: #2a2a2a;
+      border: 1px solid var(--color-border);
+      background: var(--color-card);
       cursor: pointer;
-      color: #d4d4d4;
+      color: var(--browser-text);
     }
-    .console-footer button:hover { background: #3a3a3a; }
+    .console-footer button:hover { background: var(--color-secondary); }
     .console-footer button.primary {
-      background: #1a73e8;
-      color: #fff;
-      border-color: #1a73e8;
+      background: var(--browser-accent);
+      color: var(--browser-panel);
+      border-color: var(--browser-accent);
     }
-    .console-footer button.primary:hover { background: #1557b0; }
+    .console-footer button.primary:hover { background: var(--browser-accent-hover); }
 
     /* ========== ESCALATION MODAL ========== */
     .escalation-modal {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
+      background: var(--ui-overlay-50);
       z-index: var(--keledon-modal-z);
       align-items: center;
       justify-content: center;
     }
     .escalation-modal.show { display: flex; }
     .escalation-content {
-      background: #fff;
+      background: var(--browser-panel);
       border-radius: 12px;
       padding: 24px;
       max-width: 420px;
       width: 90%;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 32px var(--ui-overlay-20);
     }
     .escalation-header {
       display: flex;
@@ -408,8 +408,8 @@
       text-transform: uppercase;
       font-weight: 600;
     }
-    .escalation-type.trigger { background: #fef7e0; color: var(--warning); }
-    .escalation-type.failure { background: #fce8e6; color: var(--danger); }
+    .escalation-type.trigger { background: var(--browser-warning-surface); color: var(--warning); }
+    .escalation-type.failure { background: var(--browser-danger-surface); color: var(--danger); }
     .escalation-message { color: var(--text-primary); font-size: 14px; margin-bottom: 12px; line-height: 1.5; }
     .escalation-detail {
       background: var(--url-bar-bg);
@@ -428,17 +428,17 @@
       font-weight: 500;
       cursor: pointer;
       border: 1px solid var(--border);
-      background: #fff;
+      background: var(--browser-panel);
       color: var(--text-primary);
       transition: all 0.15s;
     }
     .escalation-btn:hover { background: var(--url-bar-bg); }
-    .escalation-btn.continue { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .escalation-btn.continue { background: var(--accent); color: var(--browser-panel); border-color: var(--accent); }
     .escalation-btn.continue:hover { background: var(--accent-hover); }
     .escalation-btn.fix { border-color: var(--warning); color: var(--warning); }
-    .escalation-btn.fix:hover { background: var(--warning); color: #fff; }
+    .escalation-btn.fix:hover { background: var(--warning); color: var(--browser-panel); }
     .escalation-btn.abort { border-color: var(--danger); color: var(--danger); }
-    .escalation-btn.abort:hover { background: var(--danger); color: #fff; }
+    .escalation-btn.abort:hover { background: var(--danger); color: var(--browser-panel); }
 
     /* Loading bar at top */
     .loading-bar {
@@ -469,5 +469,5 @@
     .diagnostic-actions button:hover::before { background: var(--border); }
     .diagnostic-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .diagnostic-actions svg { position: relative; z-index: 1; width: 14px; height: 14px; }
-    .diagnostic-actions .diagnostic-success { color: #15803d; }
+    .diagnostic-actions .diagnostic-success { color: var(--browser-success); }
     .diagnostic-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }

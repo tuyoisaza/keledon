@@ -1,16 +1,16 @@
 :root {
-            --bg: #0f131a;
-            --panel: #151c27;
-            --panel-soft: #1b2432;
-            --border: #2a374b;
-            --text: #e6eef9;
-            --muted: #94a3b8;
-            --accent: #3bd3c6;
-            --accent-strong: #1fb5aa;
-            --danger: #f25c6c;
-            --success: #38d39f;
-            --warning: #fbbf24;
-            --info: #60a5fa;
+            --bg: var(--agent-background);
+            --panel: var(--agent-panel);
+            --panel-soft: var(--agent-panel-soft);
+            --border: var(--color-border);
+            --text: var(--agent-text);
+            --muted: var(--agent-muted);
+            --accent: var(--agent-accent);
+            --accent-strong: var(--agent-accent-strong);
+            --danger: var(--agent-danger);
+            --success: var(--agent-success);
+            --warning: var(--agent-warning);
+            --info: var(--agent-info);
         }
 
         * {
@@ -60,7 +60,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: white;
+            color: var(--color-primary-foreground);
             font-size: 14px;
         }
 
@@ -106,7 +106,7 @@
 
         .header-btn:hover {
             background: var(--accent);
-            color: white;
+            color: var(--color-primary-foreground);
             border-color: var(--accent);
         }
 
@@ -211,7 +211,7 @@
             background: var(--accent);
             border: none;
             border-radius: 6px;
-            color: white;
+            color: var(--color-primary-foreground);
             cursor: pointer;
             font-size: 12px;
         }
@@ -261,7 +261,7 @@
 
         .message.user {
             background: var(--accent);
-            color: white;
+            color: var(--color-primary-foreground);
             align-self: flex-end;
             margin-left: auto;
         }
@@ -305,7 +305,7 @@
 
         .tool-chip:hover {
             background: var(--accent);
-            color: white;
+            color: var(--color-primary-foreground);
             border-color: var(--accent);
         }
 
@@ -423,7 +423,7 @@
             left: 2px;
             width: 16px;
             height: 16px;
-            background: white;
+            background: var(--agent-panel);
             border-radius: 50%;
             transition: transform 0.3s;
         }

@@ -41,6 +41,8 @@ import { BrowserCommandsModule } from './browser-commands/browser-commands.modul
 import { SessionModule } from './modules/session.module';
 import { EscalationModule } from './modules/escalation.module';
 import { SuperAdminGuard } from './guards/roles.guard';
+import { PlatformThemeController } from './config/platform-theme.controller';
+import { PlatformThemeService } from './config/platform-theme.service';
 
 @Module({
   imports: [
@@ -81,6 +83,7 @@ import { SuperAdminGuard } from './guards/roles.guard';
     BrainController,
     PlannerController,
     SpeachesController,
+    PlatformThemeController,
   ],
   providers: [
     AppService,
@@ -95,6 +98,7 @@ import { SuperAdminGuard } from './guards/roles.guard';
       useClass: AuditInterceptor,
     },
     SuperAdminGuard,
+    PlatformThemeService,
   ],
   exports: [
     DatabaseHealthService,

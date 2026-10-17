@@ -7,7 +7,14 @@ export interface ManagedPrompt {
   executionPrompt: string;
   outputSchemaJson: Record<string, unknown>;
   enabled: boolean;
+  purpose: string;
+  owningFeature: string;
+  callsite: string;
+  inputSchemaJson: Record<string, unknown>;
+  outputDestination: string;
+  nextHops: Array<{ agentId: string; inputMapping?: Record<string, unknown>; condition?: string; maxHops?: number }>;
   revision: number;
+  revisions?: Array<{ toRevision: number; changedFields: unknown }>;
   updatedBy?: string;
   createdAt?: string;
   updatedAt?: string;

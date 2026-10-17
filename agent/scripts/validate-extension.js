@@ -54,6 +54,7 @@ const criticalFiles = [
   'background/main.js',
   'background/background-service.js',
   'ui/sidepanel.html',
+  'ui/theme-runtime.js',
   'ui/sidepanel.js',
   'content_scripts/webrtc-audio-injector.js'
 ];

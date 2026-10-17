@@ -15,7 +15,7 @@ export const CTASection = () => {
                             {t('landing.ctaDescription')}
                         </p>
                         <div className="mt-10 flex justify-center gap-6">
-                            <a href="/login" className="rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-[#0f766e] hover:bg-blue-50 transition-colors shadow-lg">
+                            <a href="/login" className="rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-primary hover:bg-primary/10 transition-colors shadow-lg">
                                 {t('landing.getStarted')}
                             </a>
                             <a href="#architecture" className="rounded-lg bg-transparent border border-white px-8 py-3.5 text-base font-semibold text-primary-foreground hover:bg-foreground/10 transition-colors">

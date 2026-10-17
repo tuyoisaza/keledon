@@ -1,5 +1,13 @@
 # UAT retest — run `20261013-1900-phdk-auto`
 
+## Candidate 5.1.73 — UAT-083 flow-configuration API/Cloud HTTP retest
+
+Built API and Cloud servers pass 24 HTTP assertions each against separate fresh PostgreSQL databases. The run verifies DB-derived actor role/company despite forged claims, cross-company superadmin configuration, coordinator isolation, approved-version immutability, legacy assignment, availability and intent mapping changes, and persisted readback through second Prisma clients. It uses loopback-only requests and synthetic identities; external providers and customer data are not involved. The four superadmin flow-configuration API rows now pass, while Web and other-role rows remain open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-083-superadmin-flow-config-http-5.1.73.json`.
+
+## Candidate 5.1.73 — UAT-081 legacy flow assignment retest
+
+After the first run showed the reassigned definition disappearing from the legacy-only screen, the handler now changes the selected scope to the destination company and reloads there. The production-built Web test passes superadmin tenant switching, definition create/update/soft-deactivate, draft creation/approval, availability enable/disable, mapping add/remove, legacy reassignment and destination list readback. The existing tenant-admin flow editor also passes. External traffic and WebSockets are blocked; APIs use in-memory synthetic fixtures. No backend superadmin authorization or database persistence is inferred. Evidence: `50-uat/evidence/uat-flow-config-superadmin-web-5.1.73.json`.
+
 ## Candidate 5.1.66 — responsive flow editor and tenant import retest
 
 The first focused flow-editor browser capture exposed an unusably narrow 390px management layout; UAT Fix moved the shell navigation to a compact mobile header and kept the editor full width. The retest exercises definition/version/availability/intent actions through Enter/Space, confirms `document.scrollWidth <= clientWidth` at 390px, and saves desktop/mobile screenshots plus a redacted journey JSON. API importer tests also retest the stale company-hint finding and confirm persisted DB ownership controls imported permissions. API/Cloud regression, Web lint/typecheck/build and the full Web UAT pass. Remaining screen-reader/all-route acceptance is open; disposable-DB migration/restart remains BLOCKED under UAT-060.
@@ -26,3 +34,8 @@ The unchanged Web UAT suite was rerun at source fingerprint sha256:aced4dfae723e
 ## Candidate 5.1.33 — source contract retest (2026-10-14)
 
 UAT-031 and `services/api/test/regression/46-knowledge-vector-cleanup.test.js` pass 12/12 against mocked Prisma and Qdrant services in API and Cloud. The test covers payload-filter deletion before the document row, collection deletion before the base row, missing collections, and failure-preserves-row behavior. API and Cloud builds and regressions pass. No disposable database or live Qdrant instance was available or used; concurrency and post-vector Prisma failure remain acceptance gaps. This does not change the existing UAT-030 web evidence or close UAT-009/010/006.
+# Candidate 5.1.73 — UAT-084/085 browser retest PASS
+
+The AI-admin UAT fixture now supplies the candidate's managed workflow metadata, so it reaches the stale-revision interaction and confirms the unsaved draft remains available. The shared-theme editor uses a production-built Web SPA with a synthetic API: all three preset previews are distinct, cancel restores saved values, save increments/readbacks a revision, Corporate visibility/fallback works, and a tenant admin is denied before protected API access. `services/web npm run test:uat` passes 7/7 browser journeys, UAT-085 passes its 12 assertions and the AI-admin journey passes. No PostgreSQL, provider call, live customer endpoint, or external request was used. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-085-theme-templates-5.1.73.json` and `docs/phdk/workstreams/AI-ADMIN-UAT.json`.
+
+---

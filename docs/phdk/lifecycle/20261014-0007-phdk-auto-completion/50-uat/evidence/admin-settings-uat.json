@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-17T06:37:56.730Z",
+  "candidate": "5.1.74",
+  "target": "production-built Web SPA with synthetic identity API",
+  "result": "PASS_SCOPED",
+  "assertions": 14,
+  "checks": [
+    "superadmin sees platform configuration links in English",
+    "tenant admin sees tenant links and voice configuration in Spanish but no platform-only links",
+    "ordinary user cannot enter management settings"
+  ],
+  "limitations": [
+    "synthetic identity/API only; route authorization and backend CRUD are verified separately",
+    "no customer data or external endpoints"
+  ]
+}

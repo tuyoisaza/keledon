@@ -1,3 +1,13 @@
+# Remediation continuation — candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
+
+Closed source audit coverage for role denials and successful mutation/auth events: API and Cloud role guards record a minimal append-only `ACCESS_DENIED` event for known actors, snapshot the actor's tenant, and still reject access if event persistence fails. API and Cloud interceptors capture the actor tenant before mutation/auth handlers run. The new nullable, non-relational `AuditLog.companyId` is paired across both Prisma schemas and additive migrations; audit filtering prefers event-time tenant attribution while retaining a fallback for historical rows. No request body, IP or user-agent is copied into role-denial events.
+
+Validation: API/Cloud Prisma validation and client generation pass; API build/regression 42/42 and lint 0 errors/0 warnings; Cloud build/regression 18/18 and lint 0 errors; query/redaction contract 4/4 and denied-attribution/interceptor 10/10 pass, including both guard/interceptor implementations, failed audit writes, migration parity and pre-handler tenant snapshots. Web 7/7 UAT suites and standalone admin-settings/theme-template/AI-admin pass; Browser 43/43; Agent theme 2/2/build/validation; Landing typecheck/build/SEO pass; theme static audit and PHDK coherence 61/61 pass. The migrations have not been applied because no isolated PostgreSQL runtime is available. Other authorization-denial paths, export audit/retention and the larger Auto portfolio remain open. Whole Auto is PARTIALLY DELIVERED; source delivery is now pending final diff review and the normal versioned PR.
+
+SIGUIENTE PASO: reconcile the source diff, deliver by the versioned PR path, then resume PostgreSQL migration/restart acceptance when an isolated target is available.
+
+---
+
 # Remediation handoff — candidate 5.1.66
 
 The source findings from UAT are resolved: mobile management uses full-width responsive content, responsive navigation mounts one UAT profile control, and the legacy importer uses the persisted database company owner before child records are created. API/Cloud now persist flow definitions, versions, tenant permissions and intent mappings in Prisma with mirrored migrations and a composite tenant ownership foreign key. Regression coverage and Web UAT pass.

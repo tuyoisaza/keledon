@@ -1,3 +1,17 @@
+## Current UAT-086/087 — superadmin Web CRUD journeys PASS
+
+Built Web UAT now covers Company, Brand, Team and User create/update/detail/confirmed-delete journeys, with separate fields and payload checks. New User creation defaults to `user`; the superadmin-only flow assigns the elevated `admin` role and Tenant B company. Synthetic stores confirm list/detail readback and fixture removal. API/Cloud persisted authorization for the same resource families is separate evidence in UAT-071/075/076. Evidence: `docs/phdk/evidence/uat-local-web.json` and `docs/phdk/evidence/uat-superadmin-{company,brand,team,user}-detail.png`.
+
+Current tally is **85 PASS, 0 BLOCKED, 1 MANUAL**; the 560-row CRUD matrix is **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Nine Web PASS rows pair UI lifecycle/configuration evidence with persisted API/Cloud acceptance: tenant-admin flow configuration (UAT-073/079), superadmin flow definition (UAT-081/083), and Company/Brand/Team/User (UAT-072/071/075/076/086/087). Remaining route/role CRUD coverage, audit migration acceptance, broad accessibility and native device/audio remain open; the candidate is undelivered.
+
+## Current UAT-083 — superadmin flow configuration over HTTP PASS
+
+API and Cloud each passed 24 HTTP assertions against separate fresh PostgreSQL databases; API applied 9 migrations and Cloud 7. The run covers DB-derived role/company scope, superadmin cross-company definition and version management, legacy assignment, permission enable/disable, mapping removal, coordinator foreign-resource denial and cross-client persistence. It closes four superadmin flow-configuration API matrix rows; Web rows and the wider matrix remain open. Evidence: `evidence/uat-083-superadmin-flow-config-http-5.1.73.json`; runner: `services/api/scripts/uat-083-http-flow-config.cjs`. Current tally is 81 PASS, 0 BLOCKED, 1 MANUAL; matrix is 391 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 20 PASS. All four commitments remain active and the candidate is undelivered.
+
+## Current UAT-082 — selected persisted superadmin flow configuration PASS
+
+API and Cloud each passed 10 in-process guard/controller assertions against fresh disposable PostgreSQL: forged role/company token claims were resolved from DB, coordinator scope excluded foreign flows, and an approved version persisted across clients. API and Cloud applied 9 and 7 migrations. These checks do not cover HTTP transport or the full matrix. Evidence: `evidence/uat-082-superadmin-flow-config-postgres-5.1.73.json`. Current tally is 80 PASS, 0 BLOCKED, 1 MANUAL; matrix remains 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS. All four commitments remain active and the local candidate is undelivered.
+
 ## Candidate 5.1.72 — UAT-067 PASS_SCOPED; whole acceptance incomplete
 
 Production-built Web UAT in `C:\KELEDON\keledon` passes 6/6 plus AI-admin; protected diagnostics passes 19/19; Browser widget source/layout checks pass 3/3 and Browser TypeScript build passes. The corrected contrast scan covers selected management, Knowledge, dashboard, sessions, profile and device routes across roles, locales and themes. It found a 3.30:1 dark-theme missing-provider-key message; OpenAI and Gemini copy now use the full semantic muted foreground. The scanner composites translucent colors/ancestor opacity and skips disabled controls. All sampled enabled text passes. Local UI fixtures are synthetic and external traffic is blocked. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`.
@@ -21,6 +35,24 @@ Disposable PostgreSQL 16.15 UAT passed for the API (9 migrations, 26 assertions)
 SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar como pendientes las decisiones operativas y UAT por cliente.
 
 # UAT handoff — `20261014-0007-phdk-auto-completion`
+
+## Candidate 5.1.73 — UAT-084/085 theme and AI-admin browser journeys PASS; whole UAT partial
+
+The exact production-built Web suite passes 7/7 existing browser journeys; UAT-085 adds 12 passing synthetic assertions for the three independently rendered theme templates, save/cancel/reload, corporate visibility/fallback and tenant-admin denial. UAT-084's AI-admin browser journey passes after its fixture was extended with the new catalog metadata, including conflict-preserves-draft and explicit reload. Evidence: `evidence/uat-085-theme-templates-5.1.73.json`, `docs/phdk/workstreams/AI-ADMIN-UAT.json`, `docs/phdk/workstreams/ai-prompts-uat.png`, and `docs/phdk/workstreams/ai-consumption-uat.png`.
+
+These are local UI/API-fixture results. The new theme PlatformSetting migration has not been applied to a disposable database and UI state after a real database restart is unverified; full visual contrast/screen-reader/all-route/mobile admin acceptance remains open. The reconciled CRUD inventory covers 40 Prisma models and 560 role-surface rows: 405 BLOCKED, 132 N/A, 3 DECISION NEEDED, 20 PASS. Portfolio tally is 83 PASS, 0 BLOCKED, 1 MANUAL; all four commitments remain active and no delivery is claimed.
+
+Next: run integrated Browser/Agent rendering against a disposable API/database, then verify restart, corporate fallback, contrast and focus before delivery review.
+
+---
+
+## Candidate 5.1.73 — UAT-081 Web fix passed; UAT stage remains open
+
+The superadmin flow editor now switches from unassigned legacy definitions to the chosen owner company after a successful assignment. UAT-081's first browser run exposed the disappearing-record view defect; after repair, the production-built Web journey passes company switching, scoped definition CRUD, version approval, availability, intent mapping and legacy reassignment. The tenant-admin flow editor UAT also passes. API calls were intercepted and external HTTP/WebSockets blocked. This is UI/request-contract evidence only; superadmin API/Cloud persistence and server authorization remain open. Evidence: `evidence/uat-flow-config-superadmin-web-5.1.73.json`.
+
+Portfolio is **79 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The matrix remains 547 rows: 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 16 PASS. All four owner-confirmed commitments remain active; this local fix has not been delivered.
+
+SIGUIENTE PASO: execute the persisted superadmin flow-configuration API/Cloud acceptance, then continue the remaining UAT backlog.
 
 ## Candidate 5.1.73 — UAT-080 PASS; portfolio acceptance incomplete
 

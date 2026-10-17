@@ -1,58 +1,5 @@
 @import "tailwindcss";
-
-@theme {
-  /* Base colors - dark navy theme */
-  --color-border: hsl(220 20% 18%);
-  --color-input: hsl(220 20% 15%);
-  --color-ring: hsl(173 80% 40%);
-  --color-background: hsl(222 47% 6%);
-  --color-foreground: hsl(210 40% 98%);
-
-  /* Primary - Cyan/Teal accent */
-  --color-primary: hsl(173 80% 40%);
-  --color-primary-foreground: hsl(222 47% 6%);
-
-  /* Secondary */
-  --color-secondary: hsl(220 20% 12%);
-  --color-secondary-foreground: hsl(210 40% 98%);
-
-  /* Muted */
-  --color-muted: hsl(220 20% 12%);
-  --color-muted-foreground: hsl(215 20% 65%);
-
-  /* Accent */
-  --color-accent: hsl(173 80% 40%);
-  --color-accent-foreground: hsl(222 47% 6%);
-
-  /* Destructive */
-  --color-destructive: hsl(0 72% 51%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-
-  /* Status colors */
-  --color-success: hsl(142 76% 36%);
-  --color-warning: hsl(38 92% 50%);
-  --color-info: hsl(199 89% 48%);
-  --color-status-success-foreground: #86efac;
-  --color-status-info-foreground: #93c5fd;
-  --color-status-warning-foreground: #fde68a;
-  --color-status-danger-foreground: #fca5a5;
-
-  /* Cards and surfaces */
-  --color-card: hsl(220 20% 10%);
-  --color-card-foreground: hsl(210 40% 98%);
-  --color-popover: hsl(220 20% 10%);
-  --color-popover-foreground: hsl(210 40% 98%);
-
-  /* Sidebar */
-  --color-sidebar: hsl(222 47% 8%);
-  --color-sidebar-foreground: hsl(215 20% 65%);
-  --color-sidebar-active: hsl(173 80% 40%);
-
-  /* Radii */
-  --radius-lg: 0.75rem;
-  --radius-md: 0.5rem;
-  --radius-sm: 0.25rem;
-}
+@import "../../../shared/theme-tokens.css";
 
 @layer base {
 
@@ -69,53 +16,6 @@
   }
 }
 
-/* Custom utilities */
-@layer utilities {
-  .gradient-text {
-    background: linear-gradient(135deg, hsl(173 80% 40%), hsl(173 80% 60%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .glass {
-    background: color-mix(in srgb, var(--color-card) 80%, transparent);
-    backdrop-filter: blur(12px);
-  }
-}
-/* Shared semantic palettes; every shell uses the same theme contract. */
-:root[data-keledon-theme="light"], :root[data-keledon-theme="light"] * {
-  --color-background: #f8fafc; --color-foreground: #0f172a;
-  --color-card: #fff; --color-card-foreground: #0f172a;
-  --color-popover: #fff; --color-popover-foreground: #0f172a;
-  --color-border: #cbd5e1; --color-input: #cbd5e1;
-  --color-muted: #e2e8f0; --color-muted-foreground: #475569;
-  --color-primary: #0f766e; --color-primary-foreground: #fff; --color-ring: #0f766e;
-  --color-secondary: #e2e8f0; --color-secondary-foreground: #0f172a;
-  --color-accent: #0f766e; --color-accent-foreground: #fff;
-  --color-sidebar: #fff; --color-sidebar-foreground: #334155; --color-sidebar-active: #0f766e;
-  --color-success: #15803d;
-  --color-status-success-foreground: #166534;
-  --color-status-info-foreground: #1d4ed8;
-  --color-status-warning-foreground: #92400e;
-  --color-status-danger-foreground: #b91c1c;
-}
-:root[data-keledon-theme="corporate"], :root[data-keledon-theme="corporate"] * {
-  --color-background: #f3f6fc; --color-foreground: #102a43;
-  --color-card: #fff; --color-card-foreground: #102a43;
-  --color-popover: #fff; --color-popover-foreground: #102a43;
-  --color-border: #bcccdc; --color-input: #bcccdc;
-  --color-muted: #d9e2ec; --color-muted-foreground: #486581;
-  --color-primary: #194185; --color-primary-foreground: #fff; --color-ring: #194185;
-  --color-secondary: #d9e2ec; --color-secondary-foreground: #102a43;
-  --color-accent: #194185; --color-accent-foreground: #fff;
-  --color-sidebar: #fff; --color-sidebar-foreground: #334e68; --color-sidebar-active: #194185;
-  --color-success: #15803d;
-  --color-status-success-foreground: #166534;
-  --color-status-info-foreground: #194185;
-  --color-status-warning-foreground: #92400e;
-  --color-status-danger-foreground: #b91c1c;
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

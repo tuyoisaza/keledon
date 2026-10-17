@@ -16,6 +16,7 @@ export interface PreparedAiPrompt {
   name: string;
   personalityPrompt: string;
   executionPrompt: string;
+  inputSchemaJson: unknown;
   outputSchemaJson: unknown;
   enabled: boolean;
   revision: number;
@@ -38,7 +39,143 @@ const mutable = [
   'executionPrompt',
   'outputSchemaJson',
   'enabled',
+  'purpose',
+  'owningFeature',
+  'callsite',
+  'inputSchemaJson',
+  'outputDestination',
+  'nextHops',
 ] as const;
+const INPUT_TYPES = new Set(['string', 'number', 'integer', 'boolean']);
+const INPUT_SENSITIVITY = new Set([
+  'public',
+  'internal',
+  'user-content',
+  'personal-data',
+  'secret',
+  'financial',
+]);
+
+function validateInputSchema(
+  value: unknown,
+): asserts value is Record<string, any> {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw new BadRequestException('Invalid workflow input schema');
+  const schema = value as Record<string, any>;
+  const allowedSchemaKeys = new Set([
+    'type',
+    'additionalProperties',
+    'properties',
+    'required',
+    'description',
+  ]);
+  if (
+    Object.keys(schema).some((key) => !allowedSchemaKeys.has(key)) ||
+    schema.type !== 'object' ||
+    schema.additionalProperties !== false ||
+    !schema.properties ||
+    typeof schema.properties !== 'object' ||
+    Array.isArray(schema.properties)
+  )
+    throw new BadRequestException('Invalid workflow input schema');
+  const names = Object.keys(schema.properties);
+  if (!names.length || names.length > 64)
+    throw new BadRequestException('Invalid workflow input schema');
+  const required = schema.required ?? [];
+  if (
+    !Array.isArray(required) ||
+    new Set(required).size !== required.length ||
+    required.some(
+      (name: unknown) =>
+        typeof name !== 'string' || !Object.hasOwn(schema.properties, name),
+    )
+  )
+    throw new BadRequestException('Invalid workflow input schema');
+  if (
+    schema.description !== undefined &&
+    (typeof schema.description !== 'string' || schema.description.length > 500)
+  )
+    throw new BadRequestException('Invalid workflow input schema');
+  const allowedFieldKeys = new Set([
+    'type',
+    'source',
+    'sensitivity',
+    'description',
+    'maxLength',
+    'minimum',
+    'maximum',
+    'enum',
+  ]);
+  for (const [name, raw] of Object.entries(schema.properties)) {
+    if (
+      !/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(name) ||
+      !raw ||
+      typeof raw !== 'object' ||
+      Array.isArray(raw)
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    const field = raw as Record<string, any>;
+    if (
+      Object.keys(field).some((key) => !allowedFieldKeys.has(key)) ||
+      name !== 'context' ||
+      !INPUT_TYPES.has(field.type) ||
+      field.source !== 'authenticated product request' ||
+      !INPUT_SENSITIVITY.has(field.sensitivity) ||
+      ['public', 'internal'].includes(field.sensitivity)
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    if (
+      field.description !== undefined &&
+      (typeof field.description !== 'string' || field.description.length > 500)
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    if (
+      field.maxLength !== undefined &&
+      (field.type !== 'string' ||
+        !Number.isInteger(field.maxLength) ||
+        field.maxLength < 1 ||
+        field.maxLength > 250000)
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    if (
+      field.minimum !== undefined &&
+      (typeof field.minimum !== 'number' ||
+        !Number.isFinite(field.minimum) ||
+        !['number', 'integer'].includes(field.type))
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    if (
+      field.maximum !== undefined &&
+      (typeof field.maximum !== 'number' ||
+        !Number.isFinite(field.maximum) ||
+        !['number', 'integer'].includes(field.type))
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    if (
+      field.minimum !== undefined &&
+      field.maximum !== undefined &&
+      field.minimum > field.maximum
+    )
+      throw new BadRequestException('Invalid workflow input field');
+    if (field.enum !== undefined) {
+      if (
+        !Array.isArray(field.enum) ||
+        !field.enum.length ||
+        field.enum.length > 50
+      )
+        throw new BadRequestException('Invalid workflow input field');
+      const compatible = field.enum.every((entry: unknown) => {
+        if (field.type === 'integer') return Number.isInteger(entry);
+        if (field.type === 'number')
+          return typeof entry === 'number' && Number.isFinite(entry);
+        return typeof entry === field.type;
+      });
+      if (!compatible)
+        throw new BadRequestException('Invalid workflow input field');
+    }
+  }
+}
+
 @Injectable()
 export class AiAdminService {
   private bootstrap?: Promise<void>;
@@ -78,6 +215,11 @@ export class AiAdminService {
                   toRevision: 1,
                   actorId: 'system:bootstrap',
                   changedFields: [...mutable],
+                  definitionSnapshot: {
+                    ...definition,
+                    enabled: true,
+                    revision: 1,
+                  },
                 },
               },
             },
@@ -138,6 +280,24 @@ export class AiAdminService {
       )
         throw new BadRequestException('Invalid definition field');
     }
+    for (const key of [
+      'purpose',
+      'owningFeature',
+      'callsite',
+      'outputDestination',
+    ]) {
+      if (
+        data[key] !== undefined &&
+        (typeof data[key] !== 'string' || data[key].length > 500)
+      )
+        throw new BadRequestException('Invalid workflow metadata');
+    }
+    if (data.inputSchemaJson !== undefined) {
+      validateInputSchema(data.inputSchemaJson);
+      if (JSON.stringify(data.inputSchemaJson).length > 32000)
+        throw new BadRequestException('Invalid workflow input schema');
+    }
+    if (data.nextHops !== undefined) this.validateNextHops(id, data.nextHops);
     if (data.enabled !== undefined && typeof data.enabled !== 'boolean')
       throw new BadRequestException('Invalid enabled state');
     if (data.outputSchemaJson !== undefined)
@@ -158,6 +318,12 @@ export class AiAdminService {
           .map((key) => [key, data[key]]),
       );
       if (!Object.keys(changes).length) return current;
+      if (
+        ['nextHops', 'inputSchemaJson', 'outputSchemaJson'].some(
+          (key) => changes[key] !== undefined,
+        )
+      )
+        await this.validateGraph(id, current, changes, tx);
       const updated = await tx.aiPromptDefinition.updateMany({
         where: { id, revision: current.revision },
         data: { ...changes, revision: { increment: 1 }, updatedBy: actorId },
@@ -179,10 +345,217 @@ export class AiAdminService {
               .update(JSON.stringify(changes[field]) ?? 'null')
               .digest('hex'),
           })),
+          definitionSnapshot: {
+            ...current,
+            ...changes,
+            revision: current.revision + 1,
+            updatedBy: actorId,
+          },
         },
       });
       return tx.aiPromptDefinition.findUnique({ where: { id } });
     });
+  }
+  async rollbackPrompt(
+    actorId: string,
+    id: string,
+    targetRevision: unknown,
+    expectedRevision: unknown,
+  ) {
+    await this.requireSuperadmin(actorId);
+    this.assertFeature(id);
+    if (
+      !Number.isInteger(targetRevision) ||
+      Number(targetRevision) < 1 ||
+      !Number.isInteger(expectedRevision) ||
+      Number(expectedRevision) < 1
+    )
+      throw new BadRequestException('Invalid rollback revision');
+    await this.ensureDefaults();
+    return this.db.$transaction(async (tx: any) => {
+      const current = await tx.aiPromptDefinition.findUnique({ where: { id } });
+      if (!current || current.revision !== expectedRevision)
+        throw new ConflictException(
+          'Definition changed; reload before rollback',
+        );
+      const target = await tx.aiPromptRevision.findFirst({
+        where: { promptId: id, toRevision: targetRevision },
+        select: { definitionSnapshot: true },
+      });
+      const snapshot = target?.definitionSnapshot as Record<
+        string,
+        unknown
+      > | null;
+      if (!snapshot)
+        throw new BadRequestException(
+          'This historical revision has no restorable snapshot',
+        );
+      compileManagedSchema(snapshot.outputSchemaJson);
+      const restored = Object.fromEntries(
+        mutable.map((key) => [key, snapshot[key]]),
+      );
+      const nextRevision = current.revision + 1;
+      const result = await tx.aiPromptDefinition.updateMany({
+        where: { id, revision: current.revision },
+        data: { ...restored, revision: { increment: 1 }, updatedBy: actorId },
+      });
+      if (result.count !== 1)
+        throw new ConflictException(
+          'Definition changed; reload before rollback',
+        );
+      await tx.aiPromptRevision.create({
+        data: {
+          promptId: id,
+          fromRevision: current.revision,
+          toRevision: nextRevision,
+          actorId,
+          changedFields: mutable
+            .filter(
+              (key) =>
+                JSON.stringify(current[key]) !== JSON.stringify(restored[key]),
+            )
+            .map((field) => ({ field, rollbackToRevision: targetRevision })),
+          definitionSnapshot: {
+            ...restored,
+            id,
+            revision: nextRevision,
+            updatedBy: actorId,
+          },
+        },
+      });
+      return tx.aiPromptDefinition.findUnique({ where: { id } });
+    });
+  }
+  private validateNextHops(
+    id: string,
+    value: unknown,
+  ): asserts value is Array<{
+    agentId: string;
+    inputMapping?: unknown;
+    condition?: string;
+    maxHops?: number;
+  }> {
+    if (!Array.isArray(value) || value.length > AI_FEATURES.length)
+      throw new BadRequestException('Invalid workflow graph edges');
+    for (const edge of value) {
+      if (!edge || typeof edge !== 'object' || Array.isArray(edge))
+        throw new BadRequestException('Invalid workflow graph edge');
+      const item = edge as Record<string, unknown>;
+      if (
+        typeof item.agentId !== 'string' ||
+        !AI_FEATURES.includes(item.agentId as AiFeature) ||
+        item.agentId === id ||
+        (item.condition !== undefined &&
+          (typeof item.condition !== 'string' ||
+            item.condition.length > 500)) ||
+        (item.maxHops !== undefined &&
+          (!Number.isInteger(item.maxHops) ||
+            Number(item.maxHops) < 1 ||
+            Number(item.maxHops) > 5)) ||
+        (item.inputMapping !== undefined &&
+          (!item.inputMapping ||
+            typeof item.inputMapping !== 'object' ||
+            Array.isArray(item.inputMapping)))
+      )
+        throw new BadRequestException('Invalid workflow graph edge');
+    }
+  }
+  private async validateGraph(
+    id: string,
+    current: any,
+    changes: Record<string, unknown>,
+    tx: any,
+  ) {
+    const rows = await tx.aiPromptDefinition.findMany({
+      select: {
+        id: true,
+        nextHops: true,
+        inputSchemaJson: true,
+        outputSchemaJson: true,
+      },
+    });
+    const definitions = new Map<string, any>(
+      rows.map((row: any) => [row.id, row]),
+    );
+    definitions.set(id, { ...current, ...changes });
+    const graph = new Map<string, string[]>(
+      [...definitions].map(([key, row]) => [
+        key,
+        Array.isArray(row.nextHops)
+          ? row.nextHops.map((edge: any) => edge.agentId)
+          : [],
+      ]),
+    );
+    const visiting = new Set<string>();
+    const visited = new Set<string>();
+    const visit = (node: string): boolean => {
+      if (visiting.has(node)) return false;
+      if (visited.has(node)) return true;
+      visiting.add(node);
+      for (const next of graph.get(node) ?? []) if (!visit(next)) return false;
+      visiting.delete(node);
+      visited.add(node);
+      return true;
+    };
+    for (const node of graph.keys())
+      if (!visit(node))
+        throw new BadRequestException('Workflow graph must be acyclic');
+    for (const [sourceId, source] of definitions) {
+      const sourceSchema = source.outputSchemaJson as Record<string, any>;
+      const sourceProperties = sourceSchema?.properties;
+      for (const edge of Array.isArray(source.nextHops)
+        ? source.nextHops
+        : []) {
+        const target = definitions.get(edge.agentId);
+        const targetSchema = target?.inputSchemaJson as Record<string, any>;
+        const targetProperties = targetSchema?.properties;
+        const mapping = edge.inputMapping;
+        if (
+          !target ||
+          !sourceProperties ||
+          !targetProperties ||
+          !mapping ||
+          typeof mapping !== 'object' ||
+          Array.isArray(mapping)
+        )
+          throw new BadRequestException(
+            'Workflow edge requires a registered target and field mapping',
+          );
+        const mappedFields = Object.keys(mapping);
+        if (
+          mappedFields.some((name) => !Object.hasOwn(targetProperties, name)) ||
+          new Set(mappedFields).size !== mappedFields.length
+        )
+          throw new BadRequestException(
+            'Workflow edge maps to an unknown target input',
+          );
+        const requiredFields = Array.isArray(targetSchema.required)
+          ? targetSchema.required
+          : [];
+        if (
+          requiredFields.some((name: string) => !Object.hasOwn(mapping, name))
+        )
+          throw new BadRequestException(
+            'Workflow edge does not map every required target input',
+          );
+        for (const [targetName, rawPath] of Object.entries(mapping)) {
+          if (
+            typeof rawPath !== 'string' ||
+            !/^\$\.[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(rawPath)
+          )
+            throw new BadRequestException(
+              'Workflow field mapping must use a direct output field path',
+            );
+          const sourceName = rawPath.slice(2);
+          const from = sourceProperties[sourceName];
+          const to = targetProperties[targetName];
+          if (!from || !to || from.type !== to.type)
+            throw new BadRequestException(
+              `Workflow field type mismatch on ${sourceId} → ${edge.agentId}`,
+            );
+        }
+      }
+    }
   }
   async prepare(
     feature: AiFeature,
@@ -195,6 +568,7 @@ export class AiAdminService {
     });
     if (!record || !record.enabled)
       throw new ForbiddenException('AI workflow is disabled');
+    validateInputSchema(record.inputSchemaJson);
     compileManagedSchema(record.outputSchemaJson);
     return record;
   }
@@ -214,6 +588,59 @@ export class AiAdminService {
         'AI output does not match its managed schema',
       );
     return output;
+  }
+  validateInput(prepared: PreparedAiPrompt, input: unknown): unknown {
+    validateInputSchema(prepared.inputSchemaJson);
+    if (!input || typeof input !== 'object' || Array.isArray(input))
+      throw new BadRequestException(
+        'AI input does not match its managed schema',
+      );
+    const schema = prepared.inputSchemaJson;
+    const value = input as Record<string, unknown>;
+    const required = Array.isArray(schema.required) ? schema.required : [];
+    if (
+      Object.keys(value).some(
+        (key) => !Object.hasOwn(schema.properties, key),
+      ) ||
+      required.some((key: string) => !Object.hasOwn(value, key))
+    )
+      throw new BadRequestException(
+        'AI input does not match its managed schema',
+      );
+    for (const [key, entry] of Object.entries(value)) {
+      const field = schema.properties[key] as Record<string, any>;
+      const matchesType =
+        field.type === 'integer'
+          ? Number.isInteger(entry)
+          : field.type === 'number'
+            ? typeof entry === 'number' && Number.isFinite(entry)
+            : typeof entry === field.type;
+      if (!matchesType)
+        throw new BadRequestException(
+          'AI input does not match its managed schema',
+        );
+      if (
+        typeof entry === 'string' &&
+        field.maxLength !== undefined &&
+        entry.length > field.maxLength
+      )
+        throw new BadRequestException(
+          'AI input exceeds its managed field limit',
+        );
+      if (
+        typeof entry === 'number' &&
+        ((field.minimum !== undefined && entry < field.minimum) ||
+          (field.maximum !== undefined && entry > field.maximum))
+      )
+        throw new BadRequestException(
+          'AI input exceeds its managed numeric bounds',
+        );
+      if (field.enum !== undefined && !field.enum.includes(entry))
+        throw new BadRequestException(
+          'AI input is outside its managed options',
+        );
+    }
+    return input;
   }
   async recordUsage(input: AiUsageInput): Promise<void> {
     this.assertFeature(input.feature);

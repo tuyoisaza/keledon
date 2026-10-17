@@ -1,8 +1,8 @@
-## Current PHDK Auto — 5.1.73; UAT-080 passed; portfolio partial
+## Current PHDK Auto — 5.1.74 candidate; UAT-083 passed; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PRs #184–#190 reconcile UAT-075–079 and the matrix; this candidate records UAT-080. API and Cloud passed persisted flow configuration for DB-derived coordinator actors, cross-tenant rejection and restart readback. PHDK v2.51.2 coherence: 56/56. UAT: **78 PASS, 0 BLOCKED, 1 MANUAL**. Synthetic PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; 395 matrix rows remain blocked, alongside native device/audio, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance. No deployment is claimed.
+Remote main is verified at 0dd405d9; the current candidate aligns admin settings routes with the approved role hierarchy, fixes UAT-081's superadmin Web legacy-assignment transition and includes UAT-083 HTTP coverage. API and Cloud each passed 24 persisted flow-configuration assertions over loopback; four superadmin API matrix rows move to PASS. PHDK v2.51.5 coherence is 61/61. Candidate 5.1.74 verification passes API 42/42, Cloud 18/18, Web 7/7 UAT suites plus standalone admin-settings/theme-template/AI-admin; audit query/redaction 4/4 and denied-attribution/interceptor 10/10. UAT: 85 PASS, 0 BLOCKED, 1 MANUAL. The 560-row CRUD matrix is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 29 PASS. Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments fully done; database migration/restart acceptance, native device/audio, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM gates remain open. No deployment is claimed.
 
-SIGUIENTE PASO: continue the remaining flow Web/superadmin role matrix and integrated runtime acceptance; keep the whole portfolio partial.
+SIGUIENTE PASO: continue the remaining four-front acceptance; keep the whole portfolio partial.
 
 ---
 

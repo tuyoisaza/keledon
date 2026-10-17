@@ -1,5 +1,17 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-083 persisted superadmin flow configuration over HTTP
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| DB-backed superadmin and coordinator in API and Cloud | US-012 / CMT-003/CMT-004 | UAT-083 / HTTP flow configuration | Apply separate API/Cloud migrations → start built servers on loopback → forge role/company token claims and tenant filters → exercise cross-company definitions, versions, availability, intent mappings and legacy assignment → verify cross-client persistence → clean fixtures and databases | PASS: 24 HTTP assertions per backend; API 9 and Cloud 7 migrations. Closes four superadmin flow API matrix rows. Web and other-role coverage remain open. `50-uat/evidence/uat-083-superadmin-flow-config-http-5.1.73.json`. |
+
+## Candidate 5.1.73 — UAT-081 superadmin flow configuration
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Synthetic superadmin | US-012 / CMT-003/CMT-004 | UAT-081 / Cross-company flow administration | Switch Company Co ↔ Tenant B → verify scoped definition list → edit/deactivate → create and approve a version → enable/disable availability → add/remove intent mapping → open legacy view → assign legacy flow to Company Co → verify destination view/readback | PASS after a first-run defect was repaired. Synthetic intercepted APIs; no live authentication or database write. `50-uat/evidence/uat-flow-config-superadmin-web-5.1.73.json`. |
+
 ## Candidate 5.1.73 — UAT-080 coordinator flow configuration
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

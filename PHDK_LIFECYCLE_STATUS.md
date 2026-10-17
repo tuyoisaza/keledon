@@ -1,4 +1,45 @@
-## Current PHDK Auto continuation — 5.1.73 orphan-session safeguard merged; whole goal partial
+## Current PHDK Auto — Check remediation underway; PHDK 2.51.5 synchronized (2026-10-17)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`, candidate 5.1.74, branch `fix/phdk-auto-uat-082`, base `0dd405d930c518537ecea17ca363e95a5b99a9fd`. Canonical PHDK `main` is v2.51.5 at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61 manifest mappings; updater `CURRENT` and static coherence checker `PASS`. Approved Check remediation CHK-001–005 is documented in `PHDK_REMEDIATION_REPORT.md`; all five remain partial. CHK-006 pricing is still decision-required. Four owner-confirmed commitments remain active; no delivery or whole-goal completion is claimed.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REVALIDATED | Forced sync 2.51.5, updater CURRENT, coherence checker PASS for 61 manifest mappings; relevant registry, Auto, Check and new automation-hygiene rules reread. |
+| Capture | REUSED | Four confirmed fronts and approved security/tenant/private-origin decisions unchanged. |
+| Plan | REUSED | Brownfield architecture, UX and four-front plan reused. |
+| PMO / Workstreams | IN PROGRESS | Admin/theme/AI source changes continue; CRUD and client-selected runtime breadth remain open. |
+| Integration Review | PARTIAL | API/Web source integration and builds pass; Browser/Agent load shared theme assets and configured-Cloud presets; managed API LLM validates bounded runtime inputs and graph contracts. The legacy `cloud/` LLM still bypasses managed definitions, but Railway production deploys `services/api` only; Cloud source parity remains open. API/Cloud successful mutation/auth and role-denial audit events now snapshot tenant; audit migration persistence remains unverified. |
+| UAT / UAT Fix | PARTIAL | API regression 42/42, Cloud regression 18/18, AI contract 9/9, audit query/redaction 4/4 and denied-attribution/interceptor 10/10; Browser 43/43, Agent theme runtime 2/2/build/validation, theme source 3/3, Web UAT 7/7 plus standalone admin-settings/theme-template/AI-admin UAT, and Landing SEO 1/1 all pass. Admin settings verifies admin/coordinator/superadmin routing, English/Spanish copy and ordinary-user denial. Nine Web rows now pair browser lifecycle/action evidence with separate PostgreSQL API/Cloud acceptance, including tenant-flow definitions, versions, availability and intent routing for admin and superadmin. Audit migration/restart acceptance, live Cloud rendering, broad route coverage and accessibility remain open. CRUD inventory covers 40 models/560 role-surface rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. |
+| SEO | COMPLETED / SOURCE SCOPE | Web/Landing SEO tests pass 1/1 each; public routes, copy, metadata and indexability unchanged; deployment measurement remains open. |
+| AEO/GEO | REUSED / CURRENT | Public answers/claims unchanged; source review remains applicable; external citations and visibility remain unmeasured. |
+| Check | IN PROGRESS | Recheck records remaining source gaps plus static and live automation-hygiene evidence. |
+| Remediation | IN PROGRESS | CHK-001–005 advanced but remain partial; CHK-006 excluded pending owner pricing decision. |
+| Delivery | PENDING | The local 5.1.74 candidate is version-bumped but has not been committed, opened as a PR, merged or deployed. |
+
+Next: complete final source/automation review, rerun relevant checks, resolve any remaining authorized source findings, then update delivery evidence if the candidate meets its gates.
+
+---
+
+## Current PHDK Auto continuation — UAT-083 superadmin flow HTTP acceptance; whole goal partial
+
+Run `20261014-0007-phdk-auto-completion`; installed PHDK v2.51.2 was verified at coherence 56/56. Remote `main` is `0dd405d930c518537ecea17ca363e95a5b99a9fd`. UAT-081 fixes the Web legacy-flow assignment view; UAT-083 passes 24 persisted HTTP assertions per backend and closes four superadmin flow API rows. UAT is 81 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix is 391 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 20 PASS. Other resource operations, Web roles and live flow execution remain open. All four commitments are active and local changes are undelivered.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | PHDK v2.51.2 coherence 56/56; repository and source version verified. |
+| Capture / Plan | REUSED | Four confirmed fronts and previously approved auth/tenant policies unchanged. |
+| PMO / Workstreams | ACTIVE | UAT-081 advances CMT-003/004; broad resource matrix remains open. |
+| Integration Review | COMPLETED FOR CURRENT FIX | Flow editor now reloads by the newly assigned owner after legacy migration. |
+| UAT / UAT Fix | IN PROGRESS | UAT-081 view-scope fix and UAT-082 selected persisted superadmin flow acceptance pass; broader resource matrix and HTTP transport remain open. |
+| SEO / AEO-GEO | PENDING | Run after remaining UAT/fixes; no public metadata changed in this slice. |
+| Check / Remediation | PENDING | Whole-candidate source review and required checks remain. |
+| Delivery | PENDING | Local changes are on main working tree only; no commit/PR/delivery yet. |
+
+SIGUIENTE PASO: continue UAT with persisted superadmin flow configuration and the remaining confirmed fronts.
+
+---
+
+## Historical PHDK Auto continuation — 5.1.73 orphan-session safeguard merged; whole goal partial
 
 Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#180](https://github.com/tuyoisaza/keledon/pull/180) merged tested source `cee3cc10a5568766001fbdbeccfa9b77fa5b4181`; docs PRs [#181](https://github.com/tuyoisaza/keledon/pull/181) and [#182](https://github.com/tuyoisaza/keledon/pull/182) advanced `main`, with #182 at `4807eb582a22f7bd3c311cc69caf7c9ccecc711d`. All six version reads are 5.1.73. UAT-068 through UAT-071 cover persisted API/Cloud slices; UAT-072/073 cover Web UI/request; UAT-074 covers private-origin source-policy parity across API/Cloud/Browser. FlowRunEvidence remains dormant. No production data or deployment is claimed.
 

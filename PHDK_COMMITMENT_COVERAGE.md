@@ -1,17 +1,34 @@
-## Current commitment coverage — 5.1.73 source merged; portfolio partial
+## Current PHDK Auto recheck — local candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
 
-PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 source; docs PRs #181–#190 are merged. This candidate records UAT-080. All six version reads remain 5.1.73 and PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally is **78 PASS, 0 BLOCKED, 1 MANUAL**; the 547-row matrix has 395 BLOCKED, 133 N/A, 3 DECISION NEEDED and 16 PASS.
+Checkout `C:\KELEDON\keledon`, branch `fix/phdk-auto-uat-082`, base `0dd405d930c518537ecea17ca363e95a5b99a9fd`. The candidate remains local and uncommitted. Canonical PHDK 2.51.5 is synchronized and coherent at 61/61 mappings. Latest verification: API build/regression 42/42, including paired-evidence checks for nine Web rows; AI contract 9/9; audit query/redaction 4/4; denied-attribution/interceptor contract 10/10; Cloud build/regression 18/18; Web production build and 7/7 UAT suites plus standalone admin-settings/theme-template/AI-admin UAT pass. Portfolio remains 0/4 commitments complete and 4/4 active/partial; UAT is 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 29 PASS. No candidate commit, PR, merge or deployment is claimed.
+
+| Commitment | Current progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | PHDK 2.51.5 is current and coherent; local 5.1.74 candidate has new source and verification records. | Complete candidate-wide review and deliver by normal branch/PR flow; verify remote readback. |
+| CMT-002 widget/diagnostics | Existing diagnostics/widget coverage remains; selected UI and theme journeys pass on the built local Web app. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow configuration, validated per-tenant private-origin allowlists, theme runtime and managed API AI contracts have source/synthetic coverage. Railway production deploys `services/api`; the separate `cloud/` legacy LLM package is not deployed there. | Preserve Cloud source parity and complete runtime integration checks. Live call/CRM acceptance requires each tenant's selected stack and test environment. |
+| CMT-004 administration/permissions | Restricted role policy and tenant boundaries remain; audit history is redacted and paged, role denials and successful API/Cloud mutations preserve tenant snapshots, and nine Web rows for tenant flows and Company/Brand/Team/User pair browser UAT with persisted API acceptance. | Apply and verify both additive PostgreSQL migrations; remaining 396 blocked CRUD rows, other authorization-denial paths, audit export/retention and other admin capabilities remain open. |
+
+The local database runtime is unavailable for migration acceptance. CHK-20261016-006 remains decision-required; no AI pricing was inferred. FlowRunEvidence remains dormant.
+
+SIGUIENTE PASO: completar la revisión integral del candidato y cerrar las verificaciones de runtime/DB y cobertura CRUD que se puedan probar localmente; después reconciliar versión y preparar la entrega normal por PR, manteniendo Auto parcial mientras falten aceptación de cliente y cierres de los cuatro compromisos.
+
+---
+
+## Historical commitment snapshot — 5.1.73 candidate UAT-083
+
+PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 source; docs PRs through #191 are merged. UAT-081 fixes the superadmin Web legacy-flow reassignment path; UAT-083 closes four persisted superadmin flow API rows in API and Cloud. PHDK v2.51.2 coherence remains 56/56; product version is 5.1.73. Portfolio remains 0/4 commitments fully DONE, 4/4 active/partial, 0 deferred, 0 cancelled. UAT tally: 81 PASS, 0 BLOCKED, 1 MANUAL; the 547-row matrix has 391 BLOCKED, 133 N/A, 3 DECISION NEEDED and 20 PASS. Remaining HTTP/resource rows, Web roles and live flow execution remain open.
 
 | Commitment | Current result | Remaining gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | PR #180 delivered 5.1.73; six version reads and remote main/tree readback pass; PHDK coherence is 56/56. | Continue remaining delivery-process standards and keep the Auto portfolio partial until all gates close. |
 | CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
-| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor, persisted API/Cloud definitions/versions/permissions/mappings (UAT-079/080), and private destination allowlist are covered by provider-independent tests. UAT-073 confirms Web editing; UAT-074 confirms origin policy parity; UAT-078 confirms persisted private-origin Vendor settings. No client stack is assumed and no customer host was contacted. | Live flow execution and customer sandbox acceptance per selected client. |
-| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071/075/076 verify persisted superadmin Company/Brand/Team/User API operations; UAT-077 verifies Workflow admin denial and superadmin CRUD; UAT-078 verifies Vendor boundaries; UAT-079/080 verify admin/coordinator flow-config API rows. UAT-072 covers mocked Web Company. FlowRunEvidence remains dormant and unnecessary to current execution. | 395 blocked matrix rows; remaining resources/roles, Web/backend auth/persistence join, and Session lifecycle/retention decisions. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor, persisted API/Cloud definitions/versions/permissions/mappings (UAT-079/080), and private destination allowlist are covered by provider-independent tests. UAT-073/081 verify tenant-admin/superadmin Web contracts; UAT-074 confirms origin policy parity; UAT-078 confirms persisted private-origin Vendor settings. No client stack is assumed and no customer host was contacted. | Superadmin API persistence/authorization; live flow execution and customer sandbox acceptance per selected client. |
+| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071/075/076 verify persisted superadmin Company/Brand/Team/User API operations; UAT-077 verifies Workflow admin denial and superadmin CRUD; UAT-078 verifies Vendor boundaries; UAT-079/080 verify admin/coordinator flow-config API rows; UAT-081 covers mocked superadmin Web flow administration. FlowRunEvidence remains dormant and unnecessary to current execution. | 395 blocked matrix rows; remaining resources/roles, Web/backend auth/persistence join, superadmin flow API evidence, and Session lifecycle/retention decisions. |
 
 Whole Auto is **PARTIALLY DELIVERED**; no deployment or customer endpoint was used.
 
-SIGUIENTE PASO: continue remaining acceptance across the four active fronts; UAT-069/070/071/072/073/074/075/076/077/078/079/080 close only the exercised API/Cloud persistence, source-policy and mocked Web slices.
+SIGUIENTE PASO: cover persisted superadmin flow API access and continue acceptance across the four active fronts; UAT-069/070/071/072/073/074/075/076/077/078/079/080/081 close only exercised API/Cloud persistence, source-policy and mocked Web slices.
 
 ---
 
@@ -482,3 +499,19 @@ Source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`, based on verified `mai
 | CMT-004 administration/permissions | Source + selected persisted evidence PASS / matrix partial | API/Cloud 37/37 and 17/17; 35-model/490-row crosswalk; selected persisted identity/session/Knowledge evidence. Exhaustive model-operation/concurrency coverage remains open. |
 
 Portfolio: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. Current acceptance is **52 PASS, 0 BLOCKED, 1 MANUAL**. Whole PHDK Auto remains **PARTIALLY DELIVERED**.
+## Current PHDK Auto recheck — local candidate 5.1.73 / PHDK 2.51.5 (2026-10-16)
+
+Checkout `C:\KELEDON\keledon`, branch `fix/phdk-auto-uat-082`, base `0dd405d930c518537ecea17ca363e95a5b99a9fd`. The Auto candidate is local and uncommitted. PHDK 2.51.5 is synchronized and coherent at 61/61 mappings. This recheck passed API build/regression 41/41, AI contract 9/9, audit contract 4/4, Cloud build/regression 18/18, Web typecheck/build, and synthetic Web UAT for theme editing, AI administration, and audit history. Whole portfolio remains 0/4 commitments complete and 4/4 active/partial. No candidate commit, PR, merge, or deployment is claimed.
+
+| Commitment | Current progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | Canonical PHDK 2.51.5 is current and coherent; local 5.1.73 candidate has updated source and verification records. | Complete candidate-wide review/version reconciliation and deliver via normal branch/PR flow; verify remote readback. |
+| CMT-002 widget/diagnostics | Existing diagnostics/widget coverage remains; selected UI journeys and theme workflows were rerun on the built local Web app. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned persisted flow configuration, validated per-tenant private-origin allowlists, theme runtime and managed API AI contracts have source and synthetic coverage. | Complete remaining voice/runtime integration checks; Cloud legacy LLM still bypasses managed definitions. Customer-specific calls and CRM require that tenant's chosen stack and test environment. |
+| CMT-004 administration/permissions | Restricted role policy and tenant boundaries remain in place; superadmin audit-history viewer now has bounded filters, redaction, stable paging and safe current-page CSV export. | Database migration/persistence acceptance and 405 blocked CRUD rows remain; audit denied events, tenant-at-event attribution, retention and other admin capabilities remain open. |
+
+Current final-source results: API 41/41 regression, AI contract 9/9, audit contract 4/4; Cloud 18/18 regression; Web typecheck/build and synthetic theme-editor, AI-admin and audit UAT pass. Local database runtime is unavailable for migration acceptance. CHK-20261016-006 remains decision-required; no pricing was inferred. FlowRunEvidence remains dormant.
+
+SIGUIENTE PASO: completar la revisión integral del candidato y cerrar las verificaciones de runtime/DB y cobertura CRUD que se puedan probar localmente; después reconciliar versión y preparar la entrega normal por PR, manteniendo Auto parcial mientras falten aceptación de cliente y cierres de los cuatro compromisos.
+
+---

@@ -7,7 +7,7 @@
 
 
 **Project Handoff to Development Kit**  
-**Version v2.51.2**
+**Version v2.51.5**
 
 PHDK is an operating system for AI-assisted software delivery.
 
@@ -224,9 +224,23 @@ At completion it tells you exactly where everything was captured so you can revi
 
 ---
 
+## Universal administration console (v2.51.4)
+
+`ADMIN_CONSOLE_STANDARD.md` requires an actual, protected **Configuración / Settings** console for every applicable administered portal. First establish `single_tenant` (one elevated admin) vs `multi_tenant` (platform super_admin and tenant-scoped admins), recommending multi-tenancy when justified without silently migrating existing data. Verify and build real user/invitation/role/permission administration, tenant lifecycle where applicable, native locale, safe debug/integrations/secrets-status, backups/audit/security/observability, shared theme templates and auditable administrator role testing. In AI products, **Prompts** must show each agent's business purpose, callsite, approved DB/API inputs, versioned prompts, JSON output schema and destination/next-agent workflow graph. Check demands UI + API + persistence + negative-permission tests, not placeholder tabs.
+
+`PHDK check` remains an evidence-backed read-only audit plus one remediation question. To request a complete authorized audit **and safe implementation in one command**, use `PHDK check --fix`. The authorized `PHDK auto` also repairs applicable in-scope gaps; unknown tenancy, sensitive permissions, live destructive operations and external credentials require their own decision/authorization.
+
+## Automation and cost hygiene (v2.51.5)
+
+Every `PHDK check` and the final Check of `PHDK auto` follows [PHDK_AUTOMATION_HYGIENE.md](PHDK_AUTOMATION_HYGIENE.md): identify leftover PHDK-managed GitHub Actions, agents, schedules, watcher/reload loops, Railway cron/restart storms and CI waiting blocks. Compare source evidence with **actual read-only GitHub/Railway state**, preserve valid required checks and GitHub→Railway autodeploy, and record unavailable provider evidence as UNVERIFIED. The vendored static collector `scripts/phdk_automation_audit.py` helps surface source risks but cannot prove remote workflows are inactive. Provider setting changes are not silently authorized.
+
 ## Canonical PHDK Design System
 
 `PHDK_DESIGN_SYSTEM.md` mandates shared shadcn-compatible components, Radix overlay primitives, semantic Tailwind tokens, Motion transitions, consistent Lucide icons, light/dark/corporate color themes and applicable en/es/pt translation catalogs. On entering Designer Mode, inspect the actual stack and document `DESIGN_SYSTEM_READINESS.md`, prepare missing safe prerequisites, then recommend and implement redesigns. The source of truth is vendored to downstream projects.
+
+## Theme tokens and Superadmin template editing
+
+[PHDK_THEME_STANDARD.md](PHDK_THEME_STANDARD.md) requires one canonical semantic CSS token stylesheet for light/dark/corporate, no hardcoded palette colors in UI components, and **Superadmin → Configuración → Edición de templates** with persisted editing, previews and a corporate show/hide switch. [scripts/phdk_theme_audit.py](scripts/phdk_theme_audit.py) supplies a vendorable static check for Designer Mode and PHDK Check; source, permission, persistence and theme-switching tests still supply functional evidence.
 
 ## Verified completion gate
 

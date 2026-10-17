@@ -1,5 +1,13 @@
 # UAT role matrix — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-086/087 synthetic superadmin resource administration
+
+The production-built Web journeys exercise superadmin Company, Brand, Team and User CRUD, explicit details and confirmed deletion. User creation begins at `user`; only the synthetic superadmin assigns `admin` and a company. All API responses are intercepted, so this covers UI/request contracts only. UAT-071/075/076 separately cover the matching API/Cloud authorization and persisted lifecycle. These four combined-evidence model-role-surface rows are PASS; other Web roles and resources remain open.
+
+## Candidate 5.1.73 — UAT-081 synthetic superadmin flow editor
+
+Superadmin UI access is exercised through a synthetic `/api/auth/me` response; company switching, scoped definitions, versions, availability, mappings and legacy ownership assignment are tested in the production-built SPA. UI role selection alone is not server authorization evidence; the paired UAT-083 real API/Cloud HTTP run proves DB-derived superadmin authorization and PostgreSQL persistence for the exercised flow configuration. UAT-079/080 cover admin/coordinator persistence. This is selected evidence, not broad role/resource acceptance.
+
 All browser personas are synthetic fixture data. UI role selection is not treated as authentication evidence. The 2026-10-14 continuation added DB-backed login and role/tenant checks on a disposable loopback PostgreSQL instance. This proves the exercised local API paths only; it is not a deployed development target or exhaustive model/operation acceptance.
 
 UAT-068 extends the Session cleanup role checks on 5.1.73: anonymous receives 401, a real persisted tenant admin receives 403, and a current-database superadmin can count/delete one qualifying ended orphan. API and Cloud fixtures verify that active or related records are preserved. The Cloud UAT superadmin was a temporary synthetic row that was removed afterward. This is a scoped endpoint journey; it does not close the 546-row resource-role-surface matrix.
