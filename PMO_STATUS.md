@@ -1,13 +1,13 @@
 ## Current PMO board — 5.1.78 managed Cloud AI; whole Auto partial
 
-Candidate `fix/phdk-auto-continuation-5-1-78` is based on fetched `origin/main` 5.1.77 SHA `383fd84f2fd1c7218882dc840db7e5be1957246a`. PHDK 2.52.2 coherence is 63/63. All five package roots and Browser renderer align at 5.1.78. API managed AI 10/10, Cloud published-snapshot runtime 7/7, API/Cloud builds and schema checks, auth guard/OAuth regressions, Web UAT 8/8 plus standalone admin/theme/AI save-publish UAT, Browser security/runtime 22/22 and Landing SEO 1/1 pass. PR #198 is open; reviews and hosted checks are absent. Railway Web root/config correction remains external/manual before verified deployment and merge; publish migrations await database acceptance.
+Candidate `fix/phdk-auto-continuation-5-1-78` is based on fetched `origin/main` 5.1.77 SHA `383fd84f2fd1c7218882dc840db7e5be1957246a`; PR #198 now points to `f004baf30019fd836b989d6ccc3f1b5810730e38`. PHDK 2.52.2 coherence is 63/63. All five package roots and Browser renderer align at 5.1.78. API managed AI 10/10, Cloud published-snapshot runtime 7/7, API/Cloud builds and schema checks, auth guard/OAuth regressions, Web UAT 8/8 plus standalone admin/theme/AI, Browser security/runtime 22/22 and Landing SEO 1/1 pass. UAT-089 adds exact-source admin-audit accessibility/export evidence. PR #198 is open with no hosted checks or independent review. Railway Web root/config correction remains external/manual before verified deployment and merge; publish/audit migrations await database acceptance. UAT tally is 86 PASS, 0 BLOCKED, 1 MANUAL; 4/4 commitments remain active/partial.
 
 | Commitment | Status | Progress and remaining acceptance |
 |---|---|---|
 | CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PHDK force update, version alignment and PR remote-head readback pass; PR delivery, Railway root/config, deploy and main readback remain. |
 | CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Prior responsive/widget evidence, Web UAT 8/8, diagnostics and Browser security/runtime 22/22 remain green; native packaged rendering/audio and broad assistive technology/localization are open. |
 | CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Managed Cloud runtime parity, tenant-bound allowlist and synthetic Browser call lifecycle tests pass; live acceptance depends on each customer's configured stack. |
-| CMT-004 administration/permissions | ACTIVE / PARTIAL | Current DB-derived role/email, one-use Google handoff, and staged/published AI revision protections pass source tests; PostgreSQL migration/restart and 396 CRUD rows remain open. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Current DB-derived role/email, one-use Google handoff, staged/published AI revisions, bounded audit export requests, and accessible 44px audit controls pass scoped checks; PostgreSQL migration/restart, other denial paths and 396 CRUD rows remain open. |
 
 Portfolio: 0/4 fully done; 4/4 active/partial; 0 deferred; 0 cancelled. Overall acceptance remains partial.
 

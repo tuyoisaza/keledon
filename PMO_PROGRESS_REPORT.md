@@ -1,4 +1,19 @@
-## Current PMO progress — 5.1.77 widget candidate; whole portfolio partial (2026-10-17)
+## Current PMO progress — 5.1.78 audit UAT continuation; whole portfolio partial (2026-10-17)
+
+The branch `fix/phdk-auto-continuation-5-1-78` is based on verified `origin/main` 5.1.77 `383fd84f2fd1c7218882dc840db7e5be1957246a`; PR #198 is open. PHDK v2.52.2 is current and coherence passes 63/63. The latest source fix raises audit-page controls to 44px, adds visible keyboard focus, and records voice-profile API detail truthfully in the CRUD matrix. UAT-089 passes 11 browser checks on a production-built local SPA with synthetic APIs: mobile 390×844 has no page overflow; bounded export requests are recorded before download; audit-write failure blocks download; tenant admin is denied before data is read. Evidence and screenshots are in `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json` and `50-uat/evidence/`. Web typecheck/build/ESLint pass. Portfolio advances to 86 PASS, 0 BLOCKED, 1 MANUAL; 560 CRUD rows remain 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL, Railway, native and customer-selected acceptance remain open; no deployment is claimed.
+
+| Workstream | Progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | PR #198 source branch is synchronized with no merge conflicts; main remains 5.1.77. | Railway root/config/deploy owner gate, independent review/checks, merge and main readback. |
+| CMT-002 widget/diagnostics | Current widget/UAT evidence remains; current admin-audit adds 44px keyboard/touch controls. | Native device/audio, screen-reader, broad contrast/themes/routes/locales. |
+| CMT-003 voice→Cloud→Browser→CRM | Managed Cloud parity, tenant-scoped voice-profile detail and private-origin contracts are evidenced. | Integrated runtime and each customer's selected provider/CRM acceptance. |
+| CMT-004 administration/permissions | UAT-089 accessibility/export; voice-profile detail is now accurately classified as source-implemented and safe. | DB migration/restart, 396 blocked rows, denial-path/retention coverage. |
+
+SIGUIENTE PASO: continue safe Check/remediation work while retaining Railway and PostgreSQL as external gates; re-read PR checks/review/main before delivery.
+
+---
+
+## Historical PMO progress — 5.1.77 widget candidate; whole portfolio partial (2026-10-17)
 
 The 5.1.77 widget correction is on `fix/diagnostics-widget-visual-spacing-5-1-77` at source commit `0da085bddbb7157453ddca3951960209a94c9e9b`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five package/lock roots and Browser renderer align. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile geometry, Browser 4/4, diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. Prior API 42/42, Cloud 18/18 and flow/persistence evidence remain valid. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. No production deployment is claimed.
 

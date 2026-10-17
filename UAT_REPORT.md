@@ -1,5 +1,11 @@
 # UAT report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity (2026-10-17)
+
+The exact production-built Web candidate passes the superadmin audit journey with synthetic, redacted rows. All 12 visible controls meet the 44px minimum; keyboard tab navigation exposes a visible focus indicator; the 390×844 layout has no page-level horizontal overflow; CSV export records bounded metadata before download; and an audit write failure prevents the download. Tenant-admin access is denied before audit data is requested. Browser Readiness is recorded in `UAT_ACCESS_REPORT.md`; machine evidence and desktop/mobile screenshots are under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/`. Persistence is a fixture only; no database or customer/provider service was contacted.
+
+UAT tally advances to **86 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**; audit migration/restart, broad CRUD, native device/audio and external acceptance remain open.
+
 ## Current candidate 5.1.78 — managed Cloud AI parity
 
 UAT-088 candidate scope is the Cloud managed-AI runtime and matching source contracts. Cloud managed runtime 6/6, Cloud cross-backend regression 19/19 and API managed-AI contract 9/9 pass. The 5.1.78 continuation also hardens current-database actor resolution and replaces the Google OAuth access-token query with a one-use exchange code; OAuth abuse regression, API HTTP wiring and local browser exchange UAT pass. See `UAT_AUTH_PLAN.md` and `UAT_ACCESS_REPORT.md` for auth scope and limits. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-cloud-managed-ai-5.1.78.md.

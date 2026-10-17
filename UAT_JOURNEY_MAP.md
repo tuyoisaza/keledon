@@ -1,5 +1,11 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.78 — UAT-089 audit console
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Synthetic superadmin; tenant-admin denial | CHK-005 / CMT-004 | UAT-089 / Audit review and visible-page export | Navigate to `/admin/audit` → inspect synthetic redacted event → measure interactive targets → tab through keyboard focus → resize to 390×844 → export page → force audit-write failure → retry route as tenant admin | PASS on production build. 12 targets are ≥44px; keyboard focus is visible; mobile page width equals viewport; failed audit event blocks CSV; tenant admin reads no audit rows. `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`; screenshots in `50-uat/evidence/`. Fixture-only persistence. |
+
 ## Candidate 5.1.73 — UAT-083 persisted superadmin flow configuration over HTTP
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

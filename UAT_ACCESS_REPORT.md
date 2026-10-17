@@ -1,5 +1,15 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Browser Readiness — UAT-089 admin audit accessibility (2026-10-17)
+
+- Stage/run/revision: Auto UAT re-entry; run `20261014-0007-phdk-auto-completion`; exact candidate revision and timestamp are recorded in `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`.
+- Target URL/environment: ephemeral `http://127.0.0.1:<port>/admin/audit` recorded in the evidence JSON; local production-built Web SPA only.
+- Permission: `ACTIVE_UAT_EXCEPTION`. Browser capability: `AVAILABLE_VERIFIED` through installed Microsoft Edge launched by Playwright; actual page navigation and UI assertions passed.
+- Target/data/roles: intercepted synthetic superadmin and tenant-admin fixtures; synthetic `.invalid` user and redacted event; outbound non-loopback HTTP is aborted. No real login, database, provider, CRM or customer record.
+- Spend: `NO_NEW_SPEND`; billing remains unverified.
+- Cases: UAT-089; 44px target sizing, keyboard-visible focus, 390×844 reflow, redacted data, bounded CSV audit event before download, fail-closed download and pre-read tenant denial. Result: PASS, 11 scoped checks. Desktop/mobile screenshots and response evidence are versioned under `50-uat/evidence/`.
+- Owner action/retest cue: none for this scoped journey. PostgreSQL-backed export persistence and migrations remain blocked until an isolated disposable database is available; resume with UAT-089 database/restart companion after provisioning it.
+
 ## Browser Readiness — candidate 5.1.78 UAT entry
 
 - Stage/run/revision: UAT and UAT Fix; run 20261014-0007-phdk-auto-completion; exact source commit `93c83bc3789f5fe5269f5dabd2c9f4557404c3e8`, version 5.1.78.

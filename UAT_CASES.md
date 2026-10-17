@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-089 | CHK-005 / synthetic platform superadmin, then tenant admin | Open the exact production-built `/admin/audit` route; inspect sanitized synthetic audit data; measure every input/button/disclosure; tab from Refresh to Export; inspect at 390×844; request visible-page export; force export-audit failure; open as tenant admin. | All 12 interactive targets are at least 44px; keyboard focus is visible; mobile page does not overflow; successful export records only bounded metadata before download; audit failure prevents download; tenant admin is denied before data read. | Local production-built Web SPA, installed Edge via Playwright, intercepted synthetic API, non-loopback HTTP aborted | PASS, 11 scoped journeys/checks. Screenshots and exact revision/URL are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-*.png` and `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`. Fixture only; no DB, provider or customer data. |
+
 ## Candidate 5.1.73 — UAT-084 AI workflow catalog and editor retest
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -61,9 +61,16 @@ async function main() {
     assert.match(keyboardFocus.label || '', /Export visible page/);
     assert.equal(keyboardFocus.visible, true, 'tab navigation must show a visible keyboard focus target');
     assert.notEqual(keyboardFocus.outline, 'none');
+    const repoRoot = path.resolve(__dirname, '../../..');
+    const evidenceDir = path.resolve(repoRoot, 'docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence');
+    fs.mkdirSync(evidenceDir, { recursive: true });
+    const desktopScreenshot = path.join(evidenceDir, 'admin-audit-uat-5.1.78-desktop.png');
+    await page.screenshot({ path: desktopScreenshot, fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
     const mobileLayout = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth }));
     assert(mobileLayout.scrollWidth <= mobileLayout.width, `page must reflow without horizontal overflow: ${JSON.stringify(mobileLayout)}`);
+    const mobileScreenshot = path.join(evidenceDir, 'admin-audit-uat-5.1.78-mobile.png');
+    await page.screenshot({ path: mobileScreenshot, fullPage: true });
     await page.getByText('View redacted details', { exact: true }).click();
     await page.getByText('{"apiKey":"[REDACTED]","safe":"updated"}', { exact: true }).waitFor();
     assert.equal(await page.getByText(/sk-[A-Za-z0-9]{12,}/).count(), 0);
@@ -94,9 +101,8 @@ async function main() {
     await page.goto(address + '/admin/audit');
     await page.waitForURL('**/dashboard');
     assert.equal(requests.length, requestsBeforeDeniedRoute);
-    const repoRoot = path.resolve(__dirname, '../../..');
     const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
-    const result = { candidate: { version: packageJson.version, revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim() }, target: 'isolated local built React SPA with synthetic audit rows', result: 'PASS', cases: ['superadmin route loads sanitized audit data', 'event metadata and success-only limitation shown', '44px minimum interactive targets', 'keyboard tab focus is visible', '390px mobile page reflows without horizontal overflow', 'redacted change details displayed', 'filters sent as encoded query', 'visible-page CSV export records bounded metadata before download', 'audit write failure blocks file download and announces an error', 'pagination requests next page', 'tenant admin route denied before audit data request'], accessibility: { minimumTargetPx: 44, targetHeightsPx: controlHeights, keyboardFocusVisible: keyboardFocus.visible, mobileViewport: mobileLayout, automatedOnly: true }, exportRequests, providerCalls: 0, persistence: 'fixture only; no database or audit data claim' };
+    const result = { candidate: { version: packageJson.version, revision: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim() }, runAt: new Date().toISOString(), target: 'isolated local built React SPA with synthetic audit rows', targetUrl: address + '/admin/audit', browser: 'installed Microsoft Edge through Playwright (headless)', result: 'PASS', cases: ['superadmin route loads sanitized audit data', 'event metadata and success-only limitation shown', '44px minimum interactive targets', 'keyboard tab focus is visible', '390px mobile page reflows without horizontal overflow', 'redacted change details displayed', 'filters sent as encoded query', 'visible-page CSV export records bounded metadata before download', 'audit write failure blocks file download and announces an error', 'pagination requests next page', 'tenant admin route denied before audit data request'], accessibility: { minimumTargetPx: 44, targetHeightsPx: controlHeights, keyboardFocusVisible: keyboardFocus.visible, mobileViewport: mobileLayout, automatedOnly: true }, screenshots: ['docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-desktop.png', 'docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-mobile.png'], outboundHttp: 'non-loopback requests are aborted by the test route', spend: 'NO_NEW_SPEND', exportRequests, providerCalls: 0, persistence: 'fixture only; no database or audit data claim' };
     const evidence = path.resolve(__dirname, '../../../docs/phdk/workstreams/ADMIN-AUDIT-UAT.json');
     fs.writeFileSync(evidence, JSON.stringify(result, null, 2) + '\n');
     console.log('PASS admin audit UI UAT: ' + result.cases.join('; '));
