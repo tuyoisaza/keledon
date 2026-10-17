@@ -1,3 +1,12 @@
+## Browser Readiness — UAT-128 post-merge production public AX (2026-10-17)
+
+- Stage/run: Auto UAT, `20261014-0007-phdk-auto-completion`; browser permission `ACTIVE_UAT_EXCEPTION`.
+- Candidate/target: product source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`, version 5.2.6; after docs-only PR #244 deploy commit `870e6db`; fresh anonymous homepage.
+- Runtime: connected CUA in-app browser `AVAILABLE_VERIFIED`; Web deployment `3688c933-9806-4546-aa2e-a1aa4515e4b7` and API `27dba245-5425-47d4-a1cf-cdc3aee2f480` SUCCESS; no pending work at readback.
+- Data/identity: anonymous only; no credentials, customer data, mutation, CRM/private host or account action.
+- Spend: `NO_NEW_SPEND`.
+- Result: UAT-128 PASS for public AX presence only. No controls activated.
+
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
 ## Browser Readiness — UAT-127 production public AX re-entry (2026-10-17)

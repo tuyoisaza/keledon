@@ -16,3 +16,8 @@ SIGUIENTE PASO: continue CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR
 ## Follow-up UAT-127 — public accessibility-tree presence (2026-10-17)
 
 A fresh anonymous production tab exposed the v5.2.6 title/version, main landmark, illustrative-demo disclosure, named diagnostic/theme/language controls, navigation and headings. The first fresh navigation returned Cloudflare 502; a subsequent fresh navigation loaded successfully. Railway Web/API reported SUCCESS, but the initial 502 cause is unknown. This passes presence only; it does not claim screen-reader output or full accessibility conformance. Evidence: `50-uat/evidence/uat-127-production-public-ax-presence-2026-10-17.json`.
+
+
+## Post-merge production readback — UAT-128 (2026-10-17)
+
+PR #244 merged at main `870e6db73b5706d8469b2d9a49e575bf735a9a3f` with docs/evidence only. Railway Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` and API `27dba245-5425-47d4-a1cf-cdc3aee2f480` report SUCCESS. Fresh anonymous production UAT-128 exposed v5.2.6 and the limited public accessibility-tree observations. Product source stays `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; this is not a broad accessibility acceptance.

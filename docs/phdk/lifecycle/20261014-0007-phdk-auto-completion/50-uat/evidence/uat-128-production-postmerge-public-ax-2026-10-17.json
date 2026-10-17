@@ -1,0 +1,46 @@
+{
+  "case": "UAT-128",
+  "phase": "PHDK Auto post-merge production public accessibility re-entry",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:49:00Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-auto-cmt002-postmerge-20261017=01",
+  "deployedVersion": "5.2.6",
+  "productSourceCommit": "e7257a7d0c66c8b34e6bbb7028c30be092f33102",
+  "deploymentSourceCommit": "870e6db73b5706d8469b2d9a49e575bf735a9a3f",
+  "webDeploymentId": "3688c933-9806-4546-aa2e-a1aa4515e4b7",
+  "webDeploymentStatus": "SUCCESS",
+  "apiDeploymentId": "27dba245-5425-47d4-a1cf-cdc3aee2f480",
+  "apiDeploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "locale": "pt",
+  "theme": "dark",
+  "browser": "Codex in-app browser via CUA",
+  "observations": {
+    "title": "KELEDON | Cloud-governed contact center runtime",
+    "versionVisible": true,
+    "mainLandmarkPresent": true,
+    "demoDisclosurePresent": true,
+    "namedDiagnosticActions": [
+      "Copiar diagnóstico completo",
+      "Limpar cache do aplicativo"
+    ],
+    "namedLocaleAndThemeControls": true,
+    "publicNavigationLinksNamed": true,
+    "contentHeadingsPresent": true,
+    "publicLinksPresent": true,
+    "observedContentLanguage": "Portuguese"
+  },
+  "result": "PASS_FOR_PUBLIC_ACCESSIBILITY_TREE_PRESENCE_POSTMERGE_ONLY",
+  "actions": [
+    "Opened a fresh anonymous production homepage after PR #244 deployments reported SUCCESS.",
+    "Recorded the accessible title, version, main landmark, demo disclosure, diagnostic/theme/language labels, navigation and headings.",
+    "Did not activate controls, links, clipboard, cache or login; no account, API mutation, customer data or CRM access."
+  ],
+  "limitations": [
+    "Accessibility-tree presence only; screen-reader speech, keyboard, full WCAG, authenticated RBAC, persistence and audio/device were not tested.",
+    "One public route in Portuguese/dark in one browser session.",
+    "The observation followed PR #244 deployment; product source remains 5.2.6 source e7257a7 while deployment commit 870e6db is documentation-only."
+  ],
+  "spendDisposition": "NO_NEW_SPEND"
+}
