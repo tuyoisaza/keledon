@@ -20,7 +20,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 
 Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance, PR review/check evidence and merge/main verification remain open.
 
-SIGUIENTE PASO: continue reconciling the four-front implementation against product behavior; keep PR #210 open until tenant-interface provisioning and required acceptance gates are resolved.
+SIGUIENTE PASO: provision an isolated PostgreSQL UAT target and obtain an authoritative tenant-ownership map for existing interfaces; then exercise the 5.2.1 role/assignment flows with synthetic Admin/Coordinator/Superadmin accounts. Keep PR #210 open until that acceptance and review gates are resolved.
 
 Automation hygiene details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` records the bounded GitHub/Railway metadata, sampled build failure and unverified provider fields. Current production service status is not acceptance of the unmerged candidate.
 
