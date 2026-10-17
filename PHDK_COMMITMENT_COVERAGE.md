@@ -7,7 +7,7 @@ PHDK 2.53.1; product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 
 | CMT-001 | Standards updated; PHDK coherence 64/64; PR #210 open without checks/review. | Required acceptance, review, merge, exact `main` and deployment verification. |
 | CMT-002 | UAT-100 confirms anonymous homepage/login widget presence on deployed v5.1.85; prior source evidence retained at its original revisions. | Candidate/authenticated surfaces, action behavior, native hardware/audio and broad accessibility/localization. |
 | CMT-003 | Provider-neutral tenant contracts retained; no client stack selected. | Per-client configured call/CRM sandbox acceptance. |
-| CMT-004 | Selector, stale-response handling and API/Cloud tenant contracts reviewed. | Verify interface provisioning/ownership, migration persistence, role sessions and cross-tenant denial; remaining CRUD. |
+| CMT-004 | Selector, stale-response handling and API/Cloud tenant contracts reviewed; new PHDK console audit found direct Prisma writes for `ManagedInterface.credentials` and additional lifecycle/backup gaps. | Review and fix the interface-secret storage boundary, then verify ownership/migration persistence, role sessions, cross-tenant denials and remaining CRUD. |
 
 Totals remain **4 confirmed / 0 done / 4 active-partial / 0 deferred / 0 cancelled**. No confirmed commitment is removed or newly deferred.
 

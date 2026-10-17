@@ -32,6 +32,8 @@ Company ownership and current user/team membership are the primary tenant bounda
 
 The 5.2.1 migration adds nullable `ManagedInterface.companyId` with an FK/index and deliberately does not backfill legacy interfaces. Existing ownerless rows must remain unavailable to tenant selectors until their Company is established through an authoritative process. No inventory, ownership assignment, data migration, production login or production write was performed.
 
+The repository also retains `DatabasePersistenceService` and `DatabaseBackupStore`, which write JSON snapshots of an in-memory Map. The active Nest module graph has no registration/callsite for this service in the inspected source, so it is not evidence of a PostgreSQL backup or recovery capability and must not be surfaced as production backup status.
+
 ## Decisions and unresolved architectural acceptance
 
 The four owner-confirmed fronts and role/private-origin policy are fixed for this Auto goal. Remaining architecture evidence is tracked in `ADMIN_CAPABILITY_MATRIX.md` and `ADMIN_SETTINGS_REGISTRY.md`: invitation/lifecycle controls, editable permission templates, backups/recovery, full general settings and operations controls, and a proper secret-manager boundary are incomplete or unverified. The required data- and service-owner choices must be resolved before claiming compliance; this document does not invent provider, backup, retention or migration settings.
