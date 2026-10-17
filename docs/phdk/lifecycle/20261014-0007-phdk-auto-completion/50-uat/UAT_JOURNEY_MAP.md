@@ -8,6 +8,12 @@ After PR #244's docs-only deploy settled, a fresh anonymous tab served KELEDON v
 
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.7 — UAT-130 anonymous copy
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Anonymous visitor | CMT-002 / public diagnostic copy | UAT-130 | Open fresh production home at main `a7ca868`; verify v5.2.7 and named copy action; activate copy; inspect only accessible status; leave clipboard unread and cache untouched. | PASS for Web copy status (“Diagnóstico copiado”) and reviewed source redaction. `landing/` runtime is BLOCKED: no authoritative Landing deployment is present in Railway and Web builds `services/web` only. Evidence: `evidence/uat-130-production-copy-status-2026-10-17.json`. |
+
 ## Production v5.2.6 — UAT-127 public accessibility-tree presence
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

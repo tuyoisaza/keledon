@@ -1,20 +1,20 @@
-# PHDK Auto Debug Widget Readiness — KELEDON 5.2.6 revalidación actual (2026-10-17)
+# PHDK Auto Debug Widget Readiness — KELEDON Web 5.2.7 / Landing source (2026-10-17)
 
-Producto fuente `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. Revisión estática de fuente en el candidato actual. No se ejecutaron pruebas/builds locales de aplicación.
+Web product source/main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PHDK 2.53.1. Production UAT-130 observed Web copy status “Diagnóstico copiado” without reading clipboard contents. Landing API/OAuth hostname redaction passes source review; the standalone Landing package is not included in Railway's Web deployment, so its runtime remains BLOCKED. No local app tests/builds were run.
 
 | Superficie/requisito | Evidencia actual | Estado |
 |---|---|---|
-| Web público y home | `services/web/src/components/common/Navbar.tsx`: marca y `VersionActions` en columna superior izquierda; el Navbar es compartido por portada. La página anónima en producción muestra v5.2.6 y controles nombrados (UAT-127–129). | PASS para montaje/nombre visible; posición exacta medida en fuente, no re-medida visualmente en producción. |
+| Web público y home | `services/web/src/components/common/Navbar.tsx`: marca y `VersionActions` en columna superior izquierda; producción v5.2.7 muestra control nombrado y anuncia el éxito de copia en UAT-130. | PASS para estado de copia Web; contenido clipboard no inspeccionado. |
 | Login | `services/web/src/pages/LoginPage.tsx`: marca, luego widget y controles de tema/idioma dentro de header fijo `left-4 top-4`. | PASS para montaje de fuente; runtime ya observado, geometría exacta no medida en esta revalidación. |
 | Aplicación y admin Web | `services/web/src/components/layout/Sidebar.tsx`: `VersionActions` en la cabecera y estado responsive del sidebar. Roles/diagnóstico profundo continúan protegidos por API. | PASS para montaje de fuente; autorización autenticada no aceptada. |
-| Landing | La revisión encontró que `landing/src/lib/debug-report.ts` derivaba y copiaba hostnames API/OAuth, contrario al contrato Web y al fix v5.2.3. El candidate v5.2.7 los oculta igual que Web; `landing/test/diagnostics-redaction-contract.test.cjs` registra regresión. | FIXED IN SOURCE; prod UAT-130 pendiente. Prueba agregada, no ejecutada localmente. |
+| Landing | `landing/src/lib/debug-report.ts` ahora omite hostnames API/OAuth como Web; `landing/test/diagnostics-redaction-contract.test.cjs` registra la regresión. Railway inventory no incluye Landing y el Dockerfile Web construye `services/web`. | FIXED IN SOURCE; runtime BLOCKED por target no identificado. Prueba agregada, no ejecutada localmente. |
 | Browser/Electron | `browser/renderer/index.html` coloca marca en la fila superior y la fila de versión/acciones en la barra de navegación; `version-actions.js` nombra botones y gestiona estados; CSS usa targets de 44×44, tile visual de 28×28, icono 14px y versión 12px. | PASS estático para contrato fuente; rendering del paquete Electron no verificado. |
 | Formato de versión | Web `VersionActions.tsx` acepta solo `X.Y.Z` numérico y presenta `vX.Y.Z`; Browser también valida semver antes de actualizar la versión de renderer. | PASS de fuente. |
 | Copia y diagnóstico real | Web `copyDebugReport()` genera el reporte allowlisted/redacted y espera `navigator.clipboard.writeText`; Browser reúne info de dispositivo/runtime y eventos limitados antes de copiar. UAT-117 confirma feedback y omisión de hostname, sin inspeccionar clipboard. | PASS limitado por fuente/UAT-117; payload completo no inspeccionado en producción. |
 | Limpieza | Web limpia solo claves/caches/cookies propias accesibles, cierra la sesión local y verifica errores; Browser desconecta runtime, limpia log local y reload tras confirmación. HTTP cache global y cookies HttpOnly quedan fuera. | PASS estático para límites declarados; ejecución de reset no repetida. |
 | Instrumentación y test evidence | La regresión nueva compara los dos campos host withheld en Web y Landing; el contenido del clipboard no se lee en producción. | PARTIAL: contrato revisado estáticamente; prueba no ejecutada localmente según instrucción del owner. |
 
-UAT-129 en producción solo observó foco visible en un enlace y el CTA; no prueba geometría del widget, todas las rutas, lector de pantalla, controles de copiar/reset, ni autorización. La divergencia de hostname sí fue reproducible por inspección de fuente y quedó corregida en el candidate; UAT-130 probará solamente el estado público de copia en el despliegue. No se afirma aceptación integral del widget.
+UAT-129 en producción solo observó foco visible en un enlace y el CTA; UAT-130 prueba el estado de copia en Web y redacción Landing en fuente, no runtime de Landing. Ninguno prueba todas las rutas, lector de pantalla o autorización. No se afirma aceptación integral del widget.
 
 ---
 

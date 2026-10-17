@@ -2,7 +2,7 @@
 
 ### UAT-130 readiness — candidate v5.2.7 / CMT-002
 
-Source review found the Landing diagnostics builder emitted the configured API and OAuth hostnames. The candidate now withholds them on both public surfaces. After PR merge and observed production deployment, the permitted acceptance is an anonymous public copy action's visible accessible success/failure status only; do not read/collect clipboard contents. No credentials, private CRM/network destination, customer data, local app test, or build is part of this case. Browser access proceeds only after the exact deployed candidate and active production UAT readiness are recorded in `50-uat/UAT_ACCESS_REPORT.md`.
+Source review found that Landing diagnostics emitted configured API and OAuth hostnames; v5.2.7 now withholds them. PR #247 merged as `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; Railway Web/API deployments both reached SUCCESS. Production UAT-130 confirms Web copy status “Diagnóstico copiado” without reading clipboard contents. Landing source redaction is reviewed, but runtime remains BLOCKED: Railway has no Landing service and Web's Dockerfile builds `services/web` only. No credentials, customer data, local app test or build was used.
 
 Remote `main` ahora es `7969fc87d3d5dc9f65a9a198d0f7a504577c7252` tras PR #246 (documentación únicamente); Railway Web/API #246 `SUCCESS`, source de producto sin cambio.
 

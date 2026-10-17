@@ -8,6 +8,19 @@ SIGUIENTE PASO: merge the documentation PR through the normal delivery path, rea
 
 ---
 
+# PHDK Lifecycle Handoff — Scoped delivery v5.2.7 privacy fix
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: `90-delivery` (scoped slice; whole Auto continues)
+Status: `SOURCE MERGED AND WEB/API DEPLOYED; PORTFOLIO PARTIAL`
+Date: 2026-10-17
+
+PR #247 delivered source commit `89a0bf26df76950e3ef93a00ae1331f3ead2634e` by squash as verified main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`. Product version is 5.2.7. Railway Web/API deployments are SUCCESS (1/1 each). UAT-130 confirms Web's public copy status; clipboard contents remain unread. The standalone Landing runtime cannot be accepted because no Landing production service/target is currently identified. See `DELIVERY_REPORT-5.2.7-privacy.md`.
+
+The PHDK Auto portfolio remains PARTIALLY DELIVERED: CMT-002 broad accessibility/RBAC/audio and CMT-003/004 work remain open/blocked. Continue CMT-003A/B, then complete the final Check and delivery audit after the authorized portfolio is otherwise resolved. Current run has no final-completion claim.
+
+---
+
 # PHDK Lifecycle Handoff — Delivery
 
 ## Current scoped delivery — 5.2.6 mobile target remediation (2026-10-17)

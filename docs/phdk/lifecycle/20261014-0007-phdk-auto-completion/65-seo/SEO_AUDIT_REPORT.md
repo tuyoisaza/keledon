@@ -1,5 +1,9 @@
 # SEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.2.7 revalidation — public SEO sources unchanged (2026-10-17)
+
+PR #247 delivered KELEDON 5.2.7 at main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`. The change only withholds API/OAuth hostnames in the standalone Landing diagnostic report and aligns application version metadata; no title, public description, canonical, route, robots, sitemap, crawl rule or structured data changed. Existing 25-control source review remains applicable for the source surfaces. No SEO app tests/builds were run locally per owner instruction; no crawler, Search Console, TLS check, external probe or field CWV measurement was performed. Railway does not deploy the `landing/` package; deployed discovery for that package is unavailable. Overall SEO remains PARTIAL / source review reused, external/deployed measurement unverified.
+
 ## Candidate 5.1.39 revalidation — 2026-10-14
 
 Source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. Public Web/Landing source, URLs, metadata and indexation policy are unchanged; only API/Cloud write contracts and API module organization changed. The 25-control checklist remains applicable and is revalidated by Web/Landing SEO tests 1/1 each, builds and typechecks. No HTTP/crawler/field/Search Console/deployed measurement was performed. Source check passes; external SEO acceptance remains partial/unmeasured.

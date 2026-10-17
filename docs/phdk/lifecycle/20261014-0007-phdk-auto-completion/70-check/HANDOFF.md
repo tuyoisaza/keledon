@@ -1,5 +1,18 @@
 # PHDK Lifecycle Handoff — Check
 
+## Current Check — 5.2.7 / PHDK 2.53.1 (2026-10-17)
+
+Status: **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL**. Current main is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PR #247 merged. Canonical report: `PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md`.
+
+- PHDK coherence 64/64; theme static audit 0 findings (runtime unverified); automation static audit no findings (remote state unverified).
+- Production Railway Web/API deploys report SUCCESS, connected to `main`, no staged changes. Both currently expose `checkSuites=false`.
+- UAT-130 passes only the public Web copy-status interaction and Landing source privacy contract. Landing has no verified production target.
+- Priority next implementation: close CMT-003C safe production fixtures, then CMT-003A lease/idempotency and CMT-003B socket-level tenant egress. No local product tests/builds were run.
+
+SIGUIENTE PASO: continuar CMT-003C → CMT-003A → CMT-003B; keep the project-level acceptance partial until production evidence closes all four commitments.
+
+---
+
 ## Current scoped check — 5.2.6 mobile target remediation (2026-10-17)
 
 Status: **PASS FOR 5.2.6 TARGET-SIZE SLICE; WHOLE AUTO PARTIAL**

@@ -1,8 +1,8 @@
 # PIAs de continuación — PHDK Auto / KELEDON 5.2.1+
 
-## Estado vigente — KELEDON 5.2.6 (2026-10-17)
+## Estado vigente — KELEDON 5.2.7 (2026-10-17)
 
-Baseline remoto `main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252` después del PR documental #246; producto fuente `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1 coherence 64/64; Railway Web/API #246 `SUCCESS`. El usuario mantiene las pruebas de aplicación exclusivamente en producción y prohíbe suites/builds locales. CMT-001 completo para este corte; CMT-002 parcial tras UAT-112–129; CMT-003A/B sin implementar; CMT-003C y CMT-004 autenticado bloqueados por la ausencia de una ruta de provisioning/cleanup sintética compatible con PHDK.
+Baseline remoto `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON 5.2.7; PR #247 integrado; PHDK 2.53.1 coherence 64/64; Railway Web/API `SUCCESS`. El usuario mantiene las pruebas de aplicación exclusivamente en producción y prohíbe suites/builds locales. CMT-001 completo para el corte 5.2.7; CMT-002 parcial: UAT-130 pasa estado de copia Web y fuente Landing, pero runtime Landing está bloqueado al no haber destino de producción verificado; CMT-003A/B siguen pendientes; CMT-003C y CMT-004 autenticado bloqueados por falta de provisioning/cleanup sintético compatible con PHDK.
 
 ## Reconciliación vigente — 2026-10-17
 

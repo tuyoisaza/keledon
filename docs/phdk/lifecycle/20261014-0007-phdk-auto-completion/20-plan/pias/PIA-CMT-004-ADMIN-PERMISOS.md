@@ -1,6 +1,6 @@
 # PIA CMT-004 — administración y permisos por tenant
 
-Estado: ACTIVE / PARTIAL · Prioridad: 4 · Decisión de tenancy: multi-tenant aprobada.
+Estado: ACTIVE / PARTIAL · Prioridad: 4 · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, Railway Web/API SUCCESS; PR #247 no cambió RBAC, modelo de datos ni flujos administrativos. Decisión de tenancy: multi-tenant aprobada.
 
 ## Política autorizada
 

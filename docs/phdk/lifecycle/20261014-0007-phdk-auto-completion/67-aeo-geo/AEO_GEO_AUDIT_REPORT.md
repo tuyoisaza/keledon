@@ -1,5 +1,9 @@
 # AEO/GEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.2.7 revalidation — public answers unchanged (2026-10-17)
+
+PR #247 changes only diagnostic hostname redaction and version metadata; public identity, answers, claims, routes, market/language policy, structured metadata and crawl directives do not change. Reuse the grounded 15-control review below. No answer engine, external crawler, paid query or live-page citation probe was used; no ranking or citation claim is made. The production page's Web build is separate from `landing/`, so the Landing runtime remains unverified. Authorship/contact provenance, market/language decisions and deployed visibility remain open/unmeasured. Whole stage remains PARTIAL.
+
 ## Candidate 5.1.39 source revalidation
 
 Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`; public `/` and discovery content are unchanged. Reuse the grounded question map and 15 controls below. Web/Landing SEO source tests pass 1/1 each. No external answer engine, live page, crawler or paid query was used; answer citations, market/language acceptance and deployed discovery remain NOT MEASURED or unresolved.

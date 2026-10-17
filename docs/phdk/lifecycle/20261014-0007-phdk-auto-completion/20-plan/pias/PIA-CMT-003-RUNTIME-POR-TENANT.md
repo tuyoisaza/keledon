@@ -1,6 +1,6 @@
 # PIA CMT-003 — voz → Cloud → Browser → CRM por tenant
 
-Estado: ACTIVE / PARTIAL · Prioridad: 3 · No existe una plataforma universal impuesta.
+Estado: ACTIVE / PARTIAL · Prioridad: 3 · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; Railway Web/API SUCCESS. El cambio 5.2.7 afecta solo redacción de Landing y versión; los hallazgos CMT-003 revalidados en 5.2.6 siguen sin cambio. No existe una plataforma universal impuesta; cada tenant elige llamada/CRM.
 
 ## Resultado esperado
 

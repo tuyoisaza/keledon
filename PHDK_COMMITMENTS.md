@@ -1,14 +1,14 @@
-# Active Auto ledger — KELEDON 5.2.7 candidate / PHDK 2.53.1 (2026-10-17)
+# Active Auto ledger — KELEDON 5.2.7 production / PHDK 2.53.1 (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; verified `origin/main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252`; production source `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). Candidate 5.2.7 fixes Landing's API/OAuth hostname disclosure; regression contract and UAT-130 are pending PR/deployment. PHDK 2.53.1 coherence 64/64.
+Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; verified production `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b` (5.2.7); PR #247 merged. Railway Web/API are SUCCESS. Landing hostname redaction is source-fixed; UAT-130 passes Web copy status and source contract, while Landing runtime remains BLOCKED for lack of a verified deployed target. PHDK 2.53.1 coherence 64/64.
 
-The four owner-confirmed commitments stay in their approved order: CMT-001 baseline/version/PRs; CMT-002 widget and safe diagnostics; CMT-003 tenant-specific voice→Cloud→Browser→CRM; CMT-004 administration and permissions. CMT-001 is complete for the 5.2.6 cut. CMT-002 remains partial after scoped production UAT-112–129. CMT-003A/B implementation and production acceptance remain open; CMT-003C authenticated fixtures are blocked by the absence of a PHDK-compliant production provisioning/cleanup path and customer-selected sandbox. CMT-004's authenticated persistence/cross-tenant proof remains blocked by the same fixture dependency.
+The four owner-confirmed commitments stay in their approved order: CMT-001 baseline/version/PRs; CMT-002 widget and safe diagnostics; CMT-003 tenant-specific voice→Cloud→Browser→CRM; CMT-004 administration and permissions. CMT-001 is complete for the delivered 5.2.7 cut. CMT-002 remains partial after UAT-112–130; UAT-130 accepts Web only and leaves Landing runtime blocked. CMT-003A/B implementation and production acceptance remain open; CMT-003C authenticated fixtures are blocked by the absence of a PHDK-compliant production provisioning/cleanup path and customer-selected sandbox. CMT-004's authenticated persistence/cross-tenant proof remains blocked by the same fixture dependency.
 
 Owner decisions retained: new email/Google identities get minimum `user`; only an existing superadmin elevates/assigns company; Admin/Coordinator stay inside tenant; API resolves actor/tenant from DB; secrets are write-only; private destinations require tenant allowlist/validation; each customer chooses voice/CRM. No customer integration is inferred. No local application tests/builds.
 
-Overall **PARCIALMENTE ENTREGADO**; CMT-001 complete for the 5.2.6 cut, CMT-002 partial with UAT-130 pending, and CMT-003/004 active/partial, 0 deferred/cancelled.
+Overall **PARCIALMENTE ENTREGADO**; CMT-001 delivered at 5.2.7, CMT-002 partial with Landing runtime blocked, and CMT-003/004 active/partial, 0 deferred/cancelled.
 
-SIGUIENTE PASO: finish candidate review/delivery and run UAT-130 on production without inspecting clipboard contents; keep authenticated CMT-003/004 UAT blocked until an approved synthetic provisioning and cleanup path exists.
+SIGUIENTE PASO: continue CMT-003A/B implementation and record the verified Landing deployment target when available; keep authenticated CMT-003/004 UAT blocked until an approved synthetic provisioning and cleanup path exists.
 
 ---
 

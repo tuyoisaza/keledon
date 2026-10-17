@@ -1,3 +1,11 @@
+## Candidate 5.2.7 — source answer review reused (2026-10-17)
+
+PR #247 did not alter public answer content; reuse the existing 15-control source review. No answer engines, crawlers or paid queries were used. Provenance, market/language decisions, citations and deployed visibility remain open/unmeasured. The standalone Landing runtime is not deployed by the verified Railway Web service. Overall AEO/GEO remains PARTIAL.
+
+SIGUIENTE PASO: carry non-remediable external evidence and UAT limitations into Check.
+
+---
+
 ## Candidate 5.2.1 — source review reused; external visibility unmeasured
 
 The public homepage remains the applicable answer surface. The tenant-interface and stale-request candidate changes no public answers, entities, claims, routes or structured metadata. Reuse the 15-control source audit; Web SEO tests pass 2/2 and Landing passes 1/1. No public host, crawler, answer engine or paid query was accessed. Market/authorship decisions, citations and deployed visibility remain partial, decision-needed or unmeasured. UAT is incomplete, so this is source revalidation rather than whole-stage acceptance.

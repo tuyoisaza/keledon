@@ -1,5 +1,9 @@
 # SEO remediation report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.2.7 — no SEO remediation required (2026-10-17)
+
+PR #247 changes diagnostic hostname redaction and version metadata only; no public SEO source, URL, robots, sitemap or structured-data contract changed. No SEO fix was indicated. Existing findings about external provenance, deployed crawl/indexation and CWV remain open/unmeasured. The standalone Landing package has no verified production target. No local application tests/builds were run.
+
 ## Candidate 5.1.39 — no public-source repair
 
 No SEO source change was necessary for this API/Cloud-only candidate. Web/Landing metadata, public `/`, sitemap, robots and route policy remain unchanged. Local SEO tests pass 1/1 per frontend and both builds/typechecks pass. Deployed HTTP/TLS/crawl, CWV, Search Console, backlinks and snippet behavior remain NOT MEASURED/BLOCKED; no deployment or external probe occurred.

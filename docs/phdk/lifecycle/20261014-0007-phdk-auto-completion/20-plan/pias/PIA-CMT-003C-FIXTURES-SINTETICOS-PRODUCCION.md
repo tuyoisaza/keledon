@@ -1,6 +1,6 @@
 # Sub-PIA CMT-003C — fixtures sintéticos para aceptación productiva
 
-Estado: INPUT GATE / PREPARATION NOT STARTED · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Candidato de producto: KELEDON 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`).
+Estado: INPUT GATE / PREPARATION NOT STARTED · Prioridad: CMT-003, prerequisito para CMT-003A/B UAT · Baseline KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; el código runtime CMT-003 no cambió desde `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6).
 
 ## Hallazgo y objetivo
 

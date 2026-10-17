@@ -1,5 +1,9 @@
 # AEO/GEO checklist — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.2.7 revalidation
+
+PR #247 changes version and diagnostics redaction only; all 15 controls below are reused for the unchanged public answer content. Citation/retrieval and external visibility remain NOT MEASURED; standalone Landing deployment is not verified. No new user-facing claims or FAQs were added.
+
 ## Candidate 5.1.39 revalidation
 
 Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`; public source unchanged. The 15 controls below are reused. Web/Landing SEO source tests pass 1/1; no answer engine, crawler, live target or paid query was contacted. External citations remain NOT MEASURED.

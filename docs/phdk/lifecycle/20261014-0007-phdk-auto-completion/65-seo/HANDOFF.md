@@ -1,3 +1,11 @@
+## Candidate 5.2.7 — source revalidation, no public SEO delta (2026-10-17)
+
+PR #247 changes Landing diagnostics redaction/version only; public SEO metadata, routes, index policy, robots and sitemap remain unchanged. The existing source audit is reused. No app tests/builds or external crawler/Search Console/TLS/CWV probes were run. Standalone Landing deployment target remains unknown. SEO remains PARTIAL for deployed/external evidence and documented provenance gaps; see current audit and remediation report above.
+
+SIGUIENTE PASO: carry source reuse and external/deployment limits into AEO/GEO and Check.
+
+---
+
 ## Candidate 5.2.1 — source revalidation PASS; SEO stage partial
 
 Public `/` remains indexable and applicable; this tenant-interface and stale-request candidate changes no public copy, metadata, route, canonical or crawler policy. The 25-control source review is reused, with Web SEO tests 2/2 and Landing tests 1/1 passing. Snapshot the candidate audit, checklist and zero-repair report under `snapshots/candidate-5.2.1/`. No live host, crawler, Search Console, TLS or field metric was accessed. UAT Prep/browser acceptance is blocked, so SEO source revalidation does not complete overall SEO acceptance.

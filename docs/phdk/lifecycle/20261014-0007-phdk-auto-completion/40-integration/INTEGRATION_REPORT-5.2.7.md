@@ -34,3 +34,7 @@ The candidate removes hostname derivation from Landing and uses the same withhel
 ## Decision and residual risks
 
 **Source candidate ready for normal versioned PR delivery and production-only UAT-130.** This review establishes the privacy behavior from source and the regression contract's presence, not runtime execution. UAT-130, after verified merge and production deployment, may observe only the public copy control's accessible success/failure state; it must not read, export or attach clipboard contents. Full CMT-002 remains partial for accessibility breadth, authenticated diagnostics/RBAC and audio. The other three confirmed commitments remain open/partial as tracked in PMO; this slice does not close the Auto goal.
+
+## Delivery readback
+
+PR [#247](https://github.com/tuyoisaza/keledon/pull/247) merged by squash. Remote `main` was independently confirmed at `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`. Railway Web/API deployments `c731a6ec-db04-42b4-9738-838eebc151d2` / `072f618b-3142-4615-babb-62aa73a64de2` reached `SUCCESS`. UAT-130 passes production Web's accessible copy status and source-level Landing redaction; the Landing package runtime is not in the deployed image and remains blocked. See stage 50 evidence and `90-delivery/DELIVERY_REPORT-5.2.7-privacy.md`.

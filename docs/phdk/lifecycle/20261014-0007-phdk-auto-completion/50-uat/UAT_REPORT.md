@@ -1,3 +1,7 @@
+## UAT-130 — copia pública en producción tras v5.2.7 (2026-10-17 21:13 UTC)
+
+Después de PR #247 (`a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`), Railway Web `c731a6ec-db04-42b4-9738-838eebc151d2` y API `072f618b-3142-4615-babb-62aa73a64de2` alcanzaron SUCCESS con 1/1 réplica y sin pendientes/fallas. La portada anónima mostró `v5.2.7`; al activar Copiar, el árbol accesible anunció “Diagnóstico copiado”. El portapapeles no se leyó ni exportó; Limpiar caché no se activó. UAT-130 **PASA solo para el estado de copia de la superficie Web y la redacción revisada en fuente**. Railway no tiene un servicio Landing y el Dockerfile Web construye `services/web`; el runtime del paquete `landing/` queda BLOCKED hasta conocer un destino de producción autoritativo. No se ejecutaron pruebas/builds locales. Evidencia: `evidence/uat-130-production-copy-status-2026-10-17.json`.
+
 ## UAT-129 — producción: orden y foco público por teclado (2026-10-17 20:54 UTC)
 
 Sobre main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` tras despliegue documental #245, producción Web v5.2.6 en source `e7257a7` recibió 11 pulsaciones Tab desde el foco inicial. El foco recorrió marca, copiar, limpiar cache, navegación, temas/idioma, acceso/alta y avanzó al CTA principal. Se observó foco visible en “Casos de uso” y “Abrir KELEDON”; no se observó trampa en el encabezado. UAT-129 **PASA solo el muestreo de orden y foco visible**. Ningún control se activó. Evidencia: `evidence/uat-129-production-public-keyboard-focus-2026-10-17.json`.
