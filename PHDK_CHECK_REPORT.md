@@ -1,3 +1,7 @@
+## Revalidación actual — KELEDON 5.2.10 / PHDK 2.53.1 — 2026-10-17
+
+`origin/main`: `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. El baseline 5.2.10/2.53.1 conserva coherencia estática 64/64; higiene automática y tema no tienen hallazgos estáticos, aunque el plano remoto y el runtime visual siguen sin verificación completa. Railway Web/API SUCCESS desde `edd18be5`; no hay cambios staged. GitHub no muestra workflows habilitados, el último run histórico `Version Bump` falló, y `main` no tiene protección. CMT-002 tiene cuatro targets de login bajo 44 px; fix 5.2.11 en PR #259 espera revisión/despliegue/UAT-142. CMT-003C/C1 permanece sin aprovisionamiento hasta entregar lifecycle durable y cleanup autorizado. PR #258 documenta el fixture y límites. Detalle: [revalidación PHDK actual](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.10-PHDK-2.53.1-current-2026-10-17.md).
+
 ## Current Check — KELEDON 5.2.10 / PHDK 2.53.1 — 2026-10-17
 
 Remote `main`: `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, PR #255 merged. **SCOPED ROUTE PIA PASS; WHOLE AUTO PARTIAL.** Delta audit: [PHDK_CHECK_REPORT-5.2.10-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.10-PHDK-2.53.1.md).
