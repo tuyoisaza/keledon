@@ -8,7 +8,7 @@ The Plan was extended into four actionable commitment packages at `docs/phdk/lif
 |---|---|---|
 | CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PIA docs are merged in PR #212; retain baseline/version/deployment readback per each source PR. |
 | CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Mobile responsive acceptance passes in UAT-108 after [PR #213](https://github.com/tuyoisaza/keledon/pull/213); sampled contrast passes UAT-109; limited public keyboard/AX sample passes UAT-110. Continue full contrast/screen-reader; authenticated diagnostics/audio require authorized synthetic identity/hardware. |
-| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Source path is mapped. Design recovery/idempotency for permanent command claims and DNS/CIDR protection before accepting tenant-private CRM; end-to-end still waits for customer sandbox. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | New sub-PIAs detail command lease/effect idempotency and tenant DNS/CIDR egress enforcement. Implement and accept only on deployed candidate; CRM E2E still waits for customer-approved synthetic sandbox. |
 | CMT-004 administration/permissions | ACTIVE / PARTIAL | Keep `KELEDON_VENDOR_KEY` and synthetic tenant/catalog prerequisites; no inferred legacy ownership. |
 
 Overall: **4 confirmed / 0 complete / 4 active-partial**. Continue in the owner's established order; do not mark a PIA or public smoke as product acceptance.

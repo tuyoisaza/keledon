@@ -8,6 +8,13 @@ Un contrato de runtime auditable y configurable por tenant: cada cliente decide 
 
 ## Trabajo
 
+### Sub-PIA ejecutables para los dos gaps de runtime
+
+- [CMT-003A — lease de comandos e idempotencia de efectos](PIA-CMT-003A-COLA-LEASE-E-IDEMPOTENCIA.md): recupera claims vencidos, evita leases concurrentes y separa reintentos idempotentes de operaciones `at_most_once` que requieren reconciliación.
+- [CMT-003B — DNS/CIDR y egress CRM privado por tenant](PIA-CMT-003B-EGRESS-DNS-CIDR-POR-TENANT.md): valida cada resolución/conexión/redirect, conserva solo los CIDR privados explícitamente aprobados y mantiene egress cerrado si Browser no puede fijar/constriñir el socket.
+
+Ambas PIAs convierten hallazgos de la revisión de fuente 2026-10-17 en aceptación acotada sobre el candidato desplegado. No autorizan pruebas de CRM real ni escrituras en producción; los sandbox/tenant/device deben ser sintéticos y aprobados por sus owners. No correr pruebas locales de la aplicación.
+
 1. Reconstruir el contrato real desde los entrypoints y callsites: sesión/evento de llamada, proveedor de voz, contexto, decisión Cloud validada, comando Browser permitido, resultado y salida CRM. Mapear timeout, cancelación, reintento, idempotencia, correlación y terminación. **Mapeado parcialmente en revisión de fuente 2026-10-17:** ver `40-integration/revalidations/20261017-runtime-contract/RUNTIME_CONTRACT_MAP.md`; se registró claim permanente sin lease y ausencia de idempotency-key de efecto externo.
 2. Mapear adaptadores soportados sin asumir que existe cliente configurado. Cada adaptador declara capacidades, autenticación, campos secretos, límites de petición y error sanitizado. Los flujos se configuran dentro del tenant y se versionan; no se copian secretos al browser.
 3. Para CRM local o privado: registrar hostname/puerto/esquema permitidos por tenant; validar DNS/resolución y revalidar cada redirect/resolución para bloquear loopback/link-local/metadata salvo las redes privadas expresamente permitidas por ese tenant. Bloquear credenciales embebidas, esquemas no HTTP(S), hosts públicos fuera de allowlist, rebinding y redirecciones fuera de política. El cliente que habilita red privada debe aprobar el CIDR/host exacto. **Gap de fuente observado en 5.2.1:** API/Cloud normalizan URLs y orígenes HTTP(S) exactos por tenant y Browser limita navegación/recursos a dichos orígenes, pero no se encontró validación de IP resuelta ni defensa DNS-rebinding. No usar todavía estos controles como garantía contra cambios de resolución; cerrar con un diseño que preserve CRM privados aprobados y aceptación del candidato desplegado.
