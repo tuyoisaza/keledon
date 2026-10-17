@@ -1,4 +1,8 @@
-## Current candidate 5.1.81 — scoped remediation verified; overall Auto partial
+## 5.1.81 source delivery readback — overall completion remains partial
+
+PR #200 delivered at verified `main` `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`. All five package roots and Browser renderer are 5.1.81; PHDK 63/63. API deploy succeeded. Web and old-snapshot redeploys failed because `/shared` is outside the captured context. Railway is now configured with root `/` and `services/web/Dockerfile`; a fresh source build must validate it. Candidate Web UAT passes 8/8 with standalone admin/theme/AI. Four commitments and the broad DB, CRUD, native, accessibility and client-runtime gates remain open.
+
+## Historical candidate 5.1.81 — scoped remediation verified; overall Auto partial
 
 The 5.1.80 Web UAT flow-editor timeout exposed a real stale refresh race. Candidate 5.1.81 fixes it and reproduces the former failure with a deliberately delayed Tenant B response. Web typecheck/build and exact-version full Web UAT pass (8/8); admin-settings, theme-template and AI-admin UAT pass; PHDK coherence is 63/63. PR and remote delivery are pending. The full portfolio is not complete: all four commitments remain active/partial and the 560-row CRUD matrix remains 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS; database, native, Web deploy configuration, broad accessibility and tenant-selected call/CRM acceptance remain open.
 

@@ -1,0 +1,76 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; fix the production Web flow-editor stale-scope race and deliver 5.1.81 while retaining partial portfolio status",
+  "target_branch": "main",
+  "expected_version": "5.1.81",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "372a0f0399a65523d3be3929a7cb447ef1634018",
+  "merged_commit_sha": "86b93a0bfe8393180d65c035d814f73e8f2dd9e2",
+  "remote_main_sha": "86b93a0bfe8393180d65c035d814f73e8f2dd9e2",
+  "remote_main_tree": "d42204c8c567e8cb1b61a297e100c4c471d4a76d",
+  "pull_request": "https://github.com/tuyoisaza/keledon/pull/200",
+  "pull_request_state": "MERGED",
+  "github_hosted_checks": [],
+  "github_review_submissions": [],
+  "main_branch_protected": false,
+  "installed_phdk": "2.52.2",
+  "phdk_coherence": "PASS 63/63 (static)",
+  "package_roots": {
+    "services/api": "5.1.81",
+    "services/web": "5.1.81",
+    "cloud": "5.1.81",
+    "landing": "5.1.81",
+    "browser": "5.1.81",
+    "browser_renderer": "v5.1.81"
+  },
+  "checks": {
+    "web_typecheck": "PASS",
+    "web_build": "PASS",
+    "changed_source_eslint": "PASS",
+    "full_production_web_uat": "PASS 8/8",
+    "standalone_admin_settings_uat": "PASS_SCOPED",
+    "standalone_theme_templates_uat": "PASS",
+    "standalone_ai_admin_uat": "PASS",
+    "all_five_package_builds": "PASS"
+  },
+  "railway": {
+    "api_deployment": {
+      "id": "ce773931-0b3c-4c5a-a422-2d46c7311bee",
+      "status": "SUCCESS"
+    },
+    "web_initial_deployment": {
+      "id": "5847a101-768c-467f-8a0d-ad450279a502",
+      "status": "FAILED",
+      "cause": "The service root /services/web excluded shared/ required by its Dockerfile."
+    },
+    "web_config_after_fix": {
+      "rootDirectory": "/",
+      "dockerfilePath": "services/web/Dockerfile"
+    },
+    "web_old_snapshot_redeployments": [
+      {
+        "id": "0939dd16-3202-4fa7-9672-b7fcff347699",
+        "status": "FAILED"
+      },
+      {
+        "id": "94431329-13ca-4985-9cb5-3dc2ede50c63",
+        "status": "FAILED"
+      }
+    ],
+    "web_next_gate": "Fresh source-based deployment required to verify corrected build context.",
+    "variables_or_volume_data_changed": false
+  },
+  "whole_auto": "PARTIALLY DELIVERED",
+  "commitments_done": 0,
+  "commitments_total": 4,
+  "uat_portfolio": "89 PASS, 0 BLOCKED, 1 MANUAL",
+  "crud_portfolio": "396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS",
+  "remaining_acceptance": [
+    "fresh Web deployment from corrected source context",
+    "PostgreSQL migration and restart acceptance",
+    "remaining persisted CRUD and authorization rows",
+    "native device/audio and broader accessibility",
+    "each customer's selected call platform and CRM sandbox"
+  ]
+}

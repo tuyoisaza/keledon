@@ -1,4 +1,12 @@
-## Current Auto continuation — candidate 5.1.81, PHDK 2.52.2 (2026-10-17)
+## Current delivery readback — 5.1.81 source merged (2026-10-17)
+
+PR [#200](https://github.com/tuyoisaza/keledon/pull/200) merged to `main` at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; fresh local and remote SHA match. All five package/lock roots and Browser renderer read 5.1.81; PHDK v2.52.2 coherence passes 63/63. GitHub reports no hosted checks/reviews and main is unprotected. Railway API deployment on the merge SHA is SUCCESS. Web auto-deploy and two redeploys from the old snapshot failed at `COPY shared/`; live Web settings now point to repository root `/` and `services/web/Dockerfile`, but a fresh source deployment is required to exercise the corrected context.
+
+Production Web typecheck/build, changed-source ESLint, full Web UAT 8/8, standalone admin-settings/theme-template/AI-admin UAT, and all five package builds pass. Candidate SEO/AEO/GEO is not applicable. All four commitments remain active/partial (0/4 done). Portfolio UAT is 89 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. Whole Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: verify a fresh Web build from the corrected Railway root/Dockerfile config, then continue PostgreSQL, CRUD, native/accessibility and tenant-specific call/CRM acceptance.
+
+## Historical pre-merge candidate state — 5.1.81, PHDK 2.52.2
 
 The 5.1.80 full Web suite exposed a real stale asynchronous request in the superadmin flow editor. Candidate 5.1.81 resolves implicit refreshes against the selected company at execution time and discards older responses. The production-built Web UAT forces a delayed Tenant B response across a switch to unassigned legacy definitions and passes; full Web UAT is 8/8 and standalone admin-settings/theme-template/AI-admin UAT pass. Web typecheck/build and PHDK coherence pass. All five package/lock roots and Browser renderer are 5.1.81. PR and remote-main verification are pending.
 

@@ -1,4 +1,8 @@
-## Current 5.1.81 candidate — UAT Fix complete; delivery pending
+## 5.1.81 source delivery readback
+
+PR #200 merged at verified remote main `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; five roots and Browser renderer are 5.1.81; PHDK coherence passes 63/63. API deploy succeeded. Web's old snapshot failed; live root/Dockerfile settings are corrected and await a fresh source build. Full Web UAT passes 8/8 plus standalone admin/theme/AI. All four commitments remain ACTIVE/PARTIAL (0/4 DONE); broad persisted/external gates remain open.
+
+## Historical pre-merge candidate — UAT Fix complete; delivery pending
 
 The superadmin flow editor now uses the current tenant selection for refreshes resumed after an in-flight write and ignores stale responses. A delayed Tenant B response regression is included. Full production-built Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin UAT; Web typecheck/build and PHDK 63/63 pass. Five package roots and Browser renderer are 5.1.81. The slice advances CMT-001/002 and is pending PR review/merge/readback. All four commitments remain ACTIVE/PARTIAL (0/4 DONE); persisted DB/migration, broad CRUD, native accessibility, Web deployment configuration and customer-selected runtime acceptance remain open.
 
