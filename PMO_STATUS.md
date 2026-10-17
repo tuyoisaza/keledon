@@ -2,12 +2,12 @@
 
 ## Current continuation — 2026-10-17
 
-The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. A read-only production browser observation (UAT-105) saw version 5.2.1, a public demo disclaimer, named copy-diagnostic and cache-clear buttons, and theme/language selectors in the pt locale. No buttons were activated. This does not prove action behavior, accessibility quality, authorization or private diagnostics. The current branch `docs/phdk-auto-pias` starts from `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; PR #212 is open with no hosted checks and awaits repository review.
+The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. Production UAT-105/106 now cover public widget presence, ES/EN/PT localization, light/corporate/dark selection, named copy/reset outcomes and keyboard access to 44×44 controls with a visible focus outline. The copy clipboard was not read; reset used a fresh anonymous IAB and returned to the public page. These results do not prove screen-reader quality, RBAC, private diagnostics, mobile/contrast coverage or audio. The current branch `docs/phdk-auto-pias` starts from `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; PR #212 is open with no hosted checks and awaits repository review.
 
 | Commitment | Status | Next executable gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | ACTIVE / PARTIAL | Deliver PIA docs through PR; preserve main/version/deployment readback per each source PR. |
-| CMT-002 widget/diagnostics | ACTIVE / PARTIAL — CURRENT | UAT isolated production browser profile across locale/theme/viewport; validate keyboard, focus and copy action. Cache clear requires disposable profile. Then address any reproducible P1 before widening to authenticated/audio UAT. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL — CURRENT | UAT-106 passes tested public control scope. Continue responsive/contrast and screen-reader acceptance; authenticated diagnostics and audio require authorized synthetic identity/hardware. |
 | CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Map actual source contract; end-to-end acceptance waits for a customer-chosen sandbox. |
 | CMT-004 administration/permissions | ACTIVE / PARTIAL | Keep `KELEDON_VENDOR_KEY` and synthetic tenant/catalog prerequisites; no inferred legacy ownership. |
 

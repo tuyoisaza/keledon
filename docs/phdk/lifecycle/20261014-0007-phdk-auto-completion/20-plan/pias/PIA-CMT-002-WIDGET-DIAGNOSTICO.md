@@ -27,7 +27,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 
 ## Dependencias y bloqueo actual
 
-La página pública de producción abierta en UAT reportó 5.2.1 en portugués, “interface ilustrativa; sem sessões ou métricas de serviço em tempo real”, y dos acciones de diagnóstico. UAT-104 confirma su disponibilidad, pero no ha activado acciones ni auditado lector de pantalla ni micrófono. No existe aún identidad sintética productiva ni una matriz UAT del candidato exacto. Completar los casos authenticated/audio queda BLOCKED hasta contar con perfil aislado autorizado; los casos públicos no destructivos pueden seguir en producción.
+La página pública de producción abierta en UAT reportó 5.2.1 en portugués, “interface ilustrativa; sem sessões ou métricas de serviço em tempo real”, y dos acciones de diagnóstico. UAT-106 amplía la aceptación pública: ES/EN, tema claro/corporativo, botones de 44×44 CSS px con foco visible, mensaje de copia sin leer el portapapeles y limpieza de estado local en una sesión anónima desechable con retorno a `/`. Sigue pendiente la matriz por locale/tema/viewport, lector de pantalla y contraste. No existe aún identidad sintética productiva ni hardware de prueba autorizado; los casos autenticados/audio quedan BLOCKED hasta contar con ellos. Evidencia: `50-uat/evidence/uat-106-production-widget-actions-and-keyboard-2026-10-17.json`.
 
 ## Reglas de privacidad
 

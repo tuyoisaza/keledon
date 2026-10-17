@@ -10,6 +10,12 @@
 |---|---|---|---|---|---|
 | UAT-105 | CMT-002 / anonymous public visitor | Open production `/` in a browser and inspect only the accessibility tree; do not click controls, log in, clear storage, copy clipboard or submit data. | Candidate version, truthful illustrative-demo disclaimer, localized named diagnostic/cache controls, theme/language selectors and public navigation are exposed to accessibility APIs. | Production browser read-only tree | **PASS (presence only):** observed version 5.2.1 in pt locale, demo disclaimer, named copy/cache buttons, theme/language selectors and public content. Does not prove interaction, focus, screen-reader announcements or RBAC. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`. |
 
+## Candidate 5.2.1 — UAT-106 production widget actions, theme/locale and keyboard
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-106 | CMT-002 / anonymous visitor in a fresh browser context | On production 5.2.1, switch locale/theme, keyboard-tab to copy/reset controls, copy report without inspecting clipboard, clear only the disposable app context, and confirm the public route recovers. | Locale and theme update; controls retain visible focus and 44×44 targets; copy/reset announce truthful outcome; public page reloads with default local preferences. No application record/server session is touched. | Production UI / isolated anonymous IAB | **PASS FOR THIS PUBLIC SCOPE:** ES and EN rendered translated content; light/corporate theme selected; keyboard reached both 44×44 buttons with a solid teal focus outline; copy announced “Diagnóstico copiado”; app reset announced its exact scope and returned to the public page with pt/dark defaults. Clipboard was not read. Does not prove RBAC, screen-reader quality, mobile, backend state or audio/device acceptance. Evidence: `evidence/uat-106-production-widget-actions-and-keyboard-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-103 production key-config readiness
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,4 +1,8 @@
-## Current re-entry — UAT-105, production widget tree (2026-10-17)
+## Current re-entry — UAT-106, production widget actions (2026-10-17)
+
+In a fresh anonymous in-app browser context on production 5.2.1, Spanish/English and light/corporate theme selections changed the rendered page. Keyboard navigation reached copy and reset buttons; each measured 44×44 CSS px and showed a solid teal focus outline. Copy announced “Diagnóstico copiado”; clipboard was not read. Reset announced its application-only scope, reloaded `/`, and restored pt/dark defaults. UAT-106 is **PASS FOR THIS PUBLIC WIDGET SCOPE**. It does not accept private diagnostics, role permissions, server sessions, screen-reader quality, mobile layouts, contrast pairs or audio/device behavior. Evidence: `evidence/uat-106-production-widget-actions-and-keyboard-2026-10-17.json`.
+
+## Prior re-entry — UAT-105, production widget tree (2026-10-17)
 
 Read-only browser inspection of `https://keledon.tuyoisaza.com/` observed v5.2.1 in Portuguese, a public illustrative-demo disclaimer, accessibility-tree names for the diagnostic-copy and app-cache-clear buttons, theme/language selectors and public navigation. UAT-105 is **PASS FOR ELEMENT PRESENCE ONLY**. No buttons were activated, no clipboard/cache/session was changed and no private diagnostics or user data were read. Keyboard/focus, screen-reader quality, copy/cache behavior, other themes/locales/viewports, authenticated diagnostics and audio/device behavior remain unverified. Evidence: `evidence/uat-105-production-widget-ax-readonly-2026-10-17.json`.
 

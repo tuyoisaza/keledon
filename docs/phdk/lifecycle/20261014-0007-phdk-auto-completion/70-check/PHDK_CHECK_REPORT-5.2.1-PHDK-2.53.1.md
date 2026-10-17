@@ -34,8 +34,9 @@ The bounded provider response did not expose an explicit wait-for-CI setting, re
 | Check | Result | Evidence / limitation |
 |---|---|---|
 | Continuation PIA coverage | PASS FOR PLANNING | Four dedicated packages exist for CMT-001…004 under `20-plan/pias/`, preserving order, policy and acceptance gates. Planning does not complete the implementation commitments. |
-| Current production widget observation | PASS, NARROW | UAT-105 read only the 5.2.1 public accessibility tree and observed named controls, selectors and demo wording. It does not prove keyboard, screen-reader, action, RBAC, audio or persistence behavior. |
-| Documentation integrity | PASS | `git diff --check`; UAT-103, UAT-104, UAT-105 and delivery JSON parse. No application tests/builds were run locally. |
+| Current production widget observation | PASS, NARROW | UAT-105/106 observed public controls on production 5.2.1 and exercised locale/theme controls, keyboard focus/target size, copy success announcement and app reset in a disposable anonymous context. Clipboard was not read. Responsive layouts, contrast, screen-reader quality, RBAC, audio and persistence remain unaccepted. |
+| Tenant CRM origin source review | GAP RECORDED | API/Cloud enforce normalized HTTP(S) tenant origins and Browser restricts navigation/resource requests to the exact allowlist, including explicitly configured private origins. No resolved-IP validation or DNS-rebinding defense was found; private CRM networking is not accepted until that gap is designed and verified on the deployed candidate. |
+| Documentation integrity | PENDING RECHECK | Re-run `git diff --check`, PHDK coherence, and parse UAT-106 evidence JSON. No local application tests/builds are permitted under the production-only testing instruction. |
 | Current PR delivery | OPEN | PR #212 targets `main` from verified base `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; head `38141045c3beb3a0a543c0955ad727727fada54f`. Compare reports three commits ahead/zero behind; GitHub combined status returns no hosted checks. |
 | Whole Auto | PARTIAL / NOT ACCEPTED | Four commitments remain active. Authenticated production acceptance, owner-managed key, synthetic catalog/personas, customer-selected CRM sandbox, and broad widget/native acceptance remain open. |
 

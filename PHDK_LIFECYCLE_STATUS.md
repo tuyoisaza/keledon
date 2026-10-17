@@ -1,6 +1,6 @@
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; current documentation branch `docs/phdk-auto-pias` based on verified `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. Product PR #210 is merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; PR #211 advanced main documentation. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are now split by commitment under `20-plan/pias/`. Production UAT-105 records a read-only AX-tree check on the public 5.2.1 homepage; authenticated/action behavior remains unaccepted.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; current documentation branch `docs/phdk-auto-pias` based on verified `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. Product PR #210 is merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; PR #211 advanced main documentation. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are split by commitment under `20-plan/pias/`. Production UAT-105/106 now covers public widget presence plus ES/EN selection, light/corporate themes, visible keyboard focus, 44×44 controls, copy status and a disposable anonymous app-state reset. Authenticated behavior, responsive/contrast/screen-reader acceptance and audio remain open.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -10,17 +10,17 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; curren
 | PMO / Workstreams | COMPLETED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; four PIAs assign the ordered next gates. CMT-002 is the active workstream. |
 | Integration Review | COMPLETED FOR SOURCE REVIEW | API/Cloud role and tenant guards, secret projections, legacy route boundary and assignment service were reviewed. Migration has nullable `companyId` and no backfill; tenant interface provisioning/legacy ownership remain acceptance items. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
-| UAT | PARTIAL / RUNNING | UAT-104 verifies public service/version; UAT-105 read the 5.2.1 public accessibility tree and found named copy/cache controls plus theme/language selectors. No controls were activated; keyboard, role, audio and persistence tests remain open. |
+| UAT | PARTIAL / RUNNING | UAT-104 verifies public service/version; UAT-105/106 confirm public controls and a narrow set of actions on production 5.2.1. UAT-106 did not inspect clipboard and reset only a fresh anonymous browser context. Responsive, contrast, screen-reader, role, persistence and audio tests remain open. |
 | UAT Fix | PENDING | Reopen after production UAT identifies a reproducible candidate defect; no live write or destructive action taken. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. Current PR #212 is open with no hosted status checks. Admin and authenticated feature gates remain open. |
+| Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. UAT-106 is narrow public-widget acceptance only. Current PR #212 is open with no hosted status checks. Admin and authenticated feature gates remain open. |
 | Remediation | PENDING | This continuation adds actionable PIA packages and current production evidence; source remediation remains tied to verified acceptance findings. |
 | Delivery | PIA PR OPEN / WHOLE GOAL PARTIAL | PR #212 targets `main`, base SHA `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`, head SHA `38141045c3beb3a0a543c0955ad727727fada54f`; it has no hosted checks. Product PR #210 and production version 5.2.1 remain separately verified. Whole-goal gate remains open. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
-SIGUIENTE PASO: finish PMO assignment from the four new PIAs, then continue CMT-002 production UAT using an isolated UAT browser profile; do not activate cache-clear on the shared profile or use customer data. Keep authenticated, audio and tenant acceptance blocked until synthetic identities/hardware are authorized.
+SIGUIENTE PASO: continue CMT-002 production acceptance for responsive layouts, contrast pairs and screen readers. Keep authenticated, audio and tenant acceptance behind authorized synthetic identities/hardware; then continue the ordered CMT-003 source conformance review and record the tenant-origin DNS/rebinding gap before any CRM pilot.
 
 Automation hygiene and acceptance details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md`; production smoke evidence is UAT-104 and key-configuration blocker is UAT-103. Deployment success does not accept authenticated behavior.
 
