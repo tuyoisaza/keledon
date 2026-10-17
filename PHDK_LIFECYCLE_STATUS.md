@@ -14,13 +14,15 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | RUNNING / PARTIAL | PHDK and documentation checks pass; source behavior remains supported by prior candidate checks. No application tests run in this continuation. |
+| Check | PARTIAL / REMOTE HYGIENE READBACK ADDED | PHDK 2.53.1 coherence 64/64 and root managed block pass. GitHub has no workflows, branch protection or rulesets; PR #210 has no checks/review. Railway API/Web current deployments succeed, but Web has 12 recent failures (three sampled failures trace to missing `shared/` in an older build context; later root-context deployments succeed). `checkSuites:false`; wait-for-CI/restart/watch/cost fields remain unverified. No app tests or production writes in this continuation. |
 | Remediation | COMPLETED FOR CURRENT DOCUMENT GAPS | Corrected PIA source links, UAT scope, provisioning limitation, and current PMO/lifecycle state; no safe source change was justified without ownership data or candidate acceptance. |
 | Delivery | PR #210 OPEN; NOT MERGED | GitHub reports no checks or review decision. No merge/main verification for 5.2.1. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance, PR review/check evidence and merge/main verification remain open.
 
 SIGUIENTE PASO: continue reconciling the four-front implementation against product behavior; keep PR #210 open until tenant-interface provisioning and required acceptance gates are resolved.
+
+Automation hygiene details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` records the bounded GitHub/Railway metadata, sampled build failure and unverified provider fields. Current production service status is not acceptance of the unmerged candidate.
 
 ---
 
