@@ -1,3 +1,13 @@
+# Current PHDK Auto — 5.1.83 delivered; portfolio partial
+
+PR #204 merged the Web Nginx root-context fix at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer are 5.1.83, and PHDK coherence is 63/63. Railway Web and API deployments report SUCCESS with 1/1 replicas. Web startup logs confirm configuration complete and workers started without the prior directive error. API logs show Nest and Prisma startup after a transient dependency reachability timeout. No live request/UI health check was performed.
+
+The scoped source delivery is complete; whole PHDK Auto remains PARTIALLY DELIVERED (0/4 commitments DONE). UAT is 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: continue the remaining four-front acceptance from verified main; keep Auto partial.
+
+---
+
 # Current PHDK Auto task — restore Web startup after 5.1.82 CORS delivery
 
 PR #203 merged source 5.1.82 to `main` (`4c2882029b35494e011318f6b87c6b429f5dd820`). API deployment reports SUCCESS. Railway also reports Web SUCCESS, but bounded startup logs show repeated Nginx restarts because the repository-root Docker build copied root `nginx.conf` into `conf.d`; runtime health is not verified.

@@ -1,3 +1,13 @@
+## Candidate 5.1.83 — source and Railway startup readback PASS_SCOPED
+
+PR #204 merged to `main` at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`. Railway Web deployment `7fb6f47b-3629-483c-a9b7-79a522658e81` reports SUCCESS with 1/1 replica; bounded logs show Nginx configuration complete and worker processes started, without the previous `worker_processes` directive failure. API deployment `639b6329-b279-47e8-bec0-7fb7bd266937` reports SUCCESS with 1/1 replica; logs show Nest started and Prisma connected after an initial dependency timeout. No live HTTP/UI probe was made. Source/build UAT-093 is supplemented by this provider-log readback; whole Auto acceptance remains incomplete.
+
+Portfolio: 91 PASS / 0 BLOCKED / 1 MANUAL. CRUD: 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: continue the four owner-confirmed fronts; keep whole Auto PARTIALLY DELIVERED.
+
+---
+
 ## Candidate 5.1.83 — Web Nginx source/build UAT PASS_SCOPED; runtime pending
 
 Source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` changes the root-context Web Dockerfile to copy `services/web/nginx.conf` into `conf.d`, addressing the Nginx startup errors observed in bounded Railway logs for 5.1.82. UAT-093 passes source/config assertions and Web SEO/Nginx tests 2/2; Web typecheck/build and production-built UAT 8/8 plus admin-settings, theme-template and AI-admin pass. Evidence: `evidence/uat-093-web-nginx-config-5.1.83.json` and candidate snapshot `snapshots/candidate-5.1.83/`.

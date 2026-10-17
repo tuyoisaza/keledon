@@ -9,15 +9,17 @@
     "Dockerfile does not copy root nginx.conf into conf.d.",
     "Existing SEO/Nginx source behavior regression passes 2/2.",
     "Web production build and typecheck pass.",
-    "Full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin UAT."
+    "Full Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin UAT.",
+    "Post-merge Railway deployment reaches SUCCESS with 1/1 replica; bounded startup log shows Nginx workers started without the prior fatal config directive."
   ],
   "result": "PASS_SCOPED",
   "external_traffic": "none",
   "database_or_provider": "not used for local tests",
-  "runtime_verification": "pending Railway deployment after merge; no Docker engine installed locally",
-  "related_merged_revision": "4c2882029b35494e011318f6b87c6b429f5dd820",
+  "runtime_verification": "Railway deployment 7fb6f47b-3629-483c-a9b7-79a522658e81 SUCCESS, 1/1 replica; bounded deploy logs show configuration complete and workers started, with no prior worker_processes directive error. No live HTTP/UI request.",
+  "related_merged_revision": "e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba",
   "limitations": [
     "Web UAT uses synthetic/intercepted API fixtures.",
     "Source/build evidence does not prove Nginx container startup or live UI health."
-  ]
+  ],
+  "deployment_id": "7fb6f47b-3629-483c-a9b7-79a522658e81"
 }

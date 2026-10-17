@@ -1,0 +1,92 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; deliver the 5.1.83 Web Nginx config-path fix while retaining partial portfolio status",
+  "target_branch": "main",
+  "expected_version": "5.1.83",
+  "version_file": "services/api/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "6ebe1a818ea3ec79db83f23b7ee9dde0688d8813",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/204",
+  "merged_commit_sha": "e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba",
+  "remote_main_tree": "a7571475a608e7f72937ccd386112004e8f739ab",
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "npm run test:regression; 43/43 suites on candidate source."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "npm run test:regression; 20/20 suites on candidate source."
+    },
+    "backend_builds": {
+      "status": "PASS",
+      "evidence": "API and Cloud production builds pass at v5.1.83."
+    },
+    "web_landing_browser": {
+      "status": "PASS",
+      "evidence": "Web/Landing build, typecheck and lint pass; Browser build and 15 tests pass."
+    },
+    "web_uat": {
+      "status": "PASS",
+      "evidence": "Production-built Web UAT 8/8 plus standalone admin-settings, theme-template and AI-admin journeys pass on exact source."
+    },
+    "nginx_config_and_deploy": {
+      "status": "PASS",
+      "evidence": "UAT-093 2/2 regression; Railway deployment 7fb6f47b-3629-483c-a9b7-79a522658e81 SUCCESS, 1/1 replica; bounded startup logs show configuration complete/workers started and no former worker_processes fatal."
+    },
+    "api_deployment": {
+      "status": "PASS",
+      "evidence": "Railway deployment 639b6329-b279-47e8-bec0-7fb7bd266937 SUCCESS, 1/1 replica; bounded logs show Nest started and Prisma connected after an initial dependency reachability timeout."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.52.2 coherence checker reports 63/63 manifest mappings."
+    },
+    "hosted_ci": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "PR #204 reported no hosted status checks or review decision; main is unprotected. Local checks and normal PR merge were verified."
+    }
+  },
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "commitments_done": 0,
+    "commitments_total": 4,
+    "uat_tally": {
+      "pass": 91,
+      "blocked": 0,
+      "manual": 1
+    },
+    "crud_tally": {
+      "pass": 29,
+      "blocked": 396,
+      "not_applicable": 132,
+      "decision_needed": 3
+    },
+    "open_gates": [
+      "PostgreSQL persistence/restart",
+      "remaining CRUD operations",
+      "native device/audio",
+      "broad accessibility/localization",
+      "deployed SEO/AEO",
+      "customer-selected call/CRM acceptance"
+    ]
+  },
+  "deployment_observation": {
+    "provider": "Railway",
+    "api_deployment_id": "639b6329-b279-47e8-bec0-7fb7bd266937",
+    "api_status": "SUCCESS",
+    "api_replicas": "1/1",
+    "web_deployment_id": "7fb6f47b-3629-483c-a9b7-79a522658e81",
+    "web_status": "SUCCESS",
+    "web_replicas": "1/1",
+    "observed_at": "2026-10-17T12:06:30Z",
+    "web_log_evidence": "bounded deployment logs show Nginx configuration complete and worker processes started; prior worker_processes directive failure absent",
+    "api_log_evidence": "bounded deployment logs show Nest startup and Prisma database connection after an initial dependency reachability timeout",
+    "live_application_test": "not performed"
+  },
+  "limitations": [
+    "GitHub reports no branch protection, enabled workflow, hosted PR checks or review decision.",
+    "Railway metadata/log readback proves provider deployment status and startup output, not externally reachable application health.",
+    "Whole PHDK Auto remains PARTIALLY DELIVERED; all four confirmed commitments still have open gates."
+  ]
+}
