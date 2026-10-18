@@ -2,9 +2,9 @@
 
 Run: 20261014-0007-phdk-auto-completion
 Repository: tuyoisaza/keledon
-Current branch: phdk/auto-review-next-20261018
-Verified remote main: b54d747a63da8c27fa1358c3db82d2787038f966
-Remote main product version: 5.2.16; local docs-only MS-001 candidate: 5.2.17 (unpublished).
+Current branch: phdk/cmt-002-diagnostics-5.2.18
+Verified remote main: f50b264ee31ae481c79e6075843c8d1c532bbe24
+Remote main: 5.2.17 at f50b264ee31ae481c79e6075843c8d1c532bbe24 after PR #269; Web/API production deployments SUCCESS; UAT-153 query readback shows 5.2.17 while an ordinary URL still serves cached 5.2.16. Current CMT-002 source candidate: 5.2.18.
 PHDK version: 2.56.0
 Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only functional acceptance.
 
@@ -13,7 +13,7 @@ Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only function
 | 00-preflight | REVALIDATED | PHDK manifest/native managed block; static coherence 69/69. |
 | 10-capture | REUSED | PROJECT_INTENT.md, PROJECT_BRIEF.md, PRD.md, FEATURES.md, REQUIREMENTS_TRACEABILITY.md. |
 | 20-plan | COMPLETED / REVALIDATED | 20-plan/MILESTONE_PLAN.md, ARCHITECTURE_REVALIDATION.md, IMPLEMENTATION_PLAN.md, PHDK_COMMITMENT_COVERAGE.md; snapshots in 20-plan/snapshots/20261018-phdk256-plan. |
-| 30-pmo | COMPLETED / REVALIDATED | PMO charter, five workstreams, dependency map, status and progress report. Current next action: publish MS-001 docs candidate 5.2.17; then MS-002 source candidate 5.2.18. |
+| 30-pmo | COMPLETED / REVALIDATED | PMO charter, five workstreams, dependency map, status and progress report. Current next action: publish MS-002 source candidate 5.2.18 and verify the exact deployed version before any production control acceptance. |
 | 40-integration | OPEN | Technical source/contract review after the next implementation slice. |
 | 45-uat-prep | PARTIAL | Audited fixture implementation/runbook exists; authenticated production journey not run. |
 | 50-uat | OPEN / PARTIAL | Production only; protected cases require existing superadmin session and synthetic identities. |

@@ -46,7 +46,13 @@ export function VersionActions({
     busy.current.copy = true;
     setCopyStatus('');
     setCopy('pending');
-    const success = await copyReport({ user, isAuthenticated, pathname });
+    let success = false;
+    try {
+      success = await copyReport({ user, isAuthenticated, pathname });
+    } catch {
+      // A rejected clipboard/report adapter is the same user-visible outcome as a denied copy.
+      success = false;
+    }
     if (!mounted.current) return;
     setCopy(success ? 'success' : 'idle');
     setCopyStatus(t(success ? 'diagnostics.copied' : 'diagnostics.copyFailed'));
@@ -73,7 +79,6 @@ export function VersionActions({
       });
     } catch {
       if (!mounted.current) return;
-      clearLocalSession();
       setClear('idle');
       busy.current.clear = false;
       setClearStatus(t('diagnostics.clearFailed'));

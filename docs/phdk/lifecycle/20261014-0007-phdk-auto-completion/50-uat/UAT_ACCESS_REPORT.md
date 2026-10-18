@@ -1,3 +1,7 @@
+## UAT-153 — despliegue documental 5.2.17 y caché HTML (2026-10-18)
+
+PR #269 está en `main` `f50b264ee31ae481c79e6075843c8d1c532bbe24`. Railway Web `0e243dd7-68f2-4fbb-81d6-8e87f937390c` y API `75d38759-c02f-426e-ba45-64c1d9a366c8` reportan `SUCCESS` para ese SHA. Una pestaña Chrome nueva a `/login` sin query todavía mostraba v5.2.16; otra pestaña con `?phdk-uat-20261018=269` mostró v5.2.17 y los controles de diagnóstico esperados. Esto es `PASS_SCOPED` para despliegue y lectura de versión; la discrepancia prueba HTML obsoleto en la ruta normal/cache, no un deploy fallido. No se activaron controles ni se autenticó. Evidencia: `evidence/uat-153-production-v5-2-17-deploy-readback-2026-10-18.json`.
+
 ## UAT-152 — producción anónima, login y controles de diagnóstico (2026-10-18)
 
 En una pestaña Chrome nueva, `/login` de producción muestra KELEDON v5.2.16 y controles accesibles “Copiar diagnóstico completo” y “Limpiar caché”. UAT-152 **PASS_SCOPED** acepta únicamente render y nombres para visitante anónimo, contra main `b54d747a63da8c27fa1358c3db82d2787038f966`. No midió geometría ni activó copiar/reset. El nuevo fix de fuente 5.2.18 sigue sin publicar y no está probado por esta observación. Evidencia: `evidence/uat-152-production-login-diagnostics-2026-10-18.json`. Sin login, cambios, lectura de portapapeles, limpieza, datos de cliente ni gasto.
