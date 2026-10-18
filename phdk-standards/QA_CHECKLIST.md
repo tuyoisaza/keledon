@@ -4,9 +4,12 @@
 
 This file defines code quality gates for task completion, merging, and GitHub delivery. `EXECUTION_SCOPE.md` controls execution; `MAIN_DELIVERY_STANDARD.md` defines normal delivery through verified remote `main` integration and explicit narrower scopes.
 
-Choose the QA scope for the whole requested outcome. With explicit `PHDK auto`, `PHDK_AUTO.md` makes the sections below coverage for final integrated verification after all development, not intermediate stage tests, releases, or human-approval gates. Record source references and actual results; mark unrelated items `N/A` with a reason. Documentation-only work needs source/diff consistency and applicable formatting checks, not an app build.
+Choose the QA scope for the whole requested outcome. With explicit `PHDK auto`, `PHDK_AUTO.md` uses focused technical verification at each completed value milestone before its versioned publication, then applies the sections below comprehensively to the final cross-milestone candidate. Lifecycle stages/tasks/slices do not trigger releases or human-approval gates. Record source references and actual results; mark unrelated items `N/A` with a reason. Documentation-only work needs source/diff consistency and applicable formatting checks, not an app build.
 
 ## Evidence Boundary
+
+
+For milestone-driven Auto, verify `MILESTONE_PLAN.md` traceability and actual milestone delivery evidence: acceptance criteria satisfied for the published increment, version/commit/PR/main SHA recorded, and subsequent work based on refreshed `main`. Final UAT must include `UAT_MILESTONE_MATRIX.md` when milestones exist and no delivered milestone may be absent from user-value acceptance coverage.
 
 The product requirements below are checked through source/diff review, static checks, local builds, and risk-triggered local unit/in-process integration tests with deterministic doubles. A checked UI, auth, database, or diagnostics item confirms implementation evidence, not an exercised user flow. Requested status, non-secret configuration metadata, and existing logs follow **Bounded read-only provider diagnostics** in `EXECUTION_SCOPE.md`, independently of Developer Mode or unlock; they are separate diagnostic evidence, never an executed product test.
 
@@ -191,7 +194,7 @@ Review existing local code-intelligence setup when relevant — see `TECHNICAL_S
 - [ ] Login, Google redirect, callback success/failure, logout, and session-refresh handlers are wired in source.
 - [ ] Auth provider is custom Google OAuth 2.0, or an explicitly approved alternative in `ARCHITECTURE_DECISIONS.md`.
 - [ ] Exactly one primary auth provider is implemented unless migration/comparison is explicitly in scope.
-- [ ] Required OAuth variable names and redirect-URI expectations are documented in `.env.example`/setup docs without real credentials.
+- [ ] Required OAuth variable names and redirect-URI expectations are documented in `.env.example`/setup docs without real credentials; when owner-supplied values are needed, the owner receives the required Railway Variables handoff from `TECHNICAL_STACK.md`: one copyable `KEY=value` block per consuming service/environment, exact code-consumed keys and public callback/origin, known non-secret URLs filled, all missing required values explained, optional keys distinguished, and secret placeholders entered directly in the provider.
 - [ ] Redirect construction uses validated configuration; actual provider registration is an external prerequisite, not an agent check.
 - [ ] OAuth state is generated and validated; invalid state and callback failures have safe errors and correlation IDs.
 - [ ] User create/update and session creation logic handles successful callbacks securely.

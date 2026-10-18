@@ -14,8 +14,16 @@ test('nginx serves the public root in its indexable location and SPA routes as n
   assert.doesNotMatch(home, /\/index\.html\s*;/, 'home fallback must not internally redirect to a different location');
 
   assert.ok(spa, 'SPA fallback location exists');
-  assert.match(spa, /try_files \$uri \$uri\/ \/index\.html;/);
+  assert.match(spa, /try_files \$uri \$uri\/ @spa;/);
   assert.match(spa, /X-Robots-Tag "noindex, nofollow" always;/);
+});
+
+test('nginx serves the superadmin interface catalog route through the protected SPA', () => {
+  const config = fs.readFileSync(path.resolve(__dirname, '../nginx.conf'), 'utf8');
+  const router = fs.readFileSync(path.resolve(__dirname, '../src/AppRouter.tsx'), 'utf8');
+
+  assert.match(config, /~\^\/admin\/interfaces\/\?\$ 1;/);
+  assert.match(router, /path="\/admin\/interfaces"\s+element=\{<ProtectedRoute minRole="superadmin">/);
 });
 
 test('nginx Docker build loads the service-scoped server configuration from the repository-root context', () => {

@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "Source commit f09976cb9d472e79cdd5eb6ec4e8d24c954b222b on feat/phdk-managed-interface-catalog-20261018, based on verified origin/main b9434822697d31a26aab71f5e32be6661815b89a; product 5.2.15; PHDK 2.54.1; PR/publish pending.",
+  "candidate_ref": "KELEDON 5.2.16 source candidate on fix/phdk-spa-interface-route-5-2-16, based on verified origin/main a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6; PHDK 2.56.0 canonical/current, coherence PASS 69/69.",
   "authorization": {
     "source_ref": "Current owner instruction 2026-10-18: phdk auto force. Retoma la meta de KELEDON con PHDK 2.54.1, publica la actualizacion y continua con todo lo que puedas resolver dentro de lo ya autorizado.",
     "instruction": "PHDK auto force",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "5.2.15 superadmin interface catalog implementation and static review; normal PR/deployment/readback pending.",
+  "current_stage": "5.2.16 source and static checks complete; ready for normal PR delivery; production retest follows merge/autodeploy.",
   "steps": [
     {
       "id": "preflight",
@@ -41,7 +41,7 @@
       "status": "done",
       "action": "Run official updater and verify PHDK manifest/native block",
       "depends_on": [],
-      "evidence": "Official PHDK updater CURRENT v2.54.1, upstream 494337138034c9abdc3851276b783528ccd39df2; static coherence PASS 66/66; 66 manifest mappings byte-identical; owner-managed AGENTS text outside markers preserved.",
+      "evidence": "Official PHDK updater CURRENT v2.54.1, upstream 494337138034c9abdc3851276b783528ccd39df2; static coherence PASS 66/66; 66 manifest mappings byte-identical; owner-managed AGENTS text outside markers preserved. Re-entry official updater returned UPDATED to canonical PHDK 2.56.0 at upstream 12bfc70134fca8b5350fde84c01e3110f6d54544 (34 manifest files); re-read current Auto/communication/UAT standards; coherence PASS 69/69. No downgrade from canonical/current.",
       "blocked_by": []
     },
     {
@@ -323,21 +323,97 @@
     {
       "id": "delivery_515",
       "kind": "delivery",
-      "status": "running",
+      "status": "done",
       "action": "Commit and publish candidate through normal PR and merge to main after required static checks",
       "depends_on": [
         "required_check_515"
       ],
       "blocked_by": [],
-      "evidence": "Reviewed source and passed static checks; versioned source commit f09976cb9d472e79cdd5eb6ec4e8d24c954b222b is ready for normal branch push and PR."
+      "evidence": "PR #266 merged to main at a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6; remote tree matched candidate; Railway Web/API deployed 5.2.15 SUCCESS."
     },
     {
       "id": "verify_515",
       "kind": "verify_delivery",
-      "status": "pending",
+      "status": "done",
       "action": "Read back remote main content/version/SHA, production deployment and safe public version/auth-denial smoke",
       "depends_on": [
         "delivery_515"
+      ],
+      "blocked_by": [],
+      "evidence": "UAT-149: Web login 5.2.15; API /health 200/version 5.2.15; anonymous /api/crud/interfaces 401; Railway production Web/API online with zero recent failures. Evidence C:\\KELEDON\\phdk-runtime-evidence\\20261018-a1bef76c\\UAT-149.json."
+    },
+    {
+      "id": "uat_150_route_failure",
+      "kind": "work",
+      "status": "done",
+      "action": "Revalidate the new interface catalog route and identify why direct anonymous navigation fails",
+      "depends_on": [
+        "verify_515"
+      ],
+      "blocked_by": [],
+      "evidence": "Production UAT-150: fresh Chrome shows localized 404 at /admin/interfaces while /management/teams resolves to /login; HTTP 404 carries Cloudflare edge headers. Bundle/AppRouter contains the superadmin route; nginx known_spa_route omitted it. Evidence 50-uat/evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json."
+    },
+    {
+      "id": "uat_151_widget_sample",
+      "kind": "work",
+      "status": "done",
+      "action": "Continue independent CMT-002 production acceptance for login diagnostics widget",
+      "depends_on": [
+        "verify_515"
+      ],
+      "blocked_by": [],
+      "evidence": "UAT-151 production login shows v5.2.15, named copy/cache controls at 44x44 and no desktop horizontal overflow. Evidence 50-uat/evidence/uat-151-production-login-widget-2026-10-18.json."
+    },
+    {
+      "id": "route_fix_516",
+      "kind": "work",
+      "status": "done",
+      "action": "Repair catalog direct-route allowlist defect and author regression coverage",
+      "depends_on": [
+        "uat_150_route_failure"
+      ],
+      "blocked_by": [],
+      "evidence": "5.2.16 candidate adds /admin/interfaces to services/web/nginx.conf known_spa_route and a source assertion pairing it to the AppRouter superadmin guard. Local application test/build/lint remain prohibited by current owner restriction."
+    },
+    {
+      "id": "integration_review_516",
+      "kind": "review_diff",
+      "status": "done",
+      "action": "Review bounded Nginx route repair and authorization boundary",
+      "depends_on": [
+        "route_fix_516"
+      ],
+      "blocked_by": [],
+      "evidence": "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/40-integration/INTEGRATION_REVIEW-5.2.16.md; assistant source review PASS for exact allowlist change; unknown routes remain 404 and route remains superadmin guarded."
+    },
+    {
+      "id": "required_check_516",
+      "kind": "required_check",
+      "status": "done",
+      "action": "Finish version/lock/renderer, PHDK coherence, evidence JSON, translation/manifest sanity and whitespace checks; no local application tests/build/lint",
+      "depends_on": [
+        "integration_review_516"
+      ],
+      "blocked_by": [],
+      "evidence": "Static-only verification PASS: five package/lock root pairs at 5.2.16, Browser renderer aligned; /admin/interfaces allowlist and AppRouter superadmin guard mapping checked; AUTO_STATE/UAT-150/UAT-151 JSON parse; PHDK 2.56.0 coherence 69/69; git diff --check PASS. No application tests/build/lint run under current owner restriction."
+    },
+    {
+      "id": "delivery_516",
+      "kind": "delivery",
+      "status": "pending",
+      "action": "Commit, push versioned branch, open normal PR, merge, then verify remote main",
+      "depends_on": [
+        "required_check_516"
+      ],
+      "blocked_by": []
+    },
+    {
+      "id": "verify_516",
+      "kind": "verify_delivery",
+      "status": "pending",
+      "action": "Verify remote main SHA/version and Railway Web/API; retest UAT-150 on deployed 5.2.16",
+      "depends_on": [
+        "delivery_516"
       ],
       "blocked_by": []
     }
@@ -393,6 +469,6 @@
       ]
     }
   ],
-  "updated_at": "2026-10-18T11:07:43-06:00",
+  "updated_at": "2026-10-18T17:16:14Z",
   "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json"
 }

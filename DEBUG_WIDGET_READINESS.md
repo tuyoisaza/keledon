@@ -1,6 +1,14 @@
 # PHDK Auto Debug Widget Readiness — KELEDON Web 5.2.7 / Landing source (2026-10-17)
 
-Web product source/main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PHDK 2.53.1. Production UAT-130 observed Web copy status “Diagnóstico copiado” without reading clipboard contents. Landing API/OAuth hostname redaction passes source review; the standalone Landing package is not included in Railway's Web deployment, so its runtime remains BLOCKED. No local app tests/builds were run.
+## Production revalidation — 5.2.15 / UAT-151 (2026-10-18)
+
+Fresh Chrome production `/login` displays v5.2.15. AX exposes “Copiar diagnóstico completo” and “Limpiar caché”; read-only DOM measurement found 44×44 CSS px targets and no horizontal overflow at the active 1581px viewport. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-151-production-login-widget-2026-10-18.json`. This is a scoped desktop login sample only; neither action was activated and no claim is made about clipboard payload, cache clearing, mobile, screen reader, authenticated mounts, Landing runtime or native Browser rendering.
+
+Production UAT-150 separately found `/admin/interfaces` missing from Nginx's SPA route allowlist; see `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json` and candidate 5.2.16 review.
+
+## Historical source readiness record — 5.2.7 (2026-10-17)
+
+Web product source/main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PHDK 2.53.1. Production UAT-130 observed Web copy status “Diagnóstico copiado” without reading clipboard contents. Landing API/OAuth hostname redaction passes source review; the standalone Landing package is not included in Railway's Web deployment, so its runtime remains BLOCKED. No local app tests/builds were run for that historical candidate.
 
 | Superficie/requisito | Evidencia actual | Estado |
 |---|---|---|

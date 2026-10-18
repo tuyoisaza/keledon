@@ -1,5 +1,9 @@
 # PHDK
 
+**Milestone delivery model (v2.56.0):** `PHDK plan` now creates `MILESTONE_PLAN.md`; PMO executes workstreams inside value milestones; Auto/Auto Force version and merge each completed milestone to verified `main` before continuing; final UAT creates milestone-to-user-story acceptance traceability. See [`PHDK_PROJECT_MANAGEMENT_STANDARD.md`](PHDK_PROJECT_MANAGEMENT_STANDARD.md).
+
+**Evolution and maintainer session standard:** [PHDK_EVOLUTION_STANDARD.md](PHDK_EVOLUTION_STANDARD.md) defines consistent PHDK naming, per-session repository refresh, workspace/branch ownership, SemVer, release coherence and verifiable publication. This is a guide for maintaining PHDK itself; it does not activate Auto or authorize unattended changes.
+
 **`PHDK auto force` and durable Auto continuity:** [PHDK_AUTO_CONTINUITY.md](PHDK_AUTO_CONTINUITY.md) makes PHDK-only human reviews non-blocking immediately, without preventive review/protection investigation. Auto keeps the scoped user mandate through context compaction, runs mandatory checks without repeated permission, and repairs/retries actual delivery failures before reporting a remaining blocker.
 
 **New `PHDK uat prep` (v2.53.0):** [`PHDK_UAT_PREP.md`](PHDK_UAT_PREP.md) defines a standalone implementation command and required stage 45 in Auto. It **builds/repairs and provisions permitted non-production synthetic Company Co role accounts**, repeatable seeders, trusted server/provider-issued test sessions and local role/tenant verification; produces fixture/role/auth/prep evidence before UAT. Prep is **not** browser testing or permission for production privileged logins; stage 50 still independently verifies browser access.
@@ -15,7 +19,7 @@
 
 
 **Project Handoff to Development Kit**  
-**Version v2.54.1**
+**Version v2.56.0**
 
 PHDK is an operating system for AI-assisted software delivery.
 
@@ -294,6 +298,7 @@ It creates or updates:
 SOLUTION_ARCHITECTURE.md
 REPOSITORY_ARCHITECTURE.md
 UX_ARCHITECTURE.md
+MILESTONE_PLAN.md
 IMPLEMENTATION_PLAN.md
 ARCHITECTURE_DECISIONS.md
 TASK.md
@@ -302,6 +307,9 @@ TASK.md
 On an existing repo, Plan **does not reset the project to a default scaffold**. It starts from current reality and recommends the smallest coherent path from current state to target state.
 
 Full procedure: [PHDK_PLAN.md](PHDK_PLAN.md).
+
+
+Plan now creates a value-based milestone roadmap under [PHDK_PROJECT_MANAGEMENT_STANDARD.md](PHDK_PROJECT_MANAGEMENT_STANDARD.md). In Auto/Auto Force, a completed milestone is technically verified, versioned, committed with the version prefix, merged through the normal PR route to `main`, remotely verified, and then execution continues from that new main. Lifecycle stage boundaries and internal slices do not trigger releases. Final UAT reads those milestones and builds milestone → user story → acceptance-case evidence.
 
 ---
 
@@ -760,6 +768,7 @@ PHDK is built around a few simple ideas:
 
 | Need | Read |
 |---|---|
+| PHDK maintainer sessions and evolution | [PHDK_EVOLUTION_STANDARD.md](PHDK_EVOLUTION_STANDARD.md) |
 | Execution boundaries | [EXECUTION_SCOPE.md](EXECUTION_SCOPE.md) |
 | Universal command preflight | [PHDK_PREFLIGHT.md](PHDK_PREFLIGHT.md) |
 | Lifecycle stage contracts & historical handoffs | [PHDK_LIFECYCLE.md](PHDK_LIFECYCLE.md) |

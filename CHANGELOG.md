@@ -1,9 +1,16 @@
+## v5.2.16 — 2026-10-18
+
+- Add the protected `/admin/interfaces` route to the Web Nginx SPA allowlist so fresh direct links reach the superadmin guard instead of the static 404 page.
+- Align the Nginx route regression with the active `@spa` fallback and assert the interface route remains superadmin-protected.
+- Synchronize all five application package/lock roots and the Browser renderer to 5.2.16.
+- PHDK standards synchronized to canonical 2.56.0; coherence passes 69/69. No local application tests/build/lint run under the owner's production-only restriction.
+
 ## v5.2.15 — 2026-10-18
 
 - Add a superadmin-only, company-owned interface catalog with create, list, edit and delete controls; tenant admins keep using their existing scoped team assignment flow.
 - Validate managed interface URLs and request fields on the API, require an existing owning company, preserve ownership on edit and never return credentials.
 - Redact URL/origin/host/IP/CIDR and credential fields from audit change payloads.
-- No local application tests/build/lint or production mutations were run; production review is pending deployment.
+- Delivered through PR #266 and deployed to production; anonymous UI/API checks are recorded in UAT-149. Authenticated acceptance remains pending.
 
 ## v5.2.14 — 2026-10-18
 
