@@ -1,3 +1,13 @@
+# Current scoped status — MVP preparation, 2026-10-18
+PHDK 2.56.0 CURRENT, static coherence 69/69. Baseline main 2decd79b6fd741d1f5838a091b2b1c4436740acf / product 5.2.21. [Intent and five PIAs](docs/mvp/meet-salesforce/README.md) prepared; executor choice OPEN. Profile contract and Windows read-only inventory are preparation, not integrated runtime.
+Meet link and second-device participant supplied; Salesforce URL/session/cases and Brain/provider readiness pending. Live MVP acceptance NOT RUN. No local application tests/build/lint, meeting join, recording, provider change or Salesforce access in this slice. Normal scoped PR/main publication tracked in the MVP preparation/delivery record; CMT-001/002/004 retained.
+
+Read-only host inventory observed Windows AMD64 build 26300, Chrome/Edge installed, 2 active capture and 2 active render endpoints. Audio routing/permissions and Meet interoperability are still UNVERIFIED. [Evidence](docs/phdk/lifecycle/20261018-meet-salesforce-mvp/HOST_INVENTORY.json).
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # KELEDON current status — 2026-10-18
 
 PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69/69. Remote main is 410bc9ead08351171b602eb3a5275f36bf29ca5a, KELEDON 5.2.20 after PR #272. Railway Web/API SUCCESS; production returned v5.2.20. Lounge download-version consistency is the current 5.2.21 candidate. Four commitments: 0/4 complete, 4/4 active/partial.

@@ -1,3 +1,12 @@
+# Current scoped plan — Meet + Salesforce MVP, 2026-10-18
+Owner prioritizes CMT-003 experimental work; other commitments retained. [Five PIAs](docs/mvp/meet-salesforce/README.md) and [MS-MVP-000..003](docs/mvp/meet-salesforce/MILESTONE_PLAN.md) are the current dependency-ordered plan.
+Order: real remote audio/return/interruption → Brain conversation → fictitious Salesforce lookup → full circuit/recovery → executor decision and later real incoming-interaction detection. Reuse bounded adapters; no whole click script per customer or compatibility claims without evidence.
+Preparation includes profile schema/example and read-only Windows inventory. No application behavior changes or local tests/build/lint. Meet link and second endpoint supplied privately; Salesforce URL/session/cases and Brain/provider readiness pending.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # Auto Force plan reconciliation — 2026-10-18T04:03:30+00:00
 
 Run: `20261014-0007-phdk-auto-completion`; product repo `tuyoisaza/keledon`; target `main`; current candidate branch `fix/phdk-cmt-003a-lease-fencing`.

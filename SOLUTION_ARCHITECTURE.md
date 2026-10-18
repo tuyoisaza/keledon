@@ -1,3 +1,11 @@
+# Current target delta — executor OPEN, 2026-10-18
+Owner decision ADR-MVP-001 supersedes mandatory Electron retention for this MVP. Separate orchestrator/turn lifecycle, AudioPort, InteractionObserver and SurfaceExecutor; Cloud governs business goals, adapters execute and report observations. Preserve tenant/identity/secret/origin/egress controls.
+[Architecture experiments](docs/mvp/meet-salesforce/ARCHITECTURE_EXPERIMENTS.md) compare Electron vs Chrome/Edge + Windows component. Neither is selected or operational from this plan. Experimental profile schema is configuration, never authority or a runtime integration. Historical docs/specs stay unchanged; this scoped target departure is explicit.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # Solution architecture — brownfield
 Goals: INT-001/002/003, confirmed four fronts. V4 Cloud-decides/Browser-executes invariant.
 Current: services/web React/Vite (root Dockerfile copies it), services/api NestJS/Prisma/voice/planner/CRUD, Electron browser. cloud/landing/agent alternatives remain retained; Dockerfiles do not prove live topology.

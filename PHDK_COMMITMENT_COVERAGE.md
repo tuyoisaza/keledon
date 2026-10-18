@@ -1,3 +1,11 @@
+# Current coverage delta — MVP, 2026-10-18
+CMT-003 maps every MVP-R01..R09 to [five PIAs and acceptance](docs/mvp/meet-salesforce/README.md), [MS-MVP-000..003](docs/mvp/meet-salesforce/MILESTONE_PLAN.md) and A01..A12. Preparation READY; functional circuit NOT RUN.
+CMT-001 source/version/PR proof applies to this slice; no new application release. CMT-002 readiness/error truthfulness required by 001/003, existing diagnostics retained. CMT-004 identity/role/origin/secret controls retained, no new permissions or acceptance claimed. Single assistant sequential execution; no delegation or background work. [Runbook](docs/mvp/meet-salesforce/TEST_RUNBOOK.md) isolates external dependencies.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # Commitment coverage — Auto Force reentry 2026-10-18T04:03:30+00:00
 
 | ID | Status | Current evidence | Next in-scope gate |

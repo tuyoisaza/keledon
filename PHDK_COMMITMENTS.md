@@ -1,3 +1,11 @@
+# Current commitment delta — MVP, 2026-10-18
+Owner prioritizes CMT-003 Meet/Salesforce MVP in this request; all four commitments remain. [MVP-R01..R09 / PIAs 001..005](docs/mvp/meet-salesforce/README.md) cover Windows audio/perception/Brain/tools/executor evaluation. Preparation is separate from functional acceptance, still NOT RUN.
+CMT-001/002/004 retained without independent backlog execution. Earlier preserve-Electron/no-real-platform assumptions do not override current scoped owner intent.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 ## CMT-002 production re-entry — 2026-10-18
 
 UAT-142 after PR #259 confirms the four login targets are 44px and no horizontal overflow remains at 320×720. It also finds the fixed header overlays the H1 by 29.3px. A scoped spacing fix is prepared as candidate 5.2.12; UAT-145 must accept it on production. Full accessibility/widget/audio scope remains partial. The other three commitments and their fixture/tenant/provider gates remain active as recorded below.

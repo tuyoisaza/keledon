@@ -1,3 +1,11 @@
+# ADR-MVP-001 — Windows execution experiment, 2026-10-18
+Status: EXPERIMENT AUTHORIZED; executor choice OPEN. Owner requests Meet/Salesforce MVP without commitment to Browser. Reopens ADR-AUTO-001/002/007 where they mandate Electron or disallow real-platform synthetic acceptance for this MVP. Preserve Cloud business authority and security/tenant policies; no wholesale rewrite or edits to historical docs/specs.
+[Experiments](docs/mvp/meet-salesforce/ARCHITECTURE_EXPERIMENTS.md), [intent](docs/intents/windows-meet-salesforce-mvp-intent.md), [PIAs](docs/mvp/meet-salesforce/README.md). Gates: remote audio both ways, interruption, case correctness, recovery, isolation; then latency, per-client configuration and maintenance. No universal vendor/API assumed; Meet is not proof of ACD detection.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # Architecture decisions
 ADR-AUTO-001 retain existing React/Vite/Nest/Prisma/Electron instead of default scaffold; code/Dockerfile evidence.
 ADR-AUTO-002 preserve Cloud-decides/Browser-executes, immutable docs/specs and no parallel historical floor restoration.

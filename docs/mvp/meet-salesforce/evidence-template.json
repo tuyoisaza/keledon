@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "scope": "Windows Meet + Salesforce MVP",
+  "status": "NOT_RUN",
+  "sessionRef": null,
+  "startedAt": null,
+  "sourceCommit": null,
+  "executor": {
+    "kind": null,
+    "version": null,
+    "buildSource": null
+  },
+  "counterparty": {
+    "available": true,
+    "joined": false,
+    "heardSpeech": null
+  },
+  "audio": {
+    "remoteCaptureVerified": false,
+    "outboundSpeechVerified": false,
+    "selfEchoExcluded": false
+  },
+  "measurements": {
+    "method": null,
+    "sttMs": null,
+    "brainMs": null,
+    "ttsFirstAudioMs": null,
+    "detectedSpeechToOutputStopMs": null,
+    "remoteInterruptionToSilenceMs": null
+  },
+  "cases": [
+    {
+      "id": "A01",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A02",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A02b",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A03",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A04",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A04b",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A05",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A06",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A07",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A08",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A09",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A10",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A11",
+      "status": "NOT_RUN",
+      "evidence": null
+    },
+    {
+      "id": "A12",
+      "status": "NOT_RUN",
+      "evidence": null
+    }
+  ],
+  "privateInputsStored": false,
+  "limitations": [
+    "Template only; no functional acceptance performed."
+  ]
+}

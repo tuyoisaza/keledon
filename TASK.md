@@ -1,3 +1,14 @@
+# Current owner task — MVP preparation, 2026-10-18
+Request: update intent, create PIAs, advance independent work and identify test inputs. Target main through normal scoped PR. Product baseline 5.2.21, PHDK 2.56.0 current/coherent; branch plan/meet-salesforce-mvp.
+[Intent](docs/intents/windows-meet-salesforce-mvp-intent.md) · [five PIAs](docs/mvp/meet-salesforce/README.md). Scope: open executor experiment, read-only Windows inventory, experimental profile contract and real-platform runbook; no runtime application changes in this slice. Six pre-existing Browser changes excluded.
+Current owner instruction replaces keep-Electron/no-real-platform restrictions only for fictitious-data Meet/Salesforce MVP. No customer records, CRM mutations, provider changes, new spend, driver installation or local application tests/build/lint. Meet link and second endpoint supplied; Salesforce URL/session/two fictitious cases and Brain/provider readiness pending. Functional acceptance NOT RUN. Publication/evidence: docs/phdk/lifecycle/20261018-meet-salesforce-mvp/.
+
+Read-only host inventory observed Windows AMD64 build 26300, Chrome/Edge installed, 2 active capture and 2 active render endpoints. Audio routing/permissions and Meet interoperability are still UNVERIFIED. [Evidence](docs/phdk/lifecycle/20261018-meet-salesforce-mvp/HOST_INVENTORY.json).
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # KELEDON PHDK Auto — current task state (2026-10-18)
 
 ## Current milestone readback — KELEDON 5.2.18 / PHDK 2.56.0

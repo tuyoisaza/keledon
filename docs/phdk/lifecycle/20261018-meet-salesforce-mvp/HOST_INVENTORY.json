@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "collectedAtUtc": "2026-10-18T22:47:58.0429767Z",
+  "kind": "READ_ONLY_HOST_INVENTORY",
+  "windows": {
+    "build": "26300",
+    "processArchitecture": "AMD64"
+  },
+  "browsers": [
+    {
+      "name": "Chrome",
+      "status": "OBSERVED",
+      "version": "152.0.7977.76",
+      "meetCompatibilityVerified": false
+    },
+    {
+      "name": "Edge",
+      "status": "OBSERVED",
+      "version": "155.0.4283.62",
+      "meetCompatibilityVerified": false
+    }
+  ],
+  "audio": {
+    "capture": {
+      "status": "OBSERVED",
+      "enumerated": 5,
+      "active": 2,
+      "unreadable": 0,
+      "streamAndPermissionVerified": false
+    },
+    "render": {
+      "status": "OBSERVED",
+      "enumerated": 10,
+      "active": 2,
+      "unreadable": 0,
+      "streamAndPermissionVerified": false
+    }
+  },
+  "functionalAcceptance": "NOT_RUN",
+  "limitations": [
+    "Observed via scripts/mvp/collect-windows-readiness.ps1, not functional audio acceptance.",
+    "No host/user names, endpoint names/IDs, process command lines, meeting links or authentication state collected.",
+    "Inventory does not prove permissions, selected/default routing, loopback, virtual microphone, Meet compatibility or remote TTS delivery."
+  ]
+}

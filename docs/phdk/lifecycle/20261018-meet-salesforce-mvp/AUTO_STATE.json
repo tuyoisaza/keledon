@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "20261018-meet-salesforce-mvp",
+  "mode": "owner-scoped-mvp",
+  "repository": "tuyoisaza/keledon",
+  "target_branch": "main",
+  "goal": "Update intent and five PIAs; prepare the Windows Meet + Salesforce MVP with an open executor choice and real-platform acceptance.",
+  "authorization": {
+    "source_ref": "Owner request 2026-10-18 in current conversation",
+    "instruction": "Actualiza el intent y arma los PIA para este MVP. Empieza con Meet y Salesforce, sin casarnos con el browser, y avanza con lo que puedas.",
+    "scope": [
+      "intent and five executable PIAs",
+      "architecture-neutral experiment contract",
+      "read-only Windows host inventory",
+      "production/real-platform UAT preparation"
+    ],
+    "restrictions": [
+      "No local application tests/build/lint",
+      "No customer records, CRM mutations, credentials in messages/Git, unapproved spend, provider changes or driver installation",
+      "Private Meet URL stays outside Git; second-endpoint participant confirmed",
+      "No fake telephony/CRM or claim that Meet proves ACD inbound detection",
+      "Preserve unrelated Browser edits; no wholesale platform rewrite"
+    ]
+  },
+  "baseline": {
+    "source_main": "2decd79b6fd741d1f5838a091b2b1c4436740acf",
+    "product_version": "5.2.21",
+    "phdk_version": "2.56.0",
+    "canonical_phdk_sha": "12bfc70134fca8b5350fde84c01e3110f6d54544"
+  },
+  "progress": {
+    "intent": "UPDATED",
+    "pias": "5 PREPARED",
+    "architecture_selection": "OPEN",
+    "host_inventory": "OBSERVED: Windows AMD64 build 26300, Chrome/Edge present, 2 active capture and 2 active render endpoints; functional audio UNVERIFIED",
+    "functional_mvp": "NOT_IMPLEMENTED",
+    "live_uat": "NOT_RUN",
+    "publication": "SCOPED_PR_DELIVERY: commit/merge proof recorded separately after actual publication",
+    "static_validation": "PASS: PHDK 69/69, PowerShell syntax, JSON parse and profile/link/privacy inspection; no application acceptance"
+  },
+  "dependencies": {
+    "meet_link": "supplied privately",
+    "second_endpoint": "owner confirmed",
+    "salesforce_url_and_session": "pending",
+    "synthetic_cases_and_expected_results": "pending",
+    "brain_tenant_and_existing_provider_readiness": "unverified",
+    "native_audio_capture_and_injection": "unverified"
+  },
+  "next_executable_action": "Complete scoped static validation/diff review, publish PR and verify main; runtime implementation/live acceptance still pending Salesforce inputs and prepared AudioPort.",
+  "other_commitments": "CMT-001/002/004 retained, not cancelled or independently resumed."
+}

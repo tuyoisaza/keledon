@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "profileId": "meet-salesforce-mvp",
+  "platform": "windows",
+  "callSurface": {
+    "kind": "call",
+    "origin": "https://meet.google.com"
+  },
+  "crmSurface": {
+    "kind": "crm",
+    "origin": "https://example.my.salesforce.com"
+  },
+  "objective": "Atender según el guion, solicitar el número de un caso ficticio, consultar su estado y responder usando la observación verificada.",
+  "requiredCapabilities": [
+    "audio.captureRemote",
+    "audio.sendSpeech",
+    "audio.cancelSpeech",
+    "interaction.observe",
+    "interaction.confirm",
+    "ui.searchCase",
+    "ui.readCase"
+  ],
+  "triggerMode": "manual_arm",
+  "limits": {
+    "maxActionSteps": 12,
+    "actionTimeoutMs": 30000,
+    "crmAccess": "read_only",
+    "bargeInStopTargetMs": 500
+  }
+}
