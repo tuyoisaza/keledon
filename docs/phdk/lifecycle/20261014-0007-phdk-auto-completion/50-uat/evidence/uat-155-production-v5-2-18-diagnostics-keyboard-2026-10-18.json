@@ -1,0 +1,47 @@
+{
+  "case": "UAT-155",
+  "story": "US-CMT002-DIAGNOSTICS-KEYBOARD-01",
+  "commitment": "CMT-002",
+  "captured_at": "2026-10-18T19:05Z",
+  "candidate": {
+    "product_version": "5.2.18",
+    "main_sha": "b1dd123fb66d861fa3b5507b79d85fa888bdc6d7"
+  },
+  "authorization": "ACTIVE_UAT_EXCEPTION",
+  "browser": {
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "fresh Chrome tab via CUA"
+  },
+  "target": "https://keledon.tuyoisaza.com/login?phdk-uat-20261018=270",
+  "identity": "anonymous",
+  "actions": [
+    "Navigate keyboard focus with three Tab presses from the page root",
+    "Observe the focused controls in order and inspect a screenshot for visible focus"
+  ],
+  "expected": "Keyboard focus proceeds through the brand, diagnostic copy and cache-clear controls without activating them; the focused control has a visible focus indicator.",
+  "actual": {
+    "sequence": [
+      "KELEDON brand link",
+      "Copiar diagnóstico completo",
+      "Limpiar caché"
+    ],
+    "focus_visible": true,
+    "focus_style": "Visible teal outline around the focused Limpiar caché control."
+  },
+  "result": "PASS_SCOPED",
+  "not_exercised": [
+    "Control activation or status feedback",
+    "Clipboard contents",
+    "Cache/storage mutation",
+    "Other routes, locales, themes, viewports, screen readers or authenticated roles"
+  ],
+  "safety": {
+    "login": false,
+    "writes": false,
+    "clipboard_read": false,
+    "cache_clear": false,
+    "customer_data": false,
+    "new_spend": false
+  },
+  "visual_evidence": "Screenshot inspected in the active UAT session; not exported."
+}

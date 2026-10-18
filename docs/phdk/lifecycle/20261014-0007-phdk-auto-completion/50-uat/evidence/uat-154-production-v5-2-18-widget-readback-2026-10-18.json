@@ -1,0 +1,52 @@
+{
+  "case": "UAT-154",
+  "story": "US-CMT002-DIAGNOSTICS-DEPLOYED-READBACK-01",
+  "commitment": "CMT-002",
+  "captured_at": "2026-10-18T19:01Z",
+  "candidate": {
+    "product_version": "5.2.18",
+    "main_sha": "b1dd123fb66d861fa3b5507b79d85fa888bdc6d7"
+  },
+  "authorization": "ACTIVE_UAT_EXCEPTION",
+  "browser": {
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "fresh Chrome tab via CUA"
+  },
+  "target": "https://keledon.tuyoisaza.com/login?phdk-uat-20261018=270",
+  "identity": "anonymous",
+  "actions": [
+    "Open a fresh production login tab with a harmless unique UAT query parameter",
+    "Read the accessible product version, diagnostic control names and login surface",
+    "Reload once after the Web deployment completed and read the current page"
+  ],
+  "expected": "After PR #270 Web deployment succeeds, the fresh-query production login displays v5.2.18 and accessible diagnostic controls.",
+  "actual": {
+    "version": "v5.2.18",
+    "copy_name": "Copiar diagnóstico completo",
+    "clear_name": "Limpiar caché",
+    "surface": "Anonymous Spanish login rendered with named diagnostic controls and login fields."
+  },
+  "deployment": {
+    "web_id": "62d02378-aebc-4c1f-8072-7d3bda4e36d7",
+    "web_status": "SUCCESS",
+    "api_id": "20093638-99f4-41cd-96e8-ab4fbce45662",
+    "api_status_at_page_capture": "DEPLOYING",
+    "api_status_after_capture": "SUCCESS"
+  },
+  "result": "PASS_SCOPED",
+  "not_exercised": [
+    "Authentication or authenticated reset behavior",
+    "Copy action, clipboard content or transmission",
+    "Cache/reset action or browser storage mutation",
+    "Responsive geometry or screen-reader output",
+    "Customer data, private endpoint or API functional probes"
+  ],
+  "safety": {
+    "login": false,
+    "writes": false,
+    "clipboard_read": false,
+    "cache_clear": false,
+    "customer_data": false,
+    "new_spend": false
+  }
+}

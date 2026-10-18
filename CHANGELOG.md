@@ -1,9 +1,15 @@
+## v5.2.19 — 2026-10-18
+
+- Reconcile the PHDK Auto milestone plan to KELEDON 5.2.18 remote main and record the PR #270 delivery state.
+- Add UAT-154/155 production evidence for the deployed Web version, accessible diagnostic labels, sampled keyboard order and visible focus; leave copy/reset behavior explicitly pending.
+- Static lifecycle evidence only; no local application tests/build/lint or production state changes.
+
 ## v5.2.18 — 2026-10-18
 
 - Keep the local authentication context intact when the app-owned diagnostic reset fails; only report success and navigate after the reset completes.
 - Treat rejected diagnostic-copy adapters as a truthful copy failure and release the pending control state.
 - Order KELEDON cache, accessible-cookie and diagnostic-event cleanup before app-owned storage; remove `auth_token` last so earlier failures do not prematurely invalidate the session.
-- Keep Web and Landing diagnostic behavior aligned. Static source review only; no local application tests/build/lint run under the owner's production-only restriction. Production acceptance remains pending deployment and an authorized disposable synthetic session.
+- Keep Web and Landing diagnostic behavior aligned. No local application tests/build/lint run under the owner's production-only restriction. Web/API are deployed; UAT-154/155 are limited production observations. Copy/reset behavior and authenticated acceptance remain pending an authorized disposable synthetic session.
 
 ## v5.2.17 — 2026-10-18
 

@@ -6,6 +6,16 @@ CMT-002 source review then found two concrete failure-path defects: rejected cop
 
 # PMO progress report — current revalidation 2026-10-18
 
+## MS-002 production readback — KELEDON 5.2.18 / PHDK 2.56.0
+
+PR #270 merged normally to remote `main` at `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7`; five package/lock roots and Browser renderer align at 5.2.18. Railway Web deployment `62d02378-aebc-4c1f-8072-7d3bda4e36d7` and API deployment `20093638-99f4-41cd-96e8-ab4fbce45662` now report `SUCCESS`. API was `DEPLOYING` at the UAT-154 page capture and subsequently reached SUCCESS. UAT-154 used a fresh query URL and read v5.2.18 plus accessible Spanish diagnostic control labels on anonymous `/login`. UAT-155 samples keyboard order through the brand, copy and clear controls and confirms visible focus on clear without activating either diagnostic action.
+
+This is scoped version/control-name/keyboard-focus evidence only. Copy/reset behavior, responsive geometry, full keyboard/screen-reader journey and authenticated acceptance remain unverified. No diagnostic control, clipboard or storage was activated; no customer data or credentials were used. No local application tests/build/lint were run under the standing owner restriction. See `50-uat/evidence/uat-154-production-v5-2-18-widget-readback-2026-10-18.json` and `uat-155-production-v5-2-18-diagnostics-keyboard-2026-10-18.json`.
+
+SIGUIENTE PASO: continue permitted anonymous CMT-002 production checks and retain authenticated reset/copy as an operation-specific dependency until a permitted synthetic session is available.
+
+---
+
 ## Plan/PMO refresh — PHDK 2.56.0
 
 Plan revalidated against current remote main b54d747a63da8c27fa1358c3db82d2787038f966 and product 5.2.16. Classified the effort as hybrid brownfield and created six value milestones without reserving exact future versions. The four previously owner-confirmed commitments map to five workstreams (CMT-003 split into lease/fencing and tenant egress). The seven project-management domains, shared contracts and dependency-specific blockers are recorded in PMO.md, PMO_WORKSTREAMS.md and PMO_DEPENDENCIES.md.

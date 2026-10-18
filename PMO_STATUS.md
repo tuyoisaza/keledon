@@ -1,8 +1,22 @@
-# PMO Status — Auto Force / PHDK 2.54.0 (2026-10-18T04:03:30+00:00)
+# PMO Status — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
 
-Run: `20261014-0007-phdk-auto-completion` · branch `fix/phdk-cmt-003a-lease-fencing` · target `main` · current candidate HEAD `a8c6ddf26e8bfe91b2c52959cf4328f7c5203c11`. Four commitments remain 0/4 DONE, 4/4 ACTIVE/PARTIAL, 0 deferred, 0 cancelled.
+Run `20261014-0007-phdk-auto-completion`; branch `phdk/auto-uat-154-ms002-5.2.19`; target `main`. Remote main is KELEDON 5.2.18 at `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` after PR #270. Railway Web/API report SUCCESS. UAT-154 reads v5.2.18 and diagnostic labels; UAT-155 samples keyboard order and visible focus. Four commitments: 0/4 DONE, 4/4 ACTIVE/PARTIAL; none deferred/cancelled.
 
-PHDK 2.54.0 is byte-verified across 66 destinations. PR #258 and #259 are open; Force marks PHDK-only human gates NON_BLOCKING_BY_MODE. Production-only app acceptance and all approved tenant/identity/customer/private-egress boundaries remain effective. Next stage: assistant technical integration review, beginning with standards/native policy diff and login candidate.
+MS-001 is delivered. MS-002 source fix is merged but remains partial pending copy/reset behavior, responsive and broad accessibility acceptance. Authenticated acceptance requires a compliant disposable synthetic session. Private CRM positive egress requires the tenant's chosen sandbox. PHDK v2.56.0 official updater is CURRENT; coherence is 69/69.
+
+| Workstream | Status | Next action |
+|---|---|---|
+| WS-001 / CMT-001 | DELIVERED FOR MS-001 | Reconcile versions/PR/deploy at each milestone. |
+| WS-002 / CMT-002 | ACTIVE / PARTIAL | Continue anonymous production UAT; keep interaction/authenticated cases gated by synthetic session. |
+| WS-003 / CMT-003A/C1 | READY FOR SOURCE / AUTH UAT BLOCKED | Continue source review/implementation where independent of CMT-002; preserve exact synthetic fixture boundaries. |
+| WS-004 / CMT-003B | READY FOR SOURCE / POSITIVE UAT BLOCKED | Continue tenant-private-egress implementation; positive case awaits exact approved host/port/CIDR. |
+| WS-005 / CMT-004 | ACTIVE / PARTIAL | Continue source-resolvable authorization gaps; persisted role acceptance remains synthetic-session dependent. |
+
+Whole Auto remains PARTIALLY DELIVERED.
+
+---
+
+## Historical PMO status — PHDK Auto Force / 2.54.0 (2026-10-18)
 
 ## Verified current readback — KELEDON 5.2.4 / 2026-10-17
 

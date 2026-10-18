@@ -1,4 +1,21 @@
-# PMO Progress — Auto Force reentry / PHDK 2.54.0 (2026-10-18T04:03:30+00:00)
+# PMO Progress — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
+
+Remote main is KELEDON 5.2.18 at `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` after PR #270. Railway Web/API are SUCCESS. UAT-154 reads the fresh-query production version and diagnostic labels; UAT-155 samples keyboard order and visible focus. MS-002 source fixes are integrated; copy/reset, responsive, screen-reader and authenticated acceptance remain partial. Four confirmed commitments remain active and ordered. Canonical plan and PIA are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/`.
+
+| Commitment | Verified progress | Next action |
+|---|---|---|
+| CMT-001 | MS-001 delivered on main; exact SHA, version and deploy evidence recorded. | Refresh baseline after each delivery. |
+| CMT-002 | PR #270 merged; Web/API SUCCESS; UAT-154/155 PASS_SCOPED for version, labels and sampled keyboard focus. | Continue anonymous production responsive/a11y cases; interaction and authenticated behavior await a permitted synthetic session. |
+| CMT-003 | Client-selected voice/CRM stack remains per tenant; lease/fencing and socket-bound egress safeguards remain planned/source gaps. | Continue source-reconcilable fixes independently; private positive acceptance needs that tenant's approved sandbox. |
+| CMT-004 | Least-privilege tenant policy remains binding; broad CRUD/RBAC persistence acceptance partial. | Continue source review and scope decisions already approved; persistence journey depends on compliant synthetic accounts. |
+
+No local application tests/build/lint, customer data, live call/CRM, private endpoint, credentials or provider writes were used. Overall Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: finish permitted anonymous CMT-002 production checks while preserving authenticated and customer-specific cases as operation-scoped gates.
+
+---
+
+## Historical PMO progress — Auto Force / PHDK 2.54.0
 
 The four owner-confirmed workstreams and order remain current. Upstream KELEDON `main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`, product 5.2.10. The current branch is `fix/phdk-cmt-003a-lease-fencing` at `a8c6ddf`; the PHDK 2.54.0 sync and continuity records are local, not yet committed. PR #258 (documentation/PIAs) and #259 (5.2.11 login targets) remain open; Force treats PHDK-only review notes as nonblocking and requires assistant source review plus normal permitted delivery.
 

@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "Remote main f50b264ee31ae481c79e6075843c8d1c532bbe24 at KELEDON 5.2.17 after PR #269. Web/API Railway deployments SUCCESS; UAT-153 fresh-query readback shows v5.2.17 while ordinary URL serves cached v5.2.16. Current branch phdk/cmt-002-diagnostics-5.2.18 contains the separate, unpublished CMT-002 source candidate. PHDK 2.56.0 coherence PASS 69/69.",
+  "candidate_ref": "Remote main b1dd123fb66d861fa3b5507b79d85fa888bdc6d7 at KELEDON 5.2.18 after PR #270. Railway Web/API deployments SUCCESS; UAT-154 production readback shows v5.2.18 and accessible diagnostic labels. UAT-155 confirms sampled keyboard order and visible focus. PHDK 2.56.0 coherence PASS 69/69.",
   "authorization": {
     "source_ref": "Current owner invocation 2026-10-18: PHDK auto; prior conversation explicitly authorized continuing the same four-commitment KELEDON goal and normal versioned PR delivery.",
     "instruction": "PHDK auto",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "MS-001 v5.2.17 merged and read back on main. Railway Web/API SUCCESS. UAT-153 fresh-query production readback displays v5.2.17; ordinary URL still serves cached v5.2.16. MS-002 CMT-002 fixes prepared as v5.2.18. No app tests/build/lint run.",
+  "current_stage": "MS-001 delivered. MS-002 source fixes merged as PR #270 at 5.2.18; Railway Web/API deployments SUCCESS. UAT-154 reads v5.2.18 on a fresh query; UAT-155 passes only sampled keyboard order and visible focus. Copy/reset behavior and authenticated acceptance remain partial. No local app tests/build/lint run per owner restriction.",
   "steps": [
     {
       "id": "preflight",
@@ -475,6 +475,52 @@
       ],
       "blocked_by": [],
       "evidence": "Static diff: rejected copy adapters return to idle with failure feedback; failed reset no longer clears in-memory auth; fallible cache/cookie/event cleanup runs before owned storage and auth_token is removed last. Web/Landing remain mirrored. No local app tests/build/lint run."
+    },
+    {
+      "id": "ms002_web_readback",
+      "kind": "verify_delivery",
+      "status": "done",
+      "action": "Verify the deployed Web candidate and anonymous diagnostic controls on production",
+      "depends_on": [
+        "ms002_source_fix"
+      ],
+      "blocked_by": [],
+      "evidence": "PR #270 merged at b1dd123fb66d861fa3b5507b79d85fa888bdc6d7. Railway Web deployment 62d02378-aebc-4c1f-8072-7d3bda4e36d7 SUCCESS; UAT-154 fresh-query production readback shows v5.2.18 and accessible Spanish diagnostic labels. Railway API 20093638-99f4-41cd-96e8-ab4fbce45662 was DEPLOYING at capture. No interaction activated."
+    },
+    {
+      "id": "ms002_api_readback",
+      "kind": "verify_delivery",
+      "status": "done",
+      "action": "Confirm the API deployment for the merged v5.2.18 main SHA",
+      "depends_on": [
+        "ms002_web_readback"
+      ],
+      "blocked_by": [],
+      "evidence": "Railway read-only inventory observed API deployment 20093638-99f4-41cd-96e8-ab4fbce45662 SUCCESS for main b1dd123fb66d861fa3b5507b79d85fa888bdc6d7; the Web deployment 62d02378-aebc-4c1f-8072-7d3bda4e36d7 is also SUCCESS. No provider settings were changed."
+    },
+    {
+      "id": "ms002_keyboard_readback",
+      "kind": "work",
+      "status": "done",
+      "action": "Sample keyboard focus order and visibility on the deployed anonymous diagnostic widget",
+      "depends_on": [
+        "ms002_web_readback"
+      ],
+      "blocked_by": [],
+      "evidence": "UAT-155 on production 5.2.18 observed Tab order brand, copy, clear and a visible teal focus outline on clear. No action was activated; screenshot was inspected in-session and not exported."
+    },
+    {
+      "id": "ms002_authenticated_acceptance",
+      "kind": "work",
+      "status": "blocked",
+      "action": "Exercise diagnostic copy/reset behavior with an isolated synthetic production session",
+      "depends_on": [
+        "ms002_web_readback"
+      ],
+      "blocked_by": [
+        "synthetic-auth-identity"
+      ],
+      "evidence": "No existing authenticated superadmin session or compliant disposable synthetic role session is available in the connected browser. Anonymous production UAT-154 was read-only; copy/reset were not activated."
     }
   ],
   "blockers": [
@@ -528,6 +574,6 @@
       ]
     }
   ],
-  "updated_at": "2026-10-18T18:58:54Z",
+  "updated_at": "2026-10-18T19:06:29Z",
   "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json"
 }

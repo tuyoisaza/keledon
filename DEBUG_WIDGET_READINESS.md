@@ -1,4 +1,10 @@
-# PHDK Auto Debug Widget Readiness — KELEDON Web 5.2.7 / Landing source (2026-10-17)
+# PHDK Auto Debug Widget Readiness — KELEDON 5.2.18 / PHDK 2.56.0 (2026-10-18)
+
+PR #270 is merged at main `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7`; Railway Web/API deployments report SUCCESS. UAT-154 reads the deployed version and accessible Spanish copy/clear names in a fresh anonymous `/login`. UAT-155 samples keyboard order (brand → copy → clear) and visible focus on the clear control without activating it. This is partial runtime evidence only: copy/reset behavior, responsive geometry, screen-reader output, authenticated diagnostics/RBAC, Landing runtime and native Browser rendering remain unverified. No local application tests/build/lint were run under the owner restriction. See the current PIA CMT-002 and UAT-154/155 evidence in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
+
+---
+
+## Historical source readiness record — KELEDON Web 5.2.7 / Landing source (2026-10-17)
 
 ## Production revalidation — 5.2.15 / UAT-151 (2026-10-18)
 
@@ -123,5 +129,10 @@ Verification: Browser renderer/runtime tests 5/5 and TypeScript build pass; web 
 CHK-AUTO-023 fixed the public navigation placement in both `services/web/src/components/common/Navbar.tsx` and `landing/src/components/common/Navbar.tsx`: the mandatory widget is now stacked directly below the KELEDON name and aligned to its left edge. Full Web diagnostics/debug-mode/version-actions suite passes 19/19. UAT-055 passes in production-built Landing with outbound traffic blocked: at 1280×900 the brand bounds are (32,16–48) and widget bounds (32,52–80), with no hero overlap; at 390×844 the widget remains visible and the mobile theme/language controls work. Exact browser evidence is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-055/`.
 
 These results establish source and local browser behavior for the public Web/Landing surface. The native packaged Browser UI, screen reader, broad route/locale coverage, and physical device/audio remain unverified. The visible controls remain 28×28 with 4px gap; a compliant non-overlapping effective 44×44 pointer target remains **UNVERIFIED / geometry-limited**.
+
+---
+# Current production revalidation — KELEDON 5.2.18 / PHDK 2.56.0 (2026-10-18)
+
+PR #270 is merged at main `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7`; Railway Web/API deployments report SUCCESS. UAT-154 reads the deployed version and accessible Spanish copy/clear names in a fresh anonymous `/login`. UAT-155 samples keyboard order (brand → copy → clear) and visible focus on the clear control without activating it. This evidence does not exercise copy/reset, responsive geometry, screen-reader output, authenticated diagnostics/RBAC, Landing runtime or native Browser rendering. No local application tests/build/lint were run under the owner restriction. See the current PIA CMT-002 and UAT-154/155 evidence in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
 
 ---

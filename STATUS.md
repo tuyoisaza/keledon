@@ -1,14 +1,14 @@
 # KELEDON current status — 2026-10-18
 
-PHDK Auto active. Plan stage revalidated under PHDK 2.56.0. Remote main is f50b264ee31ae481c79e6075843c8d1c532bbe24, KELEDON 5.2.17 after PR #269; Railway Web/API report SUCCESS; UAT-153 query readback shows Web v5.2.17 while a normal URL still serves cached v5.2.16. Four commitments: 0/4 complete, 4/4 active/partial.
+PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69/69. Remote main is b1dd123fb66d861fa3b5507b79d85fa888bdc6d7, KELEDON 5.2.18 after PR #270. Railway Web/API are SUCCESS. UAT-154 reads v5.2.18 and accessible diagnostic labels; UAT-155 samples keyboard order and visible focus. Four commitments: 0/4 complete, 4/4 active/partial.
 
 | Stage | Status | Evidence / next action |
 |---|---|---|
 | Preflight | REVALIDATED | PHDK 2.56.0; coherence 69/69; canonical manifest matches. | Continue with current installed rules. |
 | Capture | REUSED | Current owner decisions and requirements remain coherent. | No repeated interview required. |
 | Plan | COMPLETED / REVALIDATED | Six value milestones, architecture delta, commitment traceability and 41-model/574-row CRUD coverage. | PMO roadmap and workstreams verified. |
-| PMO | COMPLETED / REVALIDATED | Five workstreams map to the ordered commitments; tenant identity and client sandbox gates are operation-specific. | MS-001 is merged/deployed. UAT-153 found cached HTML on normal URL; unique query returns v5.2.17. Continue with MS-002 candidate 5.2.18. |
-| Integration/UAT/Check/Delivery | IN PROGRESS | MS-001 5.2.17 merged; Web/API SUCCESS; UAT-153 readback passes with unique query. MS-002 source candidate is 5.2.18. | Continue with versioned PR and exact deployed-source readback. |
+| PMO | COMPLETED / REVALIDATED | Six value milestones and five workstreams map the ordered commitments; tenant identity and client sandbox gates remain operation-specific. | MS-001 delivered; MS-002 source merged in PR #270. UAT-154 reads Web v5.2.18; both Railway Web/API deployments now report SUCCESS. |
+| Integration/UAT/Check/Delivery | IN PROGRESS | MS-002 source merged at b1dd123; Web/API SUCCESS; UAT-154 version/control labels and UAT-155 sampled keyboard/focus pass scoped. | Continue permitted anonymous CMT-002 checks; authenticated interactions remain pending a disposable synthetic session. |
 
 Overall portfolio: PARTIALLY DELIVERED. Authenticated production acceptance requires an existing superadmin session plus the bounded synthetic fixture path. Positive private CRM egress requires customer-selected host/port/CIDR. Neither condition blocks independent source implementation.
 

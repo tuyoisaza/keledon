@@ -2,9 +2,9 @@
 
 Run: 20261014-0007-phdk-auto-completion
 Repository: tuyoisaza/keledon
-Current branch: phdk/cmt-002-diagnostics-5.2.18
-Verified remote main: f50b264ee31ae481c79e6075843c8d1c532bbe24
-Remote main: 5.2.17 at f50b264ee31ae481c79e6075843c8d1c532bbe24 after PR #269; Web/API production deployments SUCCESS; UAT-153 query readback shows 5.2.17 while an ordinary URL still serves cached 5.2.16. Current CMT-002 source candidate: 5.2.18.
+Current branch: phdk/auto-uat-154-ms002-5.2.19
+Verified remote main: b1dd123fb66d861fa3b5507b79d85fa888bdc6d7
+Remote main: 5.2.18 after PR #270; Railway Web/API deployments SUCCESS; UAT-154 reads v5.2.18 and UAT-155 samples keyboard/focus. Current local candidate: 5.2.19 lifecycle/UAT evidence and synchronized version roots; not yet published.
 PHDK version: 2.56.0
 Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only functional acceptance.
 
@@ -13,7 +13,7 @@ Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only function
 | 00-preflight | REVALIDATED | PHDK manifest/native managed block; static coherence 69/69. |
 | 10-capture | REUSED | PROJECT_INTENT.md, PROJECT_BRIEF.md, PRD.md, FEATURES.md, REQUIREMENTS_TRACEABILITY.md. |
 | 20-plan | COMPLETED / REVALIDATED | 20-plan/MILESTONE_PLAN.md, ARCHITECTURE_REVALIDATION.md, IMPLEMENTATION_PLAN.md, PHDK_COMMITMENT_COVERAGE.md; snapshots in 20-plan/snapshots/20261018-phdk256-plan. |
-| 30-pmo | COMPLETED / REVALIDATED | PMO charter, five workstreams, dependency map, status and progress report. Current next action: publish MS-002 source candidate 5.2.18 and verify the exact deployed version before any production control acceptance. |
+| 30-pmo | COMPLETED / REVALIDATED | Six value milestones, five workstreams, dependency map, status and progress report; MS-002 source is merged. Current next action: continue permitted anonymous CMT-002 responsive/accessibility checks; authenticated interaction acceptance remains pending a disposable synthetic session. |
 | 40-integration | OPEN | Technical source/contract review after the next implementation slice. |
 | 45-uat-prep | PARTIAL | Audited fixture implementation/runbook exists; authenticated production journey not run. |
 | 50-uat | OPEN / PARTIAL | Production only; protected cases require existing superadmin session and synthetic identities. |
@@ -26,7 +26,7 @@ Blockers: authenticated synthetic acceptance depends on an existing superadmin s
 
 ---
 
-# PHDK Auto Force — estado vigente
+# Historical PHDK Auto Force — KELEDON v5.2.12 / PHDK 2.54.0
 
 Run: `20261014-0007-phdk-auto-completion` · PHDK **2.54.0** · `tuyoisaza/keledon`
 Candidato `fix/phdk-login-mobile-spacing-5-2-12` / v5.2.12 · base main observado `f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4`.

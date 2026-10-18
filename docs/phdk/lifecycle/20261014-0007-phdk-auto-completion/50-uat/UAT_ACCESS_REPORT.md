@@ -192,3 +192,10 @@ No account provisioning, test-role switch, email delivery, production browsing, 
 - Fresh anonymous `/login` opened in the in-app browser; page showed v5.2.16, both accessible diagnostic control names, locale/theme selectors and login form. AX tree and screenshot are visible in the active UAT trace.
 - No sign-in, control activation, clipboard read, cache clear, field entry, customer data or mutation.
 - PASS_SCOPED for current rendering/accessibility names. Target geometry and horizontal overflow were not remeasured in this revalidation; the earlier 44×44 CSS px / 1581px measurements apply to 5.2.15 only. Evidence is appended to `evidence/uat-151-production-login-widget-2026-10-18.json`.
+## Browser readiness — UAT-154 post-deploy Web readback (2026-10-18)
+
+- Stage/run: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; anonymous production `/login`; `ACTIVE_UAT_EXCEPTION`; `NO_NEW_SPEND`.
+- Candidate: KELEDON 5.2.18, remote main `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7`; Railway Web `62d02378-aebc-4c1f-8072-7d3bda4e36d7` `SUCCESS`; API `20093638-99f4-41cd-96e8-ab4fbce45662` `DEPLOYING` at capture.
+- Tool/target: fresh Chrome tab via CUA at `https://keledon.tuyoisaza.com/login?phdk-uat-20261018=270`; access verified; AX tree exposed v5.2.18, Spanish diagnostic labels and anonymous login.
+- Scope/safety: navigation, reload and read-only AX observation only. No login, data entry, submit, clipboard read/copy, cache clear, storage mutation, customer data, private endpoint or provider write. Evidence `evidence/uat-154-production-v5-2-18-widget-readback-2026-10-18.json`.
+- Result: `PASS_SCOPED` for deployed Web version and accessible control-name presence only; interaction behavior and API deployment acceptance remain pending.
