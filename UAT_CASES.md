@@ -1,6 +1,13 @@
-## Latest Auto Force production cases — 2026-10-18
+## Current deployed diagnostics — KELEDON 5.2.18 / PHDK 2.56.0
 
-Current re-entry cases UAT-143/144 pass scoped on production v5.2.10; UAT-141 baseline failure is reproduced; UAT-142 candidate retest is blocked until PR #259 v5.2.11 deploys. See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_CASES.md` and sanitized evidence JSON. Historical case outcomes below remain intact.
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-154 | CMT-002 / anonymous visitor | Fresh-query `/login`; inspect version and diagnostic names only. | Deployed v5.2.18 and accessible control labels. | Production browser AX tree | **PASS_SCOPED:** Web/API Railway deploys SUCCESS; fresh query shows v5.2.18, copy and clear names. Evidence in lifecycle run `50-uat/evidence/uat-154-production-v5-2-18-widget-readback-2026-10-18.json`. |
+| UAT-155 | CMT-002 / anonymous visitor | Press Tab three times from page root; inspect focused elements and screenshot; do not activate controls. | Focus order includes brand, copy, clear; visible focus indicator. | Production browser keyboard + screenshot | **PASS_SCOPED:** order observed; clear control has a visible teal focus outline. No click/action. Evidence in lifecycle run `50-uat/evidence/uat-155-production-v5-2-18-diagnostics-keyboard-2026-10-18.json`. |
+
+## Historical Auto Force cases — production v5.2.10 (2026-10-18)
+
+UAT-143/144 are scoped to the earlier v5.2.10 re-entry; UAT-141/142 preserve the earlier mobile login findings. See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_CASES.md` and sanitized evidence JSON.
 
 ---
 ## Production v5.2.9 — PIA-AUTO-SEO-002 (pending deployment)
@@ -368,3 +375,11 @@ Candidate total: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The
 | UAT-097 | US-020 / Company Co admin or coordinator | On exact candidate, switch teams and close the selector while requests are delayed; confirm stale responses/saves cannot replace or persist against the newly selected team. | BLOCKED | Focused source regression already passes, but the real role/browser journey is not deployed or authenticated in a safe target. |
 | UAT-098 | US-021 / public visitor | Open the production public homepage without signing in or changing state; record visible product version and public navigation. | PASS — PUBLIC SMOKE ONLY | Connected in-app browser opened `https://keledon.tuyoisaza.com/` at 2026-10-17 16:12 UTC. Page title “KELEDON | Cloud-governed contact center runtime”; visible version 5.1.85; public links and page content loaded. No login, API probe, form submit, storage action, or data mutation. This is not acceptance evidence for 5.2.1. |
 | UAT-099 | US-022 / anonymous visitor | Navigate directly to production `/management/teams` without a session; do not submit login or signup. | PASS — ANONYMOUS REDIRECT ONLY | Production redirected to `/login` and displayed the email/password form at 2026-10-17 16:22 UTC. No credentials entered, session created, protected content shown, or data changed. Deployed version is 5.1.85, so this is not candidate 5.2.1 or tenant-role acceptance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-099-production-anonymous-management-redirect.json`. |
+## Current deployed diagnostics — KELEDON 5.2.18 / PHDK 2.56.0
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-154 | CMT-002 / anonymous visitor | Fresh-query `/login`; inspect version and diagnostic names only. | Deployed v5.2.18 and accessible control labels. | Production browser AX tree | **PASS_SCOPED:** Web/API Railway deploys SUCCESS; fresh query shows v5.2.18, copy and clear names. Evidence in lifecycle run `50-uat/evidence/uat-154-production-v5-2-18-widget-readback-2026-10-18.json`. |
+| UAT-155 | CMT-002 / anonymous visitor | Press Tab three times from page root; inspect focused elements and screenshot; do not activate controls. | Focus order includes brand, copy, clear; visible focus indicator. | Production browser keyboard + screenshot | **PASS_SCOPED:** order observed; clear control has a visible teal focus outline. No click/action. Evidence in lifecycle run `50-uat/evidence/uat-155-production-v5-2-18-diagnostics-keyboard-2026-10-18.json`. |
+
+---

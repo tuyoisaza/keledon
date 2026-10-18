@@ -1,6 +1,10 @@
-## Latest Auto Force production browser entry — 2026-10-18
+## Current production browser readiness — UAT-154/155, KELEDON 5.2.18
 
-See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_ACCESS_REPORT.md`. Browser access was `AVAILABLE_VERIFIED`; production `/` served v5.2.10 and anonymous `/management/teams` resolved to `/login`. PR #259/5.2.11 was not deployed. The UAT-141 baseline fail was reproduced read-only: header brand 152×40, email 399×41, password 399×41, create-account 69×20 CSS px. UAT-142 remains blocked until the candidate is deployed. No login, mutation, customer data, or local app tests/build/lint.
+CUA on a fresh anonymous Chrome tab is `AVAILABLE_VERIFIED`. Railway Web/API deployments for main `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` are `SUCCESS`. UAT-154 read-only AX observation sees the deployed version and diagnostic labels. UAT-155 samples Tab order through brand/copy/clear and confirms visible focus on clear. No login, clipboard read/copy, cache action, storage mutation, customer data, private endpoint or provider write. Evidence: lifecycle run `50-uat/evidence/uat-154-production-v5-2-18-widget-readback-2026-10-18.json` and `uat-155-production-v5-2-18-diagnostics-keyboard-2026-10-18.json`. Authenticated behavior still needs a compliant synthetic session; responsive geometry was not measured in this pass.
+
+## Historical Auto Force production browser entry — v5.2.10 (2026-10-18)
+
+See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_ACCESS_REPORT.md` for UAT-143/144 and the earlier UAT-141/142 login findings. They are not current-version evidence.
 
 ---
 # UAT access report — run 20261014-0007-phdk-auto-completion
@@ -117,3 +121,8 @@ Actual Nest in-process HTTP test22 exercises real decorators/guards with isolate
 - Spend: `NO_NEW_SPEND`; billing remains unverified.
 - Result: UAT-100 PASS only for public and login widget presence on deployed v5.1.85. Both pages exposed `v5.1.85`, `Copiar diagnóstico completo`, and `Limpar cache do aplicativo`; no behavior of either action was exercised. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json`.
 - Candidate match: FAIL for 5.2.1 acceptance; production remains 5.1.85. UAT-096/097 stay BLOCKED pending candidate target plus safe synthetic roles/persistence.
+## Current production browser readiness — UAT-154/155, KELEDON 5.2.18
+
+CUA on a fresh anonymous Chrome tab is `AVAILABLE_VERIFIED`. Railway Web/API deployments for main `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` are `SUCCESS`. UAT-154 read-only AX observation sees the deployed version and diagnostic labels. UAT-155 samples Tab order through brand/copy/clear and confirms visible focus on clear. No login, clipboard read/copy, cache action, storage mutation, customer data, private endpoint or provider write. Evidence: lifecycle run `50-uat/evidence/uat-154-...json` and `uat-155-...json`. Authenticated behavior remains dependent on compliant synthetic session; responsive geometry not measured in this pass.
+
+---

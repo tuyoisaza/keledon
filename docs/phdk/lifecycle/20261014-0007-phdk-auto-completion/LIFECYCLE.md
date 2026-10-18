@@ -1,10 +1,10 @@
 # Current lifecycle state — 2026-10-18 / PHDK 2.56.0
 
-Run: 20261014-0007-phdk-auto-completion. Goal: four owner-confirmed commitments in order. MS-001 merged by PR #269 to main f50b264ee31ae481c79e6075843c8d1c532bbe24, KELEDON 5.2.17. Railway Web/API report SUCCESS. UAT-153 shows the unique-query route serves 5.2.17 while a normal URL remains on cached 5.2.16. CMT-002 source correction is prepared separately as candidate 5.2.18.
+Run: 20261014-0007-phdk-auto-completion. Goal: four owner-confirmed commitments in order. MS-001 is delivered; MS-002 source fix merged by PR #270 to main b1dd123fb66d861fa3b5507b79d85fa888bdc6d7, KELEDON 5.2.18. Railway Web/API report SUCCESS. UAT-154 reads the fresh-query Web version and diagnostic names; UAT-155 samples keyboard order and visible focus. CMT-002 remains partial pending interaction, responsive and broader accessibility evidence.
 
-Current stage board: Preflight REVALIDATED; Capture REUSED; Plan COMPLETED/REVALIDATED with MILESTONE_PLAN and 574-row/41-model CRUD coverage; PMO COMPLETED/REVALIDATED; MS-001 DELIVERED; MS-002 source correction PREPARED; production acceptance, final integration, Check and goal delivery remain OPEN.
+Current stage board: Preflight REVALIDATED; Capture REUSED; Plan COMPLETED/REVALIDATED with MILESTONE_PLAN and 574-row/41-model CRUD coverage; PMO COMPLETED/REVALIDATED; MS-001 DELIVERED; MS-002 source correction MERGED with scoped production Web UAT; production interaction/role acceptance, final integration, Check and goal delivery remain OPEN.
 
-Next step: complete source-only review, publish the separate 5.2.18 CMT-002 fix through the normal PR route and verify its deployed version. Authenticated reset acceptance remains limited to an authorized disposable synthetic session; private positive egress remains gated on a client-selected sandbox.
+Next step: complete allowed anonymous CMT-002 production checks and retain authenticated reset/copy acceptance for a compliant disposable synthetic session; private positive egress remains gated on a client-selected sandbox.
 
 ---
 

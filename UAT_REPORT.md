@@ -1,6 +1,10 @@
-## Latest Auto Force UAT re-entry — 2026-10-18
+## Current CMT-002 deployed readback — production v5.2.18 (2026-10-18)
 
-**ACCEPTANCE INCOMPLETE.** Actual production served v5.2.10; PR #259 candidate v5.2.11 is not deployed. Public home and anonymous protected-route redirect passed their scoped observations. UAT-141 four undersized login targets were reproduced (152×40, 399×41, 399×41, 69×20); UAT-142 remains BLOCKED pending deployed 5.2.11. Authenticated/tenant/device/flow/CRM acceptance remains blocked by Prep prerequisites. Detailed evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_REPORT.md`.
+UAT-154 **PASS_SCOPED**: fresh-query anonymous `/login` displays v5.2.18 and accessible diagnostic names; Railway Web/API deployments for main `b1dd123` are SUCCESS. UAT-155 **PASS_SCOPED**: Tab order samples brand → copy → clear and visible teal focus; no control activated. Copy/reset behavior, responsive geometry, screen-reader coverage, Landing runtime and authenticated role acceptance remain open. Evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/`.
+
+## Historical Auto Force re-entry — production v5.2.10 (2026-10-18)
+
+At that earlier candidate, UAT-141/142 captured the mobile login target and header findings; those records remain historical and are superseded for current release/version state by the v5.2.18 readback above. Detailed evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_REPORT.md`.
 
 ---
 ## Candidate 5.1.84 — UAT-094 dashboard controls reflect implemented runtime
@@ -605,3 +609,8 @@ UAT-100 passes narrowly on 2026-10-17: the connected browser opened the producti
 UAT-096 (tenant filter, assignment, persisted readback, foreign-tenant denial) and UAT-097 (stale response and save behavior with real role sessions) remain BLOCKED. The fixture seeder requires isolated loopback PostgreSQL and explicitly refuses production. No real production user, tenant, DB row, credential, migration or assignment was touched. Focused source regression evidence remains in the prior 5.2.1 Check report; source tests do not replace these cases.
 
 **Candidate result: ACCEPTANCE INCOMPLETE / PARTIALLY BLOCKED.** Both production smoke PASS results are outside feature acceptance. Keep the broader portfolio partial (prior counts remain historical, not recalculated by this re-entry).
+## Current CMT-002 deployed readback — production v5.2.18 (2026-10-18)
+
+UAT-154 **PASS_SCOPED**: fresh-query anonymous `/login` displays v5.2.18 and accessible diagnostic names; Railway Web/API deployments for main `b1dd123` are SUCCESS. UAT-155 **PASS_SCOPED**: Tab order samples brand → copy → clear and visible teal focus; no control activated. Copy/reset behavior, responsive geometry, screen-reader coverage, Landing runtime and authenticated role acceptance remain open. Evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/`.
+
+---

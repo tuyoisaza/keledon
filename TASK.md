@@ -1,5 +1,13 @@
 # KELEDON PHDK Auto — current task state (2026-10-18)
 
+## Current milestone readback — KELEDON 5.2.18 / PHDK 2.56.0
+
+Remote `main` is `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` after PR #270. Railway Web/API are SUCCESS. Fresh-query anonymous production UAT reads v5.2.18 and accessible diagnostic control names; keyboard sampling confirms brand→copy→clear order and visible focus without activation. CMT-002 source correction is merged; copy/reset behavior and broader acceptance remain partial. The canonical PHDK updater reports CURRENT and static coherence is 69/69. No local application tests/build/lint ran under the owner restriction.
+
+SIGUIENTE PASO: continue permitted anonymous responsive/accessibility checks; keep authenticated behavior pending a compliant synthetic session.
+
+---
+
 Current request: PHDK auto. Run: 20261014-0007-phdk-auto-completion. Remote main is f50b264ee31ae481c79e6075843c8d1c532bbe24, KELEDON 5.2.17 after PR #269; Railway Web/API SUCCESS; UAT-153 unique-query production readback displays v5.2.17. PHDK 2.56.0. The four owner-confirmed commitments remain active and ordered.
 
 Current planning stage: Plan revalidated with a six-milestone value roadmap. See docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/MILESTONE_PLAN.md and HANDOFF.md. The existing architecture/UX/admin/AI/CRUD/ADR artifacts were reused and snapshotted. The CRUD inventory now covers 41 current Prisma models and 574 role/surface rows; the 14 UatFixtureRun rows remain BLOCKED until authenticated production UAT.

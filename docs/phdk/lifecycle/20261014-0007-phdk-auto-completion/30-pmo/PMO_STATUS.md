@@ -1,20 +1,20 @@
 # PMO Status — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
 
-Run 20261014-0007-phdk-auto-completion. Remote main is KELEDON 5.2.17 at f50b264ee31ae481c79e6075843c8d1c532bbe24 after PR #269; branch phdk/cmt-002-diagnostics-5.2.18 holds the next source candidate. Railway Web/API report SUCCESS for main; UAT-153 unique-query readback shows v5.2.17 while a normal fresh tab still serves v5.2.16 (stale HTML/cache path). Portfolio: four commitments confirmed, 0/4 DONE, 4/4 ACTIVE/PARTIAL, none deferred/cancelled. Plan: six value milestones with current revalidation in 20-plan/MILESTONE_PLAN.md.
+Run 20261014-0007-phdk-auto-completion. Remote main is KELEDON 5.2.18 at b1dd123fb66d861fa3b5507b79d85fa888bdc6d7 after PR #270. Railway Web/API are SUCCESS. UAT-154 confirms fresh-query anonymous production v5.2.18 and accessible diagnostic labels; UAT-155 samples keyboard order and visible focus. Portfolio: four commitments confirmed, 0/4 DONE, 4/4 ACTIVE/PARTIAL, none deferred/cancelled. Plan: six value milestones in 20-plan/MILESTONE_PLAN.md.
 
 ## Workstream dashboard
 
 | Workstream | Status | Latest evidence | Next gate | Dependencies / PR state |
 |---|---|---|---|---|
 | WS-001 CMT-001 baseline/version/PR | DELIVERED FOR MS-001 | PHDK 2.56.0 coherence 69/69; PR #269 merged at f50b264ee31ae481c79e6075843c8d1c532bbe24; five roots and renderer 5.2.17 on main; Web/API SUCCESS; UAT-153 scoped version readback passes with fresh query; ordinary URL cache discrepancy is documented. | Continue with MS-002. | PR #269 MERGED. |
-| WS-002 CMT-002 widget/diagnostics | ACTIVE — SOURCE CANDIDATE 5.2.18 | Current source review found contradictory failure behavior in copy/reset; Web and Landing fixes are prepared and documented in PIA-CMT-002. UAT-152 is read-only evidence for production 5.2.16 labels. | Static review, versioned PR, then read-only production source/version check; action acceptance requires a disposable authorized synthetic session. | No local app tests/build/lint; no production control activation on shared session. |
+| WS-002 CMT-002 widget/diagnostics | ACTIVE — 5.2.18 SOURCE MERGED; PARTIAL UAT | PR #270 merged at b1dd123; Web/Landing failure paths corrected. Railway Web/API SUCCESS. UAT-154 reads production Web 5.2.18 and accessible labels; UAT-155 samples keyboard sequence and visible focus. Copy/reset behavior not activated. | Continue permitted anonymous responsive/accessibility checks; authenticated copy/reset needs isolated authorized synthetic session. | PR #270 MERGED; no local app tests/build/lint; no production control activation. |
 | WS-003 CMT-003A/003C1 Browser command lifecycle | READY FOR SOURCE / UAT BLOCKED | Atomic device lock/result slice and audited fixture implementation are on current main; lease expiry/start/heartbeat/fencing absent. | Implement bounded at-most-once lease protocol after WS-002; do not retry uncertain effect. | Existing superadmin session + two regular synthetic users required for production role/concurrency evidence. |
 | WS-004 CMT-003B private tenant egress | READY FOR SOURCE / POSITIVE UAT BLOCKED | Tenant origin allowlist exists; socket-level DNS/IP binding needs source reconciliation. | Implement address/redirect/socket enforcement; run safe negatives. | Positive private acceptance requires client-selected exact sandbox host/port/CIDR. |
 | WS-005 CMT-004 admin/permissions | READY FOR SOURCE / AUTH UAT BLOCKED | Restrictive policy and admin controls present; matrix updated to 41 models/574 rows. | Reconcile source gaps and then production synthetic role/persistence journeys. | Existing identity/key constraints; no credentials or provider writes. |
 
 ## Active milestone and seven-domain control
 
-MS-001 is delivered to main. Active: MS-002 diagnostics source correction, candidate 5.2.18. Next: review the source-only diff, open its normal PR, then observe deployed version before any permitted production acceptance.
+MS-001 and the MS-002 source correction are on main; Web/API deploys are SUCCESS. Active: scoped MS-002 production acceptance. Next: continue anonymous read-only responsive/accessibility checks and keep interaction/authenticated cases partial until an isolated synthetic session is available.
 
 Governance: confirmed scope and real owner restrictions preserved. Scope: no new CRM vendor or feature front. Schedule: dependency order only, no invented dates. Finance: no budget supplied; avoid metered calls. Stakeholders: owner; tenant owner selects any sandbox. Resources: sequential assistant/repo; no delegated workers. Risk: stale histories, possible duplicate side effects, tenant escape, private-network SSRF, unavailable synthetic auth; controls and operation-specific gates recorded in PMO_DEPENDENCIES.md.
 

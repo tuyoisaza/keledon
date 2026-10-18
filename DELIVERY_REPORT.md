@@ -1,4 +1,15 @@
-## Current candidate delivery — KELEDON 5.2.9 PIA-AUTO-SEO-002 (2026-10-17)
+## Current candidate delivery — KELEDON 5.2.19 PHDK Auto UAT evidence (2026-10-18)
+
+- Candidate branch: `phdk/auto-uat-154-ms002-5.2.19`, based on verified `origin/main` `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` (KELEDON 5.2.18, PR #270).
+- Scope: synchronize PHDK 2.56.0 lifecycle, PMO, milestone/PIA and production evidence; record UAT-154/155. Five package/lock roots and Browser renderer are aligned to the docs/evidence release 5.2.19. No application source behavior changed.
+- Static: PHDK coherence 69/69; UAT JSON parses; version roots match; `git diff --check` passes. No local app tests/build/lint.
+- Production evidence applies to deployed 5.2.18 only: Railway Web/API SUCCESS; UAT-154 PASS_SCOPED for fresh-query version and diagnostic labels; UAT-155 PASS_SCOPED for sampled keyboard sequence/focus. This candidate is not deployed and has no production UAT yet.
+- CMT-002 remains partial; copy/reset activation, responsive geometry, screen-reader, Landing runtime and authenticated behavior remain unverified. Whole Auto: 0/4 complete; four active/partial.
+- COMMIT_PREFIX, PR, merge, main/deployment readback are pending.
+
+---
+
+## Historical candidate delivery — KELEDON 5.2.9 PIA-AUTO-SEO-002 (2026-10-17)
 
 - Candidate: `fix/phdk-5-2-9-runtime-auto-remediation`, based on verified `origin/main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; source is prepared but commit/PR/merge are pending.
 - Scope: private noindex Vite shell, complete 43-route NGINX fallback map, real HTTP 404 document and localized React not-found page. Five package/lock roots and Browser renderer are aligned at 5.2.9.
