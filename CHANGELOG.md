@@ -1,3 +1,10 @@
+## v5.2.17 — 2026-10-18
+
+- Reconcile the KELEDON Auto Plan and PMO artifacts with PHDK 2.56 value-milestone planning, preserving the four confirmed commitments and production-only acceptance boundaries.
+- Reconcile CRUD coverage to the current 41-model Prisma schema by adding 14 role/surface rows for UatFixtureRun; all remain blocked until authenticated production acceptance.
+- Synchronize all five application package/lock roots and the Browser renderer to 5.2.17.
+- Static verification: PHDK coherence 69/69, current version-root alignment, and diff whitespace check. No local application tests/build/lint run under the owner's restriction.
+
 ## v5.2.16 — 2026-10-18
 
 - Add the protected `/admin/interfaces` route to the Web Nginx SPA allowlist so fresh direct links reach the superadmin guard instead of the static 404 page.

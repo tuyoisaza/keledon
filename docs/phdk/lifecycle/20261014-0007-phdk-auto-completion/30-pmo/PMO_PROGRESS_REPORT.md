@@ -1,3 +1,19 @@
+# PMO progress report — current revalidation 2026-10-18
+
+## Plan/PMO refresh — PHDK 2.56.0
+
+Plan revalidated against current remote main b54d747a63da8c27fa1358c3db82d2787038f966 and product 5.2.16. Classified the effort as hybrid brownfield and created six value milestones without reserving exact future versions. The four previously owner-confirmed commitments map to five workstreams (CMT-003 split into lease/fencing and tenant egress). The seven project-management domains, shared contracts and dependency-specific blockers are recorded in PMO.md, PMO_WORKSTREAMS.md and PMO_DEPENDENCIES.md.
+
+Static schema inventory found 41 current Prisma models while the historical detailed CRUD matrix covered 40. Added 14 UatFixtureRun role/surface rows, bringing the matrix to 574; those rows remain BLOCKED pending authenticated production UAT. This fixes planning traceability without implying runtime acceptance.
+
+No owner confirmation was repeated because the owner explicitly confirmed all four fronts in order. No delegated workers were used. Current source/task/PIA evidence supports source work on the Browser lease and private egress; authenticated production acceptance remains separately gated by the existing superadmin/synthetic path and customer-specific sandbox.
+
+Current branch holds only scoped PHDK managed-block and planning/coverage updates; no application test/build/lint or production mutation was performed in this planning/PMO stage. Current plan PR has not yet been opened.
+
+SIGUIENTE PASO: complete the scoped static review/checks for MS-001 and publish the planning/standards documentation by the normal branch/PR route; after remote-main verification continue WS-002.
+
+---
+
 # PHDK Auto — informe de progreso, 2026-10-17
 
 ## Reentrada vigente — KELEDON 5.2.10 / PHDK 2.53.1

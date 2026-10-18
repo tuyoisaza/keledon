@@ -1,3 +1,19 @@
+# KELEDON current status — 2026-10-18
+
+PHDK Auto active. Plan stage revalidated under PHDK 2.56.0. Remote main b54d747a63da8c27fa1358c3db82d2787038f966 remains product 5.2.16; docs-only candidate 5.2.17 is local/unpublished. Four commitments: 0/4 complete, 4/4 active/partial.
+
+| Stage | Status | Evidence / next action |
+|---|---|---|
+| Preflight | REVALIDATED | PHDK 2.56.0; coherence 69/69; canonical manifest matches. | Continue with current installed rules. |
+| Capture | REUSED | Current owner decisions and requirements remain coherent. | No repeated interview required. |
+| Plan | COMPLETED / REVALIDATED | Six value milestones, architecture delta, commitment traceability and 41-model/574-row CRUD coverage. | PMO roadmap and workstreams verified. |
+| PMO | COMPLETED / REVALIDATED | Five workstreams map to the ordered commitments; tenant identity and client sandbox gates are operation-specific. | Publish MS-001 candidate 5.2.17 and verify remote main. |
+| Integration/UAT/Check/Delivery | OPEN | Production-only acceptance; no local app tests/build/lint. | Continue through normal versioned PR and exact remote readback. |
+
+Overall portfolio: PARTIALLY DELIVERED. Authenticated production acceptance requires an existing superadmin session plus the bounded synthetic fixture path. Positive private CRM egress requires customer-selected host/port/CIDR. Neither condition blocks independent source implementation.
+
+---
+
 # Current Auto Force — KELEDON 5.2.16 route repair / 5.2.15 deployed
 
 PHDK 2.56.0 is installed from canonical upstream and coherent at 69/69 mappings. Product remote `main` is `a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6`, KELEDON 5.2.15; Railway Web/API deployments are SUCCESS and public Web/API version readback is 5.2.15. UAT-150 reproduced a production 404 for `/admin/interfaces`: the Nginx `known_spa_route` map omitted the new superadmin route, while the SPA router and server guard are present. The next candidate 5.2.16 adds the route to the allowlist and aligns a regression assertion with the live `@spa` fallback. Authenticated superadmin and tenant-role acceptance remains pending; CMT-003A/B runtime acceptance remains open. No local app tests/build/lint or production mutations are authorized/performed.

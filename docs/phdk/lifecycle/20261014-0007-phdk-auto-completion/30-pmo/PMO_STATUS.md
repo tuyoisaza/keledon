@@ -1,3 +1,27 @@
+# PMO Status — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
+
+Run 20261014-0007-phdk-auto-completion. Remote target main b54d747a63da8c27fa1358c3db82d2787038f966; current local branch phdk/auto-review-next-20261018. Remote-main product 5.2.16; docs-only MS-001 candidate 5.2.17 is unpublished. Portfolio: four commitments confirmed, 0/4 DONE, 4/4 ACTIVE/PARTIAL, none deferred/cancelled. Plan: six value milestones with current revalidation in 20-plan/MILESTONE_PLAN.md. No open PR was returned by the bounded repository PR-list query; all current plan/standards edits remain local.
+
+## Workstream dashboard
+
+| Workstream | Status | Latest evidence | Next gate | Dependencies / PR state |
+|---|---|---|---|---|
+| WS-001 CMT-001 baseline/version/PR | ACTIVE | PHDK 2.56.0 coherence 69/69; remote main/version read; six-milestone plan created. | Assistant diff/static review, then scoped branch/PR and remote readback. | MS-001 candidate local; no PR. |
+| WS-002 CMT-002 widget/diagnostics | READY | UAT-151 sampled production login widget; shared readiness report is older than current source. | Refresh DEBUG_WIDGET_READINESS and do safe production-only UAT/remediation. | Authenticated cases require synthetic identity; public checks independent. |
+| WS-003 CMT-003A/003C1 Browser command lifecycle | READY FOR SOURCE / UAT BLOCKED | Atomic device lock/result slice and audited fixture implementation are on current main; lease expiry/start/heartbeat/fencing absent. | Implement bounded at-most-once lease protocol after WS-002; do not retry uncertain effect. | Existing superadmin session + two regular synthetic users required for production role/concurrency evidence. |
+| WS-004 CMT-003B private tenant egress | READY FOR SOURCE / POSITIVE UAT BLOCKED | Tenant origin allowlist exists; socket-level DNS/IP binding needs source reconciliation. | Implement address/redirect/socket enforcement; run safe negatives. | Positive private acceptance requires client-selected exact sandbox host/port/CIDR. |
+| WS-005 CMT-004 admin/permissions | READY FOR SOURCE / AUTH UAT BLOCKED | Restrictive policy and admin controls present; matrix updated to 41 models/574 rows. | Reconcile source gaps and then production synthetic role/persistence journeys. | Existing identity/key constraints; no credentials or provider writes. |
+
+## Active milestone and seven-domain control
+
+Active: MS-001, release baseline and current PHDK plan evidence. Next: finish static plan/standards review, normal 5.2.17 docs PR, and verify main. Then proceed to MS-002 in owner order.
+
+Governance: confirmed scope and real owner restrictions preserved. Scope: no new CRM vendor or feature front. Schedule: dependency order only, no invented dates. Finance: no budget supplied; avoid metered calls. Stakeholders: owner; tenant owner selects any sandbox. Resources: sequential assistant/repo; no delegated workers. Risk: stale histories, possible duplicate side effects, tenant escape, private-network SSRF, unavailable synthetic auth; controls and operation-specific gates recorded in PMO_DEPENDENCIES.md.
+
+Whole Auto remains PARTIALLY DELIVERED. Production deployment or source presence alone does not close acceptance.
+
+---
+
 # PHDK Auto — estado de cartera al 2026-10-17
 
 ## Reconciliación post PR #257
