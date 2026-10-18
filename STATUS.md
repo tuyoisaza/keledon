@@ -1,8 +1,10 @@
-# Current Auto Force — 5.2.15 interface catalog candidate / 5.2.14 deployed
+# Current Auto Force — KELEDON 5.2.16 route repair / 5.2.15 deployed
 
-PHDK 2.54.1 is installed and published. The current local source adds a superadmin-only, company-owned interface catalog, API-side HTTP(S)/field validation and redaction of destination data from audit payloads. Current source review is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/40-integration/INTEGRATION_REVIEW-5.2.15.md`. It has not yet been delivered or deployed. No local app tests/build/lint or production mutation was performed for this candidate. Whole Auto remains partial; authenticated admin/tenant acceptance and CMT-003A/B runtime requirements remain open.
+PHDK 2.56.0 is installed from canonical upstream and coherent at 69/69 mappings. Product remote `main` is `a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6`, KELEDON 5.2.15; Railway Web/API deployments are SUCCESS and public Web/API version readback is 5.2.15. UAT-150 reproduced a production 404 for `/admin/interfaces`: the Nginx `known_spa_route` map omitted the new superadmin route, while the SPA router and server guard are present. The next candidate 5.2.16 adds the route to the allowlist and aligns a regression assertion with the live `@spa` fallback. Authenticated superadmin and tenant-role acceptance remains pending; CMT-003A/B runtime acceptance remains open. No local app tests/build/lint or production mutations are authorized/performed.
 
-Last deployed commit remains `b9434822697d31a26aab71f5e32be6661815b89a`, product 5.2.14, PHDK 2.54.1.
+Current candidate branch: `fix/phdk-spa-interface-route-5-2-16`, based on verified `origin/main` `a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6`.
+
+Production route evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json`.
 
 ## Previous deployed slice — 5.2.14
 

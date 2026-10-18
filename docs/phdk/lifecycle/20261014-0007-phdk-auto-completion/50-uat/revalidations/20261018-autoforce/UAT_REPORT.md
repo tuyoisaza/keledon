@@ -1,6 +1,22 @@
 # UAT — Auto Force re-entry (2026-10-18)
 
-**Result: ACCEPTANCE INCOMPLETE.** Browser access is `AVAILABLE_VERIFIED`; current deployed production is KELEDON 5.2.10, while the reviewed 5.2.11 candidate in PR #259 is not deployed.
+## Candidate 5.2.15 production finding: UAT-150
+
+- **Intent/story:** US-CMT004-IFCAT-01, platform superadmin direct access to the company-owned interface catalog; source `10-capture/revalidations/20261018-autoforce/PROJECT_INTENT.md`, commitment CMT-004 / ADM-CAT.
+- **Target:** production `https://keledon.tuyoisaza.com`; merged main `a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6`, KELEDON 5.2.15. Railway Web/API were `SUCCESS`; fresh Chrome rendered login v5.2.15 for the known protected teams route.
+- **Browser readiness:** phase permission `ACTIVE_UAT_EXCEPTION`; CUA fresh Chrome navigation and screenshot verified in the live UAT session; `AVAILABLE_VERIFIED`; no new spend.
+- **Actions/data:** anonymous GET/browser navigation to `/admin/interfaces` and known-safe `/management/teams`; no login, writes, customer data, credentials, clipboard read or cache clearing.
+- **Result:** **FAIL_REPRODUCED**. `/admin/interfaces` returns HTTP 404 with Cloudflare edge headers and KELEDON's static 404 page. `/management/teams` returns the SPA and redirects to `/login`. The app bundle and `AppRouter.tsx` include `/admin/interfaces` guarded by `superadmin`, but Nginx's `known_spa_route` map omits it. This is an origin routing defect; the response traversed Cloudflare, but no evidence implicates a Cloudflare rule.
+- **Repair/retest:** candidate 5.2.16 adds the exact route to Nginx's allowlist and a regression assertion. Retest the same direct URL after the exact Web deployment reports `SUCCESS`; expected result is SPA load followed by `/login` anonymously. Then authenticated role/persistence/audit cases remain pending a normal superadmin session.
+- **Evidence:** `../evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json` and live browser capture in the active UAT trace. No screenshot file exported.
+
+## CMT-002 production sample: UAT-151
+
+Story US-CMT002-DIAGNOSTICS-01 opened anonymous `/login` on KELEDON 5.2.15 in a fresh Chrome tab. The accessibility tree exposed “Copiar diagnóstico completo” and “Limpiar caché”; measured hit targets were 44×44 CSS px, and document/client widths both measured 1581px. **PASS_SCOPED** for these visible labels/targets and desktop no-overflow only. Neither control was activated; clipboard contents, cache clearing, mobile, screen-reader and authenticated surfaces remain unverified. Evidence: `../evidence/uat-151-production-login-widget-2026-10-18.json`.
+
+## Historical UAT-142 entry — 5.2.10 baseline (superseded)
+
+**Result at that historical entry: ACCEPTANCE INCOMPLETE.** Production then served KELEDON 5.2.10, while the reviewed 5.2.11 candidate in PR #259 was not deployed. Later sections below supersede that deployment state; the earlier findings remain historical evidence.
 
 | Case | Result | Evidence / scope |
 |---|---|---|

@@ -1,5 +1,11 @@
 # Sub-PIA ADM-IF — asignación de interfaces por tenant
 
+## Revalidación de navegación de catálogo — UAT-150 / candidato 5.2.16
+
+La aceptación anónima de producción 5.2.15 detectó que el deep link nuevo `/admin/interfaces` retornaba el 404 estático de Nginx, aunque `AppRouter.tsx` contiene el guard superadmin. La causa fue una entrada ausente en `known_spa_route`; el candidato 5.2.16 la incorpora y agrega una regresión fuente para mantener alineada la allowlist con el guard. UAT-150 y su captura/headers están en `50-uat/evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json`.
+
+Estado: DEFECTO REPRODUCIDO / REPARACIÓN FUENTE EN CANDIDATO / RETEST POST-DEPLOY PENDIENTE. No se afirma que la asignación por tenant o la CRUD autenticada estén aceptadas; ADM-IF-01..06 siguen requiriendo sesiones sintéticas autorizadas.
+
 ## Revalidación Auto Force — catálogo superadmin, 2026-10-18
 
 El candidato 5.2.15 separa el mantenimiento del catálogo (superadmin) de la asignación a equipos (admin/coordinator de su compañía). Un superadmin cuenta con alta/lista/edición/eliminación del catálogo por compañía en `/admin/interfaces`; el dueño debe ser existente y explícito al crear; editar conserva companyId y los registros históricos nulos no se adoptan automáticamente. La eliminación advierte que remueve asignaciones de equipo. Los consumidores de tenant siguen obteniendo únicamente su catálogo con la autorización de servidor existente.

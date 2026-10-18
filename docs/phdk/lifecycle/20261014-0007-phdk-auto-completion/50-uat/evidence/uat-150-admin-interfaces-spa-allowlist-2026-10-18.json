@@ -1,0 +1,39 @@
+{
+  "case": "UAT-150",
+  "story": "US-CMT004-IFCAT-01",
+  "commitment": "CMT-004 / ADM-CAT",
+  "captured_at": "2026-10-18T17:15:08Z",
+  "candidate": {
+    "product_version": "5.2.15",
+    "main_sha": "a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6",
+    "railway_web": {"id": "8420ce60-f812-48d0-be66-3d71b0a82d75", "status": "SUCCESS"},
+    "railway_api": {"id": "049ca186-c549-4fc4-8519-9b1a3823bec3", "status": "SUCCESS"}
+  },
+  "authorization": "ACTIVE_UAT_EXCEPTION",
+  "browser": {"capability": "AVAILABLE_VERIFIED", "channel": "fresh Chrome tab via CUA", "screenshot": "captured in active UAT tool trace; not exported"},
+  "steps": [
+    {
+      "url": "https://keledon.tuyoisaza.com/admin/interfaces",
+      "identity": "anonymous",
+      "expected": "SPA loads and superadmin route redirects to login",
+      "actual": "HTTP 404; localized KELEDON static not-found page",
+      "status": "FAIL_REPRODUCED",
+      "headers": {"server": "cloudflare", "cf-cache-status": "DYNAMIC", "cf-ray": "a4c92d7e0cf9087e-DFW"}
+    },
+    {
+      "url": "https://keledon.tuyoisaza.com/management/teams",
+      "identity": "anonymous",
+      "expected": "SPA loads and protected route redirects to login",
+      "actual": "URL resolves to /login; Web shows v5.2.15",
+      "status": "PASS_CONTROL"
+    }
+  ],
+  "source_diagnosis": {
+    "router": "services/web/src/AppRouter.tsx includes /admin/interfaces guarded with minRole superadmin",
+    "origin": "services/web/nginx.conf known_spa_route omitted /admin/interfaces",
+    "cloudflare": "Present as public edge; observed response is origin route miss forwarded through Cloudflare. No evidence of a Cloudflare rule defect."
+  },
+  "safety": {"login": false, "writes": false, "customer_data": false, "clipboard_read": false, "cache_clear": false, "new_spend": false},
+  "repair": {"candidate_version": "5.2.16", "change": "Add /admin/interfaces to Nginx SPA allowlist and assert route mapping plus superadmin guard.", "retest": "Repeat anonymous direct navigation after the exact Web deployment reports SUCCESS; expected URL /login."},
+  "limitations": ["Authenticated superadmin and tenant-role acceptance remains untested without an existing authorized session.", "This scoped anonymous case does not prove the catalog CRUD or tenant isolation."]
+}

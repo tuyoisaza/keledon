@@ -1,3 +1,20 @@
+## Browser Readiness — UAT-150 route regression on production 5.2.15 (2026-10-18)
+
+- Stage/run: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; permission `ACTIVE_UAT_EXCEPTION`; spend `NO_NEW_SPEND`.
+- Candidate: production `main` `a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6`, KELEDON 5.2.15; Railway Web/API `SUCCESS`.
+- Target/tool: `https://keledon.tuyoisaza.com/admin/interfaces`, fresh Chrome UAT tab via CUA; harmless navigation and screenshot verified; capability `AVAILABLE_VERIFIED`.
+- Actions: direct anonymous catalog-route navigation, then `/management/teams` as a known protected-route control. No login, form, mutation, customer data, secret, clipboard read, cache clear or provider access.
+- Actual: catalog path displays localized static 404; control path resolves to `/login` and shows Web `v5.2.15`. The catalog response has `Server: cloudflare`, `cf-cache-status: DYNAMIC`, `CF-RAY: a4c92d7e0cf9087e-DFW`, HTTP 404. Source maps the path through Nginx `known_spa_route` only; the new path is missing. Browser screenshot is present in the active UAT tool trace, not exported as a repository image.
+- Cases: UAT-150 `FAIL_REPRODUCED`; exact retest after 5.2.16 Web deploy. Authenticated route/role behavior remains untested pending an existing superadmin session.
+
+## Browser Readiness — UAT-151 login diagnostics controls on production 5.2.15 (2026-10-18)
+
+- Stage/run: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; permission `ACTIVE_UAT_EXCEPTION`; spend `NO_NEW_SPEND`.
+- Target/tool: anonymous `https://keledon.tuyoisaza.com/login`; fresh Chrome/CUA tab; navigation and read-only AX/DOM measurements succeeded; `AVAILABLE_VERIFIED`.
+- Actual: Web v5.2.15; copy/clear controls have accessible Spanish names and 44×44 CSS px hit targets at 1581px viewport; no horizontal overflow (document/client widths 1581/1581).
+- Access: no login, control activation, clipboard read, cache clear, customer data or mutation. Evidence `evidence/uat-151-production-login-widget-2026-10-18.json`.
+- Result: `PASS_SCOPED`; mobile, screen-reader, copy payload and cleanup execution remain unverified.
+
 ## Production browser readiness — UAT-142 post-deploy (2026-10-18)
 
 Status `AVAILABLE_VERIFIED`; anonymous production `/login` only. Railway Web `d777d27b-fcc2-4514-978b-d2af716bd6f8` and API `3786bdea-d9f6-439f-9b8d-b436be87550f` report SUCCESS for main commit `f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4`. A newly opened tab first displayed 5.2.10; one ordinary reload displayed 5.2.11. At 320×720, four targets and page width pass; DOM rectangles reveal the header overlaps the H1 by 29.3px. This is a bounded production UAT finding. No sign-in, field entry, submit, OAuth, diagnostics/cache action, clipboard or customer access. Viewport reset to default after capture. UAT-145 awaits the 5.2.12 spacing candidate.
