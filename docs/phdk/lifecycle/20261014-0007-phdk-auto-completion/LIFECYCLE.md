@@ -1,3 +1,22 @@
+## Post-merge continuation — KELEDON 5.2.12 / PHDK 2.54.0 (2026-10-18)
+
+PR #260 merged through the normal squash route as `327a4e65121bf6f085787f721fa0d291fae2ebb9`. Railway production Web `9a1e7179-dd61-4a95-afe7-23cc197474e5` and API `7bb5c647-ed17-4804-89c9-b31304416e3e` are SUCCESS for that SHA. KELEDON 5.2.12 is live. UAT-145 **PASS_SCOPED** confirms the 320×720 login heading clears the fixed header by 28px, all four primary targets remain 44px high, and no horizontal overflow occurs. Evidence: `50-uat/evidence/uat-145-production-login-mobile-2026-10-18.json`.
+
+PHDK v2.54.0 coherence remains static PASS 66/66. Post-deploy documentation/evidence is being delivered through a separate normal PR. Public SEO/AEO changes are not in this product patch; indexation, field performance, external answer citations and Landing deployment remain unmeasured. CMT-002 remains ACTIVE/PARTIAL beyond this specific visual case; authenticated synthetic UAT, customer-selected CRM/voice sandbox, private egress validation and CMT-004 tenant/role persistence remain blocked by their existing PIAs. No local application tests/build/lint or authenticated production mutation occurred. Overall Auto is **PARTIALLY DELIVERED**.
+
+| Stage | Current status | Evidence / next gate |
+|---|---|---|
+| Preflight / capture / plan / PMO | REVALIDATED | PHDK 2.54.0, 66/66 coherence, four ordered commitments and approved scope retained. |
+| Integration | MERGED / DEPLOYED | PR #260, main `327a4e6`, Web/API SUCCESS. |
+| UAT | PASS SCOPED | UAT-145 closes only the login mobile header overlap and verifies minimum target height/reflow. |
+| SEO / AEO-GEO | SOURCE REUSED / PARTIAL | Login spacing does not change public copy/metadata; external crawler and citation outcomes remain unmeasured. |
+| Check / remediation | PASS FOR THIS CUT / GAPS OPEN | Static coherence, evidence JSON, and diff hygiene; no local app suites. Other tenant/provider gates stay blocked or partial. |
+| Delivery / verify | IN PROGRESS | Merge and deployment read back; this post-deploy evidence PR and its remote verification are pending. |
+
+SIGUIENTE PASO: deliver the production UAT evidence and state reconciliation via normal PR, verify its merged content, and continue the next dependency-ready CMT-003/004 source slice without fabricating customer-specific runtime acceptance.
+
+---
+
 ## Current continuation — candidate v5.2.10 / CMT-003C1 fixture lifecycle (2026-10-17)
 
 Product source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; product PR #255 merged, docs PR #256 merged at main `357cc5074da94741b4717404f2b588a6daa8755d`. Railway Web `7724c95e-84e8-4923-8f76-6c0a0151ff49` and API `abb17a83-2de2-470b-86da-3bf3397ca5f9` SUCCESS, 1/1. PHDK 2.53.1 upstream `94f583635d295ae0f227726718904d952cadb8ab`; static coherence 64/64; exact managed AGENTS block verified.

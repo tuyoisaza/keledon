@@ -1,0 +1,62 @@
+{
+  "case_id": "UAT-145",
+  "observed_at_utc": "2026-10-18T04:30:00Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/login",
+  "product_version": "5.2.12",
+  "main_commit": "327a4e65121bf6f085787f721fa0d291fae2ebb9",
+  "railway_deployments": {
+    "web": "9a1e7179-dd61-4a95-afe7-23cc197474e5",
+    "api": "7bb5c647-ed17-4804-89c9-b31304416e3e"
+  },
+  "deployment_status": {
+    "web": "SUCCESS",
+    "api": "SUCCESS"
+  },
+  "actor": "anonymous public visitor",
+  "viewport_css_px": {
+    "width": 320,
+    "height": 720
+  },
+  "measured_after_fresh_tab": {
+    "displayed_version": "5.2.12",
+    "window_inner_width_px": 320,
+    "window_inner_height_px": 720,
+    "document_client_width_px": 305,
+    "document_scroll_width_px": 305,
+    "body_scroll_width_px": 305,
+    "horizontal_overflow": false,
+    "header_bottom_y_px": 156,
+    "login_heading_top_y_px": 184,
+    "login_heading_bottom_y_px": 216,
+    "header_heading_gap_px": 28,
+    "header_heading_intersection": false,
+    "targets": {
+      "brand_link": {
+        "width_px": 152.1,
+        "height_px": 44
+      },
+      "email": {
+        "width_px": 223.3,
+        "height_px": 44
+      },
+      "password": {
+        "width_px": 223.3,
+        "height_px": 44
+      },
+      "signup_toggle": {
+        "width_px": 85.4,
+        "height_px": 44
+      }
+    },
+    "additional_interactive_control_heights_px": {
+      "diagnostic_actions": [44, 44],
+      "theme_and_language_selectors": [44, 44],
+      "login_button": 44,
+      "google_button": 45.3
+    }
+  },
+  "result": "PASS_SCOPED: heading clears fixed header by 28px, all measured interactive controls are at least 44px tall, and no horizontal overflow is present.",
+  "screenshot": "captured and visually inspected in-session at 320x720; not exported",
+  "safety": "Anonymous read-only inspection. No form entry/submission, login, signup, OAuth, diagnostics/cache action, clipboard access, customer data, API mutation or private destination. Temporary viewport reset and agent-created tabs closed."
+}

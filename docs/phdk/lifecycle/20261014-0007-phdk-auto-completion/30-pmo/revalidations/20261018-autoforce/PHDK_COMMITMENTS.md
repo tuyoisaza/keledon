@@ -1,3 +1,16 @@
+# PHDK commitments — Post-merge reconciliation, 2026-10-18
+
+Remote `main` is KELEDON 5.2.12 at `327a4e65121bf6f085787f721fa0d291fae2ebb9`, with PR #260 merged normally and Railway Web/API SUCCESS. UAT-145 closes only the 320×720 login heading/header overlap and re-confirms four 44px targets with no horizontal overflow. PHDK is 2.54.0, static coherence 66/66.
+
+- **CMT-001 — delivered for 5.2.12:** version/manifest alignment, PR #258/#259/#260 merge and remote main/deployment readback are recorded. This does not assert future releases are automatically governed.
+- **CMT-002 — active/partial:** UAT-145 closes the specific login mobile overlap. Full diagnostics RBAC, copy/cache coverage, accessibility breadth, native audio/device and Landing runtime acceptance remain incomplete or unavailable.
+- **CMT-003 — active/partial:** per-client provider/CRM selection and tenant-specific private-destination allowlisting remain governing decisions. Queue lease/idempotency and socket-level DNS/IP egress enforcement need further source review/implementation. Authenticated integration and positive private sandbox acceptance remain blocked by the existing approved-fixture and customer sandbox prerequisites.
+- **CMT-004 — active/partial:** least-privilege policy and tenant-scoped selector are retained. Persisted role/CRUD/cross-tenant production acceptance remains blocked until a normal synthetic identity and reversible audited fixture path exist.
+
+All four confirmed commitments remain in order, with none deferred or cancelled. Whole Auto remains **PARTIALLY DELIVERED**. No app tests/build/lint ran locally, and the production UAT did not authenticate or mutate application data.
+
+---
+
 # PHDK commitments — Auto Force continuation 2026-10-18T04:03:30+00:00
 
 Four confirmed commitments remain active and ordered; no commitment is deferred or cancelled. CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 per-client voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Apply the dependency sequence and restrictions in `IMPLEMENTATION_PLAN.md`.

@@ -10,4 +10,8 @@ The source candidate changes the login main content's top padding from Tailwind 
 
 ## Version and limits
 
-KELEDON candidate is 5.2.12 across Browser, Cloud, Landing, API and Web package/lock roots, plus the Browser renderer display. No application test, build or lint was run locally. Production UAT-145 is the required acceptance: at 320×720, confirm header controls and H1 do not intersect, all four targets remain ≥44×44, document width remains 320 px, and form actions are not activated. Candidate remains unaccepted until that production readback.
+KELEDON is 5.2.12 across Browser, Cloud, Landing, API and Web package/lock roots, plus the Browser renderer display. No application test, build or lint was run locally.
+
+## Post-merge acceptance — UAT-145
+
+PR #260 merged by the normal squash path as main `327a4e65121bf6f085787f721fa0d291fae2ebb9`. Railway Web `9a1e7179-dd61-4a95-afe7-23cc197474e5` and API `7bb5c647-ed17-4804-89c9-b31304416e3e` both report SUCCESS. Anonymous production UAT-145 displayed KELEDON 5.2.12 at 320×720; header bottom y=156, H1 top y=184 (28px gap), all four target heights 44px, and no horizontal overflow. UAT-145 passes this specific mobile layout defect. It does not close the wider CMT-002 acceptance or authenticated/client integration commitments. Evidence: `50-uat/evidence/uat-145-production-login-mobile-2026-10-18.json`.

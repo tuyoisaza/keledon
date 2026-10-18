@@ -1,3 +1,11 @@
+## UAT-145 — login móvil, producción v5.2.12 (2026-10-18)
+
+**PASS_SCOPED.** Railway Web/API informaron SUCCESS para main `327a4e65121bf6f085787f721fa0d291fae2ebb9`; la sesión anónima fresca mostró v5.2.12. A 320×720 CSS px, el header termina en y=156 y el H1 inicia en y=184 (28px de separación, sin solapamiento). Marca, email, contraseña y registro miden 44px de alto; document client/scroll width 305px con scrollbar vertical dentro del viewport de 320px, sin overflow horizontal. Árbol AX y captura fueron inspeccionados. Evidencia: `evidence/uat-145-production-login-mobile-2026-10-18.json`. No se ingresaron datos ni se activó login/registro/OAuth/diagnóstico/caché. Viewport restablecido.
+
+Este caso cierra solo el solapamiento móvil de UAT-142 y el tamaño de los cuatro controles; no implica aceptación integral de CMT-002 ni de todo Auto.
+
+---
+
 ## UAT-142 — producción v5.2.11, targets y encabezado (2026-10-18)
 
 UAT-142 confirma que los cuatro targets de login llegan a 44px y que la página conserva ancho de 320px sin overflow horizontal. También encontró solapamiento: el header fijo termina en y=156 y el H1 empieza en y=126.7, de modo que se cubren 29.3px del título. El resultado es **PARTIAL**, no aceptación completa del login. Un tab mostró inicialmente 5.2.10; una recarga normal mostró 5.2.11 y solo entonces se midió. Captura examinada en la sesión; geometría: `evidence/uat-142-production-login-mobile-2026-10-18.json`. Se prepara el ajuste de espaciado en 5.2.12; UAT-145 queda pendiente de despliegue y retest productivo. No se introdujeron datos ni se activó autenticación.

@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptación funcional en producción.",
-  "candidate_ref": "branch fix/phdk-login-mobile-spacing-5-2-12 based on merged main f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4; KELEDON 5.2.12",
+  "candidate_ref": "remote main 327a4e65121bf6f085787f721fa0d291fae2ebb9; KELEDON 5.2.12; docs follow-up branch docs/phdk-uat-145-login-5-2-12",
   "authorization": {
     "source_ref": "user message 2026-10-18: \"phdk auto force\"; prior current-conversation confirmations summarized in PROJECT_INTENT.md and PHDK_COMMITMENTS.md",
     "instruction": "PHDK auto force",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "60-uat-fix",
+  "current_stage": "90-delivery",
   "steps": [
     {
       "id": "preflight",
@@ -75,18 +75,18 @@
         "plan"
       ],
       "blocked_by": [],
-      "evidence": "Reconciled PR #258 head/base, PR #259 head/base and current main SHA without querying review queues/protections; updated the ordered four-workstream plan and PIA dependencies."
+      "evidence": "Reconciled merged PRs #258, #259 and #260, current remote main and the ordered four-workstream plan/PIA dependencies without querying review queues or protections."
     },
     {
       "id": "integration_review",
       "kind": "review_diff",
       "status": "done",
-      "action": "Perform assistant technical review of PHDK 2.54.0 sync/native rule policy and the existing 5.2.11 login candidate",
+      "action": "Perform assistant technical review of PHDK 2.54.0 sync/native rule policy and the 5.2.12 login spacing change",
       "depends_on": [
         "pmo"
       ],
       "blocked_by": [],
-      "evidence": "Static source review saved at 40-integration/revalidations/20261018-autoforce/INTEGRATION_REVIEW.md; PR heads and remote main rechecked; PHDK coherence PASS 66/66. Runtime acceptance remains open."
+      "evidence": "Static source review saved at 40-integration/revalidations/20261018-autoforce/INTEGRATION_REVIEW.md and 40-integration/INTEGRATION_REPORT-5.2.12.md; normal PR #260 merge and remote main checked; PHDK coherence PASS 66/66; UAT-145 accepts the narrow public layout behavior. Broader runtime acceptance remains open."
     },
     {
       "id": "uat_prep",
@@ -108,73 +108,73 @@
         "uat_prep"
       ],
       "blocked_by": [],
-      "evidence": "Production Web/API deploys SUCCESS for main f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4 / 5.2.11. UAT-142 confirms 44px target sizes and no horizontal overflow, but finds 29.3px fixed-header/H1 overlap. Evidence: 50-uat/evidence/uat-142-production-login-mobile-2026-10-18.json."
+      "evidence": "Production Web/API deploys for main 327a4e65121bf6f085787f721fa0d291fae2ebb9 / 5.2.12 both report SUCCESS. UAT-142 preserved the 5.2.11 overlap finding; UAT-145 passes the specific 320x720 header separation, 44px target and no-horizontal-overflow retest. Evidence: 50-uat/evidence/uat-145-production-login-mobile-2026-10-18.json."
     },
     {
       "id": "uat_fix",
       "kind": "work",
-      "status": "running",
+      "status": "done",
       "action": "Repair production UAT findings and retest affected production journeys",
       "depends_on": [
         "uat_production"
       ],
       "blocked_by": [],
-      "evidence": "UAT-142 partial finding being repaired on 5.2.12 candidate by reserving top spacing (pt-40); UAT-145 is production-only and pending deployment."
+      "evidence": "UAT-142 repaired by the normal PR #260 merge to main 327a4e65121bf6f085787f721fa0d291fae2ebb9. Web/API SUCCESS; production UAT-145 PASS_SCOPED: header y=156, H1 y=184, 28px gap; four target heights >=44px; no horizontal overflow. Broader CMT-002 acceptance remains partial. Evidence: 50-uat/evidence/uat-145-production-login-mobile-2026-10-18.json."
     },
     {
       "id": "seo",
       "kind": "work",
-      "status": "pending",
+      "status": "done",
       "action": "Reconcile public discovery acceptance and deployment evidence",
       "depends_on": [
         "uat_fix"
       ],
       "blocked_by": [],
-      "evidence": "SEO source + sampled 5.2.10 production route reconciliation completed; candidate public surface unchanged. Candidate deployment and external/indexation/field metrics remain partial/unmeasured. Evidence: 65-seo/revalidations/20261018-autoforce/."
+      "evidence": "Reviewed current source/version delta and production 5.2.12 page: the change is confined to login top spacing and preserves existing public route/metadata contract. Prior route evidence is reused; external crawling/indexation/field metrics remain unmeasured, so SEO acceptance stays partial. Evidence: 65-seo/revalidations/20261018-autoforce/ and UAT-145."
     },
     {
       "id": "aeo_geo",
       "kind": "work",
-      "status": "pending",
+      "status": "done",
       "action": "Reconcile public answer/citation claims and mark unavailable metrics unverified",
       "depends_on": [
         "seo"
       ],
       "blocked_by": [],
-      "evidence": "AEO/GEO source and prior 5.2.10 route evidence reconciled; no source change warranted. Candidate 5.2.11 production behavior pending; authorship/locale decisions and answer citations unmeasured. Evidence: 67-aeo-geo/revalidations/20261018-autoforce/."
+      "evidence": "AEO/GEO source delta remains unchanged by the login spacing patch; no claim/citation content changed. External answer citations, authorship/locale policy and market visibility remain unmeasured. Evidence: 67-aeo-geo/revalidations/20261018-autoforce/ and production UAT-145."
     },
     {
       "id": "check",
       "kind": "required_check",
-      "status": "pending",
+      "status": "done",
       "action": "Run applicable source/static/documentation checks; execute app acceptance only on production",
       "depends_on": [
         "aeo_geo"
       ],
       "blocked_by": [],
-      "evidence": "Re-run static coherence/version/diff review after 5.2.12 source change; no local app tests/build/lint."
+      "evidence": "Post-merge production commit 327a4e65121bf6f085787f721fa0d291fae2ebb9 read back; Railway Web/API SUCCESS; KELEDON 5.2.12 visible and all five package/lock roots synchronized; PHDK 2.54.0 coherence 66/66; UAT-145 evidence JSON parses; PHDK_CHECK_REPORT-5.2.12-POSTMERGE.md records static review. No local app tests/build/lint."
     },
     {
       "id": "remediation",
       "kind": "work",
-      "status": "pending",
+      "status": "done",
       "action": "Repair in-scope findings without violating production/security boundaries",
       "depends_on": [
         "check"
       ],
       "blocked_by": [],
-      "evidence": "Remediation triaged against existing PIAs. No additional app patch safe to activate: CMT-003A/B depend on CMT-003C; CMT-004 runtime depends on compliant identities; UAT-141 fix already exists in PR #259. Report: 80-remediation/revalidations/20261018-autoforce/REMEDIATION_REPORT.md. Whole Auto stays partial."
+      "evidence": "Remediation triaged against current PIAs. Login overlap closed narrowly by #260/UAT-145. No additional app patch safe to activate without customer sandbox, compliant normal identity and authorized tenant fixtures; CMT-003A/B and CMT-004 runtime remain partial/blocked. Report: 80-remediation/revalidations/20261018-autoforce/REMEDIATION_REPORT.md. Whole Auto stays partial."
     },
     {
       "id": "delivery",
       "kind": "delivery",
-      "status": "pending",
+      "status": "running",
       "action": "Deliver verified branch/PR changes to main and read back remote content/version/SHA",
       "depends_on": [
         "remediation"
       ],
       "blocked_by": [],
-      "evidence": "PHDK 2.54.0/report update merged via #258 at c58d32bb; touch-target fix #259 merged at f9570d99. New 5.2.12 spacing candidate awaits normal PR delivery."
+      "evidence": "PHDK 2.54.0/report update #258 at c58d32bb, touch targets #259 at f9570d99 and login spacing #260 at 327a4e65 are merged normally and deployed. This post-deploy UAT-145 evidence/documentation follow-up is on a new docs-only branch pending normal PR delivery."
     },
     {
       "id": "verify_delivery",
@@ -225,5 +225,5 @@
       ]
     }
   ],
-  "updated_at": "2026-10-18T04:10:52Z"
+  "updated_at": "2026-10-18T04:32:00Z"
 }
