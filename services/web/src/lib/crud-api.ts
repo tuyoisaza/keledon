@@ -201,6 +201,33 @@ export async function getManagedInterfaces(): Promise<ManagedInterface[]> {
     return fetchApi('/interfaces');
 }
 
+export interface ManagedInterfaceInput {
+    companyId: string;
+    name: string;
+    baseUrl: string;
+    category?: string;
+    providerKey?: string;
+    capabilities?: string;
+    icon?: string;
+    status?: string;
+    credentials?: string;
+}
+
+export async function createManagedInterface(data: ManagedInterfaceInput): Promise<ManagedInterface> {
+    return fetchApi('/interfaces', 'POST', data);
+}
+
+export async function updateManagedInterface(
+    id: string,
+    data: Omit<ManagedInterfaceInput, 'companyId'>,
+): Promise<ManagedInterface> {
+    return fetchApi(`/interfaces/${encodeURIComponent(id)}`, 'PUT', data);
+}
+
+export async function deleteManagedInterface(id: string): Promise<void> {
+    return fetchApi(`/interfaces/${encodeURIComponent(id)}`, 'DELETE');
+}
+
 export async function getTeamInterfaces(teamId: string): Promise<ManagedInterface[]> {
     return fetchApi(`/teams/${teamId}/interfaces`);
 }

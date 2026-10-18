@@ -19,6 +19,7 @@ import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
 import AdminUsersPage from '@/pages/AdminUsersPage';
 import AdminSettingsPage from '@/pages/AdminSettingsPage';
+import AdminManagedInterfacesPage from '@/pages/AdminManagedInterfacesPage';
 import AdminAuditPage from '@/pages/AdminAuditPage';
 import AdminTeamSettingsPage from '@/pages/AdminTeamSettingsPage';
 import AdminThemeTemplatesPage from '@/pages/AdminThemeTemplatesPage';
@@ -191,6 +192,7 @@ export function AppRouter() {
                     }
                 />
                 <Route path="/admin/settings/templates" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminThemeTemplatesPage /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/interfaces" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminManagedInterfacesPage /></AppLayout></ProtectedRoute>} />
                 <Route path="/admin/audit" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminAuditPage /></AppLayout></ProtectedRoute>} />
                 <Route path="/admin/team-settings" element={<ProtectedRoute minRole="admin" allowedRoles={['admin', 'coordinator', 'superadmin']}><AppLayout><AdminTeamSettingsPage /></AppLayout></ProtectedRoute>} />
                 <Route

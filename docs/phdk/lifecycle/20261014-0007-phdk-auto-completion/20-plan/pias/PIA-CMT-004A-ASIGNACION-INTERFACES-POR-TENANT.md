@@ -1,5 +1,11 @@
 # Sub-PIA ADM-IF — asignación de interfaces por tenant
 
+## Revalidación Auto Force — catálogo superadmin, 2026-10-18
+
+El candidato 5.2.15 separa el mantenimiento del catálogo (superadmin) de la asignación a equipos (admin/coordinator de su compañía). Un superadmin cuenta con alta/lista/edición/eliminación del catálogo por compañía en `/admin/interfaces`; el dueño debe ser existente y explícito al crear; editar conserva companyId y los registros históricos nulos no se adoptan automáticamente. La eliminación advierte que remueve asignaciones de equipo. Los consumidores de tenant siguen obteniendo únicamente su catálogo con la autorización de servidor existente.
+
+El formato de la URL se valida en API con la política HTTP(S) existente; guardar no prueba conectividad ni cierra la defensa DNS/socket/CIDR de CMT-003B. Las respuestas de lista/detalle/asignación a roles de tenant omiten la URL privada; el catálogo de plataforma superadmin la conserva para mantenimiento. El formulario de credenciales es opcional y write-only; se cifran con la clave configurada, solo se muestra presencia y auditoría redacta URL, allowlists y secretos. No se ejecutaron pruebas/build/lint locales ni escrituras productivas. Revisión de roles, persistencia y auditoría en el producto desplegado pendiente.
+
 Estado: SOURCE IMPLEMENTED / PRODUCTION ACCEPTANCE PARTIAL · CMT-004 · Decisión del owner: 2026-10-17.
 
 Baseline actual de producto: KELEDON 5.2.10, main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; Railway Web/API SUCCESS. Los cambios posteriores a la revisión de fuente no alteran el selector ni sus guards; la aceptación autenticada con tenant/roles persistidos continúa pendiente del fixture/cleanup CMT-003C.

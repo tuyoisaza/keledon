@@ -1,4 +1,10 @@
-# Current Auto Force — 5.2.14 TLS candidate / 5.2.13 deployed
+# Current Auto Force — 5.2.15 interface catalog candidate / 5.2.14 deployed
+
+PHDK 2.54.1 is installed and published. The current local source adds a superadmin-only, company-owned interface catalog, API-side HTTP(S)/field validation and redaction of destination data from audit payloads. Current source review is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/40-integration/INTEGRATION_REVIEW-5.2.15.md`. It has not yet been delivered or deployed. No local app tests/build/lint or production mutation was performed for this candidate. Whole Auto remains partial; authenticated admin/tenant acceptance and CMT-003A/B runtime requirements remain open.
+
+Last deployed commit remains `b9434822697d31a26aab71f5e32be6661815b89a`, product 5.2.14, PHDK 2.54.1.
+
+## Previous deployed slice — 5.2.14
 
 PHDK 2.54.1 published in #263. Fixture lifecycle, account/session TTL guards, superadmin settings panel and atomic per-device Browser queue are merged in #264 (`bb0b3f4688102b04cb3a8af9d3232b5f41ed5808`) with Web/API SUCCESS. UAT-147 passes public version, configured API liveness and anonymous denial only; authenticated lifecycle/concurrency acceptance is unverified. No production fixture or valid mutation was made. Existing superadmin access was requested without credentials so the next dependent cases can run; independent remediation continued.
 

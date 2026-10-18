@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
-import { Activity, Bot, Building2, Database, KeyRound, Palette, Settings, Users, Workflow } from 'lucide-react';
+import { Activity, Bot, Building2, Database, KeyRound, Network, Palette, Settings, Users, Workflow } from 'lucide-react';
 import { UatFixturesPanel } from '@/components/superadmin/UatFixturesPanel';
 
 export default function AdminSettingsPage() {
@@ -10,6 +10,7 @@ export default function AdminSettingsPage() {
   const platformAdmin = user?.role === 'superadmin';
   const entries = [
     ...(platformAdmin ? [{ icon: Building2, title: t('adminSettings.companies'), description: t('adminSettings.companiesDescription'), href: '/management/companies' }] : []),
+    ...(platformAdmin ? [{ icon: Network, title: t('adminSettings.interfaceCatalog'), description: t('adminSettings.interfaceCatalogDescription'), href: '/admin/interfaces' }] : []),
     { icon: Users, title: t('adminSettings.users'), description: t('adminSettings.usersDescription'), href: '/management/users' },
     { icon: Workflow, title: t('adminSettings.flows'), description: t('adminSettings.flowsDescription'), href: '/management/flow-definitions' },
     { icon: KeyRound, title: t('adminSettings.providers'), description: t('adminSettings.providersDescription'), href: '/management/providers' },
