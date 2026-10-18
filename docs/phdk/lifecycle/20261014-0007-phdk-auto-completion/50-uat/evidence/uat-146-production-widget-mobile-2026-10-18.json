@@ -1,0 +1,38 @@
+{
+  "case_id": "UAT-146",
+  "title": "Anonymous production widget mobile layout and fresh-tab version observation",
+  "observed_at": "2026-10-18",
+  "environment": {
+    "url": "https://keledon.tuyoisaza.com/",
+    "authentication": "anonymous",
+    "viewport_css_px": { "width": 320, "height": 720 },
+    "locale_theme": "pt/dark",
+    "observed_version_after_reload": "5.2.12"
+  },
+  "result": "PASS_SCOPED_AFTER_ORDINARY_RELOAD; VERSION_FRESHNESS_PARTIAL",
+  "measurements": {
+    "document_client_width_css_px": 305,
+    "document_scroll_width_css_px": 305,
+    "body_scroll_width_css_px": 305,
+    "horizontal_overflow": false,
+    "demo_disclosure_rect_css_px": { "x": 16, "y": 112, "width": 272.7, "height": 32, "bottom": 144 },
+    "main_heading_rect_css_px": { "x": 16, "y": 233.3, "width": 272.7, "height": 240, "bottom": 473.3 },
+    "sampled_top_controls_min_height_css_px": 44
+  },
+  "version_observation": {
+    "fresh_tab_first_accessibility_tree": "5.2.10",
+    "after_one_ordinary_reload": "5.2.12",
+    "cause": "unverified",
+    "cache_control_action": "not activated"
+  },
+  "actions_not_taken": [
+    "No login, signup, OAuth, clipboard, diagnostic, cache, or navigation action was activated.",
+    "No customer, identity, provider, CRM, voice, private destination, or application data was accessed or changed.",
+    "The shared browser profile cache was not cleared."
+  ],
+  "limitations": [
+    "Responsive measurements and visual inspection apply to the page after one ordinary reload, when it displayed 5.2.12.",
+    "The initial 5.2.10 observation and post-reload 5.2.12 observation establish a freshness discrepancy only; they do not prove a cache defect or its cause.",
+    "This does not cover authenticated behavior, full accessibility conformance, all routes/locales/themes, or deep diagnostics."
+  ]
+}
