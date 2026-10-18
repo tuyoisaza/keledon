@@ -4,7 +4,7 @@
 
 La aceptación anónima de producción 5.2.15 detectó que el deep link nuevo `/admin/interfaces` retornaba el 404 estático de Nginx, aunque `AppRouter.tsx` contiene el guard superadmin. La causa fue una entrada ausente en `known_spa_route`; el candidato 5.2.16 la incorpora y agrega una regresión fuente para mantener alineada la allowlist con el guard. UAT-150 y su captura/headers están en `50-uat/evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json`.
 
-Estado: DEFECTO REPRODUCIDO / REPARACIÓN FUENTE EN CANDIDATO / RETEST POST-DEPLOY PENDIENTE. No se afirma que la asignación por tenant o la CRUD autenticada estén aceptadas; ADM-IF-01..06 siguen requiriendo sesiones sintéticas autorizadas.
+Estado: DEFECTO REPRODUCIDO / REPARADO Y RETEST PASS_SCOPED EN PRODUCCIÓN 5.2.16. La navegación anónima llega al guard y termina en `/login`; no se afirma que la asignación por tenant o la CRUD autenticada estén aceptadas. ADM-IF-01..06 siguen requiriendo sesiones sintéticas autorizadas.
 
 ## Revalidación Auto Force — catálogo superadmin, 2026-10-18
 

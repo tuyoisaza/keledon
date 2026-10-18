@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "KELEDON 5.2.16 source candidate on fix/phdk-spa-interface-route-5-2-16, based on verified origin/main a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6; PHDK 2.56.0 canonical/current, coherence PASS 69/69.",
+  "candidate_ref": "KELEDON 5.2.16 merged to main at ac5d91867105773bf02f5ba41b23263b87256aa7; Web/API Railway SUCCESS; production health 200 version 5.2.16; PHDK 2.56.0 current, coherence PASS 69/69.",
   "authorization": {
     "source_ref": "Current owner instruction 2026-10-18: phdk auto force. Retoma la meta de KELEDON con PHDK 2.54.1, publica la actualizacion y continua con todo lo que puedas resolver dentro de lo ya autorizado.",
     "instruction": "PHDK auto force",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "5.2.16 source and static checks complete; ready for normal PR delivery; production retest follows merge/autodeploy.",
+  "current_stage": "PR #267 merged and verified on remote main; Web/API 5.2.16 deployed SUCCESS; anonymous UAT-150 PASS_SCOPED; API health 200 and protected catalog endpoint 401; authenticated tenant CRUD and other gated acceptance remain pending.",
   "steps": [
     {
       "id": "preflight",
@@ -395,27 +395,29 @@
         "integration_review_516"
       ],
       "blocked_by": [],
-      "evidence": "Static-only verification PASS: five package/lock root pairs at 5.2.16, Browser renderer aligned; /admin/interfaces allowlist and AppRouter superadmin guard mapping checked; AUTO_STATE/UAT-150/UAT-151 JSON parse; PHDK 2.56.0 coherence 69/69; git diff --check PASS. No application tests/build/lint run under current owner restriction."
+      "evidence": "Static-only verification PASS: five package/lock root pairs at 5.2.16, Browser renderer aligned; /admin/interfaces allowlist and AppRouter superadmin guard mapping checked; AUTO_STATE/UAT-150/UAT-151 JSON parse; PHDK 2.56.0 coherence 69/69; git diff --check PASS. No application tests/build/lint run under current owner restriction. Production UAT-151 revalidated anonymously on v5.2.16: named diagnostic controls, locale/theme selectors and login form visible; geometry not remeasured; no control activated. Evidence 50-uat/evidence/uat-151-production-login-widget-2026-10-18.json."
     },
     {
       "id": "delivery_516",
       "kind": "delivery",
-      "status": "pending",
-      "action": "Commit, push versioned branch, open normal PR, merge, then verify remote main",
+      "status": "done",
+      "action": "Merge normal PR and verify source is present on remote main",
       "depends_on": [
         "required_check_516"
       ],
-      "blocked_by": []
+      "blocked_by": [],
+      "evidence": "PR #267 merged to main at ac5d91867105773bf02f5ba41b23263b87256aa7; Railway Web deployment 5c158bc5-99c2-43d3-80d2-650f42dcba00 and API deployment 0c5765bc-83ca-4110-8330-89aa07f1bb1e report SUCCESS."
     },
     {
       "id": "verify_516",
       "kind": "verify_delivery",
-      "status": "pending",
-      "action": "Verify remote main SHA/version and Railway Web/API; retest UAT-150 on deployed 5.2.16",
+      "status": "done",
+      "action": "Verify live API health/auth boundary and retest deployed UAT-150",
       "depends_on": [
         "delivery_516"
       ],
-      "blocked_by": []
+      "blocked_by": [],
+      "evidence": "Production API /health returned HTTP 200 version 5.2.16; anonymous /api/crud/interfaces returned HTTP 401. UAT-150 retest in evidence file navigated directly to /admin/interfaces and landed at /login with visible v5.2.16; PASS_SCOPED. Authenticated CRUD/tenant isolation remains untested."
     }
   ],
   "blockers": [

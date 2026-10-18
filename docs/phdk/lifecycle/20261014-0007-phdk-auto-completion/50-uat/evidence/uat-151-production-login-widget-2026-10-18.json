@@ -3,15 +3,65 @@
   "story": "US-CMT002-DIAGNOSTICS-01",
   "commitment": "CMT-002",
   "captured_at": "2026-10-18T17:16:14Z",
-  "candidate": {"product_version": "5.2.15", "main_sha": "a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6"},
+  "candidate": {
+    "product_version": "5.2.15",
+    "main_sha": "a1bef76ccdd3b76a8b9c4201ee41b88ac14b16f6"
+  },
   "authorization": "ACTIVE_UAT_EXCEPTION",
-  "browser": {"capability": "AVAILABLE_VERIFIED", "channel": "fresh Chrome tab via CUA"},
+  "browser": {
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "fresh Chrome tab via CUA"
+  },
   "target": "https://keledon.tuyoisaza.com/login",
   "identity": "anonymous",
-  "actions": ["Open the production login page", "Read the accessibility tree", "Measure visible diagnostics target bounds and document width"],
+  "actions": [
+    "Open the production login page",
+    "Read the accessibility tree",
+    "Measure visible diagnostics target bounds and document width"
+  ],
   "expected": "Version and named diagnostics controls render; sampled targets are at least 44x44 CSS px; no horizontal overflow at the active viewport.",
-  "actual": {"version": "v5.2.15", "copy_name": "Copiar diagnóstico completo", "clear_name": "Limpiar caché", "copy_target_css_px": [44, 44], "clear_target_css_px": [44, 44], "document_width_css_px": 1581, "client_width_css_px": 1581},
+  "actual": {
+    "version": "v5.2.15",
+    "copy_name": "Copiar diagnóstico completo",
+    "clear_name": "Limpiar caché",
+    "copy_target_css_px": [
+      44,
+      44
+    ],
+    "clear_target_css_px": [
+      44,
+      44
+    ],
+    "document_width_css_px": 1581,
+    "client_width_css_px": 1581
+  },
   "result": "PASS_SCOPED",
-  "not_exercised": ["Clipboard action/content", "Clear-cache action", "mobile viewport", "screen reader", "authenticated routes", "copy payload redaction at runtime"],
-  "safety": {"login": false, "writes": false, "clipboard_read": false, "cache_clear": false, "customer_data": false, "new_spend": false}
+  "not_exercised": [
+    "Clipboard action/content",
+    "Clear-cache action",
+    "mobile viewport",
+    "screen reader",
+    "authenticated routes",
+    "copy payload redaction at runtime"
+  ],
+  "safety": {
+    "login": false,
+    "writes": false,
+    "clipboard_read": false,
+    "cache_clear": false,
+    "customer_data": false,
+    "new_spend": false
+  },
+  "revalidation_5_2_16": {
+    "captured_at": "2026-10-18T17:22:43Z",
+    "target": "https://keledon.tuyoisaza.com/login",
+    "visible_version": "v5.2.16",
+    "observation": "Fresh anonymous production page rendered both named diagnostic controls, locale and theme selectors, and the login form. Screenshot and accessibility tree were observed in the active CUA trace.",
+    "control_names": [
+      "Copiar diagnóstico completo",
+      "Limpar cache do aplicativo"
+    ],
+    "actions_invoked": false,
+    "geometry": "Not remeasured in this revalidation; 44x44 CSS px measurement remains the earlier 5.2.15 UAT observation only."
+  }
 }
