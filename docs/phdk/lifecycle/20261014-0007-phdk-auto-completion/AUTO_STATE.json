@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptación funcional en producción.",
-  "candidate_ref": "remote main 327a4e65121bf6f085787f721fa0d291fae2ebb9; KELEDON 5.2.12; docs follow-up branch docs/phdk-uat-145-login-5-2-12",
+  "candidate_ref": "remote main 737f1b010ea69efbf10a3a7db2593a87046ea0d6; KELEDON 5.2.12; PHDK 2.54.0; PR #261 post-UAT-145 documentation merged and verified; UAT-146 widget evidence follow-up pending delivery",
   "authorization": {
     "source_ref": "user message 2026-10-18: \"phdk auto force\"; prior current-conversation confirmations summarized in PROJECT_INTENT.md and PHDK_COMMITMENTS.md",
     "instruction": "PHDK auto force",
@@ -174,7 +174,7 @@
         "remediation"
       ],
       "blocked_by": [],
-      "evidence": "PHDK 2.54.0/report update #258 at c58d32bb, touch targets #259 at f9570d99 and login spacing #260 at 327a4e65 are merged normally and deployed. This post-deploy UAT-145 evidence/documentation follow-up is on a new docs-only branch pending normal PR delivery."
+      "evidence": "PHDK 2.54.0/report update #258 at c58d32bb, touch targets #259 at f9570d99 and login spacing #260 at 327a4e65 are merged normally and deployed. PR #261 merged normally as 737f1b010ea69efbf10a3a7db2593a87046ea0d6; Railway Web/API deployments report SUCCESS; remote main readback confirms UAT-145 evidence and PHDK VERSION 2.54.0. UAT-146 production widget evidence and PIA/report reconciliation are on a docs-only follow-up branch pending normal PR delivery."
     },
     {
       "id": "verify_delivery",
@@ -225,5 +225,5 @@
       ]
     }
   ],
-  "updated_at": "2026-10-18T04:32:00Z"
+  "updated_at": "2026-10-18T05:00:00Z"
 }
