@@ -1,5 +1,9 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Reentrada de producción — UAT-142 parcial / candidato 5.2.12 (2026-10-18)
+
+PR #259 se fusionó en main `f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4`; Railway Web/API reportaron SUCCESS. UAT-142 observó 5.2.11 tras una recarga ordinaria: brand/email/password/signup miden 44px y el documento queda en 320px de ancho. La misma medición encontró que el header fijo termina en y=156 y el H1 va de y=126.7 a 158.7: solapamiento de 29.3px. UAT-142 queda PARTIAL. El follow-up 5.2.12 sube el `pt` del main de login de `pt-24` a `pt-40` para reservar espacio vertical; no toca autenticación ni permisos. UAT-145 debe confirmar por DOM/AX/captura en producción que el H1 queda debajo del header, se mantienen los cuatro targets y no aparece overflow. No se ejecutan pruebas/build/lint locales. Evidencia: `50-uat/evidence/uat-142-production-login-mobile-2026-10-18.json`.
+
 ## Hallazgo y remediación — UAT-141 / candidato 5.2.11 (2026-10-17)
 
 La inspección anónima de producción `/login` a 320×720 en v5.2.10 confirmó reflow sin overflow, pero midió cuatro objetivos por debajo del mínimo PHDK de 44×44: enlace de marca 152×40, email 239×41, contraseña 239×41 y botón “Criar conta” 69×20. El hallazgo está registrado como FAIL_PHDK_TARGET_SIZE en `50-uat/evidence/uat-141-production-login-mobile-320-2026-10-17.json`. El candidato 5.2.11 asigna un mínimo de 44px al enlace y al selector de registro, y altura de 44px a ambos campos. No se ejecutaron pruebas, build ni lint locales. UAT-142 debe medir los cuatro objetivos en la versión desplegada, confirmar ausencia de overflow y restaurar el viewport; el PIA continúa ACTIVE/PARTIAL hasta esa retest. Otras dimensiones, zoom, lector de pantalla y autenticación permanecen abiertos.

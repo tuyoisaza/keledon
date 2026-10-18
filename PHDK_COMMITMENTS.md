@@ -1,3 +1,8 @@
+## CMT-002 production re-entry — 2026-10-18
+
+UAT-142 after PR #259 confirms the four login targets are 44px and no horizontal overflow remains at 320×720. It also finds the fixed header overlays the H1 by 29.3px. A scoped spacing fix is prepared as candidate 5.2.12; UAT-145 must accept it on production. Full accessibility/widget/audio scope remains partial. The other three commitments and their fixture/tenant/provider gates remain active as recorded below.
+
+---
 # PHDK commitments — Auto Force continuation 2026-10-18T04:03:30+00:00
 
 Four confirmed commitments remain active and ordered; no commitment is deferred or cancelled. CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 per-client voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Apply the dependency sequence and restrictions in `IMPLEMENTATION_PLAN.md`.

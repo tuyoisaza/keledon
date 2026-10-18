@@ -1,3 +1,11 @@
+## v5.2.12 — 2026-10-18
+
+### Fixed
+- Reserve vertical space for the fixed login header so its theme/language controls do not cover the welcome heading on a 320px viewport.
+
+### Verification
+- Validate header-to-heading separation and reflow on the deployed production site; do not run application tests, builds, or lint locally.
+
 ## v5.2.11 — 2026-10-17
 
 ### Fixed

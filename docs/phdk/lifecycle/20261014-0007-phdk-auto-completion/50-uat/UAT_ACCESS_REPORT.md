@@ -1,3 +1,8 @@
+## Production browser readiness — UAT-142 post-deploy (2026-10-18)
+
+Status `AVAILABLE_VERIFIED`; anonymous production `/login` only. Railway Web `d777d27b-fcc2-4514-978b-d2af716bd6f8` and API `3786bdea-d9f6-439f-9b8d-b436be87550f` report SUCCESS for main commit `f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4`. A newly opened tab first displayed 5.2.10; one ordinary reload displayed 5.2.11. At 320×720, four targets and page width pass; DOM rectangles reveal the header overlaps the H1 by 29.3px. This is a bounded production UAT finding. No sign-in, field entry, submit, OAuth, diagnostics/cache action, clipboard or customer access. Viewport reset to default after capture. UAT-145 awaits the 5.2.12 spacing candidate.
+---
+
 ## Browser Readiness — UAT-141 production mobile login (2026-10-17)
 
 - Stage/run: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; permission `ACTIVE_UAT_EXCEPTION`; runtime capability `AVAILABLE_VERIFIED` via the connected Codex in-app browser/CUA.
