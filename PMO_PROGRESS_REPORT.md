@@ -1,3 +1,18 @@
+# PMO Progress — Auto Force reentry / PHDK 2.54.0 (2026-10-18T04:03:30+00:00)
+
+The four owner-confirmed workstreams and order remain current. Upstream KELEDON `main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`, product 5.2.10. The current branch is `fix/phdk-cmt-003a-lease-fencing` at `a8c6ddf`; the PHDK 2.54.0 sync and continuity records are local, not yet committed. PR #258 (documentation/PIAs) and #259 (5.2.11 login targets) remain open; Force treats PHDK-only review notes as nonblocking and requires assistant source review plus normal permitted delivery.
+
+| Commitment | Current state | Next action |
+|---|---|---|
+| CMT-001 | PHDK 2.54.0 static 66/66; source PRs #258/#259 open. PIA-001A provider governance unresolved and no settings write authorized. | Integrate current standards/lifecycle records and deliver. |
+| CMT-002 | UAT-141 production fail for four 320px login targets; 5.2.11 fix candidate on #259. | Deliver then UAT-142 on production. |
+| CMT-003 | 003A/B implementation and socket-level proof remain open; 003C1 fixture lifecycle is planned but not implemented. | Implement audited fixture lifecycle first, then lease/fencing and enforced egress; keep customer/private runtime gated. |
+| CMT-004 | Tenant selector and restrictive policy retained; authenticated/persisted role acceptance incomplete. | Continue only approved synthetic roles/tenant boundaries. |
+
+No product tests/build/lint will run locally by current owner instruction. No customer data, live call/CRM, private endpoints or provider settings will be touched. Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: close PMO reconciliation and start technical integration review of the existing candidate/source changes.
+
 # PMO Progress — current PIA continuation / PHDK 2.53.1 (2026-10-17)
 
 The Plan now has one execution package per confirmed commitment under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. Source PR #210 and documentation PR #211 are already merged; the current PIA-only branch is based on remote main `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`. PHDK coherence remains 64/64. UAT-105 adds read-only public browser evidence for the 5.2.1 homepage accessibility tree: copy-diagnostic and cache-clear actions, theme/language selectors and explicit demo wording are present in pt. No action, login, private diagnostic or cache mutation occurred. CMT-002 is the current PMO workstream; all four remain active/partial.

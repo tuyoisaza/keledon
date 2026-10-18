@@ -1,6 +1,21 @@
 # PHDK Auto — informe de progreso, 2026-10-17
 
-## Reentrada vigente — candidate 5.2.7 / CMT-002 privacy regression
+## Reentrada vigente — KELEDON 5.2.10 / PHDK 2.53.1
+
+El main remoto está en edd18be5dd8fd2c49c866f9006ee0f408642e9b4; producto 5.2.10 (fd429298a85bdcf3b5c20791f9b1598c132aabcb), Railway Web/API SUCCESS. PHDK 2.53.1 canonical (94f583635d295ae0f227726718904d952cadb8ab), coherence 64/64. El informe de Check actual y PHDK_DELIVERY_EVIDENCE.json conservan explícitamente PARTIAL en los gates abiertos. Cero pruebas/builds/lint locales de aplicación.
+
+- **CMT-001:** completo para el corte; PR #255 de producto y PR #257 documental integrados. PR #258 de PIA/check documental y PR #259 de login 5.2.11 siguen abiertos, sin review ni checks.
+- **CMT-002:** UAT-140 acepta únicamente el 404 localizado público. UAT-141 en 5.2.10 encontró cuatro targets menores de 44 px; fix candidate en #259 requiere revisión, deploy y UAT-142 productiva. A11y amplia, diagnóstico protegido/audio y runtime Landing siguen pendientes.
+- **CMT-003:** CMT-003A conserva claim no atómico/permanente, sin fencing ni idempotencia de efecto; CMT-003B no fija la IP validada al socket ni todos los redirects. CMT-003C autoriza solo fixture sintético mínimo con TTL ≤24 h, pero C1 no tiene aún lifecycle first-party durable y cleanup; no se provisionó nada. Egress positivo espera enforcement y sandbox exacto autorizado.
+- **CMT-004:** selector Web por tenant está implementado; falta aceptación con actores/roles persistidos. Los fixtures aprobados de rol user no prueban Admin/Coordinator ni superadmin.
+
+La fuente PHDK vigente y el inventario line-limit están reconciliados con el estado actual. El plano externo conserva GAP/UNVERIFIED: sin workflows/rulesets/branch protection, Railway checkSuites=false; gasto facturado y restart history no están disponibles. No se cambiaron controles de proveedor.
+
+SIGUIENTE PASO: obtener review para #258/#259. Tras integrar #259, ejecutar UAT-142 en producción. Para CMT-003C, completar revisión de seguridad e implementar el provisioning/cleanup de C1 antes de crear cualquier fixture; después seguir 003A, 003B y 004 en ese orden.
+
+---
+
+## Histórico — candidate 5.2.7 / CMT-002 privacy regression
 
 Production `main` is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PR #247 delivered KELEDON 5.2.7 and Railway Web/API are SUCCESS. Landing source now withholds copied API/OAuth hostnames and is version-aligned with the other app roots. UAT-130 passes public Web copy status and source contract; the standalone Landing runtime is BLOCKED because Railway has no such service and its target is undocumented. PHDK 2.53.1 coherence 64/64. The official updater's `UPDATED` result was only CRLF/LF checkout drift; normalized semantic diff is empty.
 

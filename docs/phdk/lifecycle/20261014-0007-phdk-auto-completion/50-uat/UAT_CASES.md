@@ -1,3 +1,8 @@
+## Latest Auto Force production cases — 2026-10-18
+
+Current re-entry cases UAT-143/144 pass scoped on production v5.2.10; UAT-141 baseline failure is reproduced; UAT-142 candidate retest is blocked until PR #259 v5.2.11 deploys. See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_CASES.md` and sanitized evidence JSON. Historical case outcomes below remain intact.
+
+---
 ## Production v5.2.6 — UAT-129 public keyboard order and visible-focus sample
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

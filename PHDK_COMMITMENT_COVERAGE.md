@@ -1,3 +1,14 @@
+# Commitment coverage — Auto Force reentry 2026-10-18T04:03:30+00:00
+
+| ID | Status | Current evidence | Next in-scope gate |
+|---|---|---|---|
+| CMT-001 | ACTIVE / PARTIAL | PHDK 2.54.0 installed 66/66; PR #258 open at `a8c6ddf`; PR #259 open at `293532e`; remote `main` `edd18be5`. | Integrate standards/documentation and versioned login fix; production readback. |
+| CMT-002 | ACTIVE / PARTIAL | Production UAT-141 found four undersized mobile login targets; candidate fix is in #259. | Merge/deploy then perform UAT-142 in production; continue broader widget/diagnostic accessibility gates. |
+| CMT-003 | ACTIVE / PARTIAL | PIA 003A/B/C1 and current static source review identify unbounded claims and DNS-to-socket gap; no client sandbox chosen. | Audited fixture lifecycle → 003A → 003B; acceptance only with approved synthetic production fixtures/sandbox. |
+| CMT-004 | ACTIVE / PARTIAL | Least-privilege policy and tenant interface selector source are present; authenticated role/persistence evidence incomplete. | Continue allowed `user` fixture path and tenant scoping; do not test unapproved elevated personas. |
+
+Aggregate: 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. Current Auto is PARTIALLY DELIVERED until all applicable gates have evidence.
+
 ## Current coverage readback — candidate 5.2.8 (2026-10-17)
 
 Baseline: PHDK 2.53.1 / 64 static mappings; remote `main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, PR #253 merged. Product tests/builds remain production-only.

@@ -1,3 +1,8 @@
+## Latest Auto Force UAT re-entry — 2026-10-18
+
+**ACCEPTANCE INCOMPLETE.** Actual production served v5.2.10; PR #259 candidate v5.2.11 is not deployed. Public home and anonymous protected-route redirect passed their scoped observations. UAT-141 four undersized login targets were reproduced (152×40, 399×41, 399×41, 69×20); UAT-142 remains BLOCKED pending deployed 5.2.11. Authenticated/tenant/device/flow/CRM acceptance remains blocked by Prep prerequisites. Detailed evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_REPORT.md`.
+
+---
 ## UAT-140 — static unknown-route localization, KELEDON 5.2.10 production (2026-10-17)
 
 PR #255 merged as main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`. Railway Web `15f47990-5368-4462-aeba-0d508c388262` and API `1b391751-bfc4-4d88-8131-ae239a3c5a07` report SUCCESS, 1/1. The Web production build completed; its output includes an advisory for a JavaScript chunk larger than 500 kB.

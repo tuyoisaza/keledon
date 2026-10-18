@@ -1,3 +1,21 @@
+# Current UAT Role Matrix — Auto Force revalidation (2026-10-18)
+
+Candidate PR #259 / 5.2.11 is not verified deployed. Role evidence below is source-backed readiness, not live acceptance. New users default to `user`; tenant and actor authority are database-derived. No authenticated synthetic role is currently provisioned.
+
+| Persona | Allowed scope | Required negative case | Status |
+|---|---|---|---|
+| Anonymous visitor | Public pages only | Protected API/admin redirects or denies | UAT case may run on verified production target |
+| Existing superadmin operator | Fixture administration only through normal authenticated, audited path | No test superadmin, arbitrary ID cleanup, or actor/tenant from request body | BLOCKED — no fixture path/session evidenced |
+| Synthetic User A | Tenant A permitted features | No access to Tenant B or admin/settings/secrets | BLOCKED — no synthetic account |
+| Synthetic User B | Tenant B permitted features | No access to Tenant A or Flow A | BLOCKED — no synthetic account |
+| Browser device A/B | Paired device's own tenant command scope | Cross-tenant command/result and revoked-device denial | BLOCKED — no fixtures |
+| Admin/Coordinator | Their tenant only | Cannot elevate roles, cross tenant, or delete companies | Not in this fixture; CMT-004 requires separate approved role acceptance |
+
+No live authorization result is claimed from this matrix. Authenticated journeys resume only with a compliant identity and cleanup path.
+---
+
+# Historical evidence follows
+
 # UAT role matrix — run 20261014-0007-phdk-auto-completion
 
 ## Production UAT-Prep authorization — v5.2.7 / 2026-10-17
