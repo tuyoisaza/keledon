@@ -1,3 +1,11 @@
+# Current traceability delta — MVP, 2026-10-18
+CMT-003 → [owner intent](docs/intents/windows-meet-salesforce-mvp-intent.md) → [MVP-R01..R09 / PIAs 001..005](docs/mvp/meet-salesforce/README.md#requisitos-y-trazabilidad) → [MS-MVP-000..003](docs/mvp/meet-salesforce/MILESTONE_PLAN.md) → [A01..A12](docs/mvp/meet-salesforce/TEST_RUNBOOK.md).
+Preparation only; every functional case remains NOT RUN. [Source baseline](docs/mvp/meet-salesforce/SOURCE_BASELINE.md). CMT-001/002/004 are retained, not cancelled or accepted by this MVP plan.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # Requirements traceability
 | CMT-003 / INT-004 | INT-001/003 | per-client call/CRM, tenant-configured private origins | owner confirmation; API/Cloud/Browser source candidate | WS-003; generic contract/security tests; client UAT only for a configured tenant |
 | CMT-004 / SEC-004 | INT-003 | least-privilege registration/elevation, company-bounded manager access, DB-derived actor/tenant, write-only secrets | owner confirmation; guards/auth/CRUD and seed source/tests | WS-004; negative policy matrix and isolated DB evidence where available |

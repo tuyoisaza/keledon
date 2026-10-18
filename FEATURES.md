@@ -1,3 +1,11 @@
+# Current feature delta — Meet/Salesforce MVP, 2026-10-18
+CMT-003 includes MVP-R01..R09 in [five PIAs](docs/mvp/meet-salesforce/README.md). Windows first; Electron is a candidate, not an obligation. No AppleScript or fake telephony/CRM.
+This slice prepares intent, plan, experimental profile schema/example, Windows read-only inventory and UAT runbook. Operational audio/conversation/CRM integration is not delivered by these artifacts.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # Features / confirmed fronts
 ## Current continuation status — 2026-10-14
 The owner reconfirmed SEC-004/INT-004 behavior: least-privilege registration and role assignment, DB-derived tenant identity, write-only secret replacement, per-tenant CRM/call configuration, and validated tenant origin allowlists for private/local CRM targets. Source remediation and final delivery remain in progress; database/native/deployed acceptance remains independently tracked.

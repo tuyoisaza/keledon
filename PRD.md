@@ -1,3 +1,11 @@
+# Current requirements delta — MVP, 2026-10-18
+Owner-authorized MVP-R01..R09 are defined/traced in [the MVP plan](docs/mvp/meet-salesforce/README.md#requisitos-y-trazabilidad): Windows interchangeable execution, verified remote audio/TTS, acoustic candidate + UI confirmation, Brain tools, actual interruption, fictitious-case read-only lookup, cancellation/recovery, measured adaptation and tenant/privacy isolation.
+Real Meet/Salesforce only; no clone. Meet does not prove ACD detection. A01..A12 remain NOT RUN; source, docs and inventory are not functional acceptance.
+
+---
+
+## Historical baseline (retained; current scope above takes precedence)
+
 # PRD — KELEDON confirmed repair portfolio
 Revision 1; 2026-10-12; sources: owner confirmation, V4 canon and source baseline. Actors: guest/user/agent/coordinator/admin/superadmin. Preserve existing role policy.
 ## Requirements

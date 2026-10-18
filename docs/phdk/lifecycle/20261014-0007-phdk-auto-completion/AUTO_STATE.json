@@ -735,5 +735,12 @@
     }
   ],
   "updated_at": "2026-10-18T20:59:55Z",
-  "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json"
+  "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json",
+  "current_owner_scope_delta": {
+    "date": "2026-10-18",
+    "run": "20261018-meet-salesforce-mvp",
+    "record": "../20261018-meet-salesforce-mvp/AUTO_STATE.json",
+    "instruction": "Meet + Salesforce MVP; executor OPEN; private Meet supplied, second endpoint confirmed. Supersedes historical no-live-platform restriction only for fictitious read-only acceptance. Current PROJECT_INTENT.md governs.",
+    "portfolio": "CMT-001/002/004 retained; current priority CMT-003 MVP preparation."
+  }
 }

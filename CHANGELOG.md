@@ -1,3 +1,9 @@
+## Unreleased — 2026-10-18 (MVP preparation only)
+
+- Reopen the Windows execution architecture for an owner-directed real Meet + Salesforce MVP, retaining Cloud authority and tenant security.
+- Capture the updated intent, five dependency-ordered PIAs, evidence gates and real-platform test prerequisites; no fake telephony/CRM and no operational MVP acceptance claimed.
+- Add an experimental profile schema/example and read-only Windows host inventory tool. Product version remains 5.2.21; application runtime is unchanged.
+
 ## v5.2.21 — 2026-10-18
 
 - Show the exact KELEDON Browser release beside the authenticated Lounge download action and pin the default installer link to that same release tag.
