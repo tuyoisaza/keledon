@@ -1,0 +1,44 @@
+{
+  "case": "UAT-152",
+  "story": "US-CMT002-DIAGNOSTICS-01",
+  "commitment": "CMT-002",
+  "captured_at": "2026-10-18T18:53:27Z",
+  "candidate": {
+    "product_version": "5.2.16",
+    "main_sha": "b54d747a63da8c27fa1358c3db82d2787038f966"
+  },
+  "authorization": "ACTIVE_UAT_EXCEPTION",
+  "browser": {
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "fresh Chrome tab via CUA"
+  },
+  "target": "https://keledon.tuyoisaza.com/login",
+  "identity": "anonymous",
+  "actions": [
+    "Open production login page in a fresh tab",
+    "Read the accessibility tree and visible product version"
+  ],
+  "expected": "Current production version and named diagnostics controls render without authentication.",
+  "actual": {
+    "version": "v5.2.16",
+    "copy_name": "Copiar diagnóstico completo",
+    "clear_name": "Limpiar caché"
+  },
+  "result": "PASS_SCOPED",
+  "not_exercised": [
+    "Widget activation",
+    "Clipboard content/action",
+    "Cache or app-state clearing",
+    "Authenticated routes",
+    "Candidate source behavior",
+    "Geometry remeasurement"
+  ],
+  "safety": {
+    "login": false,
+    "writes": false,
+    "clipboard_read": false,
+    "cache_clear": false,
+    "customer_data": false,
+    "new_spend": false
+  }
+}
