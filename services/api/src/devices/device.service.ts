@@ -3,6 +3,7 @@ import { getVendorAllowedOrigins } from '../vendor-url-policy';
 import { PrismaService } from '../prisma/prisma.service';
 import { encryptVendorSecretForPairing } from '../security/vendor-secret-crypto';
 import * as crypto from 'crypto';
+import { isAccountActive } from '../auth-local/account-lifecycle.policy';
 
 @Injectable()
 export class DeviceService {
@@ -28,9 +29,10 @@ export class DeviceService {
           gte: new Date(),
         },
       },
+      include: { user: true },
     });
 
-    if (!device) {
+    if (!device || !isAccountActive(device.user)) {
       throw new Error('Invalid or expired pairing code');
     }
 
@@ -244,9 +246,10 @@ export class DeviceService {
           in: ['paired', 'disconnected'],
         },
       },
+      include: { user: true },
     });
 
-    if (!device) {
+    if (!device || !isAccountActive(device.user)) {
       return { valid: false };
     }
 

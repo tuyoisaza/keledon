@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+import { isAccountActive } from '../auth-local/account-lifecycle.policy';
 import { CommandResultDto } from './dto/browser-commands.dto';
 
 export interface BrowserCommandEnvelope {
@@ -39,55 +41,55 @@ export class BrowserCommandsService {
 
   async getNextCommand(deviceId: string, actor?: AuthenticatedActor) {
     this.assertNonEmptyString(deviceId, 'deviceId');
-    await this.requireAccessibleDevice(deviceId, actor);
-
-    const sessions = await this.prisma.session.findMany({
-      where: {
-        userId: actor.userId,
-        teamId: actor.teamId,
-        status: {
-          notIn: ['closed', 'failed'],
+    return this.withDeviceQueue(deviceId, actor, async tx => {
+      const sessions = await tx.session.findMany({
+        where: {
+          userId: actor.userId,
+          teamId: actor.teamId,
+          status: {
+            notIn: ['closed', 'failed'],
+          },
         },
-      },
-      include: {
-        events: {
-          orderBy: { createdAt: 'asc' },
+        include: {
+          events: {
+            orderBy: { createdAt: 'asc' },
+          },
         },
-      },
-      orderBy: { createdAt: 'asc' },
-      take: 200,
-    });
+        orderBy: { createdAt: 'asc' },
+        take: 200,
+      });
 
-    const nextPending = this.findNextPendingCommand(sessions, deviceId);
+      const nextPending = this.findNextPendingCommand(sessions, deviceId);
 
-    if (!nextPending) {
+      if (!nextPending) {
+        return {
+          deviceId,
+          command: null,
+        };
+      }
+
+      await tx.event.create({
+        data: {
+          id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+          sessionId: nextPending.sessionId,
+          type: 'browser.command.claimed',
+          payload: JSON.stringify({
+            commandId: nextPending.command.id,
+            metadata: {
+              deviceId,
+              claimedAt: new Date().toISOString(),
+              source: 'browser-commands.getNextCommand',
+            },
+          }),
+        },
+      });
+
       return {
         deviceId,
-        command: null,
-      };
-    }
-
-    await this.prisma.event.create({
-      data: {
-        id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
         sessionId: nextPending.sessionId,
-        type: 'browser.command.claimed',
-        payload: JSON.stringify({
-          commandId: nextPending.command.id,
-          metadata: {
-            deviceId,
-            claimedAt: new Date().toISOString(),
-            source: 'browser-commands.getNextCommand',
-          },
-        }),
-      },
+        command: nextPending.command,
+      };
     });
-
-    return {
-      deviceId,
-      sessionId: nextPending.sessionId,
-      command: nextPending.command,
-    };
   }
 
   async recordCommandResult(
@@ -108,128 +110,143 @@ export class BrowserCommandsService {
       throw new BadRequestException(`Unsupported status: ${dto.status}`);
     }
 
-    await this.requireAccessibleDevice(deviceId, actor);
-    const sessions = await this.prisma.session.findMany({
-      where: { userId: actor.userId, teamId: actor.teamId },
-      include: {
-        events: {
-          where: {
-            OR: [
-              { type: 'browser.command.claimed' },
-              { type: 'browser.command.issued' },
-              { type: 'browser.command.result' },
-            ],
+    return this.withDeviceQueue(deviceId, actor, async tx => {
+      const sessions = await tx.session.findMany({
+        where: { userId: actor.userId, teamId: actor.teamId },
+        include: {
+          events: {
+            where: {
+              OR: [
+                { type: 'browser.command.claimed' },
+                { type: 'browser.command.issued' },
+                { type: 'browser.command.result' },
+              ],
+            },
+            orderBy: { createdAt: 'asc' },
           },
-          orderBy: { createdAt: 'asc' },
         },
-      },
-      take: 200,
-    });
+        take: 200,
+      });
 
-    const matchedSession = sessions.find((session) =>
-      this.findIssuedCommand(session.events, dto.commandId, deviceId),
-    );
-
-    if (!matchedSession) {
-      throw new NotFoundException(
-        `Command ${dto.commandId} not found for device ${deviceId}`,
+      const matchedSession = sessions.find((session) =>
+        this.findIssuedCommand(session.events, dto.commandId, deviceId),
       );
-    }
 
-    const existingResult = this.findExistingResultEvent(
-      matchedSession.events,
-      dto.commandId,
-    );
-    if (existingResult) {
-      return {
-        sessionId: matchedSession.id,
-        duplicate: true,
-        event: existingResult,
-      };
-    }
-
-    const issuedCommand = matchedSession.events.find((event) => {
-      if (event.type !== 'browser.command.issued' || !event.payload) {
-        return false;
+      if (!matchedSession) {
+        throw new NotFoundException(
+          `Command ${dto.commandId} not found for device ${deviceId}`,
+        );
       }
-      const payload = this.parseJson(event.payload);
-      return (
-        payload.id === dto.commandId && payload.metadata?.deviceId === deviceId
+
+      const existingResult = this.findExistingResultEvent(
+        matchedSession.events,
+        dto.commandId,
       );
-    });
+      if (existingResult) {
+        return {
+          sessionId: matchedSession.id,
+          duplicate: true,
+          event: existingResult,
+        };
+      }
 
-    const resultEvent = await this.prisma.event.create({
-      data: {
-        id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
-        sessionId: matchedSession.id,
-        type: 'browser.command.result',
-        payload: JSON.stringify({
-          commandId: dto.commandId,
-          status: dto.status,
-          startedAt: dto.startedAt || null,
-          completedAt: dto.completedAt || new Date().toISOString(),
-          evidence: dto.evidence || [],
-          extracted: dto.extracted || {},
-          error: dto.error || null,
-          metadata: {
-            deviceId,
-            ...(dto.metadata || {}),
-          },
-        }),
-      },
-    });
+      const issuedCommand = matchedSession.events.find((event) => {
+        if (event.type !== 'browser.command.issued' || !event.payload) {
+          return false;
+        }
+        const payload = this.parseJson(event.payload);
+        return (
+          payload.id === dto.commandId && payload.metadata?.deviceId === deviceId
+        );
+      });
 
-    const commandPayload = issuedCommand?.payload
-      ? this.parseJson(issuedCommand.payload)
-      : {};
-    const flowRunId = this.findFlowRunId(matchedSession.events, dto.commandId);
-    if (flowRunId) {
-      await this.prisma.flowRun.update({
-        where: { id: flowRunId },
+      const resultEvent = await tx.event.create({
         data: {
-          status:
-            dto.status === 'completed'
-              ? 'completed'
-              : dto.status === 'failed'
-                ? 'failed'
-                : 'running',
-          completedAt: dto.status === 'partial' ? null : new Date(),
-          error: dto.error || null,
-          result: JSON.stringify({
+          id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+          sessionId: matchedSession.id,
+          type: 'browser.command.result',
+          payload: JSON.stringify({
             commandId: dto.commandId,
-            deviceId,
-            previousCommand: commandPayload,
-            extracted: dto.extracted || {},
+            status: dto.status,
+            startedAt: dto.startedAt || null,
+            completedAt: dto.completedAt || new Date().toISOString(),
             evidence: dto.evidence || [],
+            extracted: dto.extracted || {},
+            error: dto.error || null,
+            metadata: {
+              ...(dto.metadata || {}),
+              deviceId,
+            },
           }),
         },
       });
-    }
 
-    await this.prisma.event.create({
-      data: {
-        id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+      const commandPayload = issuedCommand?.payload
+        ? this.parseJson(issuedCommand.payload)
+        : {};
+      const flowRunId = this.findFlowRunId(matchedSession.events, dto.commandId);
+      if (flowRunId) {
+        await tx.flowRun.update({
+          where: { id: flowRunId },
+          data: {
+            status:
+              dto.status === 'completed'
+                ? 'completed'
+                : dto.status === 'failed'
+                  ? 'failed'
+                  : 'running',
+            completedAt: dto.status === 'partial' ? null : new Date(),
+            error: dto.error || null,
+            result: JSON.stringify({
+              commandId: dto.commandId,
+              deviceId,
+              previousCommand: commandPayload,
+              extracted: dto.extracted || {},
+              evidence: dto.evidence || [],
+            }),
+          },
+        });
+      }
+
+      await tx.event.create({
+        data: {
+          id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
+          sessionId: matchedSession.id,
+          type:
+            dto.status === 'failed' ? 'rpa.step.failed' : 'rpa.step.completed',
+          payload: JSON.stringify({
+            commandId: dto.commandId,
+            deviceId,
+            status: dto.status,
+            extracted: dto.extracted || {},
+            error: dto.error || null,
+          }),
+        },
+      });
+
+      return {
         sessionId: matchedSession.id,
-        type:
-          dto.status === 'failed' ? 'rpa.step.failed' : 'rpa.step.completed',
-        payload: JSON.stringify({
-          commandId: dto.commandId,
-          deviceId,
-          status: dto.status,
-          extracted: dto.extracted || {},
-          error: dto.error || null,
-        }),
-      },
+        duplicate: false,
+        event: {
+          ...resultEvent,
+          payload: this.parseJson(resultEvent.payload),
+        },
+      };
     });
+  }
 
-    return {
-      sessionId: matchedSession.id,
-      duplicate: false,
-      event: {
-        ...resultEvent,
-        payload: this.parseJson(resultEvent.payload),
-      },
-    };
+  private async withDeviceQueue<T>(
+    deviceId: string,
+    actor: AuthenticatedActor | undefined,
+    operation: (tx: Prisma.TransactionClient) => Promise<T>,
+  ): Promise<T> {
+    return this.prisma.$transaction(async tx => {
+      // Same transaction-scoped lock on every API replica for claims and results.
+      // Read committed reads the previous holder's commit after the lock wait.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(542542, hashtext(${deviceId}))`;
+      await this.requireAccessibleDevice(deviceId, actor, tx);
+      return operation(tx);
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted, maxWait: 5000, timeout: 15000 });
   }
 
   private findNextPendingCommand(
@@ -265,7 +282,9 @@ export class BrowserCommandsService {
         .filter(
           ({ command, sessionMatchesDevice }) =>
             Boolean(command.id) &&
-            (command.metadata?.deviceId === deviceId || sessionMatchesDevice) &&
+            (command.metadata?.deviceId
+              ? command.metadata.deviceId === deviceId
+              : sessionMatchesDevice) &&
             !this.isExpired(command) &&
             !this.commandHasResult(session.events, command.id) &&
             !this.commandHasBeenClaimed(session.events, command.id, deviceId),
@@ -435,18 +454,22 @@ export class BrowserCommandsService {
 
   private async resolveActorContext(
     actor?: AuthenticatedActor,
+    db: Prisma.TransactionClient | PrismaService = this.prisma,
   ): Promise<ActorContext> {
     if (!actor?.userId) {
       return { role: actor?.role };
     }
 
-    const user = await this.prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: actor.userId },
       select: {
         id: true,
         role: true,
         companyId: true,
         teamId: true,
+        uatFixtureRunId: true,
+        uatFixtureExpiresAt: true,
+        uatFixtureRetiredAt: true,
         team: {
           select: {
             id: true,
@@ -456,7 +479,7 @@ export class BrowserCommandsService {
       },
     });
 
-    if (!user) {
+    if (!user || !isAccountActive(user)) {
       throw new ForbiddenException(
         `Authenticated user ${actor.userId} was not found`,
       );
@@ -473,8 +496,9 @@ export class BrowserCommandsService {
   private async requireAccessibleDevice(
     deviceId: string,
     actor?: AuthenticatedActor,
+    db: Prisma.TransactionClient | PrismaService = this.prisma,
   ) {
-    const device = await this.prisma.device.findUnique({
+    const device = await db.device.findUnique({
       where: { id: deviceId },
       include: {
         user: {
@@ -482,6 +506,9 @@ export class BrowserCommandsService {
             id: true,
             teamId: true,
             companyId: true,
+            uatFixtureRunId: true,
+            uatFixtureExpiresAt: true,
+            uatFixtureRetiredAt: true,
           },
         },
       },
@@ -495,7 +522,8 @@ export class BrowserCommandsService {
       throw new ForbiddenException('Authenticated device actor required');
     }
 
-    const actorContext = await this.resolveActorContext(actor);
+    const actorContext = await this.resolveActorContext(actor, db);
+    if (!isAccountActive(device.user)) throw new ForbiddenException('Device account is inactive');
     const sameUser = Boolean(
       device.userId && device.userId === actorContext.userId,
     );

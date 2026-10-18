@@ -6,6 +6,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { isAccountActive, isAccountSessionCurrent } from './account-lifecycle.policy';
 
 @Injectable()
 export class LocalAuthService {
@@ -64,7 +65,7 @@ export class LocalAuthService {
   async login(email: string, password: string) {
     // Look up user by email in Prisma DB
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user || !user.passwordHash) {
+    if (!user || !isAccountActive(user) || !user.passwordHash) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -114,6 +115,8 @@ export class LocalAuthService {
         },
       });
     }
+
+    if (!isAccountActive(user)) throw new UnauthorizedException('Invalid credentials');
 
     // Update last login
     await this.prisma.user.update({
@@ -200,9 +203,12 @@ export class LocalAuthService {
         role: true,
         companyId: true,
         teamId: true,
+        uatFixtureRunId: true,
+        uatFixtureExpiresAt: true,
+        uatFixtureRetiredAt: true,
       },
     });
-    if (!user) throw new UnauthorizedException('Google account is unavailable');
+    if (!isAccountActive(user)) throw new UnauthorizedException('Google account is unavailable');
 
     return {
       token: this.generateToken(user.id, user.email, user.role),
@@ -227,6 +233,7 @@ export class LocalAuthService {
       userId,
       email,
       role,
+      issuedAt: Date.now(),
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
@@ -312,7 +319,7 @@ export class LocalAuthService {
       const user = await this.prisma.user.findUnique({
         where: { id: payload.userId },
       });
-      if (!user) return null;
+      if (!isAccountSessionCurrent(user, payload.issuedAt)) return null;
 
       return {
         id: user.id,

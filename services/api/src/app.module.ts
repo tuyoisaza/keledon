@@ -43,6 +43,8 @@ import { EscalationModule } from './modules/escalation.module';
 import { SuperAdminGuard } from './guards/roles.guard';
 import { PlatformThemeController } from './config/platform-theme.controller';
 import { PlatformThemeService } from './config/platform-theme.service';
+import { UatFixturesController } from './uat-fixtures/uat-fixtures.controller';
+import { UatFixturesService } from './uat-fixtures/uat-fixtures.service';
 
 @Module({
   imports: [
@@ -84,6 +86,7 @@ import { PlatformThemeService } from './config/platform-theme.service';
     PlannerController,
     SpeachesController,
     PlatformThemeController,
+    UatFixturesController,
   ],
   providers: [
     AppService,
@@ -99,6 +102,7 @@ import { PlatformThemeService } from './config/platform-theme.service';
     },
     SuperAdminGuard,
     PlatformThemeService,
+    UatFixturesService,
   ],
   exports: [
     DatabaseHealthService,

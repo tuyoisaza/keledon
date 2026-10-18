@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -323,7 +323,10 @@ export class CrudCompanyService {
     role?: string;
   }) {
     return this.prisma.user.create({
-      data,
+      data: {
+        email: data.email, name: data.name, companyId: data.companyId,
+        teamId: data.teamId, role: data.role,
+      },
       select: {
         id: true,
         email: true,
@@ -351,9 +354,18 @@ export class CrudCompanyService {
       role?: string;
     },
   ) {
+    const existing = await this.prisma.user.findUnique({ where: { id } });
+    if (existing?.uatFixtureRunId &&
+        (['email', 'role', 'companyId', 'teamId'] as const).some(key =>
+          data[key] !== undefined && data[key] !== existing[key]))
+      throw new ForbiddenException('Synthetic fixture identity and tenant bindings are immutable');
     return this.prisma.user.update({
       where: { id },
-      data,
+      // TypeScript input types are not a runtime allowlist. Lifecycle is server-owned.
+      data: {
+        email: data.email, name: data.name, companyId: data.companyId,
+        teamId: data.teamId, role: data.role,
+      },
       select: {
         id: true,
         email: true,

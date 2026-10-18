@@ -1,4 +1,10 @@
-# Current Auto continuation — KELEDON 5.2.10 / 2026-10-17
+# Current Auto Force — 2026-10-18 / 5.2.13 candidate
+
+Publish PHDK 2.54.1 (PR #263 merged and VERSION read back), implement the audited synthetic-fixture prerequisite and atomic command-queue slice, then deliver one integrated 5.2.13 candidate and verify deployed production evidence. Preserve production-only application acceptance and all tenant/security boundaries. Missing synthetic admin execution access or client sandbox must block only the corresponding runtime cases; do not restore PHDK-only review gates. Current source and runbook: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/45-uat-prep/UAT_FIXTURE_LIFECYCLE_RUNBOOK.md`.
+
+---
+
+# Historical Auto continuation — KELEDON 5.2.10 / 2026-10-17
 
 The confirmed goal remains the four ordered commitments: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 per-client voice→Cloud→Browser→CRM; CMT-004 administration/permissions. PHDK 2.53.1 coherence is 64/64. PR #257 is integrated at `origin/main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; product source remains KELEDON 5.2.10 at `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, with Railway Web/API SUCCESS. This continuation reconciles stale PMO/PIA baselines and revalidates CMT-003A/B against current source.
 

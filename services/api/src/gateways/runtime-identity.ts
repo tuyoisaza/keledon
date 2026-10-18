@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { isAccountActive } from '../auth-local/account-lifecycle.policy';
 
 export interface RuntimeIdentity {
   tokenFingerprint?: string;
@@ -40,6 +41,7 @@ export async function resolveRuntimeIdentity(
     !device ||
     (deviceId !== undefined && device.id !== deviceId) ||
     !device.user ||
+    !isAccountActive(device.user) ||
     !device.keledonId
   )
     return null;

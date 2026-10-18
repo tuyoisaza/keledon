@@ -1,4 +1,24 @@
 {
+  "uatFixtures": {
+    "title": "Ambientes sintéticos de aceitação",
+    "description": "Duas empresas isoladas, contas comuns e duração máxima de 24 horas. Dispositivos e fluxo são criados inativos. Nenhum email ou credencial é gerado. A retirada revoga acessos; restaurar exige novo login e não reativa dispositivos.",
+    "runId": "ID da execução",
+    "userA": "ID da conta sintética A",
+    "userB": "ID da conta sintética B",
+    "ttl": "Duração",
+    "confirm": "Confirmo que ambas as contas são sintéticas, sem uso prévio e registradas como phdk-uat-…@example.invalid.",
+    "create": "Preparar ambiente",
+    "read": "Consultar execução",
+    "retire": "Retirar e revogar acessos",
+    "restore": "Restaurar contas",
+    "busy": "Processando…",
+    "failed": "Não foi possível concluir a operação. Verifique permissões, IDs e estado da execução; consulte a mesma execução antes de repetir a criação.",
+    "status": "Estado",
+    "expires": "Expiração",
+    "active": "Ativo",
+    "retired": "Retirado",
+    "expired": "Expirado"
+  },
   "app": {
     "name": "KELEDON",
     "tagline": "Automação de Call Center"
