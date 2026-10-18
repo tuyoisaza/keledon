@@ -1,6 +1,10 @@
 # PIA CMT-004 — administración y permisos por tenant
 
-## Revalidación Auto Force — catálogo de interfaces, 2026-10-18
+## Revalidación Auto — KELEDON 5.2.19 / 2026-10-18
+
+UAT-158 en producción confirma solo que el GET anónimo de `/api/crud/interfaces` devuelve 401 sin filas. Revisión de source existente sigue apoyando tenant scope/write-only; roles autenticados, persistencia, secret replacement/audit y cross-tenant deny no están aceptados. No se introdujo cambio funcional en PR #271. CMT-004 permanece ACTIVE/PARTIAL. Evidencia `50-uat/evidence/uat-158-production-anonymous-interface-api-denial-2026-10-18.json`.
+
+## Historical source revalidation — catalog, 2026-10-18
 
 El candidato 5.2.15 añade la pantalla `/admin/interfaces` únicamente para `superadmin`, enlazada desde Configuración. La lista superadmin expone empresa propietaria, nombre, URL, categoría, estado y solo `hasCredentials`; proyecciones de lista/detalle/asignación usadas por tenant omiten la URL privada. Alta exige compañía existente y URL HTTP(S) normalizada. La edición no permite cambiar ownership; los registros históricos sin `companyId` quedan sin asignación implícita. La API limita los campos aceptados, valida formato y longitud también fuera del navegador, cifra reemplazos con `KELEDON_VENDOR_KEY` y nunca devuelve el valor. El interceptor de auditoría ahora redacta URL/baseUrl, orígenes permitidos, hostname, host, CIDR, IP y campos secretos. La pantalla no realiza conexiones de prueba. No se ejecutaron tests/build/lint locales ni mutaciones productivas. El código fuente y sus contratos no se han aceptado aún en la versión desplegada.
 

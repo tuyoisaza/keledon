@@ -1,6 +1,6 @@
 # KELEDON current status — 2026-10-18
 
-PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69/69. Remote main is b1dd123fb66d861fa3b5507b79d85fa888bdc6d7, KELEDON 5.2.18 after PR #270. Railway Web/API are SUCCESS. UAT-154 reads v5.2.18 and accessible diagnostic labels; UAT-155 samples keyboard order and visible focus. Four commitments: 0/4 complete, 4/4 active/partial.
+PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69/69. Remote main is 4643e8025d41f3571865123f154e6ae8ae2cb8ed, KELEDON 5.2.19 after PR #271. Railway Web/API SUCCESS 1/1, no pending work/issues. UAT-156 reads Web v5.2.19; UAT-157 confirms API safe liveness v5.2.19; UAT-158 confirms anonymous denial on interface catalog; UAT-154/155 remain scoped to 5.2.18. Four commitments: 0/4 complete, 4/4 active/partial.
 
 | Stage | Status | Evidence / next action |
 |---|---|---|
@@ -8,7 +8,7 @@ PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69
 | Capture | REUSED | Current owner decisions and requirements remain coherent. | No repeated interview required. |
 | Plan | COMPLETED / REVALIDATED | Six value milestones, architecture delta, commitment traceability and 41-model/574-row CRUD coverage. | PMO roadmap and workstreams verified. |
 | PMO | COMPLETED / REVALIDATED | Six value milestones and five workstreams map the ordered commitments; tenant identity and client sandbox gates remain operation-specific. | MS-001 delivered; MS-002 source merged in PR #270. UAT-154 reads Web v5.2.18; both Railway Web/API deployments now report SUCCESS. |
-| Integration/UAT/Check/Delivery | IN PROGRESS | MS-002 source merged at b1dd123; Web/API SUCCESS; UAT-154 version/control labels and UAT-155 sampled keyboard/focus pass scoped. | Continue permitted anonymous CMT-002 checks; authenticated interactions remain pending a disposable synthetic session. |
+| Integration/UAT/Check/Delivery | IN PROGRESS | MS-002 source merged at b1dd123; Web/API SUCCESS; UAT-154 version/control labels and UAT-155 sampled keyboard/focus pass scoped. | Continue independent CMT-003 source/design work; release/deployment readback is closed. fixture/auth and tenant-private egress acceptance retain their specific gates. |
 
 Overall portfolio: PARTIALLY DELIVERED. Authenticated production acceptance requires an existing superadmin session plus the bounded synthetic fixture path. Positive private CRM egress requires customer-selected host/port/CIDR. Neither condition blocks independent source implementation.
 

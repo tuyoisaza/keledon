@@ -1,6 +1,10 @@
 # Sub-PIA CMT-003A — lease de comandos y efectos idempotentes
 
-## Current Auto Force revalidation — 2026-10-18
+## Current Auto revalidation — KELEDON 5.2.19 / 2026-10-18
+
+La revisión estática de main `4643e8025d41f3571865123f154e6ae8ae2cb8ed` confirmó claim y resultado bajo el mismo advisory transaction lock por device; la selección no es un lease: el claim queda permanente, no hay expiry/attempt/heartbeat/accepted-start/fencing ni operationKey de efecto. `command-result` escribe resultado, FlowRun y evento de paso en una sola transacción, y una respuesta duplicada por commandId devuelve el evento existente. El poller ejecuta el handler inmediatamente tras pull. Revisión: `40-integration/INTEGRATION_REVIEW-5.2.19-CMT-003A-B.md`. La PIA prohíbe cambiar contrato persistido/activar expiración antes del gate CMT-003C. CMT-003C1 está en source, pero UAT autenticado depende de una sesión superadmin existente y fixtures sintéticos. No habilitar redelivery/retry de efectos en esta revisión.
+
+Revisión adicional de privacidad Browser: el command poller y handlers emitían previews de payload/output, transcript/goal, texto de error y cuerpos de respuesta a logs locales; `EventLogger` guardaba objetos `data` sin sanitizar. Un candidato local intentó limitar logs y sanitizar eventos, pero la revisión encontró rutas que aún emiten IDs de ejecución y errores crudos a Cloud. Está incompleto, no aceptado ni incluido en KELEDON 5.2.20. `BrowserCommandsService.recordCommandResult` también persiste `dto.error` libre en evento, FlowRun y evento RPA; el contrato persistido sigue gated por CMT-003C. No se ejecutaron pruebas/build/lint locales ni se desplegó el candidato.
 
 5.2.13 candidate: a bounded atomicity slice is implemented. Claims and results use the same per-device PostgreSQL transaction lock; result event/flow update/step event commit together. Explicit command device targeting overrides session fallback and result metadata cannot override device identity. This does not activate claim expiry, automatic re-delivery, heartbeat or business-effect retries. Full lease fencing and adapter idempotency remain open; production concurrency acceptance is NOT RUN. Missing fixtures block those runtime cases, not this source implementation.
 

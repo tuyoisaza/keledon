@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "Remote main b1dd123fb66d861fa3b5507b79d85fa888bdc6d7 at KELEDON 5.2.18 after PR #270. Railway Web/API deployments SUCCESS; UAT-154 production readback shows v5.2.18 and accessible diagnostic labels. UAT-155 confirms sampled keyboard order and visible focus. PHDK 2.56.0 coherence PASS 69/69.",
+  "candidate_ref": "KELEDON documentation/evidence candidate v5.2.20 on phdk/cmt-003-static-review-5.2.20, based on verified remote main 4643e8025d41f3571865123f154e6ae8ae2cb8ed / product 5.2.19. Includes the corrected PHDK 2.56.0 Plan/PMO baseline and UAT-156–158 readbacks. Browser logging source candidate is excluded and remains technically incomplete/unpublished.",
   "authorization": {
     "source_ref": "Current owner invocation 2026-10-18: PHDK auto; prior conversation explicitly authorized continuing the same four-commitment KELEDON goal and normal versioned PR delivery.",
     "instruction": "PHDK auto",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "MS-001 delivered. MS-002 source fixes merged as PR #270 at 5.2.18; Railway Web/API deployments SUCCESS. UAT-154 reads v5.2.18 on a fresh query; UAT-155 passes only sampled keyboard order and visible focus. Copy/reset behavior and authenticated acceptance remain partial. No local app tests/build/lint run per owner restriction.",
+  "current_stage": "90-delivery — scoped Plan/PMO documentation/evidence candidate v5.2.20. Remote main remains 4643e802/KELEDON 5.2.19 until the versioned branch/PR is merged and verified. Browser command/event logging source is excluded after review found remaining raw identifiers/errors; it remains a separate unfinished local candidate. Whole Auto remains partial across the four commitments.",
   "steps": [
     {
       "id": "preflight",
@@ -429,7 +429,7 @@
         "capture"
       ],
       "blocked_by": [],
-      "evidence": "Created six dependency/value milestones, architecture revalidation, current implementation plan and commitment coverage; reused/snapshotted existing UX/admin/AI/ADR artifacts; added UatFixtureRun to the CRUD matrix after verifying 41 Prisma models, bringing it to 574 rows. Plan handoff records acceptance boundaries and historical snapshots. No app tests/build/lint or production write."
+      "evidence": "Earlier Plan created six dependency/value milestones, architecture revalidation, implementation plan, and coverage; reused/snapshotted UX/admin/AI/ADR artifacts; corrected the CRUD matrix to 41 models/574 rows. Current Auto revalidation corrected MILESTONE_PLAN and IMPLEMENTATION_PLAN entry baseline to remote main 4643e802/5.2.19; documented PHDK 2.56.0 value-milestone semantics. The Plan source header now matches current main; older handoff's b54d747a start remains historical. No app tests/build/lint or production write."
     },
     {
       "id": "pmo_revalidation_256",
@@ -440,7 +440,7 @@
         "plan_revalidation_256"
       ],
       "blocked_by": [],
-      "evidence": "Created PMO charter, five workstreams, dependency/integration map, current status, progress report and lifecycle handoff. The four previously confirmed commitments remain ordered; source work and external acceptance gates are separated."
+      "evidence": "Created the six value milestones and five workstreams under the PHDK 2.56.0 hybrid brownfield model. This Auto reread Plan/PM standards and confirmed remote main 4643e802/5.2.19, reconciling PMO/UAT-156–158. Revalidated PMO keeps one shared value roadmap and treats external blockers as operation-specific; updated PMO dashboard to keep dependency-ready source work visible alongside MS-002 acceptance. Four confirmed commitments retained without reconfirmation."
     },
     {
       "id": "ms001_delivery",
@@ -521,6 +521,154 @@
         "synthetic-auth-identity"
       ],
       "evidence": "No existing authenticated superadmin session or compliant disposable synthetic role session is available in the connected browser. Anonymous production UAT-154 was read-only; copy/reset were not activated."
+    },
+    {
+      "id": "ms002_release_271_web_readback",
+      "kind": "verify_delivery",
+      "status": "done",
+      "action": "Verify production Web after docs/evidence release PR #271",
+      "depends_on": [
+        "ms002_keyboard_readback"
+      ],
+      "blocked_by": [],
+      "evidence": "PR #271 merged at 4643e8025d41f3571865123f154e6ae8ae2cb8ed. Railway Web 47f15d73-4fa8-4341-b798-86ecd824151d SUCCESS 1/1. UAT-156 fresh-query anonymous readback shows v5.2.19 and diagnostic labels; API deployment was BUILDING at capture."
+    },
+    {
+      "id": "ms002_release_271_api_readback",
+      "kind": "verify_delivery",
+      "status": "done",
+      "action": "Verify Railway API deploy for the v5.2.19 docs/evidence release",
+      "depends_on": [
+        "ms002_release_271_web_readback"
+      ],
+      "blocked_by": [],
+      "evidence": "Railway API deployment 21591ee0-c2f4-483f-af69-668311ea29ee SUCCESS 1/1. Fresh-query anonymous GET /health returned status ok and version 5.2.19; no dependency/detail probes. Evidence UAT-157."
+    },
+    {
+      "id": "ms003a_b_source_review",
+      "kind": "review_diff",
+      "status": "done",
+      "action": "Reconcile current CMT-003A/B source and PIAs against PHDK MS-003 gates",
+      "depends_on": [
+        "pmo_revalidation_256"
+      ],
+      "blocked_by": [],
+      "evidence": "INTEGRATION_REVIEW-5.2.19-CMT-003A-B.md documents current per-device PostgreSQL transaction lock, permanent claim/no heartbeat/accepted-start/fencing, result atomicity, Electron origin guards and absence of socket pinning/DNS-rebinding defense. No product source/persistence change or private egress occurred."
+    },
+    {
+      "id": "ms001_release_271_api_liveness",
+      "kind": "verify_delivery",
+      "status": "done",
+      "action": "Verify API deployment and public liveness/version for release PR #271",
+      "depends_on": [
+        "ms002_release_271_api_readback"
+      ],
+      "blocked_by": [],
+      "evidence": "UAT-157 fresh-query anonymous GET /health returned HTTP 200, status ok, version 5.2.19 on API deployment 21591ee0-c2f4-483f-af69-668311ea29ee (SUCCESS 1/1). Safe liveness/version only; no dependency/detail probes."
+    },
+    {
+      "id": "ms003c1_source_audit",
+      "kind": "review_diff",
+      "status": "done",
+      "action": "Audit the current synthetic fixture source and reconcile the bounded runbook",
+      "depends_on": [
+        "ms003a_b_source_review"
+      ],
+      "blocked_by": [],
+      "evidence": "INTEGRATION_REVIEW-5.2.19-CMT-003C1.md confirms atomic/audited create-retire-restore and operation limits; clarified restore only re-enables normal account login, with device revoked and flow/agent inert. No fixture provisioned. Auth acceptance still waits existing superadmin session and owner-controlled reserved synthetic users."
+    },
+    {
+      "id": "ms005_anonymous_interface_catalog_denial",
+      "kind": "work",
+      "status": "done",
+      "action": "Verify anonymous denial on canonical tenant interface catalog in production",
+      "depends_on": [
+        "ms001_release_271_api_liveness"
+      ],
+      "blocked_by": [],
+      "evidence": "UAT-158 GET /api/crud/interfaces on API 5.2.19 returned 401 Unauthorized with no rows/data. This accepts only anonymous denial; no authenticated tenant role or selector behavior was tested."
+    },
+    {
+      "id": "planning_model_review_256",
+      "kind": "work",
+      "status": "done",
+      "action": "Verify PHDK 2.56.0 planning model against the active KELEDON portfolio and reconcile current PMO state",
+      "depends_on": [
+        "plan_revalidation_256",
+        "pmo_revalidation_256"
+      ],
+      "blocked_by": [],
+      "evidence": "PHDK 2.56.0 says Auto is the complete lifecycle, portfolio discovery preserves multiple current pillars, Plan is hybrid/brownfield when stable outcomes coexist with customer-specific uncertainty, milestones are independently valuable user outcomes rather than lifecycle stages, and PMO continuously monitors their execution. KELEDON's four owner-confirmed commitments map to six milestones/five workstreams. Corrected Plan and implementation baselines to verified main 4643e802/5.2.19; root lifecycle index now has a visible current stage board; PMO keeps MS-002 active while dependency-ready independent source review remains executable. No arbitrary commitment confirmation requested."
+    },
+    {
+      "id": "auto_entry_board_256",
+      "kind": "work",
+      "status": "done",
+      "action": "Reconcile lifecycle entry board and make the current 2.56.0 Auto stage visible",
+      "depends_on": [
+        "planning_model_review_256"
+      ],
+      "blocked_by": [],
+      "evidence": "PHDK Auto entry board added to PHDK_LIFECYCLE_STATUS.md. It identifies reused/revalidated Preflight, Capture, Plan and PMO; running Integration Review; partial UAT Prep/UAT; pending UAT Fix, Check, Remediation and Delivery; SEO/AEO-GEO reused as applicable. Documents that milestone publication follows independently valuable outcomes, not stage transition."
+    },
+    {
+      "id": "plan_baseline_reconcile_271",
+      "kind": "work",
+      "status": "done",
+      "action": "Align canonical Plan and PMO current baseline to remote main after PR #271",
+      "depends_on": [
+        "planning_model_review_256"
+      ],
+      "blocked_by": [],
+      "evidence": "MILESTONE_PLAN.md and IMPLEMENTATION_PLAN.md now identify verified main 4643e802/KELEDON 5.2.19 as the Auto entry baseline. PMO charter and dashboard describe this same base and ongoing value-milestone state. Older b54d747a/5.2.16 Plan handoff remains explicitly historical."
+    },
+    {
+      "id": "integration_source_diff_review_5_2_20",
+      "kind": "review_diff",
+      "status": "running",
+      "action": "Complete assistant source/diff and privacy review for the local Browser command/event diagnostic hardening candidate",
+      "depends_on": [
+        "ms003_browser_log_redaction"
+      ],
+      "blocked_by": [],
+      "evidence": "Pending full manual review of modified Electron logging call sites and API contract boundaries; no local app test/build/lint, product version bump, publication or deployed acceptance."
+    },
+    {
+      "id": "ms002_mobile_responsive_uat",
+      "kind": "work",
+      "status": "blocked",
+      "action": "Measure CMT-002 layout, target geometry and horizontal overflow on production at 320 CSS px",
+      "depends_on": [
+        "ms002_release_271_web_readback"
+      ],
+      "blocked_by": [
+        "mobile-viewport-tool"
+      ],
+      "evidence": "Read-only production pages were opened in both available browser surfaces. Current Chrome screenshot was desktop 1581px wide; isolated in-app view was desktop 1265px wide. The browser API exposes pageAssets and webmcp only and has no viewport resize/emulation control. These observations do not count as mobile UAT; no control or user state was changed."
+    },
+    {
+      "id": "ms003_browser_log_redaction",
+      "kind": "work",
+      "status": "done",
+      "action": "Remove customer content and identifiers from Browser command/event diagnostics without changing command payloads",
+      "depends_on": [
+        "ms003a_b_source_review"
+      ],
+      "blocked_by": [],
+      "evidence": "Working-tree source changes limit command-poller/handler logs to type/status/count metadata; remove payload/output/HTTP response bodies and raw error messages; omit transcript/goal/reason/vendor identity values; sanitize cmdlog including preview/truncate and apply a field allowlist/redaction to EventLogger before storage/export. No command payload or business result was changed. Static diff review only; no local app tests/build/lint, no deployment and no production UAT for this source candidate. API still persists dto.error unchanged under the existing PIA-CMT-003C contract gate."
+    },
+    {
+      "id": "ms003_api_error_persistence_contract",
+      "kind": "work",
+      "status": "blocked",
+      "action": "Resolve server-side normalization of Browser command error strings before persisted audit/FlowRun writes",
+      "depends_on": [
+        "ms003a_b_source_review"
+      ],
+      "blocked_by": [
+        "synthetic-auth-identity"
+      ],
+      "evidence": "BrowserCommandsService persists dto.error in browser.command.result, FlowRun.error and rpa.step.*. PIA-CMT-003A explicitly prohibits changing the persisted contract before CMT-003C; authenticated production acceptance of that fixture gate is not available. No API persistence change was made."
     }
   ],
   "blockers": [
@@ -572,8 +720,20 @@
       "resolution_attempts": [
         "No provider settings were read or changed in this turn; source implementation remains independent."
       ]
+    },
+    {
+      "id": "mobile-viewport-tool",
+      "kind": "external_dependency",
+      "source_ref": "PHDK 2.56.0 CMT-002 mobile acceptance; current CUA browser capability inventory",
+      "reason": "The available production browser interface cannot set or emulate a mobile CSS viewport, so responsive geometry cannot be measured in this session. This blocks that UAT operation only.",
+      "next_action": "Use an authorized production browser session exposing a 320 CSS px viewport; continue independent CMT-002 source review and other milestone-ready work meanwhile.",
+      "evidence": "Chrome screenshot showed a 1581px desktop viewport; isolated in-app screenshot showed a 1265px desktop viewport; tab.capabilities.list() returned only pageAssets and webmcp, with no viewport capability.",
+      "observed_at": "2026-10-18T19:18:40Z",
+      "resolution_attempts": [
+        "Opened an isolated fresh production tab and inspected available tab capabilities; no viewport control was available. No attempt was made to treat desktop rendering as mobile evidence."
+      ]
     }
   ],
-  "updated_at": "2026-10-18T19:06:29Z",
+  "updated_at": "2026-10-18T20:59:55Z",
   "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json"
 }

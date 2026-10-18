@@ -1,10 +1,10 @@
 # Current lifecycle state — 2026-10-18 / PHDK 2.56.0
 
-Run: 20261014-0007-phdk-auto-completion. Goal: four owner-confirmed commitments in order. MS-001 is delivered; MS-002 source fix merged by PR #270 to main b1dd123fb66d861fa3b5507b79d85fa888bdc6d7, KELEDON 5.2.18. Railway Web/API report SUCCESS. UAT-154 reads the fresh-query Web version and diagnostic names; UAT-155 samples keyboard order and visible focus. CMT-002 remains partial pending interaction, responsive and broader accessibility evidence.
+Run: 20261014-0007-phdk-auto-completion. Goal: four owner-confirmed commitments in order. Current verified main is `4643e8025d41f3571865123f154e6ae8ae2cb8ed`, KELEDON 5.2.19 after PR #271; Railway Web/API are SUCCESS 1/1. MS-001 is delivered, MS-002 source is merged but acceptance remains partial, and the other commitments remain active/partial.
 
-Current stage board: Preflight REVALIDATED; Capture REUSED; Plan COMPLETED/REVALIDATED with MILESTONE_PLAN and 574-row/41-model CRUD coverage; PMO COMPLETED/REVALIDATED; MS-001 DELIVERED; MS-002 source correction MERGED with scoped production Web UAT; production interaction/role acceptance, final integration, Check and goal delivery remain OPEN.
+Current stage board and 2.56.0 Auto lifecycle entry: see `PHDK_LIFECYCLE_STATUS.md`. The hybrid Plan contains six value milestones and five workstreams. MS-002 remains active/partial; operation-specific authenticated/mobile gates remain visible while independent source work continues.
 
-Next step: complete allowed anonymous CMT-002 production checks and retain authenticated reset/copy acceptance for a compliant disposable synthetic session; private positive egress remains gated on a client-selected sandbox.
+Current scoped delivery: KELEDON 5.2.20 Plan/PMO baseline reconciliation. It does not complete the four-front Auto or include the separate Browser logging source candidate.
 
 ---
 

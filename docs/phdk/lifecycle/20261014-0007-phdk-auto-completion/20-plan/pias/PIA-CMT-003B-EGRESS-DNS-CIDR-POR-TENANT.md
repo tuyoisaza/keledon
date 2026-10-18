@@ -1,6 +1,8 @@
 # Sub-PIA CMT-003B — egress DNS/CIDR y CRM privado por tenant
 
-## Revalidación Auto Force — auditoría de destinos, 2026-10-18
+## Revalidación Auto — KELEDON 5.2.19 / auditoría de destinos, 2026-10-18
+
+La revisión de main `4643e8025d41f3571865123f154e6ae8ae2cb8ed` confirma filtros por origen para navegación, ventanas, requests HTTP(S)/WS(S), redirects y frames. Esos controles no inspeccionan/resuelven A/AAAA en conexión, fijan el socket ni validan CIDR tenant-bound; no cubren DNS rebinding. La declaración runtime observada es una allowlist de origen, no una política CIDR auditada. No se hizo egress, ni se cambió código de red. Mantener destino privado cerrado hasta enforcement efectivo por cada conexión/redirect y sandbox exacto autorizado. Revisión: `40-integration/INTEGRATION_REVIEW-5.2.19-CMT-003A-B.md`.
 
 5.2.15 extiende la redacción del interceptor de auditoría a URL/baseUrl, allowlists, hostname, host, CIDR e IP; además la API exige URL HTTP(S) normalizada para el catálogo de interfaces por empresa. No hay resolución DNS ni petición al guardar, y el cambio no introduce pinning de socket, protección de redirect ni broker. El requerimiento NET-DNS/REBIND/REDIR permanece abierto; esta edición evita propagar el destino privado al registro de cambios genérico.
 

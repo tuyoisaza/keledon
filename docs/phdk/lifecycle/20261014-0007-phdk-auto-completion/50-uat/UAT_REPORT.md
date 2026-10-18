@@ -684,3 +684,18 @@ On anonymous production `/login` v5.2.7, the accessibility tree confirmed locali
 ## UAT-154 — producción anónima tras el despliegue Web 5.2.18 (2026-10-18)
 
 **PASS_SCOPED.** PR #270 está en `main` `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7`. Railway Web `62d02378-aebc-4c1f-8072-7d3bda4e36d7` informa `SUCCESS`; API `20093638-99f4-41cd-96e8-ab4fbce45662` seguía `DEPLOYING` al capturar evidencia. Una pestaña Chrome fresca con `?phdk-uat-20261018=270`, recargada después del Web deploy, muestra v5.2.18 y nombres accesibles “Copiar diagnóstico completo” y “Limpiar caché” en login anónimo. Esto acepta solo la lectura de versión/controles Web; no prueba copiar, limpieza, autenticación, responsive ni comportamiento API. No se activaron controles, no se leyó el portapapeles ni se alteró almacenamiento. Evidencia `evidence/uat-154-production-v5-2-18-widget-readback-2026-10-18.json`.
+
+
+## UAT-156 — producción anónima tras PR #271 / KELEDON 5.2.19 (2026-10-18)
+
+**PASS_SCOPED.** PR #271 está fusionado en `main` `4643e8025d41f3571865123f154e6ae8ae2cb8ed`. Railway Web `47f15d73-4fa8-4341-b798-86ecd824151d` llegó a `SUCCESS`, 1/1. Una pestaña con query fresca `?phdk-uat-20261018=271` muestra v5.2.19 y los nombres accesibles “Copiar diagnóstico completo” y “Limpiar caché” en `/login` anónimo. API `21591ee0-c2f4-483f-af69-668311ea29ee` aún estaba `BUILDING` durante esta lectura. Esto verifica solo versión/labels Web; no se activó ningún control y no se leyó ni modificó storage/clipboard. No acepta API ni comportamiento de copy/reset. Evidencia `evidence/uat-156-production-v5-2-19-widget-readback-2026-10-18.json`.
+
+
+## UAT-157 — API liveness de KELEDON 5.2.19 (2026-10-18)
+
+**PASS_SCOPED.** Después de Railway API `21591ee0-c2f4-483f-af69-668311ea29ee` `SUCCESS` 1/1, el endpoint anónimo de solo liveness `/health` en `keledonapi.tuyoisaza.com` respondió `status: ok`, versión `5.2.19`. Se consultó únicamente liveness; no se llamó health detallado/deep, dependencias, probes ni rutas CRUD. Evidencia `evidence/uat-157-production-api-health-5-2-19-2026-10-18.json`.
+
+
+## UAT-158 — denegación anónima del catálogo de interfaces (2026-10-18)
+
+**PASS_SCOPED.** GET anónimo a `/api/crud/interfaces` en la API 5.2.19 respondió `401 Unauthorized` (`Invalid or expired token`) sin devolver catálogo/filas. No se enviaron tenant IDs/Authorization y no se probó ningún rol autenticado. Esto no acepta el selector, aislamiento tenant, persistencia ni secretos; solo la barrera anónima. Evidencia `evidence/uat-158-production-anonymous-interface-api-denial-2026-10-18.json`.

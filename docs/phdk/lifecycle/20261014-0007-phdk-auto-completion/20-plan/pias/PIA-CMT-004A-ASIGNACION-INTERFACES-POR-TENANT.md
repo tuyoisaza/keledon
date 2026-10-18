@@ -1,5 +1,11 @@
 # Sub-PIA ADM-IF — asignación de interfaces por tenant
 
+## Revalidación Auto — KELEDON 5.2.19 / 2026-10-18
+
+UAT-158 verifica únicamente que un GET anónimo a `/api/crud/interfaces` devuelve 401 sin catálogo/filas. No ejecuta selector ni acepta permisos autenticados. La ruta tenant consume `/api/crud/interfaces` y la fuente deriva `companyId` desde el actor de DB; la aceptación de listado/asignación, persistencia y aislamiento cross-tenant sigue pendiente de sesión sintética. Se mantiene fuera de alcance el catálogo legacy/global. Evidencia: `50-uat/evidence/uat-158-production-anonymous-interface-api-denial-2026-10-18.json`.
+
+
+
 ## Revalidación de navegación de catálogo — UAT-150 / candidato 5.2.16
 
 La aceptación anónima de producción 5.2.15 detectó que el deep link nuevo `/admin/interfaces` retornaba el 404 estático de Nginx, aunque `AppRouter.tsx` contiene el guard superadmin. La causa fue una entrada ausente en `known_spa_route`; el candidato 5.2.16 la incorpora y agrega una regresión fuente para mantener alineada la allowlist con el guard. UAT-150 y su captura/headers están en `50-uat/evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json`.

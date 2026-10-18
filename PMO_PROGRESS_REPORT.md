@@ -1,17 +1,17 @@
 # PMO Progress — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
 
-Remote main is KELEDON 5.2.18 at `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` after PR #270. Railway Web/API are SUCCESS. UAT-154 reads the fresh-query production version and diagnostic labels; UAT-155 samples keyboard order and visible focus. MS-002 source fixes are integrated; copy/reset, responsive, screen-reader and authenticated acceptance remain partial. Four confirmed commitments remain active and ordered. Canonical plan and PIA are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/`.
+Remote main is KELEDON 5.2.19 at `4643e8025d41f3571865123f154e6ae8ae2cb8ed` after PR #271. Railway Web/API are SUCCESS 1/1 with no pending work/issues. UAT-154/155 are scoped on 5.2.18; UAT-156 reads v5.2.19 Web labels; UAT-157 confirms API liveness/version 5.2.19; UAT-158 confirms anonymous interface catalog denial only. MS-002 source fixes are integrated; copy/reset, responsive, screen-reader and authenticated acceptance remain partial. Four confirmed commitments remain active and ordered. Canonical plan and PIA are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/`.
 
 | Commitment | Verified progress | Next action |
 |---|---|---|
 | CMT-001 | MS-001 delivered on main; exact SHA, version and deploy evidence recorded. | Refresh baseline after each delivery. |
-| CMT-002 | PR #270 merged; Web/API SUCCESS; UAT-154/155 PASS_SCOPED for version, labels and sampled keyboard focus. | Continue anonymous production responsive/a11y cases; interaction and authenticated behavior await a permitted synthetic session. |
-| CMT-003 | Client-selected voice/CRM stack remains per tenant; lease/fencing and socket-bound egress safeguards remain planned/source gaps. | Continue source-reconcilable fixes independently; private positive acceptance needs that tenant's approved sandbox. |
+| CMT-002 | PR #270 source fix merged; PR #271 docs evidence merged. UAT-154/155 are scoped to 5.2.18; UAT-156 reads deployed Web v5.2.19 labels/version. UAT-156/157 provide scoped Web/API version/liveness readback; UAT-158 confirms anonymous API denial only. | Continue anonymous production responsive/a11y cases; interaction and authenticated behavior await a permitted synthetic session. |
+| CMT-003 | Client-selected voice/CRM stack remains per tenant. Static review at 40-integration/INTEGRATION_REVIEW-5.2.19-CMT-003A-B.md confirms atomic per-device transaction locking, permanent claims/no fencing and origin-only egress with no socket pinning. Lease persistence remains gated by CMT-003C; private positive acceptance needs a tenant sandbox. | Continue source-reconcilable fixes independently; private positive acceptance needs that tenant's approved sandbox. |
 | CMT-004 | Least-privilege tenant policy remains binding; broad CRUD/RBAC persistence acceptance partial. | Continue source review and scope decisions already approved; persistence journey depends on compliant synthetic accounts. |
 
 No local application tests/build/lint, customer data, live call/CRM, private endpoint, credentials or provider writes were used. Overall Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: finish permitted anonymous CMT-002 production checks while preserving authenticated and customer-specific cases as operation-scoped gates.
+SIGUIENTE PASO: publish the scoped v5.2.20 Plan/PMO and evidence reconciliation through PR, verify it on main, then continue the four-front Auto. Browser logger hardening remains an incomplete, excluded candidate.
 
 ---
 
