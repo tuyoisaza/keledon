@@ -6,6 +6,7 @@
 - Actions: direct anonymous catalog-route navigation, then `/management/teams` as a known protected-route control. No login, form, mutation, customer data, secret, clipboard read, cache clear or provider access.
 - Actual: catalog path displays localized static 404; control path resolves to `/login` and shows Web `v5.2.15`. The catalog response has `Server: cloudflare`, `cf-cache-status: DYNAMIC`, `CF-RAY: a4c92d7e0cf9087e-DFW`, HTTP 404. Source maps the path through Nginx `known_spa_route` only; the new path is missing. Browser screenshot is present in the active UAT tool trace, not exported as a repository image.
 - Cases: UAT-150 `FAIL_REPRODUCED`; exact retest after 5.2.16 Web deploy. Authenticated route/role behavior remains untested pending an existing superadmin session.
+- Retest: after PR #267 merged as `ac5d91867105773bf02f5ba41b23263b87256aa7`, Railway Web deployment `5c158bc5-99c2-43d3-80d2-650f42dcba00` SUCCESS, fresh anonymous navigation to the same URL resolves to `/login` and displays v5.2.16. UAT-150 is now `PASS_SCOPED` for direct route/guard behavior; authenticated operations remain untested.
 
 ## Browser Readiness — UAT-151 login diagnostics controls on production 5.2.15 (2026-10-18)
 
@@ -176,3 +177,10 @@ No account provisioning, test-role switch, email delivery, production browsing, 
 - Result: PASS for nine AX states, localized field/action labels and one forward keyboard sample only. Contrast, screen reader, full keyboard, mobile and authentication remain unverified.
 - Spend: `NO_NEW_SPEND`.
 - Evidence: `evidence/uat-132-production-login-locale-keyboard-2026-10-17.json`.
+
+
+## Browser Readiness — UAT-151 revalidation on production 5.2.16 (2026-10-18)
+
+- Fresh anonymous `/login` opened in the in-app browser; page showed v5.2.16, both accessible diagnostic control names, locale/theme selectors and login form. AX tree and screenshot are visible in the active UAT trace.
+- No sign-in, control activation, clipboard read, cache clear, field entry, customer data or mutation.
+- PASS_SCOPED for current rendering/accessibility names. Target geometry and horizontal overflow were not remeasured in this revalidation; the earlier 44×44 CSS px / 1581px measurements apply to 5.2.15 only. Evidence is appended to `evidence/uat-151-production-login-widget-2026-10-18.json`.

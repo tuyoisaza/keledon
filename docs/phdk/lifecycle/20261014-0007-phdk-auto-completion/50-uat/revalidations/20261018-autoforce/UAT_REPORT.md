@@ -10,9 +10,13 @@
 - **Repair/retest:** candidate 5.2.16 adds the exact route to Nginx's allowlist and a regression assertion. Retest the same direct URL after the exact Web deployment reports `SUCCESS`; expected result is SPA load followed by `/login` anonymously. Then authenticated role/persistence/audit cases remain pending a normal superadmin session.
 - **Evidence:** `../evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json` and live browser capture in the active UAT trace. No screenshot file exported.
 
+### UAT-150 post-repair result
+
+PR #267 merged as `ac5d91867105773bf02f5ba41b23263b87256aa7`; Web deployment `5c158bc5-99c2-43d3-80d2-650f42dcba00` reports `SUCCESS` in `us-west2`. A fresh anonymous Chrome navigation to `/admin/interfaces` now loads the SPA and resolves to `/login`, with v5.2.16 visible. **PASS_SCOPED for direct-route delivery and anonymous guard behavior.** Authenticated superadmin CRUD and tenant-role boundaries remain pending.
+
 ## CMT-002 production sample: UAT-151
 
-Story US-CMT002-DIAGNOSTICS-01 opened anonymous `/login` on KELEDON 5.2.15 in a fresh Chrome tab. The accessibility tree exposed “Copiar diagnóstico completo” and “Limpiar caché”; measured hit targets were 44×44 CSS px, and document/client widths both measured 1581px. **PASS_SCOPED** for these visible labels/targets and desktop no-overflow only. Neither control was activated; clipboard contents, cache clearing, mobile, screen-reader and authenticated surfaces remain unverified. Evidence: `../evidence/uat-151-production-login-widget-2026-10-18.json`.
+Story US-CMT002-DIAGNOSTICS-01 first opened anonymous `/login` on KELEDON 5.2.15 in a fresh Chrome tab. A fresh anonymous production revalidation on 2026-10-18 observed v5.2.16, both named diagnostic controls, locale/theme selectors and the login form in the accessibility tree and screenshot. Neither control was activated. The earlier 44x44 CSS px target and 1581px no-overflow measurements apply to the 5.2.15 observation only; geometry was not remeasured on 5.2.16. **PASS_SCOPED** for current rendering/accessibility names; mobile, runtime copy payload, cache-clear execution, screen-reader and authenticated surfaces remain unverified. Evidence: `../evidence/uat-151-production-login-widget-2026-10-18.json`.
 
 ## Historical UAT-142 entry — 5.2.10 baseline (superseded)
 

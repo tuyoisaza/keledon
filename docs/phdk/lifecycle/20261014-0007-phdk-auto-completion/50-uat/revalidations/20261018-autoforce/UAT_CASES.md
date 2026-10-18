@@ -6,15 +6,15 @@
 
 | ID | Actor / actions | Expected | Result |
 |---|---|---|---|
-| UAT-150 | Anonymous production visitor; open `/admin/interfaces` directly, then compare the known protected `/management/teams` route. | The catalog URL serves the SPA and redirects to `/login`; no catalog or tenant data is exposed. | **FAIL_REPRODUCED** on 5.2.15: `/admin/interfaces` returns Cloudflare-fronted origin 404; `/management/teams` returns the SPA login. Root cause: missing URI in `services/web/nginx.conf` `known_spa_route` allowlist. Evidence `../evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json`; repair candidate 5.2.16. |
+| UAT-150 | Anonymous production visitor; open `/admin/interfaces` directly, then compare the known protected `/management/teams` route. | The catalog URL serves the SPA and redirects to `/login`; no catalog or tenant data is exposed. | **PASS_SCOPED after repair**: FAIL reproduced on 5.2.15 due missing Nginx `known_spa_route` entry; after PR #267 / 5.2.16 Web deployment, fresh anonymous navigation resolved to `/login`, displaying v5.2.16. Evidence `../evidence/uat-150-admin-interfaces-spa-allowlist-2026-10-18.json`. |
 
-The 5.2.16 retest remains NOT RUN until Railway Web is live on that exact commit. The anonymous case does not replace authenticated superadmin/tenant isolation acceptance.
+The anonymous route retest passes on deployed 5.2.16 Web. It does not replace authenticated superadmin/tenant isolation acceptance.
 
 **User story US-CMT002-DIAGNOSTICS-01 (CMT-002):** As an anonymous visitor, I want the diagnostic controls to remain named and operable with adequate targets, so I can identify the app version and reach support affordances without exposing private runtime data. Source intent: `10-capture/revalidations/20261018-autoforce/PROJECT_INTENT.md`.
 
 | ID | Actor / actions | Expected | Result |
 |---|---|---|---|
-| UAT-151 | Anonymous visitor; open production `/login`, inspect AX names and measure diagnostic targets/document width. | Version visible; copy/clear have accessible names; sampled controls at least 44×44 CSS px; no horizontal overflow. | **PASS_SCOPED** on 5.2.15 at 1581px viewport: both named targets 44×44; document/client width 1581/1581. Clipboard, cache clear, mobile and runtime payload redaction not exercised. Evidence `../evidence/uat-151-production-login-widget-2026-10-18.json`. |
+| UAT-151 | Anonymous visitor; open production `/login`, inspect AX names and measure diagnostic targets/document width. | Version visible; copy/clear have accessible names; sampled controls at least 44×44 CSS px; no horizontal overflow. | **PASS_SCOPED** for rendering and accessible names on 5.2.15; fresh 5.2.16 production revalidation again displayed both named controls. Geometry was not remeasured on 5.2.16; earlier 44×44 and 1581/1581px measurement is limited to 5.2.15. Clipboard, cache clear, mobile and runtime payload redaction not exercised. Evidence `../evidence/uat-151-production-login-widget-2026-10-18.json`. |
 
 | ID | Persona / intent | Steps | Expected | Result |
 |---|---|---|---|---|

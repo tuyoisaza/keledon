@@ -12,4 +12,4 @@ PASS for bounded source repair and route security shape. Unknown/unlisted paths 
 
 ## Production retest
 
-Pending normal PR merge and Web autodeploy. Repeat anonymous navigation to `https://keledon.tuyoisaza.com/admin/interfaces`; expected: SPA loads and its superadmin guard redirects to `/login`. Authenticated superadmin CRUD, tenant denial and persistence remain separate acceptance cases requiring an existing approved superadmin session and synthetic tenant fixture.
+PR #267 is merged as `ac5d91867105773bf02f5ba41b23263b87256aa7`; Web deployment `5c158bc5-99c2-43d3-80d2-650f42dcba00` is `SUCCESS`. Production retest on a fresh anonymous Chrome tab navigated directly to `https://keledon.tuyoisaza.com/admin/interfaces`, loaded the SPA, resolved to `/login`, and displayed v5.2.16. UAT-150 passes this scoped route/guard check. Authenticated superadmin CRUD, tenant denial and persistence remain separate acceptance cases requiring an existing approved superadmin session and synthetic tenant fixture.
