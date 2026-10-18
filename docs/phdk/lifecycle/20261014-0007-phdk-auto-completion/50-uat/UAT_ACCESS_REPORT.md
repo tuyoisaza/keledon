@@ -7,6 +7,11 @@
 - Executed: UAT-141; no horizontal overflow. Four targets fail the PHDK 44px minimum. Screen reader, 200%/400% browser zoom and other locale/theme combinations remain open. No new spend.
 - Next action: retest UAT-142 against deployed v5.2.11; keep CMT-002 partial until the defect retest and broader accessibility gates complete.
 
+## Latest Auto Force production browser entry — 2026-10-18
+
+See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_ACCESS_REPORT.md`. Browser access was `AVAILABLE_VERIFIED`; production `/` served v5.2.10 and anonymous `/management/teams` resolved to `/login`. PR #259/5.2.11 was not deployed. The UAT-141 baseline fail was reproduced read-only: header brand 152×40, email 399×41, password 399×41, create-account 69×20 CSS px. UAT-142 remains blocked until the candidate is deployed. No login, mutation, customer data, or local app tests/build/lint.
+
+---
 ## Browser Readiness — UAT-140 localized production 404 (2026-10-17)
 
 - Run/stage: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; anonymous public production only; permission `ACTIVE_UAT_EXCEPTION` and CUA access `AVAILABLE_VERIFIED`.

@@ -1,3 +1,26 @@
+# Current UAT Fixture Manifest — Auto Force revalidation (2026-10-18)
+
+`20261014-0007-phdk-auto-completion`
+PR #259 / 5.2.11 head `293532e3404f84a08725a0662acd56bf42543184`; production deployment UNVERIFIED.
+State: **NOT PROVISIONED**. Proposed labels are not resources or accounts.
+
+| Fixture | Limit | Current state |
+|---|---|---|
+| Synthetic tenant A + Brand/Team | One isolated tenant with minimal structure | BLOCKED — no authenticated auditable provisioning/cleanup path |
+| User A | Exactly one ordinary `user` | BLOCKED — no owner-controlled synthetic normal-login identity evidenced |
+| Browser device A | One device bound through normal pairing | BLOCKED — tenant/user fixture not created |
+| Synthetic tenant B + Brand/Team | One isolated tenant with minimal structure | BLOCKED — no authenticated auditable provisioning/cleanup path |
+| User B | Exactly one ordinary `user` | BLOCKED — no owner-controlled synthetic normal-login identity evidenced |
+| Browser device B | One device bound through normal pairing | BLOCKED — tenant/user fixture not created |
+| Inert flow | One no-PII flow on Team A only | BLOCKED — fixture not created; no external side effects allowed |
+| CRM/DNS target | None in this run | BLOCKED for positive egress acceptance; exact tenant-approved sandbox host/port/CIDR absent |
+| Secrets, passwords, tokens | None | NOT CREATED / NOT STORED |
+
+Expiry cap: 24 hours. Cleanup: immediate after use and only via an authenticated, audited, idempotent path that revokes device access and prevents login/flow execution while retaining required audit evidence. No production database write, email, invite, client integration or customer data access occurred.
+---
+
+# Historical evidence follows
+
 # Manifiesto UAT — CMT-003C / KELEDON 5.2.10
 
 Run ID propuesto: `phdk-auto-uat-20261017` · entorno objetivo: producción · estado: **NOT PROVISIONED / BLOCKED**.
@@ -7,12 +30,16 @@ Baseline: producto source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PHDK 2.53.
 | Fixture | Etiqueta propuesta | Tenant | Estado / límite |
 |---|---|---|---|
 | Tenant A | `phdk-auto-tenant-a-20261017` | — | BLOCKED — falta vía autenticada/auditada de creación y cleanup |
+| Brand A | `phdk-auto-brand-a-20261017` | A | BLOCKED — scaffold mínimo para el Team/Flow; sin catálogo global |
+| Team A | `phdk-auto-team-a-20261017` | A | BLOCKED — scaffold mínimo; flow inerte único se asignaría aquí |
 | User A | `phdk-auto-user-a-20261017` | A | BLOCKED — rol regular únicamente; sin invitación/email |
 | Browser device A | `phdk-auto-device-a-20261017` | A | BLOCKED — sin pairing ni credenciales |
 | Tenant B | `phdk-auto-tenant-b-20261017` | — | BLOCKED — falta vía autenticada/auditada de creación y cleanup |
+| Brand B | `phdk-auto-brand-b-20261017` | B | BLOCKED — scaffold mínimo para asignación de team; sin catálogo global |
+| Team B | `phdk-auto-team-b-20261017` | B | BLOCKED — scaffold mínimo para tenant isolation; no se crea un segundo flow |
 | User B | `phdk-auto-user-b-20261017` | B | BLOCKED — rol regular únicamente; sin invitación/email |
 | Browser device B | `phdk-auto-device-b-20261017` | B | BLOCKED — sin pairing ni credenciales |
-| Flow inerte | `phdk-auto-flow-20261017` | A/B aislado según contrato | BLOCKED — aún no creado; prohibidos PII y side effects |
+| Flow inerte | `phdk-auto-flow-a-20261017` | A / Team A | BLOCKED — único flow autorizado; prohibidos PII y side effects; no demuestra la dirección inversa B→flow propio |
 | DNS/CRM sandbox | No asignada | Por tenant | BLOCKED — no hay hostname/puerto/esquema/CIDR sandbox aprobados |
 | Secretos/tokens | Ninguno | — | No solicitar, crear ni registrar en evidencia |
 

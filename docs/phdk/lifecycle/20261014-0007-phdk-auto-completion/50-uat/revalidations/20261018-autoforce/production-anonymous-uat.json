@@ -1,0 +1,51 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-18T04:10:52Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/",
+  "browser": "Codex in-app browser (connected and navigation verified)",
+  "productionVersion": "5.2.10",
+  "candidate": {
+    "pullRequest": 259,
+    "version": "5.2.11",
+    "head": "293532e3404f84a08725a0662acd56bf42543184",
+    "deploymentStatus": "NOT_DEPLOYED_AT_OBSERVATION"
+  },
+  "cases": {
+    "publicHome": {
+      "result": "PASS_SCOPED",
+      "observation": "Public home loaded; page shows version v5.2.10 and explicitly labels the example session illustrative, not live service telemetry."
+    },
+    "anonymousProtectedRoute": {
+      "route": "/management/teams",
+      "result": "PASS_SCOPED",
+      "observation": "Anonymous navigation resolves to /login; no management data was shown."
+    },
+    "loginTouchTargetsBaseline": {
+      "result": "FAIL_REPRODUCED_ON_5_2_10",
+      "measurementsCssPx": {
+        "headerBrandLink": [152, 40],
+        "emailInput": [399, 41],
+        "passwordInput": [399, 41],
+        "createAccountButton": [69, 20],
+        "signInButton": [399, 44],
+        "googleButton": [399, 45],
+        "diagnosticsCopyButton": [44, 44],
+        "diagnosticsResetButton": [44, 44]
+      },
+      "expected": "Each measured interactive target is at least 44 by 44 CSS px.",
+      "note": "Reproduces the four undersized controls recorded by UAT-141. PR #259 candidate UAT-142 was not run because 5.2.11 is not deployed."
+    }
+  },
+  "permission": "ACTIVE_UAT_EXCEPTION",
+  "browserCapability": "AVAILABLE_VERIFIED",
+  "targetData": "Anonymous public pages only; no account/login, form submission, customer data or production mutation.",
+  "spend": "NO_NEW_SPEND",
+  "limits": [
+    "One public home load and one anonymous protected-route navigation.",
+    "DOM geometry was read without clicking login, signup, diagnostics or cache controls.",
+    "No screenshot or clipboard contents captured.",
+    "Authenticated/device/flow/private CRM cases remain blocked by UAT Prep."
+  ]
+}

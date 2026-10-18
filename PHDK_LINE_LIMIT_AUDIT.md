@@ -1,5 +1,9 @@
 # PHDK physical line limit audit
 
+## Current Auto continuation — 2026-10-17
+
+Fresh `rg --files` inventory on the current documentation candidate: **1,230 active application/test files** across `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; dependencies, generated/build output, documentation/snapshots, `.git`, and vendored `phdk-standards/` are excluded. **0 files are at or above 600 physical lines.** This closes the physical-size criterion for this candidate only; whole Auto remains PARTIAL. No application tests/builds/lint were executed.
+
 ## Current candidate 5.1.39 — 2026-10-14
 
 Fresh physical-line inventory: **1,168 active application/test files** across `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; dependencies, generated output, `.git`, `phdk-standards/`, and lifecycle snapshots are excluded. **0 files are at or above 600 physical lines.** The API MVP store moved provider catalog data to `services/api/src/mvp/provider-catalog.ts` and write-contract validation to its focused module; API service now has 487 physical lines. Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`. This closes the physical-size gate only; whole Auto remains partial.

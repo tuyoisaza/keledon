@@ -1,3 +1,25 @@
+# Auto Force plan reconciliation — 2026-10-18T04:03:30+00:00
+
+Run: `20261014-0007-phdk-auto-completion`; product repo `tuyoisaza/keledon`; target `main`; current candidate branch `fix/phdk-cmt-003a-lease-fencing`.
+
+## Scope and baseline
+
+Carry forward the four confirmed commitments in their owner-approved order. Current intent, requirements, decisions and non-goals were re-read against source and current reports. PHDK 2.54.0 is current and static coherence is 66/66. Source target is KELEDON 5.2.10 on remote main `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; production acceptance is production-only. No local application test/build/lint is allowed by the owner.
+
+## Dependency-ordered work
+
+1. **CMT-001:** incorporate the verified PHDK 2.54.0 force sync and current lifecycle records into PR #258, then integrate that documentation candidate; update baseline/version/deployment evidence. PIA CMT-001A stays open for external GitHub/Railway governance metadata; no settings writes.
+2. **CMT-002:** deliver the existing KELEDON 5.2.11 login touch-target candidate in PR #259, then run UAT-142 on deployed production. Continue independent widget/accessibility gaps with production-only evidence.
+3. **CMT-003:** first implement the audited reversible synthetic fixture lifecycle from PIA CMT-003C1, limited to the already approved two tenants/two `user` identities/two Browser devices/one inert flow, TTL ≤24h and immediate cleanup. Then implement lease/fencing/idempotency (003A), and socket-level DNS/CIDR/redirect enforcement (003B). Do not claim remote side-effect or private-egress PASS without the approved production synthetic harness and exact client sandbox.
+4. **CMT-004:** preserve DB-derived actor/tenant, default `user`, tenant-scoped Admin/Coordinator permissions and write-only secrets; continue tenant Flow/FlowStep and interface-selector acceptance only within the fixture roles actually authorized. Do not seed privileged test identities.
+
+## Delivery and verification boundary
+
+Use one current candidate branch/PR where dependency and release integrity allow; reconcile already-open #258/#259. Assistant technical review replaces PHDK-only human review in Auto Force. Keep real hooks/host controls. Application behavior is tested only on deployed production with the approved synthetic scope; no production customer data, live voice/CRM, private destination or metadata requests. Source/static checks and documentation checks may run locally. Normal git delivery does not include provider-settings writes or GitHub Actions.
+
+## External acceptance gaps
+
+No owner-controlled synthetic mailbox/session is evidenced; authenticated fixture UAT is blocked only until the audited path and normal synthetic identity are available. CMT-003B private-positive UAT additionally needs the specific client-selected synthetic DNS/CRM host, port and CIDR. Provider billing/restart settings remain UNVERIFIED and out of scope for writes.
 ## Current Auto reconciliation — candidate 5.2.1 / PHDK 2.53.1 (2026-10-17)
 
 The four owner-confirmed requirements remain in their agreed order. Product source contains the Admin/Coordinator tenant-scoped TeamInterface selector, API/Cloud authorization and stale-request protection. The candidate is on open PR [#210](https://github.com/tuyoisaza/keledon/pull/210); production v5.1.85 has only anonymous read-only UAT-098/099, not candidate acceptance. The source review confirms tenant and team scoping, credential redaction and API/Cloud parity for the reviewed routes.

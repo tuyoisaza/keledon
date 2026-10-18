@@ -1,3 +1,9 @@
+# PMO Status — Auto Force / PHDK 2.54.0 (2026-10-18T04:03:30+00:00)
+
+Run: `20261014-0007-phdk-auto-completion` · branch `fix/phdk-cmt-003a-lease-fencing` · target `main` · current candidate HEAD `a8c6ddf26e8bfe91b2c52959cf4328f7c5203c11`. Four commitments remain 0/4 DONE, 4/4 ACTIVE/PARTIAL, 0 deferred, 0 cancelled.
+
+PHDK 2.54.0 is byte-verified across 66 destinations. PR #258 and #259 are open; Force marks PHDK-only human gates NON_BLOCKING_BY_MODE. Production-only app acceptance and all approved tenant/identity/customer/private-egress boundaries remain effective. Next stage: assistant technical integration review, beginning with standards/native policy diff and login candidate.
+
 ## Verified current readback — KELEDON 5.2.4 / 2026-10-17
 
 This readback supersedes earlier 5.2.1–5.2.3 candidate notes below; those remain historical. PR #232 merged at `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`. Five package/lock roots and Browser renderer align at 5.2.4; PHDK 2.53.1 coherence is 64/64 static. Railway Web deployment `228369da-23e8-49e0-8345-2469f9fd4863` and API deployment `367eb4ae-a101-448a-ac0a-361e7efee620` both report `SUCCESS` on `6715ea9`; production `/login` serves asset `index-COWg4nKb.js`. UAT-120 confirms `<html lang>` matches visible ES/EN/PT; initial Portuguese preference was restored. UAT-117 confirmed copy status/source hostname withholding; UAT-118 sampled public keyboard/focus; UAT-119 sampled login keyboard order and detected the now-fixed language mismatch. Clipboard was not read; no autofill value was captured. Successful deployment does not accept API behavior. Overall Auto remains PARTIALLY DELIVERED.

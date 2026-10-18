@@ -1,8 +1,12 @@
-# Current Auto status — KELEDON 5.2.9 candidate / 2026-10-17
+# Current Auto status — KELEDON 5.2.10 / 2026-10-17
 
-Remote `main` is `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` is based on it. PHDK v2.53.1 coherence 64/64. Candidate v5.2.9 source implements the private SPA shell and 404 behavior in PIA-AUTO-SEO-002. Route parity and JSON metadata checks pass; application build/tests/lint and production UAT remain pending. Whole Auto remains PARTIAL; CMT-003C auth fixtures are blocked.
+Remote `main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; current branch `fix/phdk-cmt-003a-lease-fencing` is based on that commit. Product source remains 5.2.10 at `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #257 is documentation-only. PHDK v2.53.1 coherence 64/64. Railway Web/API after PR #257 report SUCCESS. This continuation reconciles current PMO/PIA baseline and records a static source review of the lease and egress gates; it changes no application code and does not constitute runtime acceptance.
 
-Current action: publish this scoped versioned candidate by normal PR, then verify only UAT-135–139 on production; preserve the CMT-003C fixture gate, no customer endpoints/private egress, and no provider settings writes.
+CMT-001 complete for this cut; CMT-002 partial; CMT-003 partial with audited fixture provisioning blocked and lease/DNS socket enforcement open; CMT-004 partial with authenticated persistence/cross-tenant evidence blocked. Whole Auto remains PARTIALLY DELIVERED. No local app tests/builds/lint or production mutations were performed.
+
+PR #258 is open against `main` and GitHub reports it mergeable; no review decision or check runs are present. No product deploy is associated with this docs-only branch.
+
+Next action: obtain a legitimate review for PR #258 and complete the normal merge/readback; production authenticated acceptance remains blocked until the audited fixture/login/cleanup path is available.
 
 ---
 
