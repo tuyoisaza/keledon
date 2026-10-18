@@ -1,5 +1,9 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Retest UAT-145 — espaciado de login móvil (2026-10-18)
+
+PR #260 se fusionó normalmente como main `327a4e65121bf6f085787f721fa0d291fae2ebb9`; Railway Web `9a1e7179-dd61-4a95-afe7-23cc197474e5` y API `7bb5c647-ed17-4804-89c9-b31304416e3e` reportan SUCCESS. En una sesión anónima fresca de producción a 320×720, el sitio muestra 5.2.12, el header termina en y=156 y el H1 inicia en y=184 (brecha 28px, sin intersección). Enlace de marca/email/contraseña/registro mantienen 44px de alto; ancho de scroll del documento y body 305px frente a viewport 320px, sin overflow horizontal. UAT-145 **PASS_SCOPED** y cierra únicamente el hallazgo visual de UAT-142. Evidencia: `50-uat/evidence/uat-145-production-login-mobile-2026-10-18.json`. Captura revisada en sesión y no exportada. No se activaron formulario, OAuth, diagnóstico, caché ni portapapeles. CMT-002 y Auto general siguen ACTIVE/PARTIAL por el resto de sus gates.
+
 ## Reentrada de producción — UAT-142 parcial / candidato 5.2.12 (2026-10-18)
 
 PR #259 se fusionó en main `f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4`; Railway Web/API reportaron SUCCESS. UAT-142 observó 5.2.11 tras una recarga ordinaria: brand/email/password/signup miden 44px y el documento queda en 320px de ancho. La misma medición encontró que el header fijo termina en y=156 y el H1 va de y=126.7 a 158.7: solapamiento de 29.3px. UAT-142 queda PARTIAL. El follow-up 5.2.12 sube el `pt` del main de login de `pt-24` a `pt-40` para reservar espacio vertical; no toca autenticación ni permisos. UAT-145 debe confirmar por DOM/AX/captura en producción que el H1 queda debajo del header, se mantienen los cuatro targets y no aparece overflow. No se ejecutan pruebas/build/lint locales. Evidencia: `50-uat/evidence/uat-142-production-login-mobile-2026-10-18.json`.
