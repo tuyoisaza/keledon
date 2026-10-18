@@ -1,3 +1,10 @@
+## v5.2.13 — 2026-10-18
+
+- Add a superadmin-only synthetic-fixture lifecycle with transactional audit, two-tenant capacity, 1–24h TTL, reversible retirement and credential-free API/settings UI.
+- Expired or retired synthetic accounts lose HTTP/device access; restoration requires fresh normal login and does not resurrect old bearer/device credentials. Existing ordinary accounts preserve their authentication behavior.
+- Serialize Browser command claims/results per device across API replicas and commit result/flow/event changes atomically. Explicit command targets override session fallback; result metadata cannot override the resolved device. Permanent at-most-once claims remain; no CRM retry/lease expiration is enabled.
+- Add boundary regression sources; these have not been run locally under the owner's production-only acceptance instruction.
+
 ## v5.2.12 — 2026-10-18
 
 ### Fixed

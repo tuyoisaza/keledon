@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "Remote main b3c72a34bee0a3afe2222f25162ab8de0b89985f; KELEDON 5.2.12; PHDK 2.54.1 local upgrade approved for publication",
+  "candidate_ref": "5.2.13 working candidate feat/phdk-audited-uat-fixtures, based on remote main dd01c93003ea95c35d34e8ba2e4e4c49abe79af3; PHDK 2.54.1 published",
   "authorization": {
     "source_ref": "Current owner instruction 2026-10-18: phdk auto force. Retoma la meta de KELEDON con PHDK 2.54.1, publica la actualizacion y continua con todo lo que puedas resolver dentro de lo ya autorizado.",
     "instruction": "PHDK auto force",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "PHDK publication then implementation inventory",
+  "current_stage": "Integration/UAT Prep source complete; candidate delivery then scoped production UAT",
   "steps": [
     {
       "id": "preflight",
@@ -190,30 +190,86 @@
     {
       "id": "standards_2541_delivery",
       "kind": "delivery",
-      "status": "running",
+      "status": "done",
       "action": "Publish verified PHDK 2.54.1 via normal PR and read back remote main",
       "depends_on": [
         "verify_delivery"
       ],
-      "blocked_by": []
+      "blocked_by": [],
+      "evidence": "PR 263 merged normally as dd01c93003ea95c35d34e8ba2e4e4c49abe79af3; remote main VERSION 2.54.1 read back."
     },
     {
       "id": "implementation_inventory",
       "kind": "work",
-      "status": "pending",
+      "status": "done",
       "action": "Reconcile inherited PIA blockers against owner mandate and inspect current implementation gaps",
       "depends_on": [
         "standards_2541_delivery"
       ],
-      "blocked_by": []
+      "blocked_by": [],
+      "evidence": "Reread current intent/requirements, widget readiness, fixture and queue source/PIAs. PHDK-only security review discarded; missing admin identity scoped to authenticated acceptance."
     },
     {
       "id": "fixture_lifecycle_implementation",
       "kind": "work",
-      "status": "pending",
+      "status": "done",
       "action": "Implement permitted audited synthetic fixture provisioning and retirement infrastructure; missing identity only blocks authenticated UAT",
       "depends_on": [
         "implementation_inventory"
+      ],
+      "blocked_by": [],
+      "evidence": "5.2.13 candidate source: transaction-audited fixture lifecycle, superadmin UI, TTL/retirement/session boundary guards; authored security regressions NOT RUN locally. See INTEGRATION_REVIEW-5.2.13.md and fixture runbook."
+    },
+    {
+      "id": "queue_atomicity_implementation",
+      "kind": "work",
+      "status": "done",
+      "action": "Implement bounded queue claim/result atomicity without enabling retries",
+      "depends_on": [
+        "fixture_lifecycle_implementation"
+      ],
+      "blocked_by": [],
+      "evidence": "Per-device DB transaction lock; same transaction for result/flow/events; explicit device target precedence; server-owned metadata. Full leases still open."
+    },
+    {
+      "id": "candidate_513_delivery",
+      "kind": "delivery",
+      "status": "running",
+      "action": "Deliver reviewed 5.2.13 candidate through normal PR and verify remote main and existing autodeploy",
+      "depends_on": [
+        "queue_atomicity_implementation"
+      ],
+      "blocked_by": []
+    },
+    {
+      "id": "candidate_513_anonymous_uat",
+      "kind": "work",
+      "status": "pending",
+      "action": "Run scoped production anonymous endpoint denial and public version/redirect smoke after successful deploy",
+      "depends_on": [
+        "candidate_513_delivery"
+      ],
+      "blocked_by": []
+    },
+    {
+      "id": "fixture_authenticated_acceptance",
+      "kind": "work",
+      "status": "blocked",
+      "action": "Provision/retire reserved regular-user fixture run through an existing superadmin and execute lifecycle/tenant/queue cases",
+      "depends_on": [
+        "candidate_513_delivery"
+      ],
+      "blocked_by": [
+        "synthetic-auth-identity"
+      ]
+    },
+    {
+      "id": "private_egress_source_review",
+      "kind": "work",
+      "status": "pending",
+      "action": "Inspect tenant private-egress enforcement and repair remaining source gaps independently of positive sandbox acceptance",
+      "depends_on": [
+        "candidate_513_anonymous_uat"
       ],
       "blocked_by": []
     }
@@ -235,9 +291,9 @@
       "id": "synthetic-auth-identity",
       "kind": "external_dependency",
       "source_ref": "PIA-CMT-003C1 acceptance prerequisites",
-      "reason": "No owner-controlled synthetic mailbox/account for normal login is evidenced; the approved fixture scope excludes privileged test identities and invitations. Blocks authenticated production UAT until a compliant normal identity is available.",
-      "next_action": "Implement audited provisioning/cleanup path, then inspect existing safe production session/identity availability without exposing credentials.",
-      "evidence": "PIA CMT-003C1 and UAT Prep report document that test-as is disabled in production, audited fixture lifecycle is absent, and no owner-controlled synthetic login identity is evidenced.",
+      "reason": "No compliant existing superadmin execution session and controlled pair of ordinary synthetic account sessions is available for authenticated production fixture acceptance. This does not block lifecycle implementation.",
+      "next_action": "Use an existing authenticated superadmin to prepare the two reserved first-party synthetic users through /admin/settings and the audited fixture lifecycle; keep all credentials out of chat. Validate and retire via the runbook.",
+      "evidence": "5.2.13 source implements a normal superadmin-only audited path; no privileged synthetic account or production test-as is permitted. No fixture has been created or auth session used in this invocation.",
       "observed_at": "2026-10-17T22:02:05-06:00",
       "resolution_attempts": [
         "Re-read CMT-003C1 and UAT Prep; confirmed approved fixture limits and first-party normal login requirement. Next implement audited lifecycle; no account has been created."
@@ -256,5 +312,5 @@
       ]
     }
   ],
-  "updated_at": "2026-10-18T06:15:24.530776+00:00"
+  "updated_at": "2026-10-18T06:28:56.103687+00:00"
 }

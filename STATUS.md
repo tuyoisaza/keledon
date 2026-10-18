@@ -1,4 +1,14 @@
-# PHDK upgrade force and autonomy contract review — 2026-10-18
+# Current Auto Force — KELEDON 5.2.13 candidate / PHDK 2.54.1
+
+Owner resumed all four confirmed fronts and explicitly authorized publishing PHDK 2.54.1. Standards delivered by normal PR #263 to remote main `dd01c93003ea95c35d34e8ba2e4e4c49abe79af3`; VERSION readback is 2.54.1. Current cohesive candidate implements audited synthetic-fixture lifecycle and settings UI, account/session TTL and retirement guards, explicit user-write allowlisting, and transaction-scoped Browser queue claims/results. No account/tenant/device/flow has been provisioned, no credential/provider setting was accessed, and no local app tests/build/lint ran. Source regression cases are authored but unexecuted. Additive schema migration is delivered as repository code through the existing deploy startup; no direct database administration is performed.
+
+The old PHDK-only security-review gate on CMT-003C1 is nonblocking in FORCE. Missing synthetic identities blocks authenticated acceptance, not this implementation. The fixture manager requires an existing real superadmin, never a privileged testing identity. It accepts two unused `phdk-uat-…@example.invalid` regular accounts through normal auth, caps the entire retained fixture set at two tenants, and preserves records on retirement. The next run requires explicit cleanup reconciliation rather than silently accumulating tenants. Product version is 5.2.13 in the five package/lock roots and Browser renderer. Whole Auto remains partial.
+
+SIGUIENTE PASO: finish static source/security review, normal PR integration, verify existing Web/API autodeploy, then run only authorized production anonymous-denial/public smoke. Authenticated fixture lifecycle/concurrency and customer-private-egress acceptance remain unverified until compliant access/sandbox exists.
+
+---
+
+# Historical PHDK upgrade force and autonomy contract review — 2026-10-18
 
 Current request: synchronize published PHDK and assess the revised Auto Force contract; no product implementation or publication requested by this scoped invocation. Installed standards updated from 2.54.0 to 2.54.1, canonical upstream `494337138034c9abdc3851276b783528ccd39df2`. All 66 manifest mappings match fresh upstream bytes; the native AGENTS.md managed block matches the vendored block and owner content outside markers is byte-preserved. Coherence 66/66 and diff whitespace checks pass. No pre-existing dirty PHDK paths were overwritten; no obsolete manifest destination was removed.
 

@@ -8,6 +8,7 @@ import { Reflector } from '@nestjs/core';
 import * as crypto from 'crypto';
 import { IS_PUBLIC_KEY } from './public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { isAccountActive, isAccountSessionCurrent } from '../auth-local/account-lifecycle.policy';
 import {
   isPermittedUatTestProfile,
   parseUatTestProfileIds,
@@ -21,6 +22,7 @@ interface TokenPayload {
   email: string;
   role: string;
   expiresAt: number;
+  issuedAt?: number;
   uatTestProfile?: true;
   uatTestSessionId?: string;
   uatActorUserId?: string;
@@ -156,9 +158,13 @@ export class AuthGuard implements CanActivate {
       if (!this.prisma) return null;
       const actor = await this.prisma.user.findUnique({
         where: { id: payload.userId },
-        select: { id: true, email: true, role: true },
+        select: {
+          id: true, email: true, role: true, uatFixtureRunId: true,
+          uatFixtureExpiresAt: true, uatFixtureRetiredAt: true,
+          uatFixtureAuthAfter: true,
+        },
       });
-      if (!actor) return null;
+      if (!isAccountSessionCurrent(actor, payload.issuedAt)) return null;
 
       return {
         userId: actor.id,
@@ -204,11 +210,17 @@ export class AuthGuard implements CanActivate {
         }),
         this.prisma.user.findUnique({
           where: { id: payload.userId },
-          select: { id: true, name: true, email: true, role: true },
+          select: {
+            id: true, name: true, email: true, role: true,
+            uatFixtureRunId: true, uatFixtureExpiresAt: true, uatFixtureRetiredAt: true,
+          },
         }),
         this.prisma.user.findUnique({
           where: { id: payload.uatActorUserId },
-          select: { id: true, role: true },
+          select: {
+            id: true, role: true, uatFixtureRunId: true,
+            uatFixtureExpiresAt: true, uatFixtureRetiredAt: true,
+          },
         }),
       ]);
       const details = JSON.parse(session?.changes || 'null');
@@ -229,6 +241,9 @@ export class AuthGuard implements CanActivate {
           UAT_TEST_PROFILE_TTL_MS ||
         !allowedIds.includes(payload.userId) ||
         !profile ||
+        profile.uatFixtureRunId ||
+        !isAccountActive(profile) ||
+        !isAccountActive(actor) ||
         !isPermittedUatTestProfile(profile) ||
         actor?.role !== 'superadmin'
       ) {

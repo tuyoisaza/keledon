@@ -1,4 +1,24 @@
 {
+  "uatFixtures": {
+    "title": "Synthetic acceptance environments",
+    "description": "Two isolated companies, regular accounts and a maximum lifetime of 24 hours. Devices and the flow are created inactive. No emails or credentials are generated. Retirement revokes access; restoring requires a new login and does not reactivate devices.",
+    "runId": "Run ID",
+    "userA": "Synthetic account A ID",
+    "userB": "Synthetic account B ID",
+    "ttl": "Lifetime",
+    "confirm": "I confirm both accounts are synthetic, unused and registered as phdk-uat-…@example.invalid.",
+    "create": "Prepare environment",
+    "read": "Inspect run",
+    "retire": "Retire and revoke access",
+    "restore": "Restore accounts",
+    "busy": "Processing…",
+    "failed": "The operation could not be completed. Check permissions, IDs and run state; inspect the same run before retrying creation.",
+    "status": "Status",
+    "expires": "Expires",
+    "active": "Active",
+    "retired": "Retired",
+    "expired": "Expired"
+  },
   "app": {
     "name": "KELEDON",
     "tagline": "Call Center Automation"

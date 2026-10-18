@@ -1,5 +1,11 @@
 # Sub-PIA CMT-003C1 — provisioning/cleanup auditado de fixtures
 
+## Current Auto Force revalidation — 2026-10-18
+
+5.2.13 candidate: implementation is present in UatFixturesService/controller, the superadmin settings panel, additive lifecycle migration and shared auth/device/runtime guards. The earlier PHDK-only security-review label is NON_BLOCKING_BY_MODE under the current explicit Auto Force instruction. Create/audit and retirement/audit share transactions; retained capacity is two tenants; accounts expire and restored accounts require fresh normal login. No privileged testing identity, test-as, secret response, email or live provider is introduced. Authenticated production acceptance is still NOT RUN; implementation is not blocked by absence of an execution session. See 45-uat-prep/UAT_FIXTURE_LIFECYCLE_RUNBOOK.md.
+
+## Historical baseline
+
 Estado: **DESIGN READY / IMPLEMENTATION BLOCKED FOR SECURITY REVIEW** · Compromiso: CMT-003 · Requisito de CMT-003C y aceptación dependiente de CMT-003A/B y CMT-004. Baseline de producto KELEDON 5.2.10, source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PHDK 2.53.1. Fecha: 2026-10-17.
 
 ## Hallazgo de fuente

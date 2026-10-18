@@ -118,6 +118,10 @@ model User {
   isOnline      Boolean  @default(false)
   lastLogin     DateTime?
   passwordHash  String?
+  uatFixtureRunId String?
+  uatFixtureExpiresAt DateTime?
+  uatFixtureRetiredAt DateTime?
+  uatFixtureAuthAfter DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -128,6 +132,19 @@ model User {
   devices  Device[]
 
   @@map("users")
+}
+
+// A bounded synthetic run contains only generated fixture IDs, never credentials.
+model UatFixtureRun {
+  id        String @id
+  createdBy String
+  members   String
+  expiresAt DateTime
+  retiredAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([retiredAt, expiresAt])
+  @@map("uat_fixture_runs")
 }
 
 model Device {
