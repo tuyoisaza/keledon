@@ -1,5 +1,15 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Revalidación estática de acciones de diagnóstico — candidato 5.2.18 (2026-10-18)
+
+La revisión del source Web y Landing encontró dos defectos en el widget compartido. Primero, si falla `resetApplicationState`, ambos `VersionActions` llamaban igualmente a `clearLocalSession()`: la interfaz anunciaba fallo y a la vez cerraba la sesión local. Segundo, una excepción inesperada de `copyReport` dejaba la acción pendiente y podía producir un rechazo no manejado. Se corrigieron ambos componentes: el fallo del reset conserva el contexto de autenticación; la copia trata un rechazo como resultado fallido y libera el estado de espera.
+
+La ruta de reset también se ordenó para completar primero la eliminación/verificación de caches de KELEDON, cookies accesibles y eventos diagnósticos antes de modificar almacenamiento local/sesión; `auth_token` se elimina al final de las claves propiedad de la app para conservar la sesión si falla una eliminación previa. No se amplió el alcance a caché HTTP del navegador, cookies HttpOnly, sesión de proveedores ni estado de clientes. API, Clipboard, CRM y llamadas no se invocan con la acción de reset.
+
+El código de Web y Landing se revisó lado a lado y mantiene la misma secuencia/contrato. La validación actual es revisión estática del diff únicamente; no se ejecutaron suites, builds ni lint locales por instrucción vigente. UAT-152 confirma solo el estado anónimo, versión y nombres accesibles que hoy sirve producción 5.2.16; no activa los controles ni acepta el candidato. Después de publicación, el retest debe ejecutarse en KELEDON Web de producción y limitarse a una cuenta/sesión sintética previamente autorizada; no usar la sesión personal para probar el borrado. Landing runtime sigue sin target de producción verificado.
+
+Estado: fix de fuente preparado en el siguiente candidato patch, aceptación productiva PENDIENTE. Evidencia estática asociada al diff de `services/web/src/components/common/VersionActions.tsx`, `landing/src/components/common/VersionActions.tsx` y los dos `diagnostics-core.ts`; UAT público: `50-uat/evidence/uat-152-production-login-diagnostics-2026-10-18.json`.
+
 ## Retest UAT-145 — espaciado de login móvil (2026-10-18)
 
 PR #260 se fusionó normalmente como main `327a4e65121bf6f085787f721fa0d291fae2ebb9`; Railway Web `9a1e7179-dd61-4a95-afe7-23cc197474e5` y API `7bb5c647-ed17-4804-89c9-b31304416e3e` reportan SUCCESS. En una sesión anónima fresca de producción a 320×720, el sitio muestra 5.2.12, el header termina en y=156 y el H1 inicia en y=184 (brecha 28px, sin intersección). Enlace de marca/email/contraseña/registro mantienen 44px de alto; ancho de scroll del documento y body 305px frente a viewport 320px, sin overflow horizontal. UAT-145 **PASS_SCOPED** y cierra únicamente el hallazgo visual de UAT-142. Evidencia: `50-uat/evidence/uat-145-production-login-mobile-2026-10-18.json`. Captura revisada en sesión y no exportada. No se activaron formulario, OAuth, diagnóstico, caché ni portapapeles. CMT-002 y Auto general siguen ACTIVE/PARTIAL por el resto de sus gates.

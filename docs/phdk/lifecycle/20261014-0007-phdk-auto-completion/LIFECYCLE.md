@@ -1,10 +1,10 @@
 # Current lifecycle state — 2026-10-18 / PHDK 2.56.0
 
-Run: 20261014-0007-phdk-auto-completion. Goal: four owner-confirmed commitments in order. Remote main b54d747a63da8c27fa1358c3db82d2787038f966 serves product 5.2.16. Docs-only MS-001 candidate is 5.2.17, local and unpublished. CMT-002 source correction is separately prepared for 5.2.18 after MS-001 readback.
+Run: 20261014-0007-phdk-auto-completion. Goal: four owner-confirmed commitments in order. MS-001 merged by PR #269 to main f50b264ee31ae481c79e6075843c8d1c532bbe24, KELEDON 5.2.17. Railway Web/API report SUCCESS. UAT-153 shows the unique-query route serves 5.2.17 while a normal URL remains on cached 5.2.16. CMT-002 source correction is prepared separately as candidate 5.2.18.
 
-Current stage board: Preflight REVALIDATED; Capture REUSED; Plan COMPLETED/REVALIDATED with MILESTONE_PLAN and 574-row/41-model CRUD coverage; PMO COMPLETED/REVALIDATED; MS-001 publication gate IN PROGRESS; CMT-002 static source correction PREPARED; production acceptance, integration, final Check and delivery remain OPEN.
+Current stage board: Preflight REVALIDATED; Capture REUSED; Plan COMPLETED/REVALIDATED with MILESTONE_PLAN and 574-row/41-model CRUD coverage; PMO COMPLETED/REVALIDATED; MS-001 DELIVERED; MS-002 source correction PREPARED; production acceptance, final integration, Check and goal delivery remain OPEN.
 
-Next step: finish technical/document review, publish 5.2.17 docs through the normal PR route and verify remote main; then publish the separate 5.2.18 CMT-002 source fix and retest only on the deployed production site. Authenticated reset acceptance remains limited to an authorized synthetic session; private positive egress remains gated on a client-selected sandbox.
+Next step: complete source-only review, publish the separate 5.2.18 CMT-002 fix through the normal PR route and verify its deployed version. Authenticated reset acceptance remains limited to an authorized disposable synthetic session; private positive egress remains gated on a client-selected sandbox.
 
 ---
 

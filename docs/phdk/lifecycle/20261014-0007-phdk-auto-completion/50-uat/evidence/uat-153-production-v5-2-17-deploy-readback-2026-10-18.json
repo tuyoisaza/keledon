@@ -1,0 +1,51 @@
+{
+  "case": "UAT-153",
+  "story": "US-CMT001-RELEASE-READBACK-01",
+  "commitment": "CMT-001",
+  "captured_at": "2026-10-18T18:58:05Z",
+  "candidate": {
+    "product_version": "5.2.17",
+    "main_sha": "f50b264ee31ae481c79e6075843c8d1c532bbe24"
+  },
+  "authorization": "ACTIVE_UAT_EXCEPTION",
+  "browser": {
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "fresh Chrome tab via CUA"
+  },
+  "target": "https://keledon.tuyoisaza.com/login?phdk-uat-20261018=269",
+  "identity": "anonymous",
+  "actions": [
+    "Open a new production login tab with a harmless unique UAT query parameter",
+    "Read the accessible page version and diagnostics labels"
+  ],
+  "expected": "After the PR #269 production deployment succeeds, fresh-origin response displays v5.2.17 and the diagnostics controls render.",
+  "actual": {
+    "version": "v5.2.17",
+    "copy_name": "Copiar diagnóstico completo",
+    "clear_name": "Limpiar caché",
+    "readback": "Normal fresh-tab URL without a unique query still returned v5.2.16; unique UAT query returned v5.2.17. This isolates stale cached HTML as the discrepancy."
+  },
+  "deployment": {
+    "web_id": "0e243dd7-68f2-4fbb-81d6-8e87f937390c",
+    "web_status": "SUCCESS",
+    "api_id": "75d38759-c02f-426e-ba45-64c1d9a366c8",
+    "api_status": "SUCCESS"
+  },
+  "result": "PASS_SCOPED",
+  "not_exercised": [
+    "Authentication",
+    "copy action or clipboard content",
+    "cache/reset action",
+    "customer data",
+    "private endpoint",
+    "API functional probes"
+  ],
+  "safety": {
+    "login": false,
+    "writes": false,
+    "clipboard_read": false,
+    "cache_clear": false,
+    "customer_data": false,
+    "new_spend": false
+  }
+}

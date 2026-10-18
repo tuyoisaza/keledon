@@ -1,3 +1,9 @@
+## MS-001 delivery and MS-002 execution — PHDK 2.56.0 (2026-10-18)
+
+MS-001 was versioned as KELEDON 5.2.17 and merged through PR #269; remote `main` readback is `f50b264ee31ae481c79e6075843c8d1c532bbe24`. The source tree has all five package/lock roots and Browser renderer at 5.2.17. Railway production Web/API deployments for the main SHA report SUCCESS. UAT-153 used a fresh, unique query URL: `/login` without a query still served v5.2.16 while the query URL served v5.2.17, confirming a stale HTML/cache path. This is scoped version readback, not action acceptance.
+
+CMT-002 source review then found two concrete failure-path defects: rejected copy adapters could leave the widget pending; reset failures still cleared in-memory auth, while its helper cleared the auth token before fallible cache/cookie operations. The 5.2.18 source correction catches copy rejection, preserves auth UI on reset failure, runs cache/cookie/event cleanup before storage and removes the auth token last. Production UAT-152 remains scoped to anonymous labels on 5.2.16 and did not invoke either control. The CMT-002 PIA records retest requirements; no local app tests/build/lint were run.
+
 # PMO progress report — current revalidation 2026-10-18
 
 ## Plan/PMO refresh — PHDK 2.56.0

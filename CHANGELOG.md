@@ -1,3 +1,10 @@
+## v5.2.18 — 2026-10-18
+
+- Keep the local authentication context intact when the app-owned diagnostic reset fails; only report success and navigate after the reset completes.
+- Treat rejected diagnostic-copy adapters as a truthful copy failure and release the pending control state.
+- Order KELEDON cache, accessible-cookie and diagnostic-event cleanup before app-owned storage; remove `auth_token` last so earlier failures do not prematurely invalidate the session.
+- Keep Web and Landing diagnostic behavior aligned. Static source review only; no local application tests/build/lint run under the owner's production-only restriction. Production acceptance remains pending deployment and an authorized disposable synthetic session.
+
 ## v5.2.17 — 2026-10-18
 
 - Reconcile the KELEDON Auto Plan and PMO artifacts with PHDK 2.56 value-milestone planning, preserving the four confirmed commitments and production-only acceptance boundaries.

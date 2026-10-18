@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "Remote main b54d747a63da8c27fa1358c3db82d2787038f966; local branch phdk/auto-review-next-20261018 has docs-only MS-001 candidate 5.2.17 and separate CMT-002 source candidate 5.2.18; neither is published. PHDK 2.56.0 coherence PASS 69/69.",
+  "candidate_ref": "Remote main f50b264ee31ae481c79e6075843c8d1c532bbe24 at KELEDON 5.2.17 after PR #269. Web/API Railway deployments SUCCESS; UAT-153 fresh-query readback shows v5.2.17 while ordinary URL serves cached v5.2.16. Current branch phdk/cmt-002-diagnostics-5.2.18 contains the separate, unpublished CMT-002 source candidate. PHDK 2.56.0 coherence PASS 69/69.",
   "authorization": {
     "source_ref": "Current owner invocation 2026-10-18: PHDK auto; prior conversation explicitly authorized continuing the same four-commitment KELEDON goal and normal versioned PR delivery.",
     "instruction": "PHDK auto",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "Plan/PMO revalidated; MS-001 docs-only v5.2.17 publication pending. UAT-152 read-only anonymous production check confirms served v5.2.16 diagnostics labels. CMT-002 source fix prepared separately for v5.2.18; no app tests/build/lint run.",
+  "current_stage": "MS-001 v5.2.17 merged and read back on main. Railway Web/API SUCCESS. UAT-153 fresh-query production readback displays v5.2.17; ordinary URL still serves cached v5.2.16. MS-002 CMT-002 fixes prepared as v5.2.18. No app tests/build/lint run.",
   "steps": [
     {
       "id": "preflight",
@@ -441,6 +441,40 @@
       ],
       "blocked_by": [],
       "evidence": "Created PMO charter, five workstreams, dependency/integration map, current status, progress report and lifecycle handoff. The four previously confirmed commitments remain ordered; source work and external acceptance gates are separated."
+    },
+    {
+      "id": "ms001_delivery",
+      "kind": "verify_delivery",
+      "status": "done",
+      "action": "Publish the PHDK 2.56 Plan/PMO and baseline documentation milestone",
+      "depends_on": [
+        "pmo_revalidation_256"
+      ],
+      "blocked_by": [],
+      "evidence": "PR #269 merged normally to remote main as f50b264ee31ae481c79e6075843c8d1c532bbe24; product version 5.2.17 and Plan artifacts read back. Railway Web/API deployments SUCCESS; UAT-153 unique-query readback displays 5.2.17 while the ordinary URL remains on cached 5.2.16."
+    },
+    {
+      "id": "uat152_public_readback",
+      "kind": "work",
+      "status": "done",
+      "action": "Read the current anonymous production diagnostics widget without activating controls",
+      "depends_on": [
+        "ms001_delivery"
+      ],
+      "blocked_by": [],
+      "evidence": "UAT-152 at 2026-10-18T18:53:27Z observed production v5.2.16 and accessible Spanish copy/reset labels. No login, clipboard, cache, storage, customer data or provider action."
+    },
+    {
+      "id": "ms002_source_fix",
+      "kind": "work",
+      "status": "done",
+      "action": "Correct Web/Landing diagnostic copy and reset failure paths and update CMT-002 PIA",
+      "depends_on": [
+        "ms001_delivery",
+        "uat152_public_readback"
+      ],
+      "blocked_by": [],
+      "evidence": "Static diff: rejected copy adapters return to idle with failure feedback; failed reset no longer clears in-memory auth; fallible cache/cookie/event cleanup runs before owned storage and auth_token is removed last. Web/Landing remain mirrored. No local app tests/build/lint run."
     }
   ],
   "blockers": [
@@ -494,6 +528,6 @@
       ]
     }
   ],
-  "updated_at": "2026-10-18T18:53:27Z",
+  "updated_at": "2026-10-18T18:58:54Z",
   "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json"
 }

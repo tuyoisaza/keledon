@@ -1,10 +1,10 @@
 # KELEDON PHDK Auto — current task state (2026-10-18)
 
-Current request: PHDK auto. Run: 20261014-0007-phdk-auto-completion. Remote main b54d747a63da8c27fa1358c3db82d2787038f966 remains product 5.2.16; docs-only MS-001 candidate is 5.2.17 and is not published yet. PHDK 2.56.0. The four owner-confirmed commitments remain active and ordered.
+Current request: PHDK auto. Run: 20261014-0007-phdk-auto-completion. Remote main is f50b264ee31ae481c79e6075843c8d1c532bbe24, KELEDON 5.2.17 after PR #269; Railway Web/API SUCCESS; UAT-153 unique-query production readback displays v5.2.17. PHDK 2.56.0. The four owner-confirmed commitments remain active and ordered.
 
 Current planning stage: Plan revalidated with a six-milestone value roadmap. See docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/MILESTONE_PLAN.md and HANDOFF.md. The existing architecture/UX/admin/AI/CRUD/ADR artifacts were reused and snapshotted. The CRUD inventory now covers 41 current Prisma models and 574 role/surface rows; the 14 UatFixtureRun rows remain BLOCKED until authenticated production UAT.
 
-Next action: finish and publish the MS-001 docs-only 5.2.17 candidate, then continue MS-002 diagnostics source correction at 5.2.18. All production acceptance remains within the prior synthetic scope. No local app tests/build/lint, customer data, live CRM/call, private endpoint, credentials, provider writes, Actions, schedules or force-push.
+Next action: publish and production-readback the MS-002 diagnostics correction candidate 5.2.18, then continue the next dependency-ready milestone. All production acceptance remains within the prior synthetic scope. No local app tests/build/lint, customer data, live CRM/call, private endpoint, credentials, provider writes, Actions, schedules or force-push.
 
 ---
 

@@ -105,7 +105,10 @@ export const isOwnedKey = (key: string) =>
   /^(keledon[-_:])/i.test(key) || ['auth_token', 'user_email', 'user_name'].includes(key);
 
 function clearOwnedStorage(storage: StorageLike) {
-  const names = Array.from({ length: storage.length }, (_, i) => storage.key(i)).filter((key): key is string => !!key && isOwnedKey(key));
+  const names = Array.from({ length: storage.length }, (_, i) => storage.key(i))
+    .filter((key): key is string => !!key && isOwnedKey(key))
+    // Preserve the active auth token if an earlier owned-key removal fails.
+    .sort((a, b) => Number(a === 'auth_token') - Number(b === 'auth_token'));
   for (const key of names) {
     storage.removeItem(key);
     if (storage.getItem(key) !== null) throw new Error('Application storage was not cleared');
@@ -120,9 +123,8 @@ export async function clearApplicationState(adapters: {
   clearCookies?: () => void;
   clearEvents?: () => void;
 }) {
-  // Read authentication before mutation; failures propagate so UI cannot display false success.
+  // Complete fallible cache/cookie/diagnostic work before removing app storage or authentication.
   const hadSession = !!adapters.sessionStorage.getItem('auth_token');
-  const cleared = clearOwnedStorage(adapters.localStorage) + clearOwnedStorage(adapters.sessionStorage);
   let cachesCleared = 0;
   if (adapters.caches) {
     const owned = (await adapters.caches.keys()).filter(name => /^keledon[-_:]/i.test(name));
@@ -133,6 +135,7 @@ export async function clearApplicationState(adapters: {
   }
   adapters.clearCookies?.();
   adapters.clearEvents?.();
+  const cleared = clearOwnedStorage(adapters.localStorage) + clearOwnedStorage(adapters.sessionStorage);
   return { cleared, cachesCleared, hadSession };
 }
 
