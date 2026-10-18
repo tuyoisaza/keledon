@@ -1,3 +1,9 @@
+## v5.2.21 — 2026-10-18
+
+- Show the exact KELEDON Browser release beside the authenticated Lounge download action and pin the default installer link to that same release tag.
+- When a tenant deployment overrides the download URL, label it as configured; optionally provide `VITE_KELEDON_BROWSER_VERSION` to show its declared installer version.
+- Keep Web and Landing download actions consistent. No local application tests/build/lint run under the production-only validation instruction.
+
 ## v5.2.20 — 2026-10-18
 
 - Reconcile the PHDK 2.56.0 hybrid value-milestone Plan and PMO to the verified KELEDON 5.2.19 / PR #271 remote-main baseline.

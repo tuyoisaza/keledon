@@ -685,6 +685,8 @@
     "title": "Iniciar Keledon",
     "subtitle": "Selecione um Keledon para iniciá-lo como agente de desktop",
     "downloadApp": "Baixar aplicativo",
+    "customDownload": "versão configurada",
+    "downloadVersionUnavailable": "versão indisponível",
     "testProtocol": "Testar protocolo",
     "testProtocolTitle": "Testar o registro do protocolo",
     "protocolResult": "Se o aplicativo abriu, o protocolo está registrado. Caso contrário, reinicie-o.",

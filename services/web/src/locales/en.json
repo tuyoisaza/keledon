@@ -680,6 +680,8 @@
     "title": "Launch Keledon",
     "subtitle": "Select a Keledon to launch as a desktop agent",
     "downloadApp": "Download app",
+    "customDownload": "configured version",
+    "downloadVersionUnavailable": "version unavailable",
     "testProtocol": "Test protocol",
     "testProtocolTitle": "Test protocol registration",
     "protocolResult": "If the app opened, its protocol is registered. Restart the app if it did not.",

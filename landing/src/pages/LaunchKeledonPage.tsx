@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/useAuth';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
-import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
+import { getBrowserDownloadUrl, getBrowserInstallerUrl, DEFAULT_BROWSER_DOWNLOAD_URL, BROWSER_RELEASES_API } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
 import { useTranslation } from '@/context/useTranslation';
 import { requestKeledonLaunch } from '@/lib/launch-protocol.js';
@@ -19,6 +19,9 @@ export default function LaunchKeledonPage() {
     const [pairingCodes, setPairingCodes] = useState<Record<string, { code: string | null; expiresAt: string } | null>>({});
     const [resettingCode, setResettingCode] = useState<string | null>(null);
     const [loadingPairingCodes, setLoadingPairingCodes] = useState<Record<string, boolean>>({});
+    const [browserVersion, setBrowserVersion] = useState<string | null>(null);
+    const [browserReleaseTag, setBrowserReleaseTag] = useState<string | null>(null);
+    const [versionLoading, setVersionLoading] = useState(true);
     const [launchDetails, setLaunchDetails] = useState<null | {
         keledonId: string;
         teamId: string | null;
@@ -27,6 +30,22 @@ export default function LaunchKeledonPage() {
         nextSteps: Array<{ title: string; detail: string }>;
     }>(null);
     const loadedVendorTeamIds = useRef(new Set<string>());
+
+    useEffect(() => {
+        const controller = new AbortController();
+        fetch(BROWSER_RELEASES_API, { signal: controller.signal })
+            .then(response => response.ok ? response.json() : null)
+            .then(release => {
+                const tagName = typeof release?.tag_name === 'string' && /^v?\d+\.\d+\.\d+$/.test(release.tag_name)
+                    ? release.tag_name
+                    : null;
+                setBrowserReleaseTag(tagName);
+                setBrowserVersion(tagName?.replace(/^v/, '') || null);
+            })
+            .catch(() => setBrowserVersion(null))
+            .finally(() => setVersionLoading(false));
+        return () => controller.abort();
+    }, []);
 
     useEffect(() => {
         if (user?.role === 'superadmin' && keledons.length > 0) {
@@ -156,6 +175,12 @@ export default function LaunchKeledonPage() {
     }
 
     const isSuperAdmin = user?.role === 'superadmin';
+    const configuredDownloadUrl = getBrowserDownloadUrl(import.meta.env);
+    const hasCustomDownloadUrl = configuredDownloadUrl !== DEFAULT_BROWSER_DOWNLOAD_URL;
+    const configuredBrowserVersion = import.meta.env.VITE_KELEDON_BROWSER_VERSION?.trim();
+    const browserDownloadUrl = !hasCustomDownloadUrl && browserReleaseTag
+        ? getBrowserInstallerUrl(browserReleaseTag)
+        : configuredDownloadUrl;
 
     return (
         <div className="space-y-6">
@@ -170,15 +195,18 @@ export default function LaunchKeledonPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    {/* KELEDON_BROWSER_DOWNLOAD_URL env var on Railway can override this URL if needed */}
+                    {/* The displayed release and default installer URL use the same GitHub release tag. */}
                     <a
-                        href={getBrowserDownloadUrl(import.meta.env)}
+                        href={browserDownloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                     >
                         <Download className="w-4 h-4" />
-                        Download App
+                        Download App{browserVersion && !hasCustomDownloadUrl ? ` · v${browserVersion}` : ''}
+                        {hasCustomDownloadUrl && <span className="ml-1 text-xs">{configuredBrowserVersion ? `v${configuredBrowserVersion}` : '(configured version)'}</span>}
+                        {!hasCustomDownloadUrl && !browserVersion && !versionLoading && <span className="ml-1 text-xs">(version unavailable)</span>}
+                        {versionLoading && <Loader2 className="w-3 h-3 animate-spin ml-1" />}
                     </a>
                     <button 
                         onClick={() => {

@@ -1,3 +1,13 @@
+## Current candidate delivery — KELEDON 5.2.21 Lounge installer version (2026-10-18)
+
+- Candidate branch: `phdk/lounge-download-version-5.2.21`, based on verified remote main `410bc9ead08351171b602eb3a5275f36bf29ca5a` / KELEDON 5.2.20 after PR #272.
+- Scope: show the exact KELEDON Browser installer release beside Download app in Launch/Lounge and use a tag-pinned installer URL so the label matches the download. Web and Landing are aligned; custom download overrides are identified as configured.
+- Current public GitHub Browser installer release is v5.0.52. This is the installer artifact version, distinct from the KELEDON Web/API release version 5.2.20.
+- Checks: version roots/renderer alignment, JSON parse, `git diff --check`, PHDK static coherence. No local application tests/build/lint. Production authenticated Lounge acceptance is pending an available session; no customer account is used.
+- Delivery: PR, merge, production deployment and post-deploy readback pending.
+
+---
+
 ## Current candidate delivery — KELEDON 5.2.20 PHDK Auto Plan/PMO reconciliation (2026-10-18)
 
 - Candidate branch: `phdk/cmt-003-static-review-5.2.20`, based on verified remote main `4643e8025d41f3571865123f154e6ae8ae2cb8ed` / KELEDON 5.2.19 after PR #271.
