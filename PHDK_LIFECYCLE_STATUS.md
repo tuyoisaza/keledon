@@ -1,7 +1,7 @@
 # PHDK Auto Force — estado vigente
 
 Run: `20261014-0007-phdk-auto-completion` · PHDK **2.54.0** · `tuyoisaza/keledon`
-Rama `fix/phdk-cmt-003a-lease-fencing` · HEAD `a8c6ddf26e8bfe91b2c52959cf4328f7c5203c11` · target main observado `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`.
+Candidato `fix/phdk-login-mobile-spacing-5-2-12` / v5.2.12 · base main observado `f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4`.
 
 | Etapa | Estado | Evidencia / gate |
 |---|---|---|
@@ -10,16 +10,16 @@ Rama `fix/phdk-cmt-003a-lease-fencing` · HEAD `a8c6ddf26e8bfe91b2c52959cf4328f7
 | PMO | COMPLETED | PR #258/#259 reconciliados con main. |
 | Integration Review | COMPLETED | Revisión estática guardada en `40-integration/revalidations/20261018-autoforce/`. |
 | UAT Prep | PARTIAL | Fixtures autenticados bloqueados; no se escribieron datos. |
-| UAT | COMPLETED FOR ANONYMOUS SCOPE | Producción 5.2.10; home/ruta protegida observadas; UAT-141 fail reproducido. |
-| UAT Fix | SOURCE FIX REVIEWED / RETEST BLOCKED | PR #259 aporta sizing; UAT-142 espera deployment v5.2.11. |
-| SEO | PARTIAL / REVIEW COMPLETE | `65-seo/revalidations/20261018-autoforce/`; candidate 5.2.11 not deployed. |
-| AEO/GEO | PARTIAL / REVIEW COMPLETE | `67-aeo-geo/revalidations/20261018-autoforce/`; external citations/locale evidence unmeasured. |
-| Check | PARTIAL / REVALIDATED | PHDK coherence 66/66; provider gaps and authenticated UAT remain; full findings in `70-check/revalidations/20261018-autoforce/`. |
+| UAT | PARTIAL FOR LOGIN | UAT-142 on 5.2.11: 44px targets/no overflow pass; header overlaps H1 by 29.3px. Evidence in `50-uat/evidence/uat-142-production-login-mobile-2026-10-18.json`. |
+| UAT Fix | 5.2.12 SPACING CANDIDATE | `pt-40` reserves space; UAT-145 awaits production deploy. |
+| SEO | PARTIAL / SOURCE UNCHANGED | Candidate 5.2.12 modifies only private login spacing; external/indexation metrics remain unmeasured. |
+| AEO/GEO | PARTIAL / SOURCE UNCHANGED | Public answers unchanged in 5.2.12; citations/provenance/locale evidence unmeasured. |
+| Check | PENDING RECHECK | Re-run static coherence/version/diff after 5.2.12 source patch. |
 | Remediation | PENDING | Hallazgos adicionales in-scope. |
-| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 State: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/AUTO_STATE.json`.
-SIGUIENTE: entregar evidencia y sincronización PHDK por PR existente, verificar SHA remoto y mantener Auto parcial.
+SIGUIENTE: revisar source/diff de 5.2.12, entregar por PR, esperar Railway y ejecutar UAT-145 en producción.
 
 ---## PHDK Auto checkpoint — KELEDON 5.2.10 production UAT / 2026-10-17
 
@@ -167,7 +167,7 @@ SIGUIENTE PASO: continue the remaining ordered acceptance fronts from verified `
 | UAT / UAT Fix | PASS FOR 5.1.83 SOURCE SLICE | Web build/typecheck, Nginx/SEO 2/2, UAT 8/8 plus standalone admin/theme/AI, API 43/43, Cloud 20/20, Browser 15/15 pass. |
 | SEO / AEO-GEO | NOT AFFECTED BY FIX | Nginx root and private SPA headers are preserved; SEO/Nginx source regression passes. |
 | Check / Remediation | COMPLETED FOR SOURCE SLICE | All five builds/locks align; relevant lint/typechecks, PHDK 63/63 and source diff pass. No local Docker engine. |
-| Delivery | RUNNING | Candidate branch `fix/web-nginx-config-5.1.83` at source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`; PR creation and Railway settlement remain. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 PR #203 merged 5.1.82 at `4c2882029b35494e011318f6b87c6b429f5dd820`. API deployment reports SUCCESS. Web's provider state says SUCCESS, while bounded startup logs show repeated `worker_processes` errors and Nginx restarts from the root-context config mismatch. This status does not prove application health. Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments done; UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
@@ -186,7 +186,7 @@ SIGUIENTE PASO: open the normal PR for `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813
 | UAT / UAT Fix | PASS FOR CORS SOURCE SLICE | Exact allowlist middleware regressions pass; full API 43/43, Cloud 20/20. No live app request was made. |
 | SEO / AEO-GEO | NOT AFFECTED | No public routes, metadata, copy or answer content changed. |
 | Check / Remediation | COMPLETED FOR SOURCE SLICE | Builds, targeted lint, PHDK 63/63 and automation hygiene evidence recorded; live provider settings remain read-only. |
-| Delivery | RUNNING | Branch `fix/explicit-cors-allowlist-5.1.82`; source commit `3b060a1bcc58089c6405f254f530c68581883934` is verified. PR creation and delivery remain. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE. UAT portfolio: 90 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. GitHub has no active workflows and main is unprotected; Railway API/Web autodeploy remains connected to main with checkSuites disabled. Latest API deployment is SLEEPING; Web is SUCCESS. No 5.1.82 candidate deployment is claimed.
 
@@ -224,7 +224,7 @@ SIGUIENTE PASO: continue PostgreSQL, CRUD, native/accessibility and each custome
 | UAT / UAT Fix | PASS FOR 5.1.81 WEB SLICE | Full Web UAT 8/8, forced delayed-response regression, plus three standalone admin/theme/AI UATs. |
 | SEO / AEO-GEO | NOT AFFECTED BY CANDIDATE | Authenticated management UI only; public routes and answer content unchanged. |
 | Check / Remediation | PASS FOR SCOPED SOURCE; PORTFOLIO GAPS FOUND | Typecheck/build, 63/63 coherence, exact-version Web UAT; remaining acceptance is recorded below. |
-| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 Overall PHDK Auto remains PARTIALLY DELIVERED. PostgreSQL/restart acceptance, 396 blocked CRUD rows, native device/audio, broad accessibility, Railway Web build context and customer-selected call/CRM runs remain open. UAT portfolio tally is 89 PASS, 0 BLOCKED, 1 MANUAL; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS.
 
@@ -268,7 +268,7 @@ Run `20261014-0007-phdk-auto-completion`; installed PHDK v2.51.2 was verified at
 | UAT / UAT Fix | IN PROGRESS | UAT-081 view-scope fix and UAT-082 selected persisted superadmin flow acceptance pass; broader resource matrix and HTTP transport remain open. |
 | SEO / AEO-GEO | PENDING | Run after remaining UAT/fixes; no public metadata changed in this slice. |
 | Check / Remediation | PENDING | Whole-candidate source review and required checks remain. |
-| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 SIGUIENTE PASO: continue UAT with persisted superadmin flow configuration and the remaining confirmed fronts.
 
@@ -377,7 +377,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; checko
 | UAT / UAT Fix | PASS FOR UAT-053 | API 38/38 including AI contract 6/6; Web UAT 5/5 plus 12 AI-admin journeys; tally 53 PASS, 0 BLOCKED, 1 MANUAL. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public route, copy, metadata or claim changed; deployed evidence remains open. |
 | Check / Remediation | PASS FOR SCOPED CANDIDATE | API/Cloud/Web/Landing lint, five builds, typechecks, Browser 42/42, SEO, coherence and diff checks pass; Browser ESLint executable unavailable in this checkout. |
-| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. Persisted CRUD/migrations and full role-operation matrix, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live call/CRM acceptance remain open. No database, customer endpoint, private destination, device, provider write or deployment was used.
 
@@ -861,7 +861,7 @@ Goal: continue the owner-confirmed KELEDON four-front portfolio in order. Candid
 | AEO/GEO | REUSED | No public claims/content changes; remote citation visibility remains unmeasured. |
 | Check | COMPLETED FOR SOURCE | Five builds; API/Cloud 37/37 and 17/17; Browser 15/15; diagnostics 19/19; lint/typechecks, version alignment, diff and coherence pass. |
 | Remediation | COMPLETED FOR LOCAL FINDING | No in-scope P0/P1 remains in the tested navigation path. |
-| Delivery | RUNNING | Create and merge product PR, verify remote SHA/tree/version, archive evidence, run completion gate. |
+| Delivery | PENDING 5.2.12 | #258/#259 merged; follow-up spacing fix is on a new candidate branch. |
 
 Current status: **PARTIALLY DELIVERED** pending PR/remote evidence and broader owner-confirmed acceptance. Open scope: exhaustive persisted CRUD/model-operation/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO, and each customer's configured call/CRM workflow. No deployment or customer endpoint is claimed.
 

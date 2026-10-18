@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptación funcional en producción.",
-  "candidate_ref": "branch fix/phdk-cmt-003a-lease-fencing at a8c6ddf26e8bfe91b2c52959cf4328f7c5203c11; PHDK 2.54.0 force sync is present as uncommitted manifest-owned changes",
+  "candidate_ref": "branch fix/phdk-login-mobile-spacing-5-2-12 based on merged main f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4; KELEDON 5.2.12",
   "authorization": {
     "source_ref": "user message 2026-10-18: \"phdk auto force\"; prior current-conversation confirmations summarized in PROJECT_INTENT.md and PHDK_COMMITMENTS.md",
     "instruction": "PHDK auto force",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "90-delivery",
+  "current_stage": "60-uat-fix",
   "steps": [
     {
       "id": "preflight",
@@ -108,23 +108,23 @@
         "uat_prep"
       ],
       "blocked_by": [],
-      "evidence": "Browser readiness AVAILABLE_VERIFIED. Production v5.2.10 home and anonymous protected-route redirect observed; UAT-141 four undersized login targets reproduced. UAT-142 remains pending 5.2.11 deployment. Evidence: 50-uat/revalidations/20261018-autoforce/."
+      "evidence": "Production Web/API deploys SUCCESS for main f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4 / 5.2.11. UAT-142 confirms 44px target sizes and no horizontal overflow, but finds 29.3px fixed-header/H1 overlap. Evidence: 50-uat/evidence/uat-142-production-login-mobile-2026-10-18.json."
     },
     {
       "id": "uat_fix",
       "kind": "work",
-      "status": "done",
+      "status": "running",
       "action": "Repair production UAT findings and retest affected production journeys",
       "depends_on": [
         "uat_production"
       ],
       "blocked_by": [],
-      "evidence": "Assistant reviewed PR #259 source repair and mapped it to all four UAT-141 defects. Production UAT-142 remains blocked because deployed production is still 5.2.10; independent SEO/AEO/Check can proceed."
+      "evidence": "UAT-142 partial finding being repaired on 5.2.12 candidate by reserving top spacing (pt-40); UAT-145 is production-only and pending deployment."
     },
     {
       "id": "seo",
       "kind": "work",
-      "status": "done",
+      "status": "pending",
       "action": "Reconcile public discovery acceptance and deployment evidence",
       "depends_on": [
         "uat_fix"
@@ -135,7 +135,7 @@
     {
       "id": "aeo_geo",
       "kind": "work",
-      "status": "done",
+      "status": "pending",
       "action": "Reconcile public answer/citation claims and mark unavailable metrics unverified",
       "depends_on": [
         "seo"
@@ -146,18 +146,18 @@
     {
       "id": "check",
       "kind": "required_check",
-      "status": "done",
+      "status": "pending",
       "action": "Run applicable source/static/documentation checks; execute app acceptance only on production",
       "depends_on": [
         "aeo_geo"
       ],
       "blocked_by": [],
-      "evidence": "PHDK coherence PASS 66/66; theme static PASS (runtime false); static package inventory five roots at 5.2.10; git diff --check clean; GitHub statuses empty; Railway showed checkSuites=false, Web 11 recent failed deployments but online, API online, no staged work. Whole Auto remains partial. Report: 70-check/revalidations/20261018-autoforce/PHDK_CHECK_REPORT.md."
+      "evidence": "Re-run static coherence/version/diff review after 5.2.12 source change; no local app tests/build/lint."
     },
     {
       "id": "remediation",
       "kind": "work",
-      "status": "done",
+      "status": "pending",
       "action": "Repair in-scope findings without violating production/security boundaries",
       "depends_on": [
         "check"
@@ -168,13 +168,13 @@
     {
       "id": "delivery",
       "kind": "delivery",
-      "status": "running",
+      "status": "pending",
       "action": "Deliver verified branch/PR changes to main and read back remote content/version/SHA",
       "depends_on": [
         "remediation"
       ],
       "blocked_by": [],
-      "evidence": "Preparing normal non-force delivery of PHDK 2.54.0 sync and current Auto evidence on existing PR #258; do not merge around platform controls."
+      "evidence": "PHDK 2.54.0/report update merged via #258 at c58d32bb; touch-target fix #259 merged at f9570d99. New 5.2.12 spacing candidate awaits normal PR delivery."
     },
     {
       "id": "verify_delivery",

@@ -82,7 +82,7 @@ useEffect(() => {
           <LanguageSwitcher />
         </div>
       </header>
-      <main id="main-content" aria-labelledby="login-heading" className="w-full max-w-md pt-24 pb-8">
+      <main id="main-content" aria-labelledby="login-heading" className="w-full max-w-md pt-40 pb-8">
         <div className="text-center mb-8">
           <h1 id="login-heading" className="mt-6 text-2xl font-bold text-foreground">
             {isSignUp ? t('auth.createAccount') : t('auth.welcomeBack')}

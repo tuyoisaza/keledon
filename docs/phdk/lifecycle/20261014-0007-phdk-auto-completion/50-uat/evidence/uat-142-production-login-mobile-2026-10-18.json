@@ -1,0 +1,52 @@
+{
+  "case_id": "UAT-142",
+  "observed_at_utc": "2026-10-18T04:22:00Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/login",
+  "product_version_after_reload": "5.2.11",
+  "main_commit": "f9570d998a070ec7bc588f6fef1a85a7ee1c3cc4",
+  "railway_deployments": {
+    "web": "d777d27b-fcc2-4514-978b-d2af716bd6f8",
+    "api": "3786bdea-d9f6-439f-9b8d-b436be87550f"
+  },
+  "actor": "anonymous public visitor",
+  "viewport_css_px": {
+    "width": 320,
+    "height": 720
+  },
+  "first_fresh_tab_observation": {
+    "displayed_version": "5.2.10",
+    "action": "one ordinary page reload; no app controls activated"
+  },
+  "measured_after_reload": {
+    "displayed_version": "5.2.11",
+    "document_width_px": 320,
+    "body_width_px": 320,
+    "horizontal_overflow": false,
+    "targets": {
+      "brand_link": {
+        "width_px": 152.1,
+        "height_px": 44
+      },
+      "email": {
+        "width_px": 238.7,
+        "height_px": 44
+      },
+      "password": {
+        "width_px": 238.7,
+        "height_px": 44
+      },
+      "signup_toggle": {
+        "width_px": 85.4,
+        "height_px": 44
+      }
+    },
+    "header_bottom_y_px": 156,
+    "login_heading_top_y_px": 126.7,
+    "login_heading_bottom_y_px": 158.7,
+    "header_heading_vertical_overlap_px": 29.3
+  },
+  "result": "PARTIAL: target-size and horizontal reflow pass; header covers part of the login heading",
+  "screenshot": "captured and inspected in-session at 320x720; not exported",
+  "safety": "No login/signup/OAuth, field entry, diagnostics/cache action, clipboard, customer data, API mutation, or private destination. Temporary viewport reset afterward."
+}
