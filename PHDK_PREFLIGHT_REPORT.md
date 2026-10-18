@@ -1,3 +1,25 @@
+# PHDK Preflight — Auto Force reentrada (2026-10-18)
+
+Run: `20261014-0007-phdk-auto-completion` · repository `tuyoisaza/keledon` · checkout `C:\KELEDON\keledon-phdk-auto-contrast109` · branch `fix/phdk-cmt-003a-lease-fencing` · HEAD `a8c6ddf26e8bfe91b2c52959cf4328f7c5203c11` · target `origin/main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`.
+
+## PHDK installation and integrity
+
+- Installed and canonical PHDK: v2.54.0; fetched `main` SHA `63e8cd28bbb4d412954abda6fb7fe9b79568ba9d`.
+- Official updater: `CURRENT`, 0 files. Coherence checker: PASS, 66/66 static manifest mappings.
+- Root `AGENTS.md` managed block matches the current canonical PHDK rule block; owner rules outside it are retained.
+- Git/GitHub CLI and the connected browser are available. Browser use is limited to the scoped UAT stage. No agent delegation, provider writes or hosted CI runs.
+
+## Current Auto Force scope and boundaries
+
+The current user command resumes the four owner-confirmed KELEDON fronts in order. Application acceptance is production-only; no local application tests/builds/lint. Production fixtures remain limited to two synthetic tenants, one ordinary user and Browser device each, minimal Brand/Team, and one inert no-PII flow on Team A with TTL no longer than 24 hours and immediate cleanup. No elevated test identities, customer data, CRM/call, private destination or secret use is authorized by this revalidation.
+
+## Result and current stage
+
+Preflight is complete. Integration Review is complete for static source review; UAT Prep is partial with authenticated fixtures blocked; UAT has completed anonymous production observations against v5.2.10; UAT Fix is current. UAT-141's four undersized production login targets are reproduced, and candidate fix PR #259 (v5.2.11) is not deployed. Current status lives in `PHDK_LIFECYCLE_STATUS.md` and `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/AUTO_STATE.json`.
+
+---
+
+# Historical preflight records
 # PHDK Preflight — Auto reanudación después de PR #246 (2026-10-17)
 
 Run: `20261014-0007-phdk-auto-completion` · Repository: `tuyoisaza/keledon` · Worktree: `C:\KELEDON\keledon-phdk-auto-contrast109` · branch `fix/phdk-5-2-7-landing-diagnostic-host-redaction` · base verificado `origin/main` `7969fc87d3d5dc9f65a9a198d0f7a504577c7252` · producto KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`.

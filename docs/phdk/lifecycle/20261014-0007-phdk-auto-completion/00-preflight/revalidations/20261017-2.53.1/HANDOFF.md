@@ -1,10 +1,10 @@
 # PHDK Lifecycle Handoff — Preflight Revalidation
 
-Run ID: `20261014-0007-phdk-auto-completion`  
-Stage: `00-preflight`  
-Status: `COMPLETED`  
-Started from revision: `ef6fe6dbf7eca04708c7200615e7538812751f7e`  
-Completed at worktree: current branch, documentation/PHDK refresh only  
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: `00-preflight`
+Status: `COMPLETED`
+Started from revision: `ef6fe6dbf7eca04708c7200615e7538812751f7e`
+Completed at worktree: current branch, documentation/PHDK refresh only
 Date: 2026-10-17
 
 ## Goal / scope
@@ -43,6 +43,6 @@ The v5.2.1 feature branch is not deployed to production and no PR exists. Produc
 
 ## Next stage
 
-Stage: `45-uat-prep`  
-Required inputs: Integration Review for 5.2.1, current auth plan, role matrix, fixture manifest and Prep report.  
+Stage: `45-uat-prep`
+Required inputs: Integration Review for 5.2.1, current auth plan, role matrix, fixture manifest and Prep report.
 Next action: rebind Prep artifacts to exact candidate and state the safe-target blocker without provisioning production accounts or data.

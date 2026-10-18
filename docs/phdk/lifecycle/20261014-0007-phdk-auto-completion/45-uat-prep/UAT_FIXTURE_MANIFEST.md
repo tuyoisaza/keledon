@@ -1,3 +1,26 @@
+# Current UAT Fixture Manifest — Auto Force revalidation (2026-10-18)
+
+`20261014-0007-phdk-auto-completion`
+PR #259 / 5.2.11 head `293532e3404f84a08725a0662acd56bf42543184`; production deployment UNVERIFIED.
+State: **NOT PROVISIONED**. Proposed labels are not resources or accounts.
+
+| Fixture | Limit | Current state |
+|---|---|---|
+| Synthetic tenant A + Brand/Team | One isolated tenant with minimal structure | BLOCKED — no authenticated auditable provisioning/cleanup path |
+| User A | Exactly one ordinary `user` | BLOCKED — no owner-controlled synthetic normal-login identity evidenced |
+| Browser device A | One device bound through normal pairing | BLOCKED — tenant/user fixture not created |
+| Synthetic tenant B + Brand/Team | One isolated tenant with minimal structure | BLOCKED — no authenticated auditable provisioning/cleanup path |
+| User B | Exactly one ordinary `user` | BLOCKED — no owner-controlled synthetic normal-login identity evidenced |
+| Browser device B | One device bound through normal pairing | BLOCKED — tenant/user fixture not created |
+| Inert flow | One no-PII flow on Team A only | BLOCKED — fixture not created; no external side effects allowed |
+| CRM/DNS target | None in this run | BLOCKED for positive egress acceptance; exact tenant-approved sandbox host/port/CIDR absent |
+| Secrets, passwords, tokens | None | NOT CREATED / NOT STORED |
+
+Expiry cap: 24 hours. Cleanup: immediate after use and only via an authenticated, audited, idempotent path that revokes device access and prevents login/flow execution while retaining required audit evidence. No production database write, email, invite, client integration or customer data access occurred.
+---
+
+# Historical evidence follows
+
 # Manifiesto UAT — CMT-003C / KELEDON 5.2.10
 
 Run ID propuesto: `phdk-auto-uat-20261017` · entorno objetivo: producción · estado: **NOT PROVISIONED / BLOCKED**.

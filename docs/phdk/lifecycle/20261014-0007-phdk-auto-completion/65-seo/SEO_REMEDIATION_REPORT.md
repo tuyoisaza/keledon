@@ -1,3 +1,11 @@
+# SEO remediation report — Auto Force re-entry (2026-10-18)
+
+**No SEO source changes required for candidate 5.2.11.** The candidate diff touches the private login layout, version roots, changelog and evidence only; public SEO metadata/routes/crawl controls are unchanged. The previously accepted PIA-AUTO-SEO-002 source/production route contract remains applicable to the 5.2.10 deployment. The current Auto candidate is not deployed, so SEO acceptance of 5.2.11 itself is still pending.
+
+No author/contact/certification was invented; no product claim or market keyword was changed; no provider setting, DNS, CDN, robots, or sitemap was edited. Unmeasured field performance, crawler/indexation, Search Console and reputation data remain open as itemized in `SEO_CHECKLIST.md`.
+
+---
+
 ## Candidate 5.2.8 — Web initial HTML fallback
 
 Production GET proved the deployed Web response had an empty React root. `services/web/index.html` now contains the same previously approved semantic overview as the standalone Landing shell, with CSS limited to the `no-js` state. `services/web/src/main.tsx` removes that state before mounting React, so the live app replaces the static overview. Package/lock metadata and the Browser diagnostic renderer are coordinated at v5.2.8. No application test/build was run locally. Production acceptance passes: anonymous GET verifies the H1/copy in initial HTML, and the production browser verifies a single React heading with no leftover fallback. Evidence is stored under `snapshots/candidate-5.2.8/`. No crawling/indexation/ranking claim is made.

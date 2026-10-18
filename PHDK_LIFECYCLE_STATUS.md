@@ -1,4 +1,27 @@
-## PHDK Auto checkpoint — KELEDON 5.2.10 production UAT / 2026-10-17
+# PHDK Auto Force — estado vigente
+
+Run: `20261014-0007-phdk-auto-completion` · PHDK **2.54.0** · `tuyoisaza/keledon`
+Rama `fix/phdk-cmt-003a-lease-fencing` · HEAD `a8c6ddf26e8bfe91b2c52959cf4328f7c5203c11` · target main observado `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`.
+
+| Etapa | Estado | Evidencia / gate |
+|---|---|---|
+| Preflight | COMPLETED | PHDK v2.54.0; coherence 66/66. |
+| Capture / Plan | REUSED / RECONCILED | Cuatro compromisos y PIAs revalidadas. |
+| PMO | COMPLETED | PR #258/#259 reconciliados con main. |
+| Integration Review | COMPLETED | Revisión estática guardada en `40-integration/revalidations/20261018-autoforce/`. |
+| UAT Prep | PARTIAL | Fixtures autenticados bloqueados; no se escribieron datos. |
+| UAT | COMPLETED FOR ANONYMOUS SCOPE | Producción 5.2.10; home/ruta protegida observadas; UAT-141 fail reproducido. |
+| UAT Fix | SOURCE FIX REVIEWED / RETEST BLOCKED | PR #259 aporta sizing; UAT-142 espera deployment v5.2.11. |
+| SEO | PARTIAL / REVIEW COMPLETE | `65-seo/revalidations/20261018-autoforce/`; candidate 5.2.11 not deployed. |
+| AEO/GEO | PARTIAL / REVIEW COMPLETE | `67-aeo-geo/revalidations/20261018-autoforce/`; external citations/locale evidence unmeasured. |
+| Check | PARTIAL / REVALIDATED | PHDK coherence 66/66; provider gaps and authenticated UAT remain; full findings in `70-check/revalidations/20261018-autoforce/`. |
+| Remediation | PENDING | Hallazgos adicionales in-scope. |
+| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
+
+State: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/AUTO_STATE.json`.
+SIGUIENTE: entregar evidencia y sincronización PHDK por PR existente, verificar SHA remoto y mantener Auto parcial.
+
+---## PHDK Auto checkpoint — KELEDON 5.2.10 production UAT / 2026-10-17
 
 Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; PR #255 merged to verified remote `main` `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; KELEDON 5.2.10. PHDK 2.53.1 coherence 64/64. Owner requires application acceptance on production; no local application tests/builds/lint.
 
@@ -36,7 +59,7 @@ Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/v
 | SEO | PENDING PRODUCTION RECHECK | PIA-AUTO-SEO-002 requires metadata/status acceptance; external indexing remains unmeasured. |
 | AEO/GEO | REUSED SOURCE / PENDING DEPLOY | Product copy is unchanged; deployed root and crawler visibility remain unverified. |
 | Check | PENDING FINAL CANDIDATE | Reconcile PIA, route inventory, version, deployment evidence and open portfolio findings. |
-| Remediation | RUNNING | 5.2.9 source remediation prepared; continue CMT-003A/B and CMT-004 after this slice. |
+| Remediation | BOUNDED / PIA-GATED | No safe further source patch until CMT-003C fixture gate; login fix remains #259. |
 | Delivery | IN PROGRESS | Branch PR, merge/readback and production acceptance remain pending. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. Current external gates include authenticated synthetic fixtures/cleanup, customer-selected private CRM sandbox, Landing deployment target, GitHub branch protection/provider controls and billing visibility. Do not change provider settings or claim full completion.
@@ -201,7 +224,7 @@ SIGUIENTE PASO: continue PostgreSQL, CRUD, native/accessibility and each custome
 | UAT / UAT Fix | PASS FOR 5.1.81 WEB SLICE | Full Web UAT 8/8, forced delayed-response regression, plus three standalone admin/theme/AI UATs. |
 | SEO / AEO-GEO | NOT AFFECTED BY CANDIDATE | Authenticated management UI only; public routes and answer content unchanged. |
 | Check / Remediation | PASS FOR SCOPED SOURCE; PORTFOLIO GAPS FOUND | Typecheck/build, 63/63 coherence, exact-version Web UAT; remaining acceptance is recorded below. |
-| Delivery | PENDING | Prepare normal PR, review/check readback, merge and verify remote main/version. |
+| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
 
 Overall PHDK Auto remains PARTIALLY DELIVERED. PostgreSQL/restart acceptance, 396 blocked CRUD rows, native device/audio, broad accessibility, Railway Web build context and customer-selected call/CRM runs remain open. UAT portfolio tally is 89 PASS, 0 BLOCKED, 1 MANUAL; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS.
 
@@ -245,7 +268,7 @@ Run `20261014-0007-phdk-auto-completion`; installed PHDK v2.51.2 was verified at
 | UAT / UAT Fix | IN PROGRESS | UAT-081 view-scope fix and UAT-082 selected persisted superadmin flow acceptance pass; broader resource matrix and HTTP transport remain open. |
 | SEO / AEO-GEO | PENDING | Run after remaining UAT/fixes; no public metadata changed in this slice. |
 | Check / Remediation | PENDING | Whole-candidate source review and required checks remain. |
-| Delivery | PENDING | Local changes are on main working tree only; no commit/PR/delivery yet. |
+| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
 
 SIGUIENTE PASO: continue UAT with persisted superadmin flow configuration and the remaining confirmed fronts.
 
@@ -354,7 +377,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; checko
 | UAT / UAT Fix | PASS FOR UAT-053 | API 38/38 including AI contract 6/6; Web UAT 5/5 plus 12 AI-admin journeys; tally 53 PASS, 0 BLOCKED, 1 MANUAL. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public route, copy, metadata or claim changed; deployed evidence remains open. |
 | Check / Remediation | PASS FOR SCOPED CANDIDATE | API/Cloud/Web/Landing lint, five builds, typechecks, Browser 42/42, SEO, coherence and diff checks pass; Browser ESLint executable unavailable in this checkout. |
-| Delivery | PENDING | Commit, push, PR, actual controls, merge and remote readback remain. |
+| Delivery | RUNNING | Normal PR #258 evidence/PHDK update and remote readback. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. Persisted CRUD/migrations and full role-operation matrix, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live call/CRM acceptance remain open. No database, customer endpoint, private destination, device, provider write or deployment was used.
 

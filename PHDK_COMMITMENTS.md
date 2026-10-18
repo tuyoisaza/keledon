@@ -1,3 +1,7 @@
+# PHDK commitments — Auto Force continuation 2026-10-18T04:03:30+00:00
+
+Four confirmed commitments remain active and ordered; no commitment is deferred or cancelled. CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 per-client voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Apply the dependency sequence and restrictions in `IMPLEMENTATION_PLAN.md`.
+
 # Current commitment readback — KELEDON 5.2.8 / 2026-10-17
 
 Run `20261014-0007-phdk-auto-completion`; PHDK 2.53.1, static coherence 64/64. PR #253 is merged to `main` at `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; Web/API production deploys for this SHA are SUCCESS. The four owner-confirmed fronts and their order remain unchanged.

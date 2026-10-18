@@ -1,3 +1,24 @@
+# Current UAT Auth Plan — Auto Force revalidation (2026-10-18)
+
+## Candidate and environment
+
+PR #259 proposes KELEDON 5.2.11 (head `293532e3404f84a08725a0662acd56bf42543184`) over remote main `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; PR #258 carries PHDK 2.54.0 lifecycle alignment. Both are open and production deployment is UNVERIFIED. The permitted functional environment remains the deployed production site; no application behavior is inferred from source or PR state.
+
+## Supported identity and boundary
+
+Use KELEDON's ordinary first-party email/password or Google sign-in, never test-as in production, forged claims, manually minted tokens, direct database writes, a public fixture endpoint, or provider-setting changes. New identities receive only `user`; actor and tenant come from the database. Only an existing authorized superadmin can bind/provision fixtures through an audited first-party path if one becomes available. No such completed reversible path or owner-controlled synthetic mailbox/account is currently evidenced. Do not use the owner's normal identity as a test persona.
+
+## Authorized fixture scope
+
+Two temporary isolated synthetic tenants, one regular `user` and one Browser device per tenant, minimum Brand/Team structure, and one inert no-PII flow on Team A. TTL at most 24 hours and immediate cleanup. No elevated test users, email/invitations, customer data, live calls/CRM, private-network requests, metadata access, secrets or credentials in evidence. Private CRM acceptance additionally needs a tenant-selected synthetic host/port/CIDR and connection-level enforcement.
+
+## Current decision and next action
+
+Authenticated UAT remains BLOCKED until both an owner-controlled ordinary synthetic identity and an authenticated, durable-audit, reversible cleanup path exist. No production mutation was made. Stage 50 may proceed with independent anonymous journeys after exact production target and browser readiness are verified; leave authentication cases blocked and resume them only when the safe prerequisites are actually available.
+---
+
+# Historical evidence follows
+
 # UAT Authentication Plan — KELEDON
 
 ## Current production-only authorization scope — v5.2.7 / 2026-10-17
