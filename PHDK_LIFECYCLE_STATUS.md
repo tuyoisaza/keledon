@@ -2,9 +2,10 @@
 
 Run: 20261014-0007-phdk-auto-completion
 Repository: tuyoisaza/keledon
-Current branch: phdk/auto-uat-154-ms002-5.2.19
-Verified remote main: b1dd123fb66d861fa3b5507b79d85fa888bdc6d7
-Remote main: 5.2.18 after PR #270; Railway Web/API deployments SUCCESS; UAT-154 reads v5.2.18 and UAT-155 samples keyboard/focus. Current local candidate: 5.2.19 lifecycle/UAT evidence and synchronized version roots; not yet published.
+Current lifecycle stage: 90-delivery — publishing the scoped PHDK Auto Plan/PMO reconciliation as KELEDON 5.2.20 documentation/evidence; Browser command-log source is excluded from this candidate.
+Current branch: phdk/cmt-003-static-review-5.2.20
+Verified remote main: 4643e8025d41f3571865123f154e6ae8ae2cb8ed
+Remote main baseline: KELEDON 5.2.19 after PR #271, merge `4643e8025d41f3571865123f154e6ae8ae2cb8ed`. Web deploy `47f15d73-4fa8-4341-b798-86ecd824151d` SUCCESS 1/1; API deploy `21591ee0-c2f4-483f-af69-668311ea29ee` SUCCESS 1/1. UAT-156 reads Web v5.2.19; UAT-157 confirms API safe liveness v5.2.19. Scoped 5.2.20 docs/evidence candidate is based on that main; Browser logger source candidate is incomplete and excluded.
 PHDK version: 2.56.0
 Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only functional acceptance.
 
@@ -12,15 +13,37 @@ Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only function
 |---|---|---|
 | 00-preflight | REVALIDATED | PHDK manifest/native managed block; static coherence 69/69. |
 | 10-capture | REUSED | PROJECT_INTENT.md, PROJECT_BRIEF.md, PRD.md, FEATURES.md, REQUIREMENTS_TRACEABILITY.md. |
-| 20-plan | COMPLETED / REVALIDATED | 20-plan/MILESTONE_PLAN.md, ARCHITECTURE_REVALIDATION.md, IMPLEMENTATION_PLAN.md, PHDK_COMMITMENT_COVERAGE.md; snapshots in 20-plan/snapshots/20261018-phdk256-plan. |
-| 30-pmo | COMPLETED / REVALIDATED | Six value milestones, five workstreams, dependency map, status and progress report; MS-002 source is merged. Current next action: continue permitted anonymous CMT-002 responsive/accessibility checks; authenticated interaction acceptance remains pending a disposable synthetic session. |
-| 40-integration | OPEN | Technical source/contract review after the next implementation slice. |
+| 20-plan | REUSED / REVALIDATED THIS AUTO | 20-plan/MILESTONE_PLAN.md, ARCHITECTURE_REVALIDATION.md, IMPLEMENTATION_PLAN.md, PHDK_COMMITMENT_COVERAGE.md; entry baseline corrected from stale 5.2.16/5.2.18 references to main 4643e802/5.2.19. Snapshots in 20-plan/snapshots/20261018-phdk256-plan. |
+| 30-pmo | REUSED / REVALIDATED THIS AUTO | Six value milestones/five workstreams retained; PMO is continuous against value plan, not the stage sequence. MS-002 active; independent ready source work remains in PMO. |
+| 40-integration | COMPLETED FOR 5.2.20 DOCS CANDIDATE | Plan/PMO and remote-main baseline are reconciled; separate Browser logging candidate remains technically incomplete and excluded. |
 | 45-uat-prep | PARTIAL | Audited fixture implementation/runbook exists; authenticated production journey not run. |
 | 50-uat | OPEN / PARTIAL | Production only; protected cases require existing superadmin session and synthetic identities. |
 | 60-uat-fix | OPEN | Repair and retest findings on deployed candidate. |
 | 65-seo / 67-aeo-geo | OPEN / PARTIAL | Revalidate changed public claims/routes; external measures remain unverified. |
 | 70-check / 80-remediation | OPEN | PHDK coherence/static checks; honor no-local-app-test/build/lint restriction. |
-| 90-delivery | OPEN | Normal versioned branch/PR/merge/main readback; no force-push/provider writes. |
+| 90-delivery | RUNNING — SCOPED DOCS CANDIDATE | KELEDON 5.2.20; normal branch/PR/merge/readback. This publishes the Plan/PMO correction only and does not complete the four-front Auto. |
+
+## PHDK Auto entry board — model 2.56.0
+
+Goal: continue the owner-confirmed KELEDON portfolio CMT-001 → CMT-004 in order. Planning uses six value milestones/five workstreams; Auto continues after each independently delivered milestone from refreshed `main`.
+
+| Lifecycle stage | Entry status | Reuse / current execution |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | Canonical PHDK 2.56.0; coherence 69/69. |
+| Capture | REUSED | Four commitments and owner decisions remain current; no new scope confirmation needed. |
+| Plan | REUSED / REVALIDATED | Hybrid brownfield; six value milestones/five workstreams. Current baseline corrected here to main 4643e802 / 5.2.19. |
+| PMO / Workstreams | REUSED / REVALIDATED | Four confirmed fronts, execution dependencies and operation-specific blockers retained. |
+| Integration Review | RUNNING | CMT-003 source/log review plus plan-to-current-main consistency; log-hardening candidate is local only. |
+| UAT Prep | PARTIAL | Authenticated fixture lifecycle is documented; no authorized authenticated session available. |
+| UAT | PARTIAL | UAT-156–158 provide limited public/API readbacks; responsive mobile geometry blocked by missing viewport control. |
+| UAT Fix | PENDING | Fix and retest findings against a deployed candidate. |
+| SEO | PARTIAL / REUSE | Revalidate only changed public route/metadata claims; external field metrics unverified. |
+| AEO/GEO | PARTIAL / REUSE | Revalidate current public answer claims; external citations/market metrics unverified. |
+| Check | PENDING | Static/PHDK only; no local application test/build/lint. |
+| Remediation | PENDING | Resolve in-scope, unambiguous Check gaps. |
+| Delivery | PENDING | Versioned branch → PR → merge → exact remote-main/deploy readback. |
+
+Current stage: Delivery. Next: finish versioned docs/evidence PR, merge through the normal route, and verify remote `main` SHA/version. Keep the Browser source hardening candidate separate and unpublished until its full technical review is repaired.
 
 Blockers: authenticated synthetic acceptance depends on an existing superadmin session; positive private CRM egress depends on the selected tenant's exact authorized sandbox. These block only dependent operations. All four commitments remain ACTIVE/PARTIAL; whole Auto is not complete.
 

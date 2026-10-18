@@ -1,11 +1,21 @@
-## Current candidate delivery — KELEDON 5.2.19 PHDK Auto UAT evidence (2026-10-18)
+## Current candidate delivery — KELEDON 5.2.20 PHDK Auto Plan/PMO reconciliation (2026-10-18)
 
-- Candidate branch: `phdk/auto-uat-154-ms002-5.2.19`, based on verified `origin/main` `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` (KELEDON 5.2.18, PR #270).
+- Candidate branch: `phdk/cmt-003-static-review-5.2.20`, based on verified remote main `4643e8025d41f3571865123f154e6ae8ae2cb8ed` / KELEDON 5.2.19 after PR #271.
+- Scope: correct the PHDK 2.56.0 milestone/implementation plan and PMO baseline, make the current Auto lifecycle board visible, and reconcile scoped production UAT-156–158 evidence and linked PIAs/status.
+- No application behavior or Browser logging source is included. Browser logging hardening remains a separate, technically incomplete local candidate and is not in this release.
+- Applicable checks: PHDK coherence 69/69 static; JSON parse; version-root alignment; `git diff --check`; repository/document/source-reference review. No local application tests/build/lint. Production evidence is existing UAT-156–158 only; no new browser interaction or production write.
+- Delivery: candidate version roots are aligned to 5.2.20; commit, push/PR, merge/readback remain pending until verified. This is a documentation/evidence release; whole Auto remains PARTIALLY DELIVERED.
+
+---
+
+## Current delivery — KELEDON 5.2.19 PHDK Auto UAT evidence (2026-10-18)
+
+- PR [#271](https://github.com/tuyoisaza/keledon/pull/271) merged normally to verified `main` as `4643e8025d41f3571865123f154e6ae8ae2cb8ed`, based on KELEDON 5.2.18 / PR #270. Version roots and Browser renderer are 5.2.19.
 - Scope: synchronize PHDK 2.56.0 lifecycle, PMO, milestone/PIA and production evidence; record UAT-154/155. Five package/lock roots and Browser renderer are aligned to the docs/evidence release 5.2.19. No application source behavior changed.
 - Static: PHDK coherence 69/69; UAT JSON parses; version roots match; `git diff --check` passes. No local app tests/build/lint.
-- Production evidence applies to deployed 5.2.18 only: Railway Web/API SUCCESS; UAT-154 PASS_SCOPED for fresh-query version and diagnostic labels; UAT-155 PASS_SCOPED for sampled keyboard sequence/focus. This candidate is not deployed and has no production UAT yet.
+- Production: Railway Web `47f15d73-4fa8-4341-b798-86ecd824151d` and API `21591ee0-c2f4-483f-af69-668311ea29ee` SUCCESS 1/1; environment reports no pending work/issues. UAT-156 PASS_SCOPED reads Web 5.2.19/control labels; UAT-157 PASS_SCOPED reads API `/health` `status: ok`, version 5.2.19. UAT-154/155 remain scoped to 5.2.18. No copy/reset action or authenticated behavior was exercised.
 - CMT-002 remains partial; copy/reset activation, responsive geometry, screen-reader, Landing runtime and authenticated behavior remain unverified. Whole Auto: 0/4 complete; four active/partial.
-- COMMIT_PREFIX, PR, merge, main/deployment readback are pending.
+- Delivery gate: PR #271 merged; main/version, deploy, and scoped production readbacks verified. Whole Auto remains partial.
 
 ---
 

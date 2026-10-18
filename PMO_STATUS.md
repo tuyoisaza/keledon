@@ -1,15 +1,15 @@
 # PMO Status — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
 
-Run `20261014-0007-phdk-auto-completion`; branch `phdk/auto-uat-154-ms002-5.2.19`; target `main`. Remote main is KELEDON 5.2.18 at `b1dd123fb66d861fa3b5507b79d85fa888bdc6d7` after PR #270. Railway Web/API report SUCCESS. UAT-154 reads v5.2.18 and diagnostic labels; UAT-155 samples keyboard order and visible focus. Four commitments: 0/4 DONE, 4/4 ACTIVE/PARTIAL; none deferred/cancelled.
+Run `20261014-0007-phdk-auto-completion`; branch `phdk/cmt-003-static-review-5.2.20`; target `main`. Remote main is KELEDON 5.2.19 at `4643e8025d41f3571865123f154e6ae8ae2cb8ed` after PR #271. Railway Web/API SUCCESS 1/1, no pending work/issues. UAT-156 reads Web v5.2.19; UAT-157 confirms API liveness v5.2.19; UAT-154/155 remain scoped to 5.2.18. Four commitments: 0/4 DONE, 4/4 ACTIVE/PARTIAL; none deferred/cancelled.
 
-MS-001 is delivered. MS-002 source fix is merged but remains partial pending copy/reset behavior, responsive and broad accessibility acceptance. Authenticated acceptance requires a compliant disposable synthetic session. Private CRM positive egress requires the tenant's chosen sandbox. PHDK v2.56.0 official updater is CURRENT; coherence is 69/69.
+MS-001 is delivered. MS-002 source fix is merged but remains partial pending copy/reset behavior, responsive and broad accessibility acceptance. PR #271 records UAT-154/155 and the v5.2.19 Web readback UAT-156. Authenticated acceptance requires a compliant disposable synthetic session. Private CRM positive egress requires the tenant's chosen sandbox. PHDK v2.56.0 official updater is CURRENT; coherence is 69/69.
 
 | Workstream | Status | Next action |
 |---|---|---|
 | WS-001 / CMT-001 | DELIVERED FOR MS-001 | Reconcile versions/PR/deploy at each milestone. |
 | WS-002 / CMT-002 | ACTIVE / PARTIAL | Continue anonymous production UAT; keep interaction/authenticated cases gated by synthetic session. |
-| WS-003 / CMT-003A/C1 | READY FOR SOURCE / AUTH UAT BLOCKED | Continue source review/implementation where independent of CMT-002; preserve exact synthetic fixture boundaries. |
-| WS-004 / CMT-003B | READY FOR SOURCE / POSITIVE UAT BLOCKED | Continue tenant-private-egress implementation; positive case awaits exact approved host/port/CIDR. |
+| WS-003 / CMT-003A/C1 | SOURCE WORK IN PROGRESS / AUTH UAT BLOCKED | Current source review: atomic per-device claim/result transaction exists, but permanent claims/no heartbeat/start/fencing remain. Working tree now removes content/IDs from Browser command and event logs; API still persists raw dto.error under the CMT-003C contract gate. No tests/deploy/publication for this candidate. |
+| WS-004 / CMT-003B | READY FOR SOURCE / POSITIVE UAT BLOCKED | Current source review: origin/redirect/request guards exist; socket pinning and DNS-rebinding protection do not. Continue safe design; positive egress waits exact authorized tenant host/port/CIDR. |
 | WS-005 / CMT-004 | ACTIVE / PARTIAL | Continue source-resolvable authorization gaps; persisted role acceptance remains synthetic-session dependent. |
 
 Whole Auto remains PARTIALLY DELIVERED.

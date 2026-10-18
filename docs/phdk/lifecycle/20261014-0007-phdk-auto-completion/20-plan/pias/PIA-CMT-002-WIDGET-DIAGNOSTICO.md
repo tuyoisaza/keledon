@@ -1,5 +1,9 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Readback vigente — KELEDON 5.2.19 / PHDK 2.56.0 (2026-10-18)
+
+PR #271 is merged at remote main `4643e8025d41f3571865123f154e6ae8ae2cb8ed`; Railway Web/API report SUCCESS 1/1. UAT-156 observes the anonymous Web version/control names on 5.2.19, UAT-157 confirms only API `/health` liveness/version, and UAT-158 confirms only anonymous denial (401) for the interface catalog. UAT-154/155 remain scoped to 5.2.18; PR #271 did not change the application behavior from that source cut. A fresh isolated production view shows Portuguese labels, but its desktop viewport cannot establish mobile geometry and the available browser interface exposes no viewport emulation/resizing. No diagnostic action, clipboard, cache, storage, login or provider operation was activated. Whole CMT-002 remains ACTIVE/PARTIAL; copy/reset behavior, mobile geometry, full assistive-technology coverage, authenticated diagnostics, Landing runtime and native Browser rendering remain unverified. Static review of current Web/Landing source reconfirms truthful copy failure, reset failure preserving local authentication, app-owned cleanup and auth-token-last ordering; no new in-scope source defect was identified. No local application tests/build/lint were run.
+
 ## Revalidación estática de acciones de diagnóstico — candidato 5.2.18 (2026-10-18)
 
 La revisión del source Web y Landing encontró dos defectos en el widget compartido. Primero, si falla `resetApplicationState`, ambos `VersionActions` llamaban igualmente a `clearLocalSession()`: la interfaz anunciaba fallo y a la vez cerraba la sesión local. Segundo, una excepción inesperada de `copyReport` dejaba la acción pendiente y podía producir un rechazo no manejado. Se corrigieron ambos componentes: el fallo del reset conserva el contexto de autenticación; la copia trata un rechazo como resultado fallido y libera el estado de espera.

@@ -1,6 +1,6 @@
-## Current CMT-002 deployed readback — production v5.2.18 (2026-10-18)
+## Current CMT-002 deployed readback — production v5.2.19 (2026-10-18)
 
-UAT-154 **PASS_SCOPED**: fresh-query anonymous `/login` displays v5.2.18 and accessible diagnostic names; Railway Web/API deployments for main `b1dd123` are SUCCESS. UAT-155 **PASS_SCOPED**: Tab order samples brand → copy → clear and visible teal focus; no control activated. Copy/reset behavior, responsive geometry, screen-reader coverage, Landing runtime and authenticated role acceptance remain open. Evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/`.
+UAT-156 **PASS_SCOPED**: PR #271 main Web deploy reached SUCCESS 1/1; fresh-query anonymous `/login` displays v5.2.19 and accessible diagnostic names. API deploy remains BUILDING at latest status read. UAT-154/155 remain scoped to 5.2.18: labels/version plus sampled keyboard order/focus. Copy/reset behavior, responsive geometry, screen-reader coverage, Landing runtime and authenticated role acceptance remain open. Evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/`.
 
 ## Historical Auto Force re-entry — production v5.2.10 (2026-10-18)
 

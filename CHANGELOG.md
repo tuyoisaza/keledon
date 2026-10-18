@@ -1,3 +1,9 @@
+## v5.2.20 — 2026-10-18
+
+- Reconcile the PHDK 2.56.0 hybrid value-milestone Plan and PMO to the verified KELEDON 5.2.19 / PR #271 remote-main baseline.
+- Add a visible Auto lifecycle entry board and current UAT-156–158 readbacks; keep the four confirmed commitments and all partial/external acceptance gates explicit.
+- Static delivery only; no product behavior changed, no local application tests/build/lint, and no new production mutations. The separate Browser logging hardening candidate is excluded from this documentation release.
+
 ## v5.2.19 — 2026-10-18
 
 - Reconcile the PHDK Auto milestone plan to KELEDON 5.2.18 remote main and record the PR #270 delivery state.

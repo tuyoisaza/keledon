@@ -1,5 +1,9 @@
 # Sub-PIA CMT-003C1 — provisioning/cleanup auditado de fixtures
 
+## Revalidación Auto — KELEDON 5.2.19 / 2026-10-18
+
+Revisión de fuente actual: `40-integration/INTEGRATION_REVIEW-5.2.19-CMT-003C1.md`. La ruta de create/retire/restore sigue protegida por superadmin DB-derived, límite de un run de dos tenants y TTL 1–24h; auditoría mutativa participa en la misma transacción; no hay credentials/secrets/invites/provider writes. Detalle importante: Restore solo restablece login de cuenta dentro del TTL; devices quedan revocados/sin pair code y agents/flow permanecen inactivos. La cuenta requiere login normal nuevo y el Browser se debe re-parear; el fixture/flow no se reactiva automáticamente. Esto es fail-closed y el runbook lo explica. No se encontró nueva escritura de producto que sea segura/independiente de aceptación; sin sesión superadmin existente no se provisiona run ni se afirma UAT. La revisión static no equivale a acceptance productiva.
+
 ## Current Auto Force revalidation — 2026-10-18
 
 5.2.13 candidate: implementation is present in UatFixturesService/controller, the superadmin settings panel, additive lifecycle migration and shared auth/device/runtime guards. The earlier PHDK-only security-review label is NON_BLOCKING_BY_MODE under the current explicit Auto Force instruction. Create/audit and retirement/audit share transactions; retained capacity is two tenants; accounts expire and restored accounts require fresh normal login. No privileged testing identity, test-as, secret response, email or live provider is introduced. Authenticated production acceptance is still NOT RUN; implementation is not blocked by absence of an execution session. See 45-uat-prep/UAT_FIXTURE_LIFECYCLE_RUNBOOK.md.

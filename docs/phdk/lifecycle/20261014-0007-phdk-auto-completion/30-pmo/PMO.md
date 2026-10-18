@@ -2,8 +2,8 @@
 
 Run: 20261014-0007-phdk-auto-completion
 Owner-confirmed scope: CMT-001 through CMT-004, in that order
-Verified base: remote main b54d747a63da8c27fa1358c3db82d2787038f966 / product 5.2.16
-Active branch: phdk/auto-review-next-20261018
+Verified base at current Auto entry: remote main 4643e8025d41f3571865123f154e6ae8ae2cb8ed / KELEDON 5.2.19 (PR #271)
+Active working branch: phdk/cmt-003-static-review-5.2.20; scoped 5.2.20 docs/evidence candidate is unpublished. Browser logger source remains incomplete and excluded.
 Roadmap: ../20-plan/MILESTONE_PLAN.md
 
 ## Portfolio objective
@@ -20,7 +20,7 @@ Deliver a trustworthy, accessible, secure multi-tenant contact-center product by
 
 ## Workstream portfolio
 
-WS-001 baseline/version/PR (MS-001); WS-002 widget and safe diagnostics (MS-002); WS-003 command lease/fencing and audited synthetic execution (MS-003); WS-004 tenant DNS/socket/redirect egress (MS-004); WS-005 administration/permissions/CRUD (MS-005). MS-006 integrates all delivered milestones and carries residual gates into final UAT/Check/Delivery. Details and dependencies are in PMO_WORKSTREAMS.md and PMO_DEPENDENCIES.md.
+WS-001 baseline/version/PR (MS-001); WS-002 widget and safe diagnostics (MS-002); WS-003 command lease/fencing and audited synthetic execution (MS-003); WS-004 tenant DNS/socket/redirect egress (MS-004); WS-005 administration/permissions/CRUD (MS-005). MS-006 integrates all delivered milestones and carries residual gates into final UAT/Check/Delivery. MS-001 is delivered; MS-002 is active/partial; MS-003/004/005 retain independent source work and operation-specific UAT gates. Details and dependencies are in PMO_WORKSTREAMS.md and PMO_DEPENDENCIES.md.
 
 ## Seven-domain control and integration
 

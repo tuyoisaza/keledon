@@ -1,0 +1,41 @@
+{
+  "case": "UAT-158",
+  "story": "US-CMT004-INTERFACE-CATALOG-ANONYMOUS-DENY-01",
+  "commitment": "CMT-004",
+  "captured_at": "2026-10-18T19:15Z",
+  "candidate": {
+    "product_version": "5.2.19",
+    "main_sha": "4643e8025d41f3571865123f154e6ae8ae2cb8ed",
+    "pr": 271
+  },
+  "authorization": "ACTIVE_UAT_EXCEPTION",
+  "browser": {
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "fresh query GET via CUA in-app browser"
+  },
+  "target": "https://keledonapi.tuyoisaza.com/api/crud/interfaces?phdk-uat-20261018=271",
+  "identity": "anonymous",
+  "actions": [
+    "GET only the canonical tenant-managed interfaces API with no Authorization header",
+    "Read the HTTP error body; do not supply tenant IDs or enumerate other routes"
+  ],
+  "expected": "Global authentication guard denies anonymous interface catalog access before any tenant data is returned.",
+  "actual": {
+    "status_code": 401,
+    "error": "Unauthorized",
+    "message": "Invalid or expired token",
+    "data_returned": false
+  },
+  "result": "PASS_SCOPED",
+  "not_exercised": [
+    "Any authenticated role, tenant assignment, listing, mutation, persistence or secret behavior",
+    "Legacy/global catalog routes, other tenant IDs or customer records"
+  ],
+  "safety": {
+    "login": false,
+    "writes": false,
+    "authorization_header": false,
+    "customer_data": false,
+    "new_spend": false
+  }
+}
