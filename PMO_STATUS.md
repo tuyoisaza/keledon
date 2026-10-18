@@ -1,6 +1,6 @@
 # PMO Status — KELEDON Auto / PHDK 2.56.0 (2026-10-18)
 
-Run `20261014-0007-phdk-auto-completion`; branch `phdk/cmt-003-static-review-5.2.20`; target `main`. Remote main is KELEDON 5.2.19 at `4643e8025d41f3571865123f154e6ae8ae2cb8ed` after PR #271. Railway Web/API SUCCESS 1/1, no pending work/issues. UAT-156 reads Web v5.2.19; UAT-157 confirms API liveness v5.2.19; UAT-154/155 remain scoped to 5.2.18. Four commitments: 0/4 DONE, 4/4 ACTIVE/PARTIAL; none deferred/cancelled.
+Run `20261014-0007-phdk-auto-completion`; branch `phdk/lounge-download-version-5.2.21`; target `main`. Remote main is KELEDON 5.2.20 at `410bc9ead08351171b602eb3a5275f36bf29ca5a` after PR #272. Railway Web/API SUCCESS; post-merge production reads returned 5.2.20. Current UI candidate targets the Lounge installer-version/download consistency gap for 5.2.21. Four commitments: 0/4 DONE, 4/4 ACTIVE/PARTIAL; none deferred/cancelled.
 
 MS-001 is delivered. MS-002 source fix is merged but remains partial pending copy/reset behavior, responsive and broad accessibility acceptance. PR #271 records UAT-154/155 and the v5.2.19 Web readback UAT-156. Authenticated acceptance requires a compliant disposable synthetic session. Private CRM positive egress requires the tenant's chosen sandbox. PHDK v2.56.0 official updater is CURRENT; coherence is 69/69.
 

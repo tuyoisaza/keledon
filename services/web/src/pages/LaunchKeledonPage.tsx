@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
-import { getBrowserDownloadUrl, BROWSER_RELEASES_API } from '@/lib/knowledge-source-utils.js';
+import { getBrowserDownloadUrl, getBrowserInstallerUrl, DEFAULT_BROWSER_DOWNLOAD_URL, BROWSER_RELEASES_API } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
 import { useTranslation } from '@/context/I18nContext';
 import { requestKeledonLaunch } from '@/lib/launch-protocol.js';
@@ -17,6 +17,7 @@ export default function LaunchKeledonPage() {
     const [launching, setLaunching] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [browserVersion, setBrowserVersion] = useState<string | null>(null);
+    const [browserReleaseTag, setBrowserReleaseTag] = useState<string | null>(null);
     const [versionLoading, setVersionLoading] = useState(true);
     const [launchDetails, setLaunchDetails] = useState<null | {
         keledonId: string;
@@ -41,7 +42,13 @@ export default function LaunchKeledonPage() {
         const controller = new AbortController();
         fetch(BROWSER_RELEASES_API, { signal: controller.signal })
             .then(r => r.ok ? r.json() : null)
-            .then(d => setBrowserVersion(d?.tag_name?.replace(/^v/, '') || null))
+            .then(d => {
+                const tagName = typeof d?.tag_name === 'string' && /^v?\d+\.\d+\.\d+$/.test(d.tag_name)
+                    ? d.tag_name
+                    : null;
+                setBrowserReleaseTag(tagName);
+                setBrowserVersion(tagName?.replace(/^v/, '') || null);
+            })
             .catch(() => setBrowserVersion(null))
             .finally(() => setVersionLoading(false));
         return () => controller.abort();
@@ -173,6 +180,12 @@ export default function LaunchKeledonPage() {
     }
 
     const isSuperAdmin = user?.role === 'superadmin';
+    const configuredDownloadUrl = getBrowserDownloadUrl(import.meta.env);
+    const hasCustomDownloadUrl = configuredDownloadUrl !== DEFAULT_BROWSER_DOWNLOAD_URL;
+    const configuredBrowserVersion = import.meta.env.VITE_KELEDON_BROWSER_VERSION?.trim();
+    const browserDownloadUrl = !hasCustomDownloadUrl && browserReleaseTag
+        ? getBrowserInstallerUrl(browserReleaseTag)
+        : configuredDownloadUrl;
 
     return (
         <div className="space-y-6">
@@ -187,18 +200,31 @@ export default function LaunchKeledonPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    {/* KELEDON_BROWSER_DOWNLOAD_URL env var on Railway can override this URL if needed */}
+                    {/* The displayed release and default installer URL use the same GitHub release tag. */}
                     <a
-                        href={getBrowserDownloadUrl(import.meta.env)}
+                        href={browserDownloadUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={browserVersion && !hasCustomDownloadUrl
+                            ? `${t('launch.downloadApp')}, KELEDON Browser v${browserVersion}`
+                            : t('launch.downloadApp')}
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         {t('launch.downloadApp')}
-                        {browserVersion && (
+                        {browserVersion && !hasCustomDownloadUrl && (
                             <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary-foreground/15 rounded">
                                 v{browserVersion}
+                            </span>
+                        )}
+                        {hasCustomDownloadUrl && (
+                            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary-foreground/15 rounded">
+                                {configuredBrowserVersion ? `v${configuredBrowserVersion}` : t('launch.customDownload')}
+                            </span>
+                        )}
+                        {!hasCustomDownloadUrl && !browserVersion && !versionLoading && (
+                            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary-foreground/15 rounded">
+                                {t('launch.downloadVersionUnavailable')}
                             </span>
                         )}
                         {versionLoading && (

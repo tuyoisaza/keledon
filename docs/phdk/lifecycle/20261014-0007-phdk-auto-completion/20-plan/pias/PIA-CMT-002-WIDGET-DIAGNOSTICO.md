@@ -1,5 +1,9 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Current Lounge download-version finding — candidate KELEDON 5.2.21
+
+The authenticated Launch/Lounge page displayed the GitHub latest Browser release tag, but its download action used the unpinned `releases/latest/download` URL. The candidate now derives the visible release from the latest tag and pins the default installer link to that tag, so the displayed installer version and downloaded release agree. A configured custom URL is labeled as configured; an optional `VITE_KELEDON_BROWSER_VERSION` value supplies its declared version. Web/Landing source review only; authenticated production UI acceptance remains pending.
+
 ## Readback vigente — KELEDON 5.2.19 / PHDK 2.56.0 (2026-10-18)
 
 PR #271 is merged at remote main `4643e8025d41f3571865123f154e6ae8ae2cb8ed`; Railway Web/API report SUCCESS 1/1. UAT-156 observes the anonymous Web version/control names on 5.2.19, UAT-157 confirms only API `/health` liveness/version, and UAT-158 confirms only anonymous denial (401) for the interface catalog. UAT-154/155 remain scoped to 5.2.18; PR #271 did not change the application behavior from that source cut. A fresh isolated production view shows Portuguese labels, but its desktop viewport cannot establish mobile geometry and the available browser interface exposes no viewport emulation/resizing. No diagnostic action, clipboard, cache, storage, login or provider operation was activated. Whole CMT-002 remains ACTIVE/PARTIAL; copy/reset behavior, mobile geometry, full assistive-technology coverage, authenticated diagnostics, Landing runtime and native Browser rendering remain unverified. Static review of current Web/Landing source reconfirms truthful copy failure, reset failure preserving local authentication, app-owned cleanup and auth-token-last ordering; no new in-scope source defect was identified. No local application tests/build/lint were run.

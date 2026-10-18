@@ -2,10 +2,10 @@
 
 Run: 20261014-0007-phdk-auto-completion
 Repository: tuyoisaza/keledon
-Current lifecycle stage: 90-delivery — publishing the scoped PHDK Auto Plan/PMO reconciliation as KELEDON 5.2.20 documentation/evidence; Browser command-log source is excluded from this candidate.
-Current branch: phdk/cmt-003-static-review-5.2.20
-Verified remote main: 4643e8025d41f3571865123f154e6ae8ae2cb8ed
-Remote main baseline: KELEDON 5.2.19 after PR #271, merge `4643e8025d41f3571865123f154e6ae8ae2cb8ed`. Web deploy `47f15d73-4fa8-4341-b798-86ecd824151d` SUCCESS 1/1; API deploy `21591ee0-c2f4-483f-af69-668311ea29ee` SUCCESS 1/1. UAT-156 reads Web v5.2.19; UAT-157 confirms API safe liveness v5.2.19. Scoped 5.2.20 docs/evidence candidate is based on that main; Browser logger source candidate is incomplete and excluded.
+Current lifecycle stage: 90-delivery — KELEDON 5.2.21 candidate clarifies the exact Browser installer version and pins the download link to that release.
+Current branch: phdk/lounge-download-version-5.2.21
+Verified remote main baseline: 410bc9ead08351171b602eb3a5275f36bf29ca5a
+Remote main baseline: KELEDON 5.2.20 after PR #272; Railway Web/API deployment is SUCCESS. Production readback immediately after merge showed the public site v5.2.20 and API health v5.2.20. Latest GitHub Browser installer release is v5.0.52; Lounge currently resolves the latest installer separately from the displayed tag, which this candidate ties together. No authenticated UI acceptance is claimed yet.
 PHDK version: 2.56.0
 Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only functional acceptance.
 
@@ -15,13 +15,13 @@ Goal: owner-confirmed CMT-001 through CMT-004 in order; production-only function
 | 10-capture | REUSED | PROJECT_INTENT.md, PROJECT_BRIEF.md, PRD.md, FEATURES.md, REQUIREMENTS_TRACEABILITY.md. |
 | 20-plan | REUSED / REVALIDATED THIS AUTO | 20-plan/MILESTONE_PLAN.md, ARCHITECTURE_REVALIDATION.md, IMPLEMENTATION_PLAN.md, PHDK_COMMITMENT_COVERAGE.md; entry baseline corrected from stale 5.2.16/5.2.18 references to main 4643e802/5.2.19. Snapshots in 20-plan/snapshots/20261018-phdk256-plan. |
 | 30-pmo | REUSED / REVALIDATED THIS AUTO | Six value milestones/five workstreams retained; PMO is continuous against value plan, not the stage sequence. MS-002 active; independent ready source work remains in PMO. |
-| 40-integration | COMPLETED FOR 5.2.20 DOCS CANDIDATE | Plan/PMO and remote-main baseline are reconciled; separate Browser logging candidate remains technically incomplete and excluded. |
+| 40-integration | IN REVIEW — LOUNGE DOWNLOAD VERSION | The installer version label and default download URL now derive from the same release tag in the Web and Landing launch screens. |
 | 45-uat-prep | PARTIAL | Audited fixture implementation/runbook exists; authenticated production journey not run. |
 | 50-uat | OPEN / PARTIAL | Production only; protected cases require existing superadmin session and synthetic identities. |
 | 60-uat-fix | OPEN | Repair and retest findings on deployed candidate. |
 | 65-seo / 67-aeo-geo | OPEN / PARTIAL | Revalidate changed public claims/routes; external measures remain unverified. |
 | 70-check / 80-remediation | OPEN | PHDK coherence/static checks; honor no-local-app-test/build/lint restriction. |
-| 90-delivery | RUNNING — SCOPED DOCS CANDIDATE | KELEDON 5.2.20; normal branch/PR/merge/readback. This publishes the Plan/PMO correction only and does not complete the four-front Auto. |
+| 90-delivery | RUNNING — UI RELEASE CANDIDATE | KELEDON 5.2.21; normal branch/PR/merge and production readback. Authenticated download interaction remains unverified without an available synthetic session; whole Auto remains partial. |
 
 ## PHDK Auto entry board — model 2.56.0
 

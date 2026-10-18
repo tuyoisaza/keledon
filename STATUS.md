@@ -1,6 +1,6 @@
 # KELEDON current status — 2026-10-18
 
-PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69/69. Remote main is 4643e8025d41f3571865123f154e6ae8ae2cb8ed, KELEDON 5.2.19 after PR #271. Railway Web/API SUCCESS 1/1, no pending work/issues. UAT-156 reads Web v5.2.19; UAT-157 confirms API safe liveness v5.2.19; UAT-158 confirms anonymous denial on interface catalog; UAT-154/155 remain scoped to 5.2.18. Four commitments: 0/4 complete, 4/4 active/partial.
+PHDK Auto active. Canonical PHDK 2.56.0 updater reports CURRENT; coherence is 69/69. Remote main is 410bc9ead08351171b602eb3a5275f36bf29ca5a, KELEDON 5.2.20 after PR #272. Railway Web/API SUCCESS; production returned v5.2.20. Lounge download-version consistency is the current 5.2.21 candidate. Four commitments: 0/4 complete, 4/4 active/partial.
 
 | Stage | Status | Evidence / next action |
 |---|---|---|
