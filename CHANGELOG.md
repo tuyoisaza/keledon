@@ -1,3 +1,10 @@
+## v5.2.15 — 2026-10-18
+
+- Add a superadmin-only, company-owned interface catalog with create, list, edit and delete controls; tenant admins keep using their existing scoped team assignment flow.
+- Validate managed interface URLs and request fields on the API, require an existing owning company, preserve ownership on edit and never return credentials.
+- Redact URL/origin/host/IP/CIDR and credential fields from audit change payloads.
+- No local application tests/build/lint or production mutations were run; production review is pending deployment.
+
 ## v5.2.14 — 2026-10-18
 
 - Verify Web nginx HTTPS upstream certificates against an explicit CA bundle and API hostname; remove the three location-level verification bypasses. Validate nginx configuration before serving at container startup.

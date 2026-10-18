@@ -414,7 +414,7 @@ export class AuditInterceptor implements NestInterceptor {
 
   private sanitizeBody() {
     const sensitiveField =
-      /(?:password|passwd|token|secret|credential|api[-_]?key|authorization|private[-_]?key|access[-_]?key)/i;
+      /(?:password|passwd|token|secret|credential|api[-_]?key|authorization|private[-_]?key|access[-_]?key|(?:base)?url|allowed[-_]?origins|hostname|host|cidr|ip(?:address)?)/i;
     return (key: string, value: any): any => {
       if (sensitiveField.test(key)) {
         return '[REDACTED]';

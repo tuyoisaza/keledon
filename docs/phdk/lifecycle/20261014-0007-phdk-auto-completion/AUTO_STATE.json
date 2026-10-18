@@ -5,7 +5,7 @@
   "repository": "tuyoisaza/keledon",
   "target_branch": "main",
   "goal": "Continuar el portafolio KELEDON de cuatro compromisos confirmados en orden y entregar evidencia verificable, manteniendo aceptaciÃ³n funcional en producciÃ³n.",
-  "candidate_ref": "Remote main bb0b3f4688102b04cb3a8af9d3232b5f41ed5808 / 5.2.13 deployed; 5.2.14 TLS verification candidate fix/phdk-proxy-tls-verification",
+  "candidate_ref": "Source commit f09976cb9d472e79cdd5eb6ec4e8d24c954b222b on feat/phdk-managed-interface-catalog-20261018, based on verified origin/main b9434822697d31a26aab71f5e32be6661815b89a; product 5.2.15; PHDK 2.54.1; PR/publish pending.",
   "authorization": {
     "source_ref": "Current owner instruction 2026-10-18: phdk auto force. Retoma la meta de KELEDON con PHDK 2.54.1, publica la actualizacion y continua con todo lo que puedas resolver dentro de lo ya autorizado.",
     "instruction": "PHDK auto force",
@@ -33,7 +33,7 @@
     "All delivered code/documents integrated through normal branch/PR route to remote main and content/version/SHA verified",
     "Unmet client/provider/hardware requirements remain explicitly PARTIAL/BLOCKED, never fabricated as PASS"
   ],
-  "current_stage": "TLS remediation delivery; authenticated fixture UAT waiting only on compliant administrative session",
+  "current_stage": "5.2.15 superadmin interface catalog implementation and static review; normal PR/deployment/readback pending.",
   "steps": [
     {
       "id": "preflight",
@@ -41,7 +41,7 @@
       "status": "done",
       "action": "Run official updater and verify PHDK manifest/native block",
       "depends_on": [],
-      "evidence": "Official updater CURRENT v2.54.0, upstream 63e8cd28bbb4d412954abda6fb7fe9b79568ba9d; static coherence PASS 66/66; force sync manifest byte comparison exact.",
+      "evidence": "Official PHDK updater CURRENT v2.54.1, upstream 494337138034c9abdc3851276b783528ccd39df2; static coherence PASS 66/66; 66 manifest mappings byte-identical; owner-managed AGENTS text outside markers preserved.",
       "blocked_by": []
     },
     {
@@ -279,10 +279,65 @@
     {
       "id": "tls_proxy_delivery",
       "kind": "delivery",
-      "status": "running",
+      "status": "done",
       "action": "Deliver Web upstream TLS verification and validate production Web-to-API denial path",
       "depends_on": [
         "private_egress_source_review"
+      ],
+      "blocked_by": [],
+      "evidence": "PR265 merged b9434822697d31a26aab71f5e32be6661815b89a; Web/API SUCCESS; nginx runtime config test successful; UAT-148 Web5.2.14/API5.2.14/liveness200 and protected Web-proxy JSON denial401. Post-merge runtime evidence is local, no circular docs-only release required."
+    },
+    {
+      "id": "admin_interface_catalog_implementation",
+      "kind": "work",
+      "status": "done",
+      "action": "Implement superadmin-only company-owned managed-interface catalog with server-side validation, write-only credentials and audit redaction",
+      "depends_on": [
+        "tls_proxy_delivery"
+      ],
+      "blocked_by": [],
+      "evidence": "Candidate source 5.2.15 adds /admin/interfaces page, server route guard, explicit existing-company ownership, immutable ownership on edit, bounded field/HTTP(S) validation, no connection probe, write-only encrypted credentials and URL/host/IP/CIDR audit redaction. PIA ADM-CAT/ADM-IF and integration review refreshed."
+    },
+    {
+      "id": "integration_review_515",
+      "kind": "review_diff",
+      "status": "done",
+      "action": "Review catalog implementation and API/audit boundary for tenant isolation, secrets, destination exposure and UI behavior",
+      "depends_on": [
+        "admin_interface_catalog_implementation"
+      ],
+      "blocked_by": [],
+      "evidence": "Source review in docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/40-integration/INTEGRATION_REVIEW-5.2.15.md. Review PASS for source integration; production role/persistence/audit acceptance not claimed."
+    },
+    {
+      "id": "required_check_515",
+      "kind": "required_check",
+      "status": "done",
+      "action": "Run only static JSON/locale/version/PHDK coherence and whitespace checks; no local application tests, build or lint under current owner instruction",
+      "depends_on": [
+        "integration_review_515"
+      ],
+      "blocked_by": [],
+      "evidence": "PHDK coherence PASS 66/66; all 5 package/lock pairs and Browser renderer at 5.2.15; API/Web locale JSON parses and ES/EN/PT key parity PASS 1082 keys; AUTO_STATE JSON parses; git diff --check PASS. No application tests/build/lint run under explicit production-only owner instruction."
+    },
+    {
+      "id": "delivery_515",
+      "kind": "delivery",
+      "status": "running",
+      "action": "Commit and publish candidate through normal PR and merge to main after required static checks",
+      "depends_on": [
+        "required_check_515"
+      ],
+      "blocked_by": [],
+      "evidence": "Reviewed source and passed static checks; versioned source commit f09976cb9d472e79cdd5eb6ec4e8d24c954b222b is ready for normal branch push and PR."
+    },
+    {
+      "id": "verify_515",
+      "kind": "verify_delivery",
+      "status": "pending",
+      "action": "Read back remote main content/version/SHA, production deployment and safe public version/auth-denial smoke",
+      "depends_on": [
+        "delivery_515"
       ],
       "blocked_by": []
     }
@@ -304,12 +359,13 @@
       "id": "synthetic-auth-identity",
       "kind": "external_dependency",
       "source_ref": "PIA-CMT-003C1 acceptance prerequisites",
-      "reason": "No compliant existing superadmin execution session and controlled pair of ordinary synthetic account sessions is available for authenticated production fixture acceptance. This does not block lifecycle implementation.",
+      "reason": "No compliant existing superadmin execution session and controlled pair of ordinary synthetic account sessions is available for authenticated production acceptance. This blocks authenticated acceptance only, not independent source work.",
       "next_action": "Use an existing authenticated superadmin to prepare the two reserved first-party synthetic users through /admin/settings and the audited fixture lifecycle; keep all credentials out of chat. Validate and retire via the runbook.",
       "evidence": "5.2.13 source implements a normal superadmin-only audited path; no privileged synthetic account or production test-as is permitted. No fixture has been created or auth session used in this invocation.",
-      "observed_at": "2026-10-17T22:02:05-06:00",
+      "observed_at": "2026-10-18T11:05:33-06:00",
       "resolution_attempts": [
-        "Re-read CMT-003C1 and UAT Prep; confirmed approved fixture limits and first-party normal login requirement. Next implement audited lifecycle; no account has been created."
+        "Re-read CMT-003C1 and UAT Prep; confirmed approved fixture limits and first-party normal login requirement. Next implement audited lifecycle; no account has been created.",
+        "Opened a fresh production tab at /admin/settings; app redirected to /login and displayed anonymous 5.2.14. No credentials were available in the session; no login or mutation was attempted. Continue independent CMT-004 source work."
       ]
     },
     {
@@ -323,7 +379,20 @@
       "resolution_attempts": [
         "Re-read the current owner restrictions and PIA CMT-001A; continue repository delivery, leave external settings unchanged and mark unavailable metadata unverified."
       ]
+    },
+    {
+      "id": "vendor-key-provisioning",
+      "kind": "external_dependency",
+      "source_ref": "PIA-CMT-004 ADM-CAT secret-storage acceptance prerequisite",
+      "reason": "The production KELEDON_VENDOR_KEY value is not available in the approved owner-controlled provisioning channel; no key value was read or changed.",
+      "next_action": "Before authenticated secret-write acceptance, the owner provisions the existing key through the authorized production secret-management channel; do not paste it into chat or commit it.",
+      "evidence": "Managed-interface secret writes require the existing AES-GCM key and API returns only hasCredentials. Metadata review does not establish key availability or value.",
+      "observed_at": "2026-10-18T11:05:33-06:00",
+      "resolution_attempts": [
+        "No provider settings were read or changed in this turn; source implementation remains independent."
+      ]
     }
   ],
-  "updated_at": "2026-10-18T06:36:43.600096+00:00"
+  "updated_at": "2026-10-18T11:07:43-06:00",
+  "post_merge_evidence": "C:\\KELEDON\\phdk-runtime-evidence\\20261018-b9434822\\SOURCE_DELIVERY_EVIDENCE.json"
 }

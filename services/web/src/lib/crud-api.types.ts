@@ -82,9 +82,13 @@ export interface ManagedInterface {
     id: string;
     companyId?: string | null;
     name: string;
-    baseUrl: string;
+    baseUrl?: string;
     category?: string;
     status: string;
+    providerKey?: string | null;
+    capabilities?: string | null;
+    icon?: string | null;
+    hasCredentials?: boolean;
     createdAt?: string;
     updatedAt?: string;
 }

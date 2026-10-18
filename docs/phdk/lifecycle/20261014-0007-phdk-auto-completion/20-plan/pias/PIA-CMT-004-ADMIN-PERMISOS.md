@@ -1,5 +1,11 @@
 # PIA CMT-004 — administración y permisos por tenant
 
+## Revalidación Auto Force — catálogo de interfaces, 2026-10-18
+
+El candidato 5.2.15 añade la pantalla `/admin/interfaces` únicamente para `superadmin`, enlazada desde Configuración. La lista superadmin expone empresa propietaria, nombre, URL, categoría, estado y solo `hasCredentials`; proyecciones de lista/detalle/asignación usadas por tenant omiten la URL privada. Alta exige compañía existente y URL HTTP(S) normalizada. La edición no permite cambiar ownership; los registros históricos sin `companyId` quedan sin asignación implícita. La API limita los campos aceptados, valida formato y longitud también fuera del navegador, cifra reemplazos con `KELEDON_VENDOR_KEY` y nunca devuelve el valor. El interceptor de auditoría ahora redacta URL/baseUrl, orígenes permitidos, hostname, host, CIDR, IP y campos secretos. La pantalla no realiza conexiones de prueba. No se ejecutaron tests/build/lint locales ni mutaciones productivas. El código fuente y sus contratos no se han aceptado aún en la versión desplegada.
+
+Estado ADM-CAT: **SOURCE IMPLEMENTED / PRODUCTION ACCEPTANCE PENDING**. Falta confirmar en producción roles, persistencia, sustitución write-only de secretos y auditoría; el owner debe provisionar `KELEDON_VENDOR_KEY` por su canal autorizado antes de guardar secretos. La sesión admin sintética solicitada sigue ausente. CMT-004 permanece ACTIVE / PARTIAL.
+
 Estado: ACTIVE / PARTIAL · Prioridad: 4 · Baseline productivo KELEDON 5.2.10 en main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, Railway Web/API SUCCESS; los PR #253–255 no cambiaron RBAC, modelo de datos ni flujos administrativos. Decisiones confirmadas: cuenta nueva=user; solo superadmin existente eleva roles/asigna empresas; admin/coordinator quedan confinados a su empresa; actor/tenant se derivan de BD; secretos son write-only. Decisión de tenancy: multi-tenant aprobada.
 
 ## Política autorizada

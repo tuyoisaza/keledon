@@ -1,5 +1,9 @@
 # Sub-PIA CMT-003B — egress DNS/CIDR y CRM privado por tenant
 
+## Revalidación Auto Force — auditoría de destinos, 2026-10-18
+
+5.2.15 extiende la redacción del interceptor de auditoría a URL/baseUrl, allowlists, hostname, host, CIDR e IP; además la API exige URL HTTP(S) normalizada para el catálogo de interfaces por empresa. No hay resolución DNS ni petición al guardar, y el cambio no introduce pinning de socket, protección de redirect ni broker. El requerimiento NET-DNS/REBIND/REDIR permanece abierto; esta edición evita propagar el destino privado al registro de cambios genérico.
+
 ## Current Auto Force review — 2026-10-18
 
 Browser socket pinning remains absent; exact tenant sandbox/host/port/CIDR is not supplied and native Browser acceptance is unavailable through the connected IAB-only channel. No private egress or metadata is contacted. A concrete independent defect was found in Web nginx: three HTTPS proxy routes disable upstream certificate verification. Candidate 5.2.14 enables trusted-CA/hostname verification and validates nginx configuration at container startup, where private WebSocket DNS is available. This advances source security without claiming that a customer CRM broker or DNS-pinning contract is implemented. See 40-integration/INTEGRATION_REVIEW-5.2.14.md.

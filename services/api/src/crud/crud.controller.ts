@@ -167,6 +167,7 @@ export class CrudController {
     return this.crud.getTeamInterfaces(
       id,
       req.actor?.role === 'superadmin' ? undefined : req.actor?.companyId,
+      req.actor?.role === 'superadmin',
     );
   }
 
@@ -275,12 +276,13 @@ export class CrudController {
   getManagedInterfaces(@Req() req: CrudRequestContext) {
     return this.crud.getManagedInterfaces(
       req.actor?.role === 'superadmin' ? undefined : req.actor?.companyId,
+      req.actor?.role === 'superadmin',
     );
   }
 
   @Get('interfaces/:id')
-  getManagedInterface(@Param('id') id: string) {
-    return this.crud.getManagedInterface(id);
+  getManagedInterface(@Param('id') id: string, @Req() req: CrudRequestContext) {
+    return this.crud.getManagedInterface(id, req.actor?.role === 'superadmin');
   }
 
   @Post('interfaces')
