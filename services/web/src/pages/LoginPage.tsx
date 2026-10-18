@@ -70,7 +70,7 @@ useEffect(() => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <header className="fixed left-4 top-4 z-50 flex flex-col items-start gap-1">
-        <Link to="/" className="inline-flex items-center gap-2" aria-label={t('app.name')}>
+        <Link to="/" className="inline-flex min-h-11 items-center gap-2" aria-label={t('app.name')}>
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Bot className="w-6 h-6 text-primary-foreground" />
             </div>
@@ -111,7 +111,7 @@ useEffect(() => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                  className="h-11 w-full pl-10 pr-4 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                   placeholder={t('auth.emailPlaceholder')}
                   required
                 />
@@ -129,7 +129,7 @@ useEffect(() => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                  className="h-11 w-full pl-10 pr-4 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
                   placeholder={t('auth.passwordPlaceholder')}
                   required
                   minLength={6}
@@ -175,7 +175,7 @@ useEffect(() => {
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-primary hover:underline font-medium"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center px-2 align-middle text-primary hover:underline font-medium"
             >
               {isSignUp ? t('auth.signIn') : t('auth.signUp')}
             </button>

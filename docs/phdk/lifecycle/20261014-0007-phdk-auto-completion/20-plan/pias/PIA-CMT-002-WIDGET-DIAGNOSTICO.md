@@ -1,5 +1,9 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
+## Hallazgo y remediación — UAT-141 / candidato 5.2.11 (2026-10-17)
+
+La inspección anónima de producción `/login` a 320×720 en v5.2.10 confirmó reflow sin overflow, pero midió cuatro objetivos por debajo del mínimo PHDK de 44×44: enlace de marca 152×40, email 239×41, contraseña 239×41 y botón “Criar conta” 69×20. El hallazgo está registrado como FAIL_PHDK_TARGET_SIZE en `50-uat/evidence/uat-141-production-login-mobile-320-2026-10-17.json`. El candidato 5.2.11 asigna un mínimo de 44px al enlace y al selector de registro, y altura de 44px a ambos campos. No se ejecutaron pruebas, build ni lint locales. UAT-142 debe medir los cuatro objetivos en la versión desplegada, confirmar ausencia de overflow y restaurar el viewport; el PIA continúa ACTIVE/PARTIAL hasta esa retest. Otras dimensiones, zoom, lector de pantalla y autenticación permanecen abiertos.
+
 ## Revalidación de ruta/localización — v5.2.10 (2026-10-17)
 
 Production PR #255 merged at main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; Web/API deploys are SUCCESS. UAT-140 verifies the public 404 title/copy in saved Portuguese and the error response's noindex/no-canonical contract. This only adds one route/localization slice; protected diagnostic RBAC, complete accessibility, authenticated persistence, clipboard/caching scope, broad locale/theme and native audio remain open. Evidence: `50-uat/evidence/uat-140-production-localized-404-2026-10-17.json`. No local app tests/builds/lint.

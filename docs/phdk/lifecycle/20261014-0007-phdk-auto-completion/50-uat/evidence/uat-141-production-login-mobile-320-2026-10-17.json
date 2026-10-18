@@ -1,0 +1,62 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-141",
+  "commitment": "CMT-002",
+  "timestampUtc": "2026-10-17T22:36:06Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/login",
+  "productVersionObserved": "5.2.10",
+  "productSource": "fd429298a85bdcf3b5c20791f9b1598c132aabcb",
+  "documentMainAtRun": "edd18be5dd8fd2c49c866f9006ee0f408642e9b4",
+  "actor": "anonymous",
+  "permissions": "ACTIVE_UAT_EXCEPTION",
+  "browserCapability": "AVAILABLE_VERIFIED",
+  "browserChannel": "Codex in-app browser / CUA",
+  "viewportCssPx": {
+    "width": 320,
+    "height": 720
+  },
+  "locale": "pt",
+  "theme": "dark",
+  "observations": {
+    "documentWidth": 320,
+    "bodyWidth": 320,
+    "horizontalOverflow": false,
+    "mainBounds": {
+      "x": 16,
+      "y": 21,
+      "width": 288,
+      "height": 677,
+      "right": 304,
+      "bottom": 699
+    },
+    "targets": [
+      { "name": "KELEDON home link", "width": 152, "height": 40, "result": "FAIL_PHDK_44PX" },
+      { "name": "Email field", "width": 239, "height": 41, "result": "FAIL_PHDK_44PX" },
+      { "name": "Password field", "width": 239, "height": 41, "result": "FAIL_PHDK_44PX" },
+      { "name": "Entrar", "width": 239, "height": 44, "result": "PASS" },
+      { "name": "Google", "width": 239, "height": 45, "result": "PASS" },
+      { "name": "Criar conta", "width": 69, "height": 20, "result": "FAIL_PHDK_44PX" },
+      { "name": "Theme selector", "width": 93, "height": 44, "result": "PASS" },
+      { "name": "Language selector", "width": 109, "height": 44, "result": "PASS" }
+    ]
+  },
+  "result": "FAIL_PHDK_TARGET_SIZE; PASS_REFLOW",
+  "actions": [
+    "Opened the public production login route in a new anonymous tab.",
+    "Applied a temporary 320x720 CSS viewport and inspected visible content, controls and bounds.",
+    "Captured and visually inspected a screenshot in the UAT session; no form values were entered.",
+    "Reset the temporary viewport; default 1280x720 viewport was confirmed after the reset."
+  ],
+  "notPerformed": [
+    "No login, signup or OAuth action was activated.",
+    "No credentials, clipboard, customer data, private endpoints, account changes or production writes were used.",
+    "No local application tests, builds or lint were run."
+  ],
+  "spend": "NO_NEW_SPEND",
+  "limitations": [
+    "This case covers 320px CSS reflow and touch-target geometry, not browser zoom at 200%/400%.",
+    "Screen-reader output, authenticated access and other locale/theme combinations remain unverified.",
+    "The screenshot was displayed and reviewed in the UAT session but was not exported as a repository file."
+  ]
+}

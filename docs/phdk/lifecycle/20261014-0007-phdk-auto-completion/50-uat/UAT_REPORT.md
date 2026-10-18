@@ -1,3 +1,7 @@
+## UAT-141 — producción: login móvil 320px / targets PHDK (2026-10-17 22:36 UTC)
+
+En la página pública de producción `https://keledon.tuyoisaza.com/login`, v5.2.10 / source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, a viewport CSS 320×720. La página cabe sin overflow horizontal (document/body 320px; el main termina en y=699). La revisión geométrica encontró cuatro controles bajo el mínimo táctil PHDK de 44×44: enlace de marca 40px de alto, email 41px, contraseña 41px y “Criar conta” 69×20px. Entrar, Google y selectores de idioma/tema cumplen 44px. **UAT-141 falla el target-size PHDK y pasa el reflow medido.** Captura visual mostrada y examinada en la sesión; medidas completas: `evidence/uat-141-production-login-mobile-320-2026-10-17.json`. No se introdujeron datos, ni se activaron login/signup/OAuth; viewport temporal restablecido a 1280×720. No hubo pruebas/build/lint local ni gasto nuevo.
+
 ## Latest Auto Force UAT re-entry — 2026-10-18
 
 **ACCEPTANCE INCOMPLETE.** Actual production served v5.2.10; PR #259 candidate v5.2.11 is not deployed. Public home and anonymous protected-route redirect passed their scoped observations. UAT-141 four undersized login targets were reproduced (152×40, 399×41, 399×41, 69×20); UAT-142 remains BLOCKED pending deployed 5.2.11. Authenticated/tenant/device/flow/CRM acceptance remains blocked by Prep prerequisites. Detailed evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/revalidations/20261018-autoforce/UAT_REPORT.md`.

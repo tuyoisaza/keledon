@@ -8,6 +8,12 @@ After PR #244's docs-only deploy settled, a fresh anonymous tab served KELEDON v
 
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Production candidate v5.2.11 — mobile login touch targets
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Anonymous visitor | US-014 / usable mobile login controls | UAT-141 baseline → UAT-142 retest | Open production `/login` anonymously at 320×720 → inspect named target bounds and reflow → do not enter credentials or activate auth → restore viewport. | UAT-141 FAIL_PHDK_TARGET_SIZE / PASS_REFLOW on v5.2.10; candidate fix raises the brand link, email/password fields and signup toggle to 44px. UAT-142 production retest is pending deployment. Evidence: `evidence/uat-141-production-login-mobile-320-2026-10-17.json`. |
+
 ## Production v5.2.8 — public HTML and login shell handoff
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |
