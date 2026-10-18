@@ -1,4 +1,14 @@
-# Current Auto status — KELEDON 5.2.10 / 2026-10-17
+# PHDK upgrade force and autonomy contract review — 2026-10-18
+
+Current request: synchronize published PHDK and assess the revised Auto Force contract; no product implementation or publication requested by this scoped invocation. Installed standards updated from 2.54.0 to 2.54.1, canonical upstream `494337138034c9abdc3851276b783528ccd39df2`. All 66 manifest mappings match fresh upstream bytes; the native AGENTS.md managed block matches the vendored block and owner content outside markers is byte-preserved. Coherence 66/66 and diff whitespace checks pass. No pre-existing dirty PHDK paths were overwritten; no obsolete manifest destination was removed.
+
+The new continuity/communication/native rules explicitly require inherited-blocker reconciliation, short rule refresh, concrete proposals/defaults for routine missing definitions, supported reload/fresh-tab/isolated-context repair, independent work despite dependent blockers, and continuing after partial delivery. Static advisor scenarios confirm CONTINUE with an independent task despite a blocked sandbox-dependent task, CONTINUE for PHDK-only review, and REPAIR_STATE for a missing state record. These are standard-library advisor checks, not application acceptance.
+
+Assessment: the contract now directly addresses the observed execution failures. Its advisor remains advisory: it neither executes tasks nor changes the host's persistent-goal status, and the assistant must still verify blocker provenance/freshness and completeness of the task inventory. This upgrade/review does not itself activate Auto or validate product debug-widget behavior. Changes remain local and uncommitted on `chore/phdk-upgrade-review-20261018`; no push, merge, deployment, browser use or local application test/build/lint was performed. Next command for product continuation: `PHDK auto force` under the current owner scope.
+
+---
+
+# Historical Auto status — KELEDON 5.2.10 / 2026-10-17
 
 Remote `main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; current branch `fix/phdk-cmt-003a-lease-fencing` is based on that commit. Product source remains 5.2.10 at `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #257 is documentation-only. PHDK v2.53.1 coherence 64/64. Railway Web/API after PR #257 report SUCCESS. This continuation reconciles current PMO/PIA baseline and records a static source review of the lease and egress gates; it changes no application code and does not constitute runtime acceptance.
 
