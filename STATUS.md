@@ -1,3 +1,11 @@
+# Current Auto Force — 5.2.14 TLS candidate / 5.2.13 deployed
+
+PHDK 2.54.1 published in #263. Fixture lifecycle, account/session TTL guards, superadmin settings panel and atomic per-device Browser queue are merged in #264 (`bb0b3f4688102b04cb3a8af9d3232b5f41ed5808`) with Web/API SUCCESS. UAT-147 passes public version, configured API liveness and anonymous denial only; authenticated lifecycle/concurrency acceptance is unverified. No production fixture or valid mutation was made. Existing superadmin access was requested without credentials so the next dependent cases can run; independent remediation continued.
+
+5.2.14 now repairs nginx upstream certificate verification, supplies the CA bundle in the existing image and checks nginx configuration at runtime startup, where private WebSocket DNS is available. No local app tests/build/lint, CI dispatch or provider settings writes. Whole Auto remains partial; positive tenant-private-egress and native Browser cases require their actual permitted targets/runtime.
+
+---
+
 # Current Auto Force — KELEDON 5.2.13 candidate / PHDK 2.54.1
 
 Owner resumed all four confirmed fronts and explicitly authorized publishing PHDK 2.54.1. Standards delivered by normal PR #263 to remote main `dd01c93003ea95c35d34e8ba2e4e4c49abe79af3`; VERSION readback is 2.54.1. Current cohesive candidate implements audited synthetic-fixture lifecycle and settings UI, account/session TTL and retirement guards, explicit user-write allowlisting, and transaction-scoped Browser queue claims/results. No account/tenant/device/flow has been provisioned, no credential/provider setting was accessed, and no local app tests/build/lint ran. Source regression cases are authored but unexecuted. Additive schema migration is delivered as repository code through the existing deploy startup; no direct database administration is performed.

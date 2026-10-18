@@ -1,3 +1,8 @@
+## v5.2.14 — 2026-10-18
+
+- Verify Web nginx HTTPS upstream certificates against an explicit CA bundle and API hostname; remove the three location-level verification bypasses. Validate nginx configuration before serving at container startup.
+- Preserve UAT-147 production 5.2.13 liveness/anonymous-denial evidence, including the initial Web-edge 403 observations and corrected API-upstream retest. Authenticated acceptance remains open.
+
 ## v5.2.13 — 2026-10-18
 
 - Add a superadmin-only synthetic-fixture lifecycle with transactional audit, two-tenant capacity, 1–24h TTL, reversible retirement and credential-free API/settings UI.

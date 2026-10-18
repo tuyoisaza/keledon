@@ -1,0 +1,87 @@
+{
+  "case_id": "UAT-147",
+  "observed_at": "2026-10-18T06:34:16.956123+00:00",
+  "target": "https://keledon-api-production.up.railway.app",
+  "revision": "bb0b3f4688102b04cb3a8af9d3232b5f41ed5808",
+  "results": [
+    {
+      "case": "liveness",
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "expected": 200,
+      "result": "PASS_SCOPED",
+      "version": "5.2.13",
+      "liveness": "ok"
+    },
+    {
+      "case": "fixture-manifest-anonymous",
+      "method": "GET",
+      "path": "/api/admin/uat-fixtures/phdk-uat-76153ada-4d0a-4a63-b679-e0e41c6b653d",
+      "status": 401,
+      "expected": 401,
+      "result": "PASS_SCOPED"
+    },
+    {
+      "case": "fixture-create-anonymous",
+      "method": "POST",
+      "path": "/api/admin/uat-fixtures",
+      "status": 401,
+      "expected": 401,
+      "result": "PASS_SCOPED"
+    },
+    {
+      "case": "queue-anonymous",
+      "method": "GET",
+      "path": "/api/browser/devices/phdk-uat-no-device/next-command",
+      "status": 401,
+      "expected": 401,
+      "result": "PASS_SCOPED"
+    }
+  ],
+  "scope": "Anonymous production denial/liveness only; no credentials, cookies, customer data, private egress or valid fixture mutation; not authenticated lifecycle/concurrency acceptance",
+  "browser": "IAB login displayed 5.2.13; navigating to /admin/settings resolved to /login; no controls/forms activated",
+  "previous_attempt": {
+    "case_id": "UAT-147",
+    "observed_at": "2026-10-18T06:33:40.641836+00:00",
+    "target": "https://keledon.tuyoisaza.com",
+    "revision": "bb0b3f4688102b04cb3a8af9d3232b5f41ed5808",
+    "results": [
+      {
+        "case": "liveness",
+        "method": "GET",
+        "path": "/health",
+        "status": 403,
+        "expected": 200,
+        "result": "FAIL"
+      },
+      {
+        "case": "fixture-manifest-anonymous",
+        "method": "GET",
+        "path": "/api/admin/uat-fixtures/phdk-uat-76153ada-4d0a-4a63-b679-e0e41c6b653d",
+        "status": 403,
+        "expected": 401,
+        "result": "FAIL"
+      },
+      {
+        "case": "fixture-create-anonymous",
+        "method": "POST",
+        "path": "/api/admin/uat-fixtures",
+        "status": 403,
+        "expected": 401,
+        "result": "FAIL"
+      },
+      {
+        "case": "queue-anonymous",
+        "method": "GET",
+        "path": "/api/browser/devices/phdk-uat-no-device/next-command",
+        "status": 403,
+        "expected": 401,
+        "result": "FAIL"
+      }
+    ],
+    "scope": "Anonymous production denial/liveness only; no credentials, cookies, customer data, private egress or valid fixture mutation; not authenticated lifecycle/concurrency acceptance",
+    "browser": "IAB login displayed 5.2.13; navigating to /admin/settings resolved to /login; no controls/forms activated"
+  },
+  "routing_note": "Initial shell requests to the Web edge returned 403; browser /health on Web showed its 404 page. Retest uses the production API upstream explicitly configured by Web nginx, preserving normal API authentication."
+}

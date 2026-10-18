@@ -1,5 +1,11 @@
 # Sub-PIA CMT-003B — egress DNS/CIDR y CRM privado por tenant
 
+## Current Auto Force review — 2026-10-18
+
+Browser socket pinning remains absent; exact tenant sandbox/host/port/CIDR is not supplied and native Browser acceptance is unavailable through the connected IAB-only channel. No private egress or metadata is contacted. A concrete independent defect was found in Web nginx: three HTTPS proxy routes disable upstream certificate verification. Candidate 5.2.14 enables trusted-CA/hostname verification and validates nginx configuration at container startup, where private WebSocket DNS is available. This advances source security without claiming that a customer CRM broker or DNS-pinning contract is implemented. See 40-integration/INTEGRATION_REVIEW-5.2.14.md.
+
+## Historical baseline
+
 Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 2 · Producto KELEDON 5.2.10, source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; `origin/main` documental `edd18be5dd8fd2c49c866f9006ee0f408642e9b4` (PR #257). Railway Web/API SUCCESS. Los cortes 5.2.8–5.2.10 solo afectan HTML/metadata público y localización 404; Browser egress source no cambia desde revalidación 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`). La revalidación actual confirma el contrato y está en `40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md`. Revisión estática de fuente: 2026-10-17.
 
 ## Hallazgo y objetivo
