@@ -7,7 +7,7 @@
   let ctx, stream, source, processor, gain, timer, unsubscribe;
   let chunks = [], preRoll = [], utterance = false, hot = 0, quiet = 0, length = 0, turns = 0;
   let generation = 0, playbackGeneration = -1, playing = false;
-  let output;
+  let output, inspecting = false;
   const show = text => { if (output) output.textContent = text; };
   const send = data => {
     if (window.opener && !window.opener.closed) window.opener.postMessage({ protocol: PROTOCOL, session, ...data }, ORIGIN);
@@ -97,6 +97,32 @@
       session = d.session; show('Brain enlazado. Autoriza el equipo en Brain, luego inicia audio aquí.'); return;
     }
     if (!session || d.session !== session) return;
+    if (d.type === 'inspect') {
+      if (inspecting) return;
+      inspecting = true;
+      const ownSession = session;
+      void (async () => {
+        try {
+          const api = window.keledonMeetAudio;
+          const transport = await api?.inspectTransport();
+          const state = api?.snapshot();
+          if (state && ownSession === session) send({ type: 'diagnostics', state: {
+            generation: state.generation, remoteTracks: state.remoteTracks, outgoingTracks: state.outgoingTracks,
+            activeSources: state.activeSources, outputBindings: state.outputBindings,
+            audioContext: state.audioContext, remoteLevelMilli: Math.round(state.remoteLevel * 1000),
+            queuedMs: Math.round(state.queuedAheadSeconds * 1000),
+            sentBytes: transport?.bytesSent, receivedBytes: transport?.bytesReceived,
+            sentPackets: transport?.packetsSent, receivedPackets: transport?.packetsReceived,
+          } });
+        } catch { show('No se pudo inspeccionar el transporte; revisa el estado del adaptador'); }
+        finally { inspecting = false; }
+      })();
+    }
+    if (d.type === 'cancel' && active) {
+      generation = window.keledonMeetAudio.cancelSpeech(); playing = false;
+      chunks = []; preRoll = []; utterance = false; hot = quiet = length = 0;
+      send({ type: 'interrupt', generation }); show('Respuesta y cola canceladas; esperando voz remota');
+    }
     if (d.type === 'activate') { authorized = true; show('Equipo autorizado. Pulsa Iniciar audio Brain con ambos extremos listos.'); }
     if (d.type === 'stop') stop(false);
     if (d.type === 'speech' && active && d.generation === generation && d.generation === window.keledonMeetAudio.snapshot().generation && d.audio instanceof ArrayBuffer && d.audio.byteLength <= 8 * 1024 * 1024) {
@@ -112,7 +138,7 @@
     const root = host.attachShadow({ mode: 'open' });
     const panel = document.createElement('section'); panel.setAttribute('aria-label', 'Enlace de conversación Brain');
     panel.style.cssText = 'font:14px system-ui;background:#17202a;color:white;border:2px solid white;border-radius:8px;padding:12px;max-width:300px';
-    const title = document.createElement('strong'); title.textContent = 'Meet ↔ Brain · v0.3.0'; panel.append(title);
+    const title = document.createElement('strong'); title.textContent = 'Meet ↔ Brain · v0.4.0'; panel.append(title);
     for (const [label, action] of [
       ['Conectar con Brain', () => { if (!window.opener) { show('Abre esta reunión desde el panel Meet de Brain'); return; } requested = true; send({ type: 'ready' }); show('Solicitando enlace al Brain que abrió esta ventana'); }],
       ['Iniciar audio Brain', () => { void start(); }], ['Detener audio Brain', () => stop()],

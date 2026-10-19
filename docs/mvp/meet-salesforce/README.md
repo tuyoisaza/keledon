@@ -1,4 +1,12 @@
 # MVP Windows — Meet + Salesforce
+Estado actual 2026-10-19: candidato integrado 5.7.0 / extensión 0.4.0, con controles
+por capa, log verbose seguro, lectura Salesforce acotada y cierre/espera. El
+propietario aplazó las pruebas: aceptación de conversación/CRM/candidato PENDIENTE,
+sin convertir supuestos en PASS. [Implementación actual](IMPLEMENTATION_5.7.0.md)
+· [próxima aceptación paso a paso](LAYER_ACCEPTANCE_RUNBOOK.md)
+· [Speaches 10 CPU/10 GB/sin suspensión](RAILWAY_REPAIR_20261019.md).
+Los estados del plan que siguen son históricos y no sustituyen ese registro.
+
 Estado 2026-10-18: PLAN PREPARADO; implementación del circuito y UAT pendientes.
 Actualización de aceptación 2026-10-18: transporte de audio en Meet verificado con muestra española de producción, recepción remota, tres interrupciones por voz y reproducción completa tras liberar/rearmar. [Evidencia actual](../../meet-audio-20261018/UAT_REPORT.md). Esto sustituye los NOT RUN históricos solo para esas pruebas acotadas; STT→Brain, transcripción, CRM, cola futura de red, inmunidad general a eco y circuito automático siguen pendientes. Adaptador experimental v0.2.1 local/no publicado; producto web TTS/vista previa 5.5.2 publicado. Los estados originales del plan se conservan a continuación como baseline histórico.
 PHDK instalado/canónico 2.56.0 verificado; baseline fuente main 5.2.21, 2decd79b6fd741d1f5838a091b2b1c4436740acf.

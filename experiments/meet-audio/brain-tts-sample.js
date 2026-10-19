@@ -24,7 +24,7 @@
     const panel = document.createElement('section');
     panel.setAttribute('aria-label', 'KELEDON muestra TTS española');
     const title = document.createElement('strong');
-    title.textContent = 'KELEDON · TTS de producción v0.2.1';
+    title.textContent = 'KELEDON · TTS de producción v0.4.0';
     const explanation = document.createElement('p');
     explanation.textContent = 'Genera una muestra ficticia en español con el TTS del equipo seleccionado en Brain. Descarga el audio; no lo reproduce localmente. No cambia proveedores.';
     const button = document.createElement('button');

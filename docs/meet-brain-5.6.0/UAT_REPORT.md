@@ -1,3 +1,14 @@
+# Continuación 2026-10-19 — aceptación aplazada por el propietario
+
+El candidato 5.7.0 incorpora controles por capa y lectura Salesforce acotada.
+No se ejecutan nuevas pruebas durante la ausencia del propietario; casos nuevos
+NOT RUN/PENDIENTES. No se reinterpretan los fallos STT históricos como PASS.
+La autorización posterior de reparación permitió los ajustes de Speaches a
+10 CPU/10 GB y suspensión false; [evidencia operativa](../mvp/meet-salesforce/RAILWAY_REPAIR_20261019.md).
+Online no demuestra transcripción ni persistencia despierta. [Próxima UAT](../mvp/meet-salesforce/LAYER_ACCEPTANCE_RUNBOOK.md).
+
+---
+
 # UAT report — Meet STT/Brain/TTS 5.6.0
 
 LATEST2026-10-19: PARTIALLY DELIVERED / functional conversation BLOCKED at configured STT. Extension link/team authorization passed. The5.6.2 retest sent actual remote audio; upstream timeout45seconds and provider restarts prevent a transcript/Brain reply. See latest evidence and administrator prerequisite at the end. Historical extension-reload blockers below are resolved, not current prerequisites. No successful conversation or Brain-interruption PASS is claimed.

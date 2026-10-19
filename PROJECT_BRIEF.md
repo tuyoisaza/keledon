@@ -1,4 +1,42 @@
-# Current brief — Windows Meet + Salesforce MVP (2026-10-18)
+# Current brief — Windows Meet + Salesforce MVP (2026-10-19)
+
+## Current implementation continuation — 5.7.0 acceptance candidate
+
+The owner explicitly deferred new tests for a few hours and requested the rest of
+the MVP plus controls for each layer and a copyable verbose log. Work continues
+as implementation; no unexecuted case becomes PASS. Current source candidate adds
+independent session/team, remote/file STT, scoped knowledge, Brain, web `/tts/speak`,
+local/Meet playback and transport/interrupt controls. Logs project only bounded
+timestamps, stage/events, HTTP/safe codes, elapsed times, bytes/counts and generations.
+
+The integrated candidate connects a recognized fictitious case-number goal to an
+explicit Salesforce child opened from a persisted active team CRM destination.
+Only one/two operator-declared fictitious case numbers, recognized Lightning list
+search/exact Case links, status and optional subject are allowed. Current actor,
+team and destination are revalidated on every read and answer. Observations remain
+untrusted data; responses quote the observed fields deterministically, without
+model-driven actions or CRM writes. Unknown layouts/results require assistance.
+Interruption cancels pending lookup and old audio; explicit goodbye releases the
+session, and a new interaction resets history/turn count. Meet ingress is manual;
+ACD alarm detection and universal UI adaptability are not claimed.
+
+Speaches remains the same provider/image, with explicit 10 CPU/10 GB and
+`sleepApplication:false` reapplied after a stale deployment was observed sleeping.
+Railway redeployment 07ad0766-f6f1-4a1e-9297-b53615f6ea05 reported SUCCESS/Online,
+one running replica. This is infrastructure readback, not a successful STT test or
+proof of remaining permanently awake. [Operational evidence](docs/mvp/meet-salesforce/RAILWAY_REPAIR_20261019.md).
+
+Implementation, publication and acceptance are separate. New conversation/CRM/
+diagnostic acceptance is PENDING until the owner returns; previous sample,
+preview and transport confirmations below remain valid only within their scope.
+No local tests, builds, lint, typecheck or new live product/provider trials in this
+continuation. [Current implementation/review](docs/mvp/meet-salesforce/IMPLEMENTATION_5.7.0.md)
+and [step-by-step layer runbook](docs/mvp/meet-salesforce/LAYER_ACCEPTANCE_RUNBOOK.md).
+
+The following STT-failure checkpoint is historical; its requirement to obtain
+administrator permission is superseded by the owner's explicit repair/resource
+instructions and the operational actions above. It is not evidence of success.
+
 ## Verified checkpoint — TTS and current audio acceptance
 
 ### STT/Brain bridge — live acceptance blocked at STT (2026-10-19)
