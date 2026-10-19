@@ -25,6 +25,7 @@ export interface User {
   created_at?: string;
   last_session?: string;
   uatTestProfile?: boolean;
+  uatRoleOperator?: boolean;
 }
 
 interface AuthContextType {
@@ -126,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem('uat_active_profile_session_id');
     sessionStorage.removeItem('uat_active_profile_expires_at');
     setUser(data.user);
-    window.location.assign('/dashboard');
+    window.location.assign(data.user.uatRoleOperator ? '/profile' : '/dashboard');
   };
 
   useEffect(() => {

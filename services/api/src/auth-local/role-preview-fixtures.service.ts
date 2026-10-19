@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { isAccountActive } from './account-lifecycle.policy';
+import { rolePreviewOwner } from './role-preview-operator.policy';
 
 export const PREVIEW_ROLES = ['user', 'agent', 'admin', 'coordinator'] as const;
 export const PREVIEW_FIXTURE_EVENT = 'ROLE_PREVIEW_PROVISIONED';
@@ -110,11 +111,12 @@ export async function isManagedRolePreview(
       !PREVIEW_ROLES.some(role => role === profile.role) ||
       profile.email !== `phdk-role-${profile.role}-${profile.uatFixtureRunId.slice(9)}@example.invalid`) return false;
   const run = await prisma.uatFixtureRun.findUnique({ where: { id: profile.uatFixtureRunId } });
-  if (!run || run.createdBy !== actorId || run.retiredAt || run.expiresAt.getTime() <= Date.now()) return false;
+  const ownerId = await rolePreviewOwner(prisma, actorId);
+  if (!run || !ownerId || run.createdBy !== ownerId || run.retiredAt || run.expiresAt.getTime() <= Date.now()) return false;
   const member = JSON.parse(run.members)[0];
   if (!member || member.companyId !== profile.companyId || member.teamId !== profile.teamId) return false;
   const event = await prisma.auditLog.findFirst({ where: {
-    userId: actorId, entity: 'UAT_ROLE_PROFILE', entityId: profile.id, action: PREVIEW_FIXTURE_EVENT,
+    userId: ownerId, entity: 'UAT_ROLE_PROFILE', entityId: profile.id, action: PREVIEW_FIXTURE_EVENT,
   } });
   if (!event) return false;
   const details = JSON.parse(event.changes || 'null');

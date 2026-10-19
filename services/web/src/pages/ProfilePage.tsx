@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
 import { User, Building2, Tag, Users, Calendar, Clock, Shield } from 'lucide-react';
+import { RolePreviewUatPanel } from '@/components/layout/RolePreviewUatPanel';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -32,6 +33,7 @@ export default function ProfilePage() {
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">{t('profile.title')}</h1>
+      {user?.uatRoleOperator && <RolePreviewUatPanel />}
 
       <div className="bg-card rounded-xl border border-border p-6 space-y-6">
         {/* Profile Picture & Basic Info */}

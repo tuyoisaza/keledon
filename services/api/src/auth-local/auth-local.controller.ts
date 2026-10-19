@@ -24,6 +24,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SuperAdminGuard } from '../guards/roles.guard';
 import { UatTestProfilesService } from './uat-test-profiles.service';
 import { RolePreviewFixturesService } from './role-preview-fixtures.service';
+import { RolePreviewOperatorService } from './role-preview-operator.service';
 
 interface LoginDto {
   email: string;
@@ -66,6 +67,7 @@ export class LocalAuthController {
     private readonly configService: ConfigService,
     private readonly uatTestProfilesService: UatTestProfilesService,
     private readonly rolePreviewFixtures: RolePreviewFixturesService,
+    private readonly rolePreviewOperator: RolePreviewOperatorService,
   ) {}
 
   @Public()
@@ -246,7 +248,7 @@ export class LocalAuthController {
         throw new UnauthorizedException('No token provided');
       }
       const token = authHeader.substring(7);
-      const user = req.user?.uatTestProfile
+      const user = req.user?.uatTestProfile || req.user?.uatRoleOperator
         ? await this.authService.getGuardedProfile(req.user.userId)
         : await this.authService.validateToken(token);
       if (!user) {
@@ -277,6 +279,7 @@ export class LocalAuthController {
         createdAt: company?.created_at || null,
         lastSession: user.last_session || null,
         uatTestProfile: req.user?.uatTestProfile === true,
+        uatRoleOperator: req.user?.uatRoleOperator === true,
       };
 
       return {
@@ -301,6 +304,19 @@ export class LocalAuthController {
   }
 
   @UseGuards(SuperAdminGuard)
+  @Post('uat-test-profiles/bootstrap')
+  async bootstrapRoleOperator(@Req() req: any, @Res({ passthrough: true }) res: any) {
+    res.setHeader('Cache-Control', 'no-store');
+    return this.rolePreviewOperator.bootstrap(req.user.userId);
+  }
+
+  @UseGuards(SuperAdminGuard)
+  @Post('uat-test-profiles/bootstrap/retire')
+  async retireRoleOperator(@Req() req: any, @Body() body: any) {
+    return this.rolePreviewOperator.retire(req.user.userId, body?.sessionId);
+  }
+
+  @UseGuards(SuperAdminGuard)
   @Post('uat-test-profiles/prepare')
   @ApiOperation({ summary: 'Prepare bounded, audited synthetic read-only role profiles' })
   async prepareRoleProfiles(@Req() req: any) {
@@ -320,6 +336,8 @@ export class LocalAuthController {
         ipAddress: req.ip,
         userAgent: req.headers?.['user-agent'],
       },
+      req.user.uatRoleOperatorSessionId,
+      req.user.uatRoleOperator ? req.user.expiresAt : undefined,
     );
   }
 

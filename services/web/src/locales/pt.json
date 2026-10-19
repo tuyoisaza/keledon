@@ -1078,7 +1078,18 @@
       "agent": "Agente",
       "admin": "Admin",
       "coordinator": "Coordenador"
-    }
+    },
+    "bootstrap": "Iniciar teste isolado",
+    "bootstrapHelp": "Abre uma sessão fictícia limitada ao seletor em outra aba. A sessão atual apenas autoriza a preparação e a retirada do teste.",
+    "bootstrapStarted": "Teste isolado aberto. Retire os perfis aqui ao terminar.",
+    "popupBlocked": "Permita abrir a aba de teste e tente novamente.",
+    "retire": "Finalizar e retirar teste",
+    "retired": "Teste retirado; sessões e perfis fictícios revogados.",
+    "operator": "Superadmin sintético · somente seletor",
+    "operatorHelp": "Esta sessão testa apenas perfis fictícios. Administração global, conexões ao vivo e provedores estão indisponíveis.",
+    "checks": "Verificar permissões dos quatro perfis",
+    "verifyRetirement": "Verificar retirada do teste",
+    "checkFailed": "Uma verificação não correspondeu ao resultado esperado"
   },
   "voiceProfiles": {
     "title": "Perfis de voz",

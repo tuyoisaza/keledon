@@ -11,6 +11,7 @@ import { IS_PUBLIC_KEY } from './public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { isAccountActive, isAccountSessionCurrent } from '../auth-local/account-lifecycle.policy';
 import { isManagedRolePreview } from '../auth-local/role-preview-fixtures.service';
+import { roleOperatorSession, ROLE_OPERATOR_TTL_MS } from '../auth-local/role-preview-operator.policy';
 import {
   isPermittedUatTestProfile,
   parseUatTestProfileIds,
@@ -28,6 +29,8 @@ interface TokenPayload {
   uatTestProfile?: true;
   uatTestSessionId?: string;
   uatActorUserId?: string;
+  uatRoleOperator?: true;
+  uatRoleOperatorSessionId?: string;
 }
 
 interface AuthenticatedRequest {
@@ -92,6 +95,12 @@ export class AuthGuard implements CanActivate {
     }
 
     request.user = user;
+    if (user.uatRoleOperator) {
+      const path = request.route?.path || '';
+      const allowed = (request.method === 'GET' && ['/api/auth/me', '/api/auth/uat-test-profiles'].includes(path)) ||
+        (request.method === 'POST' && ['/api/auth/uat-test-profiles/switch', '/api/auth/uat-test-profiles/return'].includes(path));
+      if (!allowed) throw new ForbiddenException('Synthetic operator is limited to the role selector');
+    }
     if (user.uatTestProfile) {
       // Fail closed for mutations, runtime/provider APIs and non-reviewed GETs.
       const path = request.route?.path || '';
@@ -138,9 +147,19 @@ export class AuthGuard implements CanActivate {
       }
 
       // Decode and parse payload
-      const payload: TokenPayload = JSON.parse(
+      const payload = JSON.parse(
         Buffer.from(base64Payload, 'base64').toString('utf-8'),
       );
+
+      if (payload?.roleOperator !== undefined || payload?.roleOperatorSessionId !== undefined) {
+        if (!this.prisma || payload.roleOperator !== true || typeof payload.userId !== 'string' ||
+            typeof payload.roleOperatorSessionId !== 'string' || !Number.isFinite(payload.expiresAt) ||
+            payload.expiresAt <= Date.now() || payload.expiresAt - Date.now() > ROLE_OPERATOR_TTL_MS) return null;
+        const session = await roleOperatorSession(this.prisma, payload.userId, payload.roleOperatorSessionId);
+        if (!session || payload.expiresAt > session.expiresAt) return null;
+        return { userId: session.actor.id, email: session.actor.email, role: session.actor.role,
+          expiresAt: payload.expiresAt, uatRoleOperator: true, uatRoleOperatorSessionId: payload.roleOperatorSessionId };
+      }
 
       // Check token expiry
       if (
@@ -243,6 +262,9 @@ export class AuthGuard implements CanActivate {
         process.env.KELEDON_UAT_TEST_PROFILE_IDS,
       );
       const managed = profile && await isManagedRolePreview(this.prisma, profile, payload.uatActorUserId);
+      const operator = actor?.uatFixtureRunId
+        ? (typeof details?.operatorSessionId === 'string' && await roleOperatorSession(this.prisma, actor.id, details.operatorSessionId))
+        : null;
       if (
         !session ||
         ended ||
@@ -263,6 +285,7 @@ export class AuthGuard implements CanActivate {
           !profile.uatFixtureRunId && isPermittedUatTestProfile(profile))) ||
         !isAccountActive(profile) ||
         !isAccountActive(actor) ||
+        (actor?.uatFixtureRunId && (!operator || payload.expiresAt > operator.expiresAt)) ||
         actor?.role !== 'superadmin'
       ) {
         return null;

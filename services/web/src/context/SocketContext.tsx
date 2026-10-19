@@ -53,7 +53,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
   const [connecting, setConnecting] = useState(true);
 
   useEffect(() => {
-    if (isLoading || !user || user.uatTestProfile) {
+    if (isLoading || !user || user.uatTestProfile || user.uatRoleOperator) {
       setSocket(null);
       setConnected(false);
       setConnecting(false);
@@ -105,7 +105,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
         newSocket.close();
       }
     };
-  }, [isLoading, user?.id, user?.uatTestProfile]);
+  }, [isLoading, user?.id, user?.uatTestProfile, user?.uatRoleOperator]);
 
   const value: SocketContextType = {
     socket,

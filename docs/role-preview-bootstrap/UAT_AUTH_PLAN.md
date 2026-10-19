@@ -1,0 +1,5 @@
+# Authentication plan — selector 5.5.0
+
+Use the current already-authenticated platform operator only to click explicit first-party synthetic bootstrap/retirement. Never use that identity for role acceptance or extract its credential. The new tab receives the server-issued, fifteen-minute selector-only synthetic superadmin capability; `/me` proves actual current DB identity and scope. The four audited target accounts use existing short-lived Test as sessions, not fabricated claims. Ordinary auth/TTS/runtime consumers reject the operator credential. No password, provider identity write, new secret or customer profile is involved.
+
+Check exact deployed candidate first, then actual browser access. Test through CUA visible controls; finite in-product API checks retain secrets in the app. Capture only non-secret case results, synthetic fixture IDs and sanitized UI. Retire from the original operator tab and verify old synthetic credentials fail before closing the test tab. Account/session/run expiry remains server-enforced if interrupted. Read IMPLEMENTATION.md for trust boundaries and authority.

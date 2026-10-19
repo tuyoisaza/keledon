@@ -1073,7 +1073,18 @@
       "agent": "Agent",
       "admin": "Admin",
       "coordinator": "Coordinator"
-    }
+    },
+    "bootstrap": "Start isolated role test",
+    "bootstrapHelp": "Opens a synthetic selector-only session in another tab. This session only authorizes fixture preparation and retirement.",
+    "bootstrapStarted": "Isolated test opened. Retire its fixtures here when finished.",
+    "popupBlocked": "Allow the test tab to open and try again.",
+    "retire": "Finish and retire test",
+    "retired": "Test retired; synthetic sessions and profiles revoked.",
+    "operator": "Synthetic superadmin · selector only",
+    "operatorHelp": "This session tests fictional roles only. Global administration, live connections and providers are unavailable.",
+    "checks": "Check permissions for all four roles",
+    "verifyRetirement": "Verify test retirement",
+    "checkFailed": "A check did not match the expected result"
   },
   "voiceProfiles": {
     "title": "Voice profiles",

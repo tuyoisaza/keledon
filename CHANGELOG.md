@@ -1,5 +1,12 @@
 ## v5.4.3 — 2026-10-18
 
+## v5.5.0 — 2026-10-18
+
+- Add an explicitly authorized, audited synthetic superadmin session limited to the role selector; preserve the real operator session in its original tab.
+- Bind synthetic role sessions to current owner, fixture run and operator grant; deny generic administration, runtime, sockets and TTS, and cap reduced sessions by the originating capability expiry.
+- Add finite production role/tenant/return/replay/expiry checks and explicit owned-fixture retirement/revocation verification. Keep test credentials out of URLs and evidence.
+- Use same-origin selector requests, preserve the return to synthetic superadmin and keep all acceptance against deployed production. No local application tests/builds/lint/typechecks.
+
 - Correct the production TTS UAT panel to expect the existing Nest POST success status 201; keep strict audio MIME/size and selected-team checks before retaining the sample.
 - Record safe content type and SHA-256 for the exact audio artifact sent to Meet. Second synthetic run retired, old session reuse correctly returned 401; final rerun pending. No provider/auth/hosting settings changed and no local tests/builds/lint.
 

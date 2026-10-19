@@ -1078,7 +1078,18 @@
       "agent": "Agente",
       "admin": "Admin",
       "coordinator": "Coordinador"
-    }
+    },
+    "bootstrap": "Iniciar prueba aislada",
+    "bootstrapHelp": "Crea una sesión ficticia limitada al selector en otra pestaña. Tu sesión actual solo autoriza la preparación y la retirada de la prueba.",
+    "bootstrapStarted": "Prueba aislada abierta. Al terminar, retira sus perfiles desde aquí.",
+    "popupBlocked": "Permite abrir la pestaña de prueba e inténtalo de nuevo.",
+    "retire": "Finalizar y retirar la prueba",
+    "retired": "Prueba retirada; sesiones y perfiles ficticios revocados.",
+    "operator": "Superadmin sintético · solo selector",
+    "operatorHelp": "Esta sesión solo prueba roles ficticios. No permite administración global, conexiones en vivo ni proveedores.",
+    "checks": "Comprobar permisos de los cuatro roles",
+    "verifyRetirement": "Verificar retirada de la prueba",
+    "checkFailed": "Una comprobación no cumplió el resultado esperado"
   },
   "voiceProfiles": {
     "title": "Perfiles de voz",
