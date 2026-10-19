@@ -10,9 +10,7 @@ type Evidence = { case: string; status: number; expected: number; pass: boolean;
 const SAMPLE = 'Hola, esta es una prueba de voz de Brain en español. ¿Puedes confirmar que me escuchas con claridad?';
 
 /** Keeps synthetic capabilities in component memory; never replaces the operator session. */
-export function BrainTtsUatPanel({ teamId, resolveApi }: {
-  teamId: string; resolveApi: () => Promise<{ apiBase: string }>;
-}) {
+export function BrainTtsUatPanel({ teamId }: { teamId: string }) {
   const [run, setRun] = useState<Run | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -49,8 +47,7 @@ export function BrainTtsUatPanel({ teamId, resolveApi }: {
     setRun(value);
   }
   async function requestSpeech(label: string, expected: number, token?: string, selectedTeam?: unknown, text = SAMPLE) {
-    const { apiBase } = await resolveApi();
-    const response = await fetch(`${apiBase}/tts/speak`, {
+    const response = await fetch("/tts/speak", {
       method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: JSON.stringify({ text, ...(selectedTeam !== undefined ? { teamId: selectedTeam } : {}) }),
       signal: AbortSignal.timeout(35000),
