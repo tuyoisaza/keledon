@@ -1,3 +1,8 @@
+## v5.6.1 — 2026-10-19
+
+- Diagnose failed Meet voice turns with allowlisted stage/error codes (STT, Brain, timeout or upstream HTTP), without logging provider endpoints, error text, credentials, audio or transcript.
+- Distinguish initial channel readiness from actual cancellation; preserve authorization, budgets, providers, CSP and request timeouts. No local tests/builds/lint.
+
 ## v5.6.0 — 2026-10-18
 
 - Add explicitly linked Meet receiver audio to configured team STT, Brain and web /tts/speak, with bounded ephemeral audio/history and interruption/late-response rejection.

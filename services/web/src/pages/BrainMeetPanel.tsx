@@ -41,9 +41,11 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
       if (d.type === 'closed') { stop('Meet liberó el enlace'); setConnected(false); return; }
       if (!s.active || Date.now() >= s.expires) return;
       if (d.type === 'interrupt' && Number.isSafeInteger(d.generation) && d.generation > s.generation) {
-        if (s.pending || s.playing) setEvidence(v => ({ ...v, cancelled: v.cancelled + 1 }));
+        const cancelled = s.pending || s.playing;
+        const preparing = s.generation === 0;
+        if (cancelled) setEvidence(v => ({ ...v, cancelled: v.cancelled + 1 }));
         s.generation = d.generation; s.abort?.abort();
-        s.playing = false; setStatus('Voz remota detectada; respuesta anterior cancelada'); return;
+        s.playing = false; setStatus(cancelled ? 'Voz remota detectada; respuesta anterior cancelada' : preparing ? 'Canal remoto preparado; esperando voz' : 'Voz remota detectada; escuchando el turno'); return;
       }
       if (d.type === 'started' && d.generation === s.generation) { s.playing = true; return; }
       if (d.type === 'played' && d.generation === s.generation) {
@@ -64,7 +66,12 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
         if (!token) throw new Error('Sesión ausente; inicia sesión de nuevo');
         const headers = new Headers(options.headers); headers.set('Authorization', `Bearer ${token}`);
         const response = await fetch(path, { ...options, headers, signal: abort.signal, redirect: 'error', credentials: 'same-origin' });
-        if (!response.ok) throw new Error(`STT/Brain/TTS rechazado (HTTP ${response.status}); revisa sesión, equipo o proveedor`);
+        if (!response.ok) {
+          const problem = await response.json().catch(() => ({}));
+          const code = typeof problem.code === 'string' && /^MEET_(PREPARE|STT|BRAIN)_(TIMEOUT|UNAVAILABLE|HTTP_\d{3})$/.test(problem.code) ? problem.code : '';
+          const service = path === '/tts/speak' ? 'TTS' : 'STT/Brain';
+          throw new Error(`${service} rechazado (HTTP ${response.status})${code ? ` · ${code}` : ''}; revisa sesión, equipo o proveedor`);
+        }
         return response;
       };
       void (async () => {

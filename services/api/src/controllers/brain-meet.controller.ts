@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Header, HttpException, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Header, HttpException, Logger, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { Public } from '../guards/public.decorator';
@@ -15,6 +15,7 @@ import { runtimeAiBudget } from '../llm/runtime-ai-budget';
 @Public()
 @UseGuards(BrainMeetGuard)
 export class BrainMeetController {
+  private readonly logger = new Logger(BrainMeetController.name);
   constructor(private readonly prisma: PrismaService, private readonly llm: LLMService, private readonly knowledge: VectorStoreService) {}
 
   @Get('scope')
@@ -46,6 +47,7 @@ export class BrainMeetController {
     const closed = () => { disconnected = true; };
     req.res.once('close', closed);
     const current = () => { if (disconnected) throw new HttpException('Conversation cancelled', 409); };
+    let stage: 'PREPARE' | 'STT' | 'BRAIN' = 'PREPARE';
     try {
       await runtimeAiBudget.run(`meet:${req.runtimeIdentity.userId}`, undefined, () => Promise.resolve());
       await this.prisma.auditLog.create({ data: {
@@ -57,11 +59,13 @@ export class BrainMeetController {
         throw new HttpException('Selected team requires configured server STT', 503);
       if (config.sttProvider === 'speaches') config.sttModel = 'Systran/faster-whisper-large-v3';
       current();
+      stage = 'STT';
       const stt = await transcribeConfiguredAudio(config, audio, 'es');
       current();
       const transcript = typeof stt.text === 'string' ? stt.text.trim() : '';
       if (!transcript) return { teamId: req.runtimeIdentity.teamId, transcript: '', reply: '' };
       if (transcript.length > 4000) throw new BadRequestException('Transcription too long');
+      stage = 'BRAIN';
       const answer = await new BrainController(this.llm, this.knowledge).chat({
         message: `Conversación de voz: responde en español, en una o dos frases breves, sin acciones externas. El interlocutor dijo: ${transcript}`,
         history, language: 'es', voiceMode: true,
@@ -69,11 +73,16 @@ export class BrainMeetController {
       current();
       return { teamId: req.runtimeIdentity.teamId, transcript, reply: answer.reply.slice(0, 4000) };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
       const message = error instanceof Error ? error.message : '';
       if (message === 'AI request budget exceeded') throw new HttpException('Conversation spending limit reached', 429);
       if (message === 'AI integration disabled') throw new HttpException('Conversation disabled by spending controls', 503);
-      throw new HttpException('Configured team STT or Brain unavailable', 502);
+      if (error instanceof HttpException && error.getStatus() !== 500) throw error;
+      const upstream = /provider returned HTTP (\d{3})$/.exec(message)?.[1];
+      const reason = upstream ? `HTTP_${upstream}` : /timeout/i.test(message) ? 'TIMEOUT' : 'UNAVAILABLE';
+      const code = `MEET_${stage}_${reason}`;
+      // Allowlisted metadata only: never error text, endpoint, prompt, audio or credentials.
+      this.logger.warn(JSON.stringify({ event: 'meet.voice.failure', stage, code }));
+      throw new HttpException({ statusCode: 502, message: `Configured team ${stage} unavailable`, code, stage }, 502);
     } finally { req.res.removeListener('close', closed); }
   }
 }
