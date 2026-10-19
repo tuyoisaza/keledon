@@ -1,4 +1,4 @@
-## v5.4.0 — 2026-10-18
+## v5.4.1 — 2026-10-18
 
 - Add an explicitly administrator-authorized audited bootstrap for three new short-lived synthetic TTS accounts, including an unassigned platform superadmin, and two isolated fictional tenants. Existing users, roles and provider settings are never changed.
 - Issue server-signed TTS-only capabilities held in Brain component memory; deny general authentication/runtime reuse, enforce current DB identity/lifecycle, run ownership, selected provider team, sample length, expiry and retirement.
