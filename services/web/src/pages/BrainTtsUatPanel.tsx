@@ -6,7 +6,7 @@ type Run = {
   members: Array<{ id: string; role: string; companyId: string | null; teamId: string | null }>;
   sessions: Array<{ userId: string; role: string; teamId: string | null; token: string }>;
 };
-type Evidence = { case: string; status: number; expected: number; pass: boolean; team?: string; bytes?: number };
+type Evidence = { case: string; status: number; expected: number; pass: boolean; team?: string; bytes?: number; contentType?: string; sha256?: string };
 const SAMPLE = 'Hola, esta es una prueba de voz de Brain en español. ¿Puedes confirmar que me escuchas con claridad?';
 
 /** Keeps synthetic capabilities in component memory; never replaces the operator session. */
@@ -57,6 +57,8 @@ export function BrainTtsUatPanel({ teamId }: { teamId: string }) {
       const type = response.headers.get('content-type') || '';
       const blob = await response.blob();
       entry.bytes = blob.size;
+      entry.contentType = type;
+      entry.sha256 = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await blob.arrayBuffer()))).map(byte => byte.toString(16).padStart(2, '0')).join('');
       entry.team = response.headers.get('X-Keledon-TTS-Team') || '';
       entry.pass = entry.pass && type.startsWith('audio/') && blob.size > 200 && entry.team === run?.selectedTeamId;
       if (entry.pass) {
@@ -101,7 +103,7 @@ export function BrainTtsUatPanel({ teamId }: { teamId: string }) {
       <button className={button} disabled={busy || !run || retired} onClick={() => void execute(denials)}>Verificar denegaciones</button>
       <button className={button} disabled={busy || !run || retired || !evidence.some(entry => entry.case === 'auth-expired' && entry.pass) || Boolean(audio)} onClick={() => void execute(async () => {
         if (!run) return;
-        await requestSpeech('spanish-audio', 200, run.sessions.find(session => session.role === 'superadmin')!.token, run.selectedTeamId);
+        await requestSpeech('spanish-audio', 201, run.sessions.find(session => session.role === 'superadmin')!.token, run.selectedTeamId);
       })}>Generar muestra española</button>
       <button className={button} disabled={busy || retired || (!run && !sessionStorage.getItem('brain_tts_synthetic_run_id'))} onClick={() => void execute(retire)}>Retirar cuentas sintéticas</button>
     </div>
