@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LocalAuthService } from './auth-local.service';
 import { isAccountActive } from './account-lifecycle.policy';
 import { isManagedRolePreview } from './role-preview-fixtures.service';
+import { roleOperatorSession } from './role-preview-operator.policy';
 import {
   isPermittedUatTestProfile,
   parseUatTestProfileIds,
@@ -53,8 +54,13 @@ export class UatTestProfilesService {
       ipAddress?: string;
       userAgent?: string;
     },
+    operatorSessionId?: string,
+    operatorExpiresAt?: number,
   ) {
     const actor = await this.assertSuperadmin(actorUserId);
+    const operator = actor.uatFixtureRunId && operatorSessionId
+      ? await roleOperatorSession(this.prisma, actor.id, operatorSessionId) : null;
+    if (actor.uatFixtureRunId && (!operator || !Number.isFinite(operatorExpiresAt))) throw new ForbiddenException('Scoped operator session required');
     const allowedIds = parseUatTestProfileIds(
       process.env.KELEDON_UAT_TEST_PROFILE_IDS,
     );
@@ -69,7 +75,7 @@ export class UatTestProfilesService {
 
     const sessionId = randomUUID();
     const expiresAt = Math.min(Date.now() + UAT_TEST_PROFILE_TTL_MS,
-      profile.uatFixtureExpiresAt?.getTime() ?? Infinity);
+      profile.uatFixtureExpiresAt?.getTime() ?? Infinity, operator?.expiresAt ?? Infinity, operatorExpiresAt ?? Infinity);
     await this.prisma.auditLog.create({
       data: {
         userId: actor.id,
@@ -85,6 +91,7 @@ export class UatTestProfilesService {
           companyId: profile.companyId,
           teamId: profile.teamId,
           reason: 'superadmin_role_preview',
+          operatorSessionId: operatorSessionId || null,
           expiresAt,
         }),
       },

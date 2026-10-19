@@ -1,0 +1,3 @@
+# Prep readiness — source ready; production pending
+
+The missing selector-specific synthetic origin has been implemented under the owner's explicit authorization. Existing source auth, provider boundaries and audited fixture lifecycle are reused. No local application tests/builds/lint/typechecks, local account seeding, database operation or direct deployment was performed. Static source checks and assistant security review are recorded in IMPLEMENTATION.md. This is not functional acceptance. Next: versioned PR/merge/readback, observe existing production autodeploy, verify browser readiness and operate the explicit scoped bootstrap, role journeys and retirement.

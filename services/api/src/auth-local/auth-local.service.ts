@@ -273,6 +273,12 @@ export class LocalAuthService {
     return `${encoded}.${signature}`;
   }
 
+  generateRoleOperatorToken(userId: string, sessionId: string, expiresAt: number): string {
+    const encoded = Buffer.from(JSON.stringify({ userId, roleOperator: true, roleOperatorSessionId: sessionId, expiresAt })).toString('base64');
+    const signature = crypto.createHmac('sha256', this.authSecret).update(encoded).digest('hex');
+    return `${encoded}.${signature}`;
+  }
+
   /**
    * Validate a token by checking HMAC signature and expiry.
    * Returns user data from DB if valid, null otherwise.
@@ -303,6 +309,10 @@ export class LocalAuthService {
       const payload = JSON.parse(
         Buffer.from(base64Payload, 'base64').toString('utf-8'),
       );
+
+      // Product role-test capabilities are accepted only by the scoped global guard.
+      // Generic auth consumers, runtime, sockets and TTS must always reject them.
+      if (payload?.roleOperator !== undefined || payload?.roleOperatorSessionId !== undefined) return null;
 
       // Check token expiry
       if (

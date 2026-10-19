@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FlaskConical, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
-import { API_URL } from '@/lib/config';
+import { RolePreviewBootstrap } from './RolePreviewBootstrap';
 
 interface UatTestProfile {
   id: string;
@@ -31,7 +31,7 @@ export function UatTestProfileControl({ collapsed = false }: { collapsed?: boole
     if (!token) return () => { active = false; };
     setLoading(true);
     setError('');
-    fetch(`${API_URL}/api/auth/uat-test-profiles`, {
+    fetch('/api/auth/uat-test-profiles', {
       headers: { Authorization: `Bearer ${token}` },
     }).then(async (response) => {
       if (!response.ok) throw new Error('Profile list unavailable');
@@ -55,7 +55,7 @@ export function UatTestProfileControl({ collapsed = false }: { collapsed?: boole
     setError('');
     try {
       const token = sessionStorage.getItem('auth_token');
-      const response = await fetch(`${API_URL}/api/auth/uat-test-profiles/prepare`, {
+      const response = await fetch('/api/auth/uat-test-profiles/prepare', {
         method: 'POST', headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 409) {
@@ -127,13 +127,14 @@ export function UatTestProfileControl({ collapsed = false }: { collapsed?: boole
         {t('uatTestProfiles.label')}
       </label>}
       {!collapsed && <p className="text-xs text-muted-foreground">{t('uatTestProfiles.readOnly')}</p>}
+      {user.uatRoleOperator && <p className="text-xs font-medium">{t('uatTestProfiles.operator')}</p>}
       {loading && <p className="text-xs" role="status">{t('uatTestProfiles.working')}</p>}
       {!loading && !error && profiles.length === 0 && <>
         <p className="text-xs text-muted-foreground">{t('uatTestProfiles.empty')}</p>
-        <button type="button" onClick={prepareProfiles} disabled={pending}
+        {!user.uatRoleOperator && <button type="button" onClick={prepareProfiles} disabled={pending}
           className="w-full rounded bg-primary px-2 py-1.5 text-xs text-primary-foreground disabled:opacity-50">
           {pending ? t('uatTestProfiles.working') : t('uatTestProfiles.prepare')}
-        </button>
+        </button>}
       </>}
       {profiles.length > 0 && <>
       <select
@@ -163,6 +164,7 @@ export function UatTestProfileControl({ collapsed = false }: { collapsed?: boole
       {error && <p className="text-xs text-destructive" role="alert">{error}</p>}
       {error && <button type="button" onClick={() => setReload(value => value + 1)} disabled={pending}
         className="text-xs underline">{t('uatTestProfiles.retry')}</button>}
+      {!user.uatRoleOperator && <RolePreviewBootstrap />}
     </div>
   );
 }
