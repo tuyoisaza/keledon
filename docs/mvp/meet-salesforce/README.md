@@ -1,5 +1,6 @@
 # MVP Windows — Meet + Salesforce
 Estado 2026-10-18: PLAN PREPARADO; implementación del circuito y UAT pendientes.
+Actualización de aceptación 2026-10-18: transporte de audio en Meet verificado con muestra española de producción, recepción remota, tres interrupciones por voz y reproducción completa tras liberar/rearmar. [Evidencia actual](../../meet-audio-20261018/UAT_REPORT.md). Esto sustituye los NOT RUN históricos solo para esas pruebas acotadas; STT→Brain, transcripción, CRM, cola futura de red, inmunidad general a eco y circuito automático siguen pendientes. Adaptador experimental v0.2.1 local/no publicado; producto web TTS/vista previa 5.5.2 publicado. Los estados originales del plan se conservan a continuación como baseline histórico.
 PHDK instalado/canónico 2.56.0 verificado; baseline fuente main 5.2.21, 2decd79b6fd741d1f5838a091b2b1c4436740acf.
 Compromiso padre CMT-003. Este corte prioriza por instrucción actual el experimento MVP sin cancelar CMT-001/002/004.
 
