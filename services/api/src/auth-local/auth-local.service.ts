@@ -277,7 +277,7 @@ export class LocalAuthService {
    * Validate a token by checking HMAC signature and expiry.
    * Returns user data from DB if valid, null otherwise.
    */
-  async validateToken(token: string) {
+  async validateToken(token: string, options: { allowSyntheticTts?: boolean } = {}) {
     try {
       const tokenParts = token.split('.');
       if (tokenParts.length !== 2) return null;
@@ -321,6 +321,27 @@ export class LocalAuthService {
       });
       if (!isAccountSessionCurrent(user, payload.issuedAt)) return null;
 
+      let syntheticTtsTeamId: string | undefined;
+      if (user.uatFixtureRunId?.startsWith('brain-tts-')) {
+        if (!options.allowSyntheticTts || payload.syntheticTtsRunId !== user.uatFixtureRunId ||
+            payload.expiresAt > user.uatFixtureExpiresAt.getTime()) return null;
+        const event = await this.prisma.auditLog.findFirst({ where: {
+          entity: 'BRAIN_TTS_SYNTHETIC', entityId: user.uatFixtureRunId, action: 'TTS_SYNTHETIC_CREATED',
+        } });
+        const run = JSON.parse(event?.changes || 'null');
+        const member = run?.members?.find((entry: { id: string }) => entry.id === user.id);
+        const owner = run?.actorId && await this.prisma.user.findUnique({ where: { id: run.actorId } });
+        const retired = await this.prisma.auditLog.findFirst({ where: {
+          entity: 'BRAIN_TTS_SYNTHETIC', entityId: user.uatFixtureRunId, action: 'TTS_SYNTHETIC_RETIRED',
+        } });
+        if (!event || event.userId !== run.actorId || run.runId !== user.uatFixtureRunId ||
+            run.expiresAt <= Date.now() || retired || !member || member.role !== user.role ||
+            member.companyId !== user.companyId || member.teamId !== user.teamId ||
+            !user.email.endsWith('@example.invalid') || user.passwordHash ||
+            owner?.role !== 'superadmin' || owner.uatFixtureRunId || !isAccountActive(owner)) return null;
+        syntheticTtsTeamId = run.selectedTeamId;
+      } else if (payload.syntheticTtsRunId !== undefined) return null;
+
       return {
         id: user.id,
         email: user.email,
@@ -328,11 +349,22 @@ export class LocalAuthService {
         role: user.role,
         company_id: user.companyId,
         team_id: user.teamId,
+        syntheticTtsRunId: syntheticTtsTeamId ? user.uatFixtureRunId : undefined,
+        syntheticTtsTeamId,
         last_session: user.lastLogin?.toISOString(),
       };
     } catch {
       return null;
     }
+  }
+
+  /** Server-issued TTS-only capability, intentionally incompatible with global AuthGuard. */
+  generateTtsSyntheticToken(userId: string, runId: string, expiresAt: number): string {
+    const encoded = Buffer.from(JSON.stringify({
+      userId, syntheticTtsRunId: runId, issuedAt: Date.now(), expiresAt,
+    })).toString('base64');
+    const signature = crypto.createHmac('sha256', this.authSecret).update(encoded).digest('hex');
+    return `${encoded}.${signature}`;
   }
 
   /** Only /me calls this after the global guard validates the audited preview session. */

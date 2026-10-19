@@ -43,6 +43,7 @@ export class TTSController {
 
     const isWav = result.audioData?.subarray(0, 4).toString('ascii') === 'RIFF';
     res.set({
+      'Access-Control-Expose-Headers': 'X-Keledon-TTS-Team, X-Duration, X-Correlation-Id, X-Trace-Id',
       'Content-Type': isWav ? 'audio/wav' : 'audio/mpeg',
       'Content-Length': result.audioData?.length || 0,
       'X-Duration': result.duration?.toString() || '0',

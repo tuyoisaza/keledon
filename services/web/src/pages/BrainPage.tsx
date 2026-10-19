@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { BrainTtsUatPanel } from './BrainTtsUatPanel';
 import { useBrainContextData } from "./useBrainContextData";
 import { useBrainProviderConfig } from "./useBrainProviderConfig";
 import { useBrainAudioDevices } from "./useBrainAudioDevices";
@@ -505,6 +506,7 @@ selectedCompany?.name ?? "No company selected",
 
   return (
     <div className="space-y-6">
+      {user?.role === 'superadmin' && !user.uatTestProfile && <BrainTtsUatPanel teamId={selectedTeamId} resolveApi={resolveBrainCloudConfig} />}
       <BrainProviderPanel {...{
         contextSummary,
         setConfigRefreshKey,
