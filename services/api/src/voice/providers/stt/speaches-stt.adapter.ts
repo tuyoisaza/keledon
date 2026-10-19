@@ -6,6 +6,7 @@ export interface SpeachesSttAdapterConfig {
   apiKey: string;
   model?: string;
   language?: string;
+  timeoutMs?: 15000 | 45000;
 }
 
 /**
@@ -26,6 +27,7 @@ export class SpeachesSttAdapter implements SttAdapter {
       apiKey: config.apiKey,
       model: config.model || 'whisper-1',
       language: config.language || undefined,
+      timeoutMs: config.timeoutMs === 45000 ? 45000 : 15000,
     };
     this.logger.log(`SpeachesSTT initialized model=${this.config.model}`);
     return Promise.resolve();
@@ -33,7 +35,7 @@ export class SpeachesSttAdapter implements SttAdapter {
 
   async transcribe(
     audio: Buffer,
-    options?: { language?: string },
+    options?: { language?: string; signal?: AbortSignal },
   ): Promise<SttResult> {
     if (!this.config) throw new Error('SpeachesSTT not initialized');
 
@@ -52,7 +54,7 @@ export class SpeachesSttAdapter implements SttAdapter {
         method: 'POST',
         headers: { Authorization: `Bearer ${this.config.apiKey}` },
         body: formData,
-        signal: AbortSignal.timeout(15000),
+        signal: options?.signal ? AbortSignal.any([AbortSignal.timeout(this.config.timeoutMs || 15000), options.signal]) : AbortSignal.timeout(this.config.timeoutMs || 15000),
       });
     } catch (error) {
       if (error instanceof Error && error.name === 'TimeoutError')

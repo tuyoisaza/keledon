@@ -59,7 +59,7 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
       s.pending = true;
       s.abort?.abort();
       const abort = new AbortController(); s.abort = abort;
-      const timeout = setTimeout(() => abort.abort(), 45000);
+      const timeout = setTimeout(() => abort.abort(), 90000);
       const current = () => link.current === s && s.active && generation === s.generation && !abort.signal.aborted && Date.now() < s.expires;
       const request = async (path: string, options: RequestInit) => {
         const token = getAuthToken();

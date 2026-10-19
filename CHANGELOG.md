@@ -1,3 +1,8 @@
+## v5.6.2 — 2026-10-19
+
+- Allow a bounded45-second STT wait only for Meet turns after observed upstream499 at14.94seconds during provider startup; other STT callers retain15seconds.
+- Abort upstream STT when Meet cancels/disconnects; permit90seconds for the complete browser turn within the unchanged two-minute/six-turn session. No automatic retries, provider/settings/auth/CSP or spending-cap changes.
+
 ## v5.6.1 — 2026-10-19
 
 - Diagnose failed Meet voice turns with allowlisted stage/error codes (STT, Brain, timeout or upstream HTTP), without logging provider endpoints, error text, credentials, audio or transcript.

@@ -44,7 +44,8 @@ export class BrainMeetController {
     if (!Array.isArray(history) || history.length > 6 || history.some(x => !x || !['user','assistant'].includes(x.role) || typeof x.content !== 'string' || x.content.length > 4000))
       throw new BadRequestException('Invalid conversation history');
     let disconnected = false;
-    const closed = () => { disconnected = true; };
+    const cancellation = new AbortController();
+    const closed = () => { disconnected = true; cancellation.abort(); };
     req.res.once('close', closed);
     const current = () => { if (disconnected) throw new HttpException('Conversation cancelled', 409); };
     let stage: 'PREPARE' | 'STT' | 'BRAIN' = 'PREPARE';
@@ -60,7 +61,7 @@ export class BrainMeetController {
       if (config.sttProvider === 'speaches') config.sttModel = 'Systran/faster-whisper-large-v3';
       current();
       stage = 'STT';
-      const stt = await transcribeConfiguredAudio(config, audio, 'es');
+      const stt = await transcribeConfiguredAudio(config, audio, 'es', { timeoutMs: 45000, signal: cancellation.signal });
       current();
       const transcript = typeof stt.text === 'string' ? stt.text.trim() : '';
       if (!transcript) return { teamId: req.runtimeIdentity.teamId, transcript: '', reply: '' };
@@ -73,6 +74,7 @@ export class BrainMeetController {
       current();
       return { teamId: req.runtimeIdentity.teamId, transcript, reply: answer.reply.slice(0, 4000) };
     } catch (error) {
+      if (disconnected) throw new HttpException('Conversation cancelled', 409);
       const message = error instanceof Error ? error.message : '';
       if (message === 'AI request budget exceeded') throw new HttpException('Conversation spending limit reached', 429);
       if (message === 'AI integration disabled') throw new HttpException('Conversation disabled by spending controls', 503);

@@ -8,6 +8,7 @@ export async function transcribeConfiguredAudio(
   config: VoiceProviderConfig,
   audio: Buffer,
   language?: string,
+  options: { timeoutMs?: 15000 | 45000; signal?: AbortSignal } = {},
 ): Promise<SttResult> {
   if (
     process.env.KELEDON_VOICE_DISABLED === 'true' ||
@@ -15,6 +16,7 @@ export async function transcribeConfiguredAudio(
     audio.length > 4 * 1024 * 1024
   )
     throw new Error('Invalid or disabled audio input');
+  const timeoutMs = options.timeoutMs === 45000 ? 45000 : 15000;
   return runtimeAiBudget.run(
     `stt:${config.teamId || 'unassigned'}`,
     undefined,
@@ -31,8 +33,9 @@ export async function transcribeConfiguredAudio(
               baseUrl: config.speachesApiUrl,
               apiKey: config.sttApiKey || '',
               model: config.sttModel,
+              timeoutMs,
             });
-            return adapter.transcribe(audio, { language });
+            return adapter.transcribe(audio, { language, signal: options.signal });
           }
           if (config.sttProvider === 'deepgram') {
             if (!config.sttApiKey)
@@ -49,7 +52,7 @@ export async function transcribeConfiguredAudio(
                 'Content-Type': 'audio/wav',
               },
               body: audio as any,
-              signal: AbortSignal.timeout(15000),
+              signal: options.signal ? AbortSignal.any([AbortSignal.timeout(timeoutMs), options.signal]) : AbortSignal.timeout(timeoutMs),
             });
             if (!response.ok)
               throw new Error(
