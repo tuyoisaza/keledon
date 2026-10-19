@@ -248,9 +248,10 @@ export class LocalAuthController {
         throw new UnauthorizedException('No token provided');
       }
       const token = authHeader.substring(7);
-      const user = req.user?.uatTestProfile || req.user?.uatRoleOperator
+      const profileContext = req.user?.uatTestProfile || req.user?.uatRoleOperator
         ? await this.authService.getGuardedProfile(req.user.userId)
-        : await this.authService.validateToken(token);
+        : null;
+      const user = profileContext || await this.authService.validateToken(token);
       if (!user) {
         throw new UnauthorizedException('Invalid token');
       }
@@ -273,10 +274,10 @@ export class LocalAuthController {
         role: user.role,
         companyId: user.company_id,
         teamId: user.team_id,
-        companyName: company?.name || null,
-        brandName: brand?.name || null,
-        teamName: team?.name || null,
-        createdAt: company?.created_at || null,
+        companyName: profileContext?.company_name || company?.name || null,
+        brandName: profileContext?.brand_name || brand?.name || null,
+        teamName: profileContext?.team_name || team?.name || null,
+        createdAt: profileContext?.created_at || company?.created_at || null,
         lastSession: user.last_session || null,
         uatTestProfile: req.user?.uatTestProfile === true,
         uatRoleOperator: req.user?.uatRoleOperator === true,

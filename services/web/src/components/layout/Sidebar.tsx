@@ -84,12 +84,12 @@ export function Sidebar() {
       <>
         <aside
             className={cn(
-                'hidden h-screen shrink-0 flex-col bg-sidebar border-r border-border transition-all duration-300 md:flex',
+                'hidden h-screen min-h-0 shrink-0 flex-col overflow-hidden bg-sidebar border-r border-border transition-all duration-300 md:flex',
                 collapsed ? 'w-36' : 'w-56'
             )}
         >
             {/* Shared diagnostics stay visible in both navigation modes. */}
-            <div className="flex flex-col items-start gap-1 p-3 border-b border-border">
+            <div className="flex shrink-0 flex-col items-start gap-1 p-3 border-b border-border">
                 <div className="flex w-full items-center justify-between gap-2">
                     <Link to="/dashboard" className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
@@ -108,7 +108,7 @@ export function Sidebar() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 py-4 px-2 space-y-1">
+            <nav className="min-h-0 flex-1 overflow-y-auto py-4 px-2 space-y-1">
                 {filteredItems.map((item) => {
                     const isActive = location.pathname === item.href;
                     return (
@@ -130,7 +130,7 @@ export function Sidebar() {
             </nav>
 
             {/* User section */}
-            <div className="p-4 border-t border-border">
+            <div className="max-h-[50dvh] shrink-0 overflow-y-auto p-4 border-t border-border">
                 {!mobile && <UatTestProfileControl collapsed={collapsed} />}
                 <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3')}>
                     <div className={cn(

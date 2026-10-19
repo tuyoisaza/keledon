@@ -66,7 +66,7 @@ export default function ProfilePage() {
             <Building2 className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
               <p className="text-sm text-muted-foreground">{t('profile.company')}</p>
-              <p className="font-medium">{user?.company_name || t('profile.notAssigned')}</p>
+              <p className="font-medium">{user?.company_name || user?.companyName || t('profile.notAssigned')}</p>
             </div>
           </div>
 
@@ -75,7 +75,7 @@ export default function ProfilePage() {
             <Tag className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
               <p className="text-sm text-muted-foreground">{t('profile.brand')}</p>
-              <p className="font-medium">{user?.brand_name || t('profile.notAssigned')}</p>
+              <p className="font-medium">{user?.brand_name || user?.brandName || t('profile.notAssigned')}</p>
             </div>
           </div>
 
@@ -84,7 +84,7 @@ export default function ProfilePage() {
             <Users className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
               <p className="text-sm text-muted-foreground">{t('profile.team')}</p>
-              <p className="font-medium">{user?.team_name || t('profile.notAssigned')}</p>
+              <p className="font-medium">{user?.team_name || user?.teamName || t('profile.notAssigned')}</p>
             </div>
           </div>
 
@@ -93,7 +93,7 @@ export default function ProfilePage() {
             <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
               <p className="text-sm text-muted-foreground">{t('profile.memberSince')}</p>
-              <p className="font-medium">{formatDate(user?.created_at)}</p>
+              <p className="font-medium">{formatDate(user?.created_at || user?.createdAt)}</p>
             </div>
           </div>
 
@@ -102,7 +102,7 @@ export default function ProfilePage() {
             <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
               <p className="text-sm text-muted-foreground">{t('profile.lastActive')}</p>
-              <p className="font-medium">{formatDateTime(user?.last_session)}</p>
+              <p className="font-medium">{formatDateTime(user?.last_session || user?.lastSession)}</p>
             </div>
           </div>
         </div>
