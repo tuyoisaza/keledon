@@ -3,6 +3,12 @@ Fecha: 2026-10-18. Decisión ADR-MVP-001. Evidencia actual: inspección de fuent
 
 ## Separación propuesta
 Brain/guion/RAG decide objetivos de negocio; orquestador mantiene sesión y turnos; AudioPort transporta audio y cancelaciones; InteractionObserver percibe señales; SurfaceExecutor observa/actúa/verifica en superficies autorizadas.
+La aclaración del propietario 2026-10-19 exige que este núcleo sea independiente
+de Salesforce/Meet: referencias a `search_case`/`read_case` son ejemplos de negocio,
+no el contrato universal. El contrato general usa observaciones acotadas y refs
+efímeras de elementos, acciones autorizadas y verificación posterior. Un adaptador
+web no acredita control de aplicaciones nativas Windows; cada capacidad necesita
+un ejecutor real y evidencia por superficie. [Delta requerido](INTERFACE_CONTROL_SCOPE.md).
 Los adaptadores resuelven diferencias técnicas por cliente. URL + prompt no son una garantía de soporte de toda telefonía/CRM. Las capacidades se descubren/verifican por sesión; una desconocida se registra UNVERIFIED.
 
 ## Candidatos

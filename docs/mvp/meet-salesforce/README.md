@@ -1,4 +1,12 @@
-# MVP Windows — Meet + Salesforce
+# MVP Windows — control de interfaces por objetivo
+
+**Corrección de alcance, 2026-10-19:** cualquier interfaz autorizada. Meet y
+Salesforce son ejemplos iniciales, no el núcleo ni una condición para continuar.
+El control general todavía no está implementado de extremo a extremo en 5.7.0;
+sus botones de audio y lector Salesforce no lo sustituyen. [Alcance corregido y
+brechas concretas](INTERFACE_CONTROL_SCOPE.md). El nombre histórico de esta carpeta
+se conserva para no romper referencias, no como restricción de producto.
+
 Estado actual 2026-10-19: candidato integrado 5.7.0 / extensión 0.4.0, con controles
 por capa, log verbose seguro, lectura Salesforce acotada y cierre/espera. El
 propietario aplazó las pruebas: aceptación de conversación/CRM/candidato PENDIENTE,
