@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "goal": "Repair TTS HTML preview without weakening CSP; verify Spanish sample in production",
+  "target_branch": "main",
+  "expected_version": "5.5.2",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "0d89a4bcfc8d42bbb11396878c4674e00619bd62",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/283",
+  "checks": {
+    "static_source_security": {
+      "status": "PASS",
+      "evidence": "Full outgoing source reviewed; whitespace, five package/lock versions and unchanged dependency entries verified; nginx unchanged"
+    },
+    "local_application_checks": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "Owner explicitly excludes local tests/builds/lint; no application typecheck run; production UAT executed instead"
+    },
+    "production_preview": {
+      "status": "PASS",
+      "evidence": "UAT_REPORT.md: actual 5.5.2 complete playback 5.136 s, exact SHA256, pause/resume/stop/replacement; owner heard complete and clear"
+    },
+    "csp": {
+      "status": "PASS",
+      "evidence": "Exact production header equality: CSP_BASELINE.txt and CSP_AFTER.txt; no nginx change"
+    }
+  }
+}
