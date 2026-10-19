@@ -68,7 +68,8 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
         const response = await fetch(path, { ...options, headers, signal: abort.signal, redirect: 'error', credentials: 'same-origin' });
         if (!response.ok) {
           const problem = await response.json().catch(() => ({}));
-          const code = typeof problem.code === 'string' && /^MEET_(PREPARE|STT|BRAIN)_(TIMEOUT|UNAVAILABLE|HTTP_\d{3})$/.test(problem.code) ? problem.code : '';
+          const candidate = response.headers.get('X-Keledon-Voice-Error') || problem.code;
+          const code = typeof candidate === 'string' && /^MEET_(PREPARE|STT|BRAIN)_(TIMEOUT|UNAVAILABLE|HTTP_\d{3})$/.test(candidate) ? candidate : '';
           const service = path === '/tts/speak' ? 'TTS' : 'STT/Brain';
           throw new Error(`${service} rechazado (HTTP ${response.status})${code ? ` · ${code}` : ''}; revisa sesión, equipo o proveedor`);
         }

@@ -82,6 +82,8 @@ export class BrainMeetController {
       const upstream = /provider returned HTTP (\d{3})$/.exec(message)?.[1];
       const reason = upstream ? `HTTP_${upstream}` : /timeout/i.test(message) ? 'TIMEOUT' : 'UNAVAILABLE';
       const code = `MEET_${stage}_${reason}`;
+      // Global 5xx bodies remain redacted. This route exposes only its bounded safe code.
+      req.res.setHeader('X-Keledon-Voice-Error', code);
       // Allowlisted metadata only: never error text, endpoint, prompt, audio or credentials.
       this.logger.warn(JSON.stringify({ event: 'meet.voice.failure', stage, code }));
       throw new HttpException({ statusCode: 502, message: `Configured team ${stage} unavailable`, code, stage }, 502);

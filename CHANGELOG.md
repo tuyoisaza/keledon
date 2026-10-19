@@ -1,3 +1,8 @@
+## v5.6.3 — 2026-10-19
+
+- Preserve global5xx redaction while exposing only an allowlisted Meet voice-stage code in a route-specific response header, validated by the web.
+- Record actual STT timeout after45seconds, provider restarts and memory reaching the3GB limit; full conversation acceptance remains blocked, without provider/resources/settings changes or local tests/builds/lint.
+
 ## v5.6.2 — 2026-10-19
 
 - Allow a bounded45-second STT wait only for Meet turns after observed upstream499 at14.94seconds during provider startup; other STT callers retain15seconds.
