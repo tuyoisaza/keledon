@@ -1,3 +1,8 @@
+## v5.4.3 — 2026-10-18
+
+- Correct the production TTS UAT panel to expect the existing Nest POST success status 201; keep strict audio MIME/size and selected-team checks before retaining the sample.
+- Record safe content type and SHA-256 for the exact audio artifact sent to Meet. Second synthetic run retired, old session reuse correctly returned 401; final rerun pending. No provider/auth/hosting settings changed and no local tests/builds/lint.
+
 ## v5.4.2 — 2026-10-18
 
 - Send Brain HTTP speech, provider tests and synthetic TTS acceptance through the existing web `/tts/speak` proxy, preserving authentication and avoiding the API domain CORS mismatch observed during production UAT.
