@@ -1,4 +1,4 @@
-# Production TTS and Meet cases — 5.4.1
+# Production TTS and Meet cases — 5.4.3
 
 | ID | Operation | Required evidence |
 | --- | --- | --- |
@@ -10,9 +10,11 @@
 | BT-06 | Ordinary user A selecting B's team | 403 |
 | BT-07 | Synthetic admin selecting unapproved existing fixture team | 403 |
 | BT-08 | Synthetic admin generic /api/crud/users | 401 |
-| BT-09 | Unassigned synthetic admin Spanish sample, selected TuyoMX provider | 200, audio MIME, >200 bytes, exact server team header |
+| BT-09 | Unassigned synthetic admin Spanish sample, selected TuyoMX provider | 201, audio MIME, >200 bytes, exact server team header |
 | BT-10 | Audited retirement and original token reuse | 201 retire, 401 reuse |
 | BT-11 | Send downloaded exact Spanish audio through existing Meet generated stream | Decoded matching audio and outgoing RTP evidence |
 | BT-12 | Remote participant acknowledgment | Explicit acknowledgment of hearing complete Spanish phrase, no local playback inference |
 
 These are acceptance cases, not local application tests. All start PENDING until observed. No local tests/builds/lint/typechecks.
+
+Final results: BT-01 through BT-12 PASS. Eleven fine-grained HTTP/metadata entries are in production-http-evidence.json; real Meet decode/RTP/cleanup and explicit human confirmation in meet-transport-evidence.json and UAT_REPORT.md. No local tests/builds/lint. Native optional HTML preview is not used as acceptance evidence.

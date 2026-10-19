@@ -1,4 +1,4 @@
-# Scoped TTS role matrix — 5.4.1
+# Scoped TTS role matrix — 5.4.3
 
 | Persona | Identity | Expected access |
 | --- | --- | --- |
@@ -11,3 +11,5 @@
 | Retired | Same genuine run session after audited retire | /tts/speak 401 |
 
 Paired-device authentication code unchanged; no device credentials created by this bootstrap. Tenant/role claims checked against DB, never UI flags. Exact generated IDs and observed outcomes will be appended only after real production execution.
+
+Final observed results: all listed denials and elevated selected-team sample PASS, retirement/reuse 401 PASS. Exact run IDs and artifact/remote acceptance in UAT_REPORT.md; no raw tokens or personal account details persisted.

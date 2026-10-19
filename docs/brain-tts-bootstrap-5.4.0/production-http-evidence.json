@@ -1,0 +1,103 @@
+{
+  "version": "5.4.3",
+  "source_sha": "56ba614afbf34d8f4fcecf07c121f47052d20dc9",
+  "runId": "brain-tts-c2b0f86c-3f59-458e-8654-e3d0967c89b1",
+  "created_at_utc": "2026-10-19T04:01:18.835Z",
+  "expires_at_utc": "2026-10-19T04:16:18.835Z",
+  "admin_without_company_or_team": true,
+  "retired": true,
+  "web": "https://keledon.tuyoisaza.com/brain",
+  "tts_route": "/tts/speak",
+  "cases": [
+    {
+      "case": "bootstrap-idempotent",
+      "status": 201,
+      "expected": 201,
+      "pass": true
+    },
+    {
+      "case": "auth-absent",
+      "status": 401,
+      "expected": 401,
+      "pass": true
+    },
+    {
+      "case": "team-required",
+      "status": 400,
+      "expected": 400,
+      "pass": true
+    },
+    {
+      "case": "team-invalid",
+      "status": 400,
+      "expected": 400,
+      "pass": true
+    },
+    {
+      "case": "team-missing",
+      "status": 404,
+      "expected": 404,
+      "pass": true
+    },
+    {
+      "case": "normal-user-foreign-team",
+      "status": 403,
+      "expected": 403,
+      "pass": true
+    },
+    {
+      "case": "synthetic-admin-unapproved-team",
+      "status": 403,
+      "expected": 403,
+      "pass": true
+    },
+    {
+      "case": "synthetic-admin-global-denied",
+      "status": 401,
+      "expected": 401,
+      "pass": true
+    },
+    {
+      "case": "auth-expired",
+      "status": 401,
+      "expected": 401,
+      "pass": true
+    },
+    {
+      "case": "spanish-audio",
+      "status": 201,
+      "expected": 201,
+      "pass": true
+    },
+    {
+      "case": "retired-session-denied",
+      "status": 401,
+      "expected": 401,
+      "pass": true
+    }
+  ],
+  "audio": {
+    "bytes": 20589,
+    "contentType": "audio/mpeg",
+    "sha256": "22e14125a346917f4ddf416a49f20d3a7dfbcf703a1bac2e166b4c8dc3aeda53",
+    "team": "0a97649a-741d-4185-b457-5fce8a8e3f45",
+    "provider_label_observed": "speaches",
+    "voice_label_observed": "ef_dora",
+    "text": "Hola, esta es una prueba de voz de Brain en español. ¿Puedes confirmar que me escuchas con claridad?",
+    "remote_playback": "ACCEPTED: exact MP3 decoded/played into Meet for 5.136s and remote participant confirmed complete clear hearing",
+    "note": "MP3 ID3 header and exact hash checked statically; actual decoding/playback was inside production Meet, not a local application test"
+  },
+  "capability_blocker": {
+    "blob_export": "Blob downloads are not supported by this browser",
+    "downloads_page": "Browser URL policy rejected chrome://downloads; only http/https; no workaround attempted",
+    "user_action_requested": "Manually save the existing Brain sample and provide absolute local path; do not upload credentials or file in chat",
+    "resolution": "Owner manually saved sample under docs/audios; exact hash verified; no blocked browser-policy workaround"
+  },
+  "remote_acknowledgment": {
+    "status": "PASS",
+    "source": "Explicit human response in current conversation after actual Meet transmission",
+    "quote": "Sí, la escuché completa y clara",
+    "context": "Remote-device listening to the complete Spanish phrase; post-playback question",
+    "not_inferred_from_rtp": true
+  }
+}
