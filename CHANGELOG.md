@@ -1,3 +1,8 @@
+## v5.4.2 — 2026-10-18
+
+- Send Brain HTTP speech, provider tests and synthetic TTS acceptance through the existing web `/tts/speak` proxy, preserving authentication and avoiding the API domain CORS mismatch observed during production UAT.
+- No origin allowlist, hosting/provider settings, roles or secrets changed. First synthetic run retired; repeat acceptance on this candidate. No local tests/builds/lint.
+
 ## v5.4.1 — 2026-10-18
 
 - Add an explicitly administrator-authorized audited bootstrap for three new short-lived synthetic TTS accounts, including an unassigned platform superadmin, and two isolated fictional tenants. Existing users, roles and provider settings are never changed.

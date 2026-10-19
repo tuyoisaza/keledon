@@ -1,0 +1,5 @@
+# UAT browser readiness — 2026-10-18
+
+Permission: ACTIVE, explicit owner-directed production TTS and Meet UAT. Access: AVAILABLE_VERIFIED, existing connected Chrome, Brain https://keledon.tuyoisaza.com/brain and Meet https://meet.google.com/iaz-fkaw-twx. Rechecked runtime inventory and harmless Brain inspection/reload in designated second tab; original operator tab and Meet untouched. Initial current page v5.3.0; candidate 5.4.1/main 3a491e78 requires deployed readback. No browser purchase/installation or provider settings writes. Spend: existing configured team TTS explicitly authorized for a short Spanish sample; billing unverified; ordinary caps preserved.
+
+Existing owner session is used for authorized administration only. TTS acceptance runs as new synthetic accounts through the reviewed Brain panel, never as owner. Remote participant replied “si estoy conectado” in this conversation; actual audio acknowledgment pending. Close only agent-created ephemeral tabs; preserve user tabs and meeting.

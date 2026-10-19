@@ -113,8 +113,7 @@ async function speakReply(text: string, messageId: string) {
 
     try {
       let blob: Blob | null = null;
-      const { apiBase } = await scope.resolveBrainCloudConfig();
-      const res = await apiFetch(`${apiBase}/tts/speak`, {
+      const res = await apiFetch("/tts/speak", {
         method: "POST",
         body: JSON.stringify({ text, teamId: scope.selectedTeamId }),
         signal: controller.signal,

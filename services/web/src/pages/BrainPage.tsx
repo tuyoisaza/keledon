@@ -506,7 +506,7 @@ selectedCompany?.name ?? "No company selected",
 
   return (
     <div className="space-y-6">
-      {user?.role === 'superadmin' && !user.uatTestProfile && <BrainTtsUatPanel teamId={selectedTeamId} resolveApi={resolveBrainCloudConfig} />}
+      {user?.role === 'superadmin' && !user.uatTestProfile && <BrainTtsUatPanel teamId={selectedTeamId} />}
       <BrainProviderPanel {...{
         contextSummary,
         setConfigRefreshKey,

@@ -114,10 +114,9 @@ async function testTTSProvider() {
     scope.setTtsTestStatus("running");
     scope.addLog(`[TEST] TTS: testing ${scope.ttsProvider || "?"}...`);
     try {
-      const { apiBase } = await scope.resolveBrainCloudConfig();
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 30000);
-      const res = await apiFetch(`${apiBase}/tts/speak`, {
+      const res = await apiFetch("/tts/speak", {
         method: "POST",
         body: JSON.stringify({
           text: "Hello, this is a TTS test.",
