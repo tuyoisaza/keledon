@@ -54,7 +54,9 @@ export class SpeachesSttAdapter implements SttAdapter {
         body: formData,
         signal: AbortSignal.timeout(15000),
       });
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.name === 'TimeoutError')
+        throw new Error('Speaches STT provider timeout');
       throw new Error('Speaches STT provider request failed');
     }
 
