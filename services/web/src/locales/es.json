@@ -1057,15 +1057,28 @@
     "exploreWorkflow": "Explorar el flujo"
   },
   "uatTestProfiles": {
-    "label": "Perfiles UAT de prueba",
-    "shortLabel": "Perfiles UAT",
-    "choose": "Selecciona una cuenta de prueba",
+    "label": "Probar como rol",
+    "shortLabel": "Probar rol",
+    "choose": "Selecciona un rol de prueba",
     "switch": "Entrar al perfil",
     "switchFailed": "No se pudo iniciar el perfil de prueba.",
-    "active": "Sesión temporal de prueba activa",
+    "active": "Vista de prueba",
     "return": "Volver a superadmin",
     "returnFailed": "No se pudo cerrar el perfil de prueba.",
-    "working": "Procesando…"
+    "working": "Procesando…",
+    "readOnly": "Solo lectura · cuentas sintéticas · sesión de hasta 10 minutos. Las acciones y conexiones en vivo están bloqueadas.",
+    "empty": "Prepara perfiles aislados para probar los roles. Crea hasta dos empresas sintéticas, sin usuarios reales ni credenciales.",
+    "prepare": "Preparar o renovar perfiles",
+    "prepareFailed": "No se pudieron preparar los perfiles. Revisa tu sesión de superadmin e inténtalo otra vez.",
+    "fixtureConflict": "La ejecución sintética existente pertenece a otro administrador, venció o fue retirada. Su propietario debe reconciliarla en la administración de fixtures antes de reutilizarla.",
+    "loadFailed": "No se pudieron cargar los perfiles de prueba.",
+    "retry": "Reintentar",
+    "roles": {
+      "user": "Usuario",
+      "agent": "Agente",
+      "admin": "Admin",
+      "coordinator": "Coordinador"
+    }
   },
   "voiceProfiles": {
     "title": "Perfiles de voz",

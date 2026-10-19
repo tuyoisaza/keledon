@@ -23,6 +23,7 @@ import { Public } from '../guards/public.decorator';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SuperAdminGuard } from '../guards/roles.guard';
 import { UatTestProfilesService } from './uat-test-profiles.service';
+import { RolePreviewFixturesService } from './role-preview-fixtures.service';
 
 interface LoginDto {
   email: string;
@@ -64,6 +65,7 @@ export class LocalAuthController {
     private readonly googleOAuthService: GoogleOAuthService,
     private readonly configService: ConfigService,
     private readonly uatTestProfilesService: UatTestProfilesService,
+    private readonly rolePreviewFixtures: RolePreviewFixturesService,
   ) {}
 
   @Public()
@@ -244,7 +246,9 @@ export class LocalAuthController {
         throw new UnauthorizedException('No token provided');
       }
       const token = authHeader.substring(7);
-      const user = await this.authService.validateToken(token);
+      const user = req.user?.uatTestProfile
+        ? await this.authService.getGuardedProfile(req.user.userId)
+        : await this.authService.validateToken(token);
       if (!user) {
         throw new UnauthorizedException('Invalid token');
       }
@@ -294,6 +298,13 @@ export class LocalAuthController {
     return {
       profiles: await this.uatTestProfilesService.listProfiles(req.user.userId),
     };
+  }
+
+  @UseGuards(SuperAdminGuard)
+  @Post('uat-test-profiles/prepare')
+  @ApiOperation({ summary: 'Prepare bounded, audited synthetic read-only role profiles' })
+  async prepareRoleProfiles(@Req() req: any) {
+    return this.rolePreviewFixtures.prepare(req.user.userId);
   }
 
   @UseGuards(SuperAdminGuard)

@@ -1,5 +1,12 @@
 ## Unreleased — 2026-10-18 (MVP preparation only)
 
+## v5.3.0 — 2026-10-18
+
+- Add a visible superadmin “Test as role” selector for synthetic user, agent, admin and coordinator identities, with preparation, error/retry states and return to superadmin.
+- Issue audited ten-minute server sessions using persisted roles and fixture tenant membership; restrict previews to reviewed read-only routes and disable runtime sockets. No real-user impersonation or migrations.
+- Reuse the bounded two-tenant fixture lifecycle; explicitly renew dedicated role-preview runs and enforce retirement/expiry for preview users. Preserve existing UAT run ownership/lifecycle restrictions.
+- Fix authenticated preview reload and expired-session recovery. Production functional/security acceptance is pending; no local application tests, builds or lint ran.
+
 - Reopen the Windows execution architecture for an owner-directed real Meet + Salesforce MVP, retaining Cloud authority and tenant security.
 - Capture the updated intent, five dependency-ordered PIAs, evidence gates and real-platform test prerequisites; no fake telephony/CRM and no operational MVP acceptance claimed.
 - Add an experimental profile schema/example and read-only Windows host inventory tool. Product version remains 5.2.21; application runtime is unchanged.

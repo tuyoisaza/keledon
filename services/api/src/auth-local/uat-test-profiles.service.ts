@@ -7,6 +7,8 @@ import {
 import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { LocalAuthService } from './auth-local.service';
+import { isAccountActive } from './account-lifecycle.policy';
+import { isManagedRolePreview } from './role-preview-fixtures.service';
 import {
   isPermittedUatTestProfile,
   parseUatTestProfileIds,
@@ -23,19 +25,25 @@ export class UatTestProfilesService {
   ) {}
 
   async listProfiles(actorUserId: string) {
-    this.assertEnabled();
     await this.assertSuperadmin(actorUserId);
     const ids = parseUatTestProfileIds(
       process.env.KELEDON_UAT_TEST_PROFILE_IDS,
     );
     const users = await this.prisma.user.findMany({
-      where: { id: { in: ids } },
-      select: { id: true, name: true, email: true, role: true },
+      where: { OR: [
+        ...(uatTestProfilesEnabled() ? [{ id: { in: ids } }] : []),
+        { email: { startsWith: 'phdk-role-' }, uatFixtureRunId: { not: null } },
+      ] },
       orderBy: { name: 'asc' },
     });
-    return users
-      .filter(isPermittedUatTestProfile)
-      .map(({ id, name, role }) => ({ id, name, role }));
+    const permitted = [];
+    for (const profile of users) {
+      if (await isManagedRolePreview(this.prisma, profile, actorUserId) ||
+          (uatTestProfilesEnabled() && ids.includes(profile.id) &&
+            !profile.uatFixtureRunId && isAccountActive(profile) && isPermittedUatTestProfile(profile)))
+        permitted.push({ id: profile.id, name: profile.name, role: profile.role });
+    }
+    return permitted;
   }
 
   async startProfile(
@@ -46,23 +54,22 @@ export class UatTestProfilesService {
       userAgent?: string;
     },
   ) {
-    this.assertEnabled();
     const actor = await this.assertSuperadmin(actorUserId);
     const allowedIds = parseUatTestProfileIds(
       process.env.KELEDON_UAT_TEST_PROFILE_IDS,
     );
-    if (!allowedIds.includes(profileId)) throw new NotFoundException();
-
     const profile = await this.prisma.user.findUnique({
       where: { id: profileId },
-      select: { id: true, name: true, email: true, role: true },
     });
-    if (!profile || !isPermittedUatTestProfile(profile)) {
+    const managed = profile && await isManagedRolePreview(this.prisma, profile, actor.id);
+    if (!profile || (!managed && !(uatTestProfilesEnabled() && allowedIds.includes(profileId) &&
+        !profile.uatFixtureRunId && isAccountActive(profile) && isPermittedUatTestProfile(profile)))) {
       throw new NotFoundException();
     }
 
     const sessionId = randomUUID();
-    const expiresAt = Date.now() + UAT_TEST_PROFILE_TTL_MS;
+    const expiresAt = Math.min(Date.now() + UAT_TEST_PROFILE_TTL_MS,
+      profile.uatFixtureExpiresAt?.getTime() ?? Infinity);
     await this.prisma.auditLog.create({
       data: {
         userId: actor.id,
@@ -75,6 +82,9 @@ export class UatTestProfilesService {
           actorUserId: actor.id,
           profileUserId: profile.id,
           profileRole: profile.role,
+          companyId: profile.companyId,
+          teamId: profile.teamId,
+          reason: 'superadmin_role_preview',
           expiresAt,
         }),
       },
@@ -94,6 +104,9 @@ export class UatTestProfilesService {
       user: {
         id: profile.id,
         name: profile.name,
+        email: profile.email,
+        companyId: profile.companyId,
+        teamId: profile.teamId,
         role: profile.role,
         uatTestProfile: true,
       },
@@ -108,7 +121,6 @@ export class UatTestProfilesService {
       userAgent?: string;
     },
   ) {
-    this.assertEnabled();
     const actor = await this.assertSuperadmin(actorUserId);
     if (typeof sessionId !== 'string' || !sessionId.trim()) {
       throw new UnauthorizedException('No active UAT test profile');
@@ -126,7 +138,7 @@ export class UatTestProfilesService {
       },
       select: { id: true },
     });
-    if (ended) throw new UnauthorizedException('No active UAT test profile');
+    if (ended) return { success: true };
 
     await this.prisma.auditLog.create({
       data: {
@@ -139,23 +151,18 @@ export class UatTestProfilesService {
         changes: JSON.stringify({
           actorUserId: actor.id,
           profileUserId: details.profileUserId,
-          reason: 'operator_returned_to_superadmin',
+          reason: details.expiresAt <= Date.now() ? 'expired_return_to_superadmin' : 'operator_returned_to_superadmin',
         }),
       },
     });
     return { success: true };
   }
 
-  private assertEnabled() {
-    if (!uatTestProfilesEnabled()) throw new NotFoundException();
-  }
-
   private async assertSuperadmin(id: string) {
     const actor = await this.prisma.user.findUnique({
       where: { id },
-      select: { id: true, role: true },
     });
-    if (!actor || actor.role !== 'superadmin') {
+    if (!actor || actor.role !== 'superadmin' || !isAccountActive(actor)) {
       throw new ForbiddenException('Current database superadmin required');
     }
     return actor;

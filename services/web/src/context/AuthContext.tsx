@@ -80,15 +80,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       !data?.token ||
       !data?.sessionId ||
       !data?.user?.id ||
-      !['user', 'admin', 'coordinator'].includes(data.user.role)
+      !['user', 'agent', 'admin', 'coordinator'].includes(data.user.role) ||
+      data.user.uatTestProfile !== true || !Number.isFinite(data.expiresAt)
     ) {
       throw new Error('UAT test profile response was invalid');
     }
 
     sessionStorage.setItem('uat_original_superadmin_token', adminToken);
     sessionStorage.setItem('uat_active_profile_session_id', data.sessionId);
+    sessionStorage.setItem('uat_active_profile_expires_at', String(data.expiresAt));
     sessionStorage.setItem('auth_token', data.token);
     setUser(data.user);
+    window.location.assign('/profile');
   };
 
   const returnToSuperAdmin = async () => {
@@ -121,7 +124,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem('auth_token', adminToken);
     sessionStorage.removeItem('uat_original_superadmin_token');
     sessionStorage.removeItem('uat_active_profile_session_id');
+    sessionStorage.removeItem('uat_active_profile_expires_at');
     setUser(data.user);
+    window.location.assign('/dashboard');
   };
 
   useEffect(() => {
@@ -143,13 +148,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.success && data.user) {
           setUser(data.user);
           recordAuthEvent('session-check', 'success');
+        } else if (sessionStorage.getItem('uat_original_superadmin_token')) {
+          // Expired/revoked previews must never discard the operator's return path.
+          try {
+            await returnToSuperAdmin();
+          } catch {
+            // Keep the scoped identity and return control visible for a safe retry.
+            setUser({ id: 'expired-preview', name: 'Company Co', email: '', role: 'user', uatTestProfile: true });
+          }
         } else {
           sessionStorage.removeItem('auth_token');
           sessionStorage.removeItem('uat_original_superadmin_token');
           sessionStorage.removeItem('uat_active_profile_session_id');
+          sessionStorage.removeItem('uat_active_profile_expires_at');
           recordAuthEvent('session-check', 'failure');
         }
       } catch {
+        if (sessionStorage.getItem('uat_original_superadmin_token')) {
+          setUser({ id: 'expired-preview', name: 'Company Co', email: '', role: 'user', uatTestProfile: true });
+        }
         recordAuthEvent('session-check', 'failure');
         debugLogger.log('error', 'Authentication session check failed', { stage: 'session-check' });
       } finally {
@@ -184,6 +201,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.token) {
         sessionStorage.removeItem('uat_original_superadmin_token');
         sessionStorage.removeItem('uat_active_profile_session_id');
+        sessionStorage.removeItem('uat_active_profile_expires_at');
         sessionStorage.setItem('auth_token', data.token);
       }
 
@@ -200,7 +218,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const clearLocalSession = () => {
     sessionStorage.removeItem('auth_token');
     sessionStorage.removeItem('uat_original_superadmin_token');
-    sessionStorage.removeItem('uat_active_profile_session_id');
+    sessionStorage.removeItem('uat_active_profile_expires_at');
     sessionStorage.removeItem('uat_active_profile_session_id');
     setUser(null);
     setEmail('');

@@ -1052,15 +1052,28 @@
     "exploreWorkflow": "Explore the workflow"
   },
   "uatTestProfiles": {
-    "label": "UAT test profiles",
-    "shortLabel": "UAT profiles",
-    "choose": "Select a test account",
+    "label": "Test as role",
+    "shortLabel": "Test role",
+    "choose": "Choose a test role",
     "switch": "Enter profile",
     "switchFailed": "Could not start the test profile.",
-    "active": "Temporary test session active",
+    "active": "Role preview",
     "return": "Return to superadmin",
     "returnFailed": "Could not end the test profile.",
-    "working": "Working…"
+    "working": "Working…",
+    "readOnly": "Read only · synthetic accounts · up to 10 minutes. Actions and live connections are blocked.",
+    "empty": "Prepare isolated role profiles. Creates up to two synthetic companies, without real users or credentials.",
+    "prepare": "Prepare or renew profiles",
+    "prepareFailed": "Could not prepare profiles. Check your superadmin session and try again.",
+    "fixtureConflict": "The existing synthetic run belongs to another administrator, expired or was retired. Its owner must reconcile it in fixture administration before reuse.",
+    "loadFailed": "Could not load test profiles.",
+    "retry": "Retry",
+    "roles": {
+      "user": "User",
+      "agent": "Agent",
+      "admin": "Admin",
+      "coordinator": "Coordinator"
+    }
   },
   "voiceProfiles": {
     "title": "Voice profiles",

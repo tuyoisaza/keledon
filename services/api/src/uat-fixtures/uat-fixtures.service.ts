@@ -142,6 +142,12 @@ export class UatFixturesService {
           throw new ConflictException('Fixture ownership changed; reconcile before retirement or restoration');
       }
       const retiredAt = retired ? (run.retiredAt || new Date()) : null;
+      // Role-preview identities share the run's TTL and retirement boundary.
+      // They have no password or devices and cannot authenticate outside audited previews.
+      await tx.user.updateMany({ where: { uatFixtureRunId: runId,
+        email: { startsWith: 'phdk-role-' } }, data: {
+        uatFixtureRetiredAt: retiredAt, uatFixtureAuthAfter: new Date(),
+      } });
       for (const member of members) {
         await tx.user.update({ where: { id: member.userId }, data: {
           uatFixtureRetiredAt: retiredAt, uatFixtureAuthAfter: new Date(),
