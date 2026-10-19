@@ -1,0 +1,5 @@
+# Browser access — real Meet audio UAT
+
+2026-10-18, 22:49–22:53 America/Mexico_City. Scoped owner instruction explicitly requests bidirectional Meet audio/interruption. Permission ACTIVE_UAT_EXCEPTION; actual Chrome extension browser 3 AVAILABLE_VERIFIED from existing two-participant Meet UI and adapter panel v0.2.1. Private meeting address intentionally not recorded. Target is existing real Meet plus previously generated production Brain 5.5.2 sample, not a localhost application.
+
+Owner explicitly confirmed second-device readiness with headphones and participated in fictitious remote-input and three barge-in trials. Only existing experimental adapter controls and file chooser used; no recording, credential access, new provider request, upload or provider/hosting settings write. NO_NEW_SPEND; billing unverified. No local tests/build/lint. Case-level evidence and cleanup in UAT_REPORT.md. Final adapter released, own audio resources zero, mic/camera off, meeting retained. No access blocker remains for this bounded transport trial; STT/Brain integration remains a separate unimplemented journey.
