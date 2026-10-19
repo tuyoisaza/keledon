@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "KELEDON Meet audio experiment",
+  "version": "0.3.0",
+  "description": "Explicit meeting audio routing and opt-in Brain window link. No persistent recording or credentials in Meet.",
+  "content_scripts": [{
+    "matches": ["https://meet.google.com/*"],
+    "js": ["audio-port.js", "meet-brain-link.js"],
+    "run_at": "document_start",
+    "world": "MAIN",
+    "all_frames": false
+  }, {
+    "matches": ["https://keledon.tuyoisaza.com/brain*"],
+    "js": ["brain-tts-sample.js"],
+    "run_at": "document_start",
+    "world": "MAIN",
+    "all_frames": false
+  }]
+}
