@@ -4,6 +4,13 @@
 - Capture the updated intent, five dependency-ordered PIAs, evidence gates and real-platform test prerequisites; no fake telephony/CRM and no operational MVP acceptance claimed.
 - Add an experimental profile schema/example and read-only Windows host inventory tool. Product version remains 5.2.21; application runtime is unchanged.
 
+## v5.2.22 — 2026-10-18
+
+- Authorize Brain TTS for current, active database-backed superadmins without tenant assignments using a TTS-only guard and server-resolved team/brand/company scope.
+- Preserve ordinary user and paired-device validation; reject explicit foreign-team requests and role-preview tokens before provider execution.
+- Keep `/tts/speak`, team-configured providers, secrets and spending controls; return scoped authorization/configuration/budget errors.
+- No local application tests, builds or lint. Production security/audio/Meet acceptance remains pending approved synthetic sessions and remote confirmation.
+
 ## v5.2.21 — 2026-10-18
 
 - Show the exact KELEDON Browser release beside the authenticated Lounge download action and pin the default installer link to that same release tag.
