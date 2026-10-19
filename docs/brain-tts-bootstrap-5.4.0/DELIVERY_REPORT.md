@@ -1,0 +1,15 @@
+# Delivery — audited synthetic TTS bootstrap
+
+Owner mandate 2026-10-18: implement audited production synthetic bootstrap without touching real accounts; complete TTS negative cases and Spanish production/Meet sample with actual remote confirmation; no local tests/builds/lint. Agent working only in authorized primary checkout, preserving unrelated dirty records, experiments and user-saved audio.
+
+Product final 5.4.3. PR https://github.com/tuyoisaza/keledon/pull/277 (bootstrap 5.4.1), https://github.com/tuyoisaza/keledon/pull/278 (same-origin HTTP repair 5.4.2), https://github.com/tuyoisaza/keledon/pull/279 (correct existing 201 expectation, audio hash 5.4.3) all MERGED. Independently fetched source main 56ba614afbf34d8f4fcecf07c121f47052d20dc9 and read back package/version and relevant source. API and Web GitHub-connected autodeploy statuses SUCCESS at 2026-10-19T04:01:53Z; real Brain visibly 5.4.3. No direct provider deployment/admin, hosting settings writes, hosted CI dispatch, hooks bypass, agents or scheduling.
+
+VERSION_BUMP PASS (SemVer minor plus bounded repair patches, five package/lock roots and Browser display). COMMIT_PREFIX PASS (each application commit version-prefixed). PUSH_AND_PR PASS (three PR merges verified). REMOTE_MAIN PASS for source above. SCOPE_AND_CHECKS PASS: final explicit post-playback remote hearing response “Sí, la escuché completa y clara” received; static diff/source/security/whitespace and production HTTP/transport evidence complete. Local application checks NOT APPLICABLE under current owner policy replacing them with scoped production acceptance; no invented local PASS.
+
+Owner's explicit scoped implementation request approves the described synthetic security behavior. Assistant source/security review done; no independent human source inspection claimed; no required server review/check observed, and no protection/hook bypass. Original guards/provider/spending rules remain; new synthetic capabilities deliberately reject generic authentication/runtime and allow only audited team-bound TTS. All fixture writes target newly created .invalid identities, never existing real user accounts. Accounts now retired.
+
+See UAT_REPORT.md, COMMITMENT_LEDGER.md, production-http-evidence.json and meet-transport-evidence.json. Overall scoped request DELIVERED/ACCEPTED with actual remote acknowledgment. Separate native audio preview CSP limitation is documented; actual MP3 decoded successfully in production Meet.
+
+Final evidence publication is documentation only and does not create another application release or version bump. Live meeting identifier redacted from latest reports; earlier public Git history retains it, disclosed to owner.
+
+Mechanical completion gate PASS was observed for the final application source main 56ba614a / 5.4.3 before this evidence-only publication. The published PHDK_DELIVERY_EVIDENCE.json is that historical source checkpoint. A final local FINAL_REMOTE_RECEIPT.json will bind the later documentation-only merge readback without creating an impossible self-referential Git SHA or another release.

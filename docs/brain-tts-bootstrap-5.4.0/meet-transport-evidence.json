@@ -1,0 +1,50 @@
+{
+  "measuredAt": "2026-10-19T04:07:20.470Z",
+  "source": "existing authorized Meet experiment v0.2.1 UI",
+  "sample_file": "docs/audios/brain-tts-es-5.4.3.mp3",
+  "sha256": "22e14125a346917f4ddf416a49f20d3a7dfbcf703a1bac2e166b4c8dc3aeda53",
+  "artifact_hash_matches_web": true,
+  "lastDecoded": {
+    "duration": 5.136,
+    "channels": 1,
+    "sampleRate": 48000,
+    "sampledRms": 0.06676334508750635
+  },
+  "activeSources_after_playback": 0,
+  "interrupts": 0,
+  "queuedAheadSeconds": 0,
+  "transport": {
+    "matchedOutputSenders": 1,
+    "bytesSent": 43056,
+    "packetsSent": 256,
+    "remoteReceivers": 3,
+    "bytesReceived": 0,
+    "packetsReceived": 0,
+    "outputMediaSources": [
+      {
+        "audioLevel": 0.13345744193853573,
+        "totalAudioEnergy": 0.4002224228870901,
+        "totalSamplesDuration": 5.129999999999935
+      }
+    ],
+    "failedReads": 0
+  },
+  "physical_microphone_excluded": true,
+  "remote_confirmation": {
+    "status": "PASS",
+    "source": "Explicit post-playback response in this conversation",
+    "quote": "Sí, la escuché completa y clara",
+    "experiment_ui_field_not_modified": "NOT_RUN"
+  },
+  "cleanup": {
+    "status": "RELEASED_RESELECT_MEET_MIC",
+    "armed": false,
+    "audioContext": "absent",
+    "outgoingTracks": 0,
+    "activeSources": 0,
+    "queuedAheadSeconds": 0,
+    "meet_microphone": "off",
+    "physical_microphone_restored": false,
+    "meeting_left_open": true
+  }
+}

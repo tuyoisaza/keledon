@@ -1,0 +1,32 @@
+{
+  "version": "1",
+  "goal": "Audited production synthetic TTS bootstrap and Spanish Meet acceptance",
+  "target_branch": "main",
+  "expected_version": "5.4.3",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "56ba614afbf34d8f4fcecf07c121f47052d20dc9",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/279",
+  "checks": {
+    "source_security_static": {
+      "status": "PASS",
+      "evidence": "Complete scoped assistant diff/security review, git diff --check and five-root version/dependency-lock equality"
+    },
+    "local_application_checks": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "Current owner explicitly forbids local tests/builds/lint; acceptance must be production-only. None run; not a claimed local PASS."
+    },
+    "production_http": {
+      "status": "PASS",
+      "evidence": "production-http-evidence.json: 11 observed HTTP/metadata cases on real Brain 5.4.3, all expected statuses and checks matched"
+    },
+    "meet_transport": {
+      "status": "PASS",
+      "evidence": "Exact matching MP3 decoded and played 5.136s into existing Meet generated track; meet-transport-evidence.json records RTP and cleanup"
+    },
+    "remote_acknowledgment": {
+      "status": "PASS",
+      "evidence": "Explicit post-playback response in current conversation: Sí, la escuché completa y clara. See UAT_REPORT.md and meet-transport-evidence.json."
+    }
+  }
+}
