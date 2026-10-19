@@ -1,3 +1,9 @@
+## v5.5.2 — 2026-10-18
+
+- Replace the TTS preview media element with accessible Web Audio controls that decode sample bytes in memory, avoiding the CSP-blocked blob media URL without changing any CSP directive.
+- Support play, pause/resume, stop/replay, progress, decoding errors and source/context cleanup, with SHA-256 and completion evidence. Existing audio download remains separate.
+- Allow the exact previously generated Spanish sample to be opened in the production preview without upload or another TTS provider call. No auth/provider/settings changes or local tests/builds/lint.
+
 ## v5.4.3 — 2026-10-18
 
 ## v5.5.1 — 2026-10-18

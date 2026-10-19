@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiFetch } from '@/lib/api-fetch';
+import { TtsAudioPreview } from './TtsAudioPreview';
 
 type Run = {
   runId: string; selectedTeamId: string; expiresAt: number; expiryProbe: string;
@@ -16,6 +17,7 @@ export function BrainTtsUatPanel({ teamId }: { teamId: string }) {
   const [error, setError] = useState('');
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [audio, setAudio] = useState('');
+  const [previewBlob, setPreviewBlob] = useState<Blob | null>(null);
   const [mime, setMime] = useState('audio/wav');
   const [retired, setRetired] = useState(false);
   const runId = useRef(sessionStorage.getItem('brain_tts_synthetic_run_id') || `brain-tts-${crypto.randomUUID()}`);
@@ -63,7 +65,7 @@ export function BrainTtsUatPanel({ teamId }: { teamId: string }) {
       entry.pass = entry.pass && type.startsWith('audio/') && blob.size > 200 && entry.team === run?.selectedTeamId;
       if (entry.pass) {
         if (audioUrl.current) URL.revokeObjectURL(audioUrl.current);
-        audioUrl.current = URL.createObjectURL(blob); setAudio(audioUrl.current); setMime(type);
+        audioUrl.current = URL.createObjectURL(blob); setAudio(audioUrl.current); setMime(type); setPreviewBlob(blob);
       }
     }
     setEvidence(previous => [...previous, entry]);
@@ -108,7 +110,8 @@ export function BrainTtsUatPanel({ teamId }: { teamId: string }) {
       <button className={button} disabled={busy || retired || (!run && !sessionStorage.getItem('brain_tts_synthetic_run_id'))} onClick={() => void execute(retire)}>Retirar cuentas sintéticas</button>
     </div>
     {run && <p className="text-sm">Run: {run.runId} · Caduca: {new Date(run.expiresAt).toISOString()} · Superadmin sin empresa/equipo: {String(run.members[0]?.companyId === null && run.members[0]?.teamId === null)}</p>}
-    {audio && <div className="space-y-2"><audio controls src={audio} aria-label="Muestra española de TTS" /><a className="underline" href={audio} download={`brain-tts-es-${__APP_VERSION__}.${mime.includes('wav') ? 'wav' : 'mp3'}`}>Descargar muestra española para Meet</a><p className="text-sm">La reproducción local no confirma recepción en Meet. Se requiere confirmación del interlocutor remoto.</p></div>}
+    <TtsAudioPreview audio={previewBlob} />
+    {audio && <div className="space-y-2"><a className="underline" href={audio} download={`brain-tts-es-${__APP_VERSION__}.${mime.includes('wav') ? 'wav' : 'mp3'}`}>Descargar muestra española para Meet</a><p className="text-sm">La reproducción local no confirma recepción en Meet. Se requiere confirmación del interlocutor remoto.</p></div>}
     {retired && <p role="status">Cuentas sintéticas retiradas. Conservadas solo para auditoría; sesiones revocadas.</p>}
     {busy && <p role="status">Ejecutando operación limitada…</p>}
     {error && <p role="alert" className="text-destructive">{error}</p>}
