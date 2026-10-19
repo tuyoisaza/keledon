@@ -1,0 +1,7 @@
+# Completion reconciliation — current request
+
+Implementation/publishing complete: PR #286 merged, remote main 4876f6e5412b7f92db924c2b6ed5096f9b07ee63 / 5.6.0, both existing web/API autodeploys success, visible production version. Exact CSP and shared RuntimeActorGuard unchanged. Source-reviewed dedicated authorization derives team/brand/company server-side, retains assignments/device checks and excludes preview/TTS-only capabilities. Audio-only opener/session/generation bridge and cancellation implemented; no credentials in Meet. Existing cost/managed-prompt/secret controls retained.
+
+Acceptance incomplete: actual new conversation and barge-in blocked because live Meet window still has adapter 0.2.1, while reviewed on-disk version is 0.3.0. Host extension reload requested; browser chrome:// restriction prevents assistant action, no workaround used. Anonymous/invalid bearer denial passed, other security fixture cases explicitly unexecuted. No new provider usage, capture or invented conversation proof. Brief updated truthfully. Current request remains PARTIALLY DELIVERED; full MVP/CRM not resumed.
+
+No local tests/builds/lint/typecheck. Only static source/security/diff and version/lock checks; unrelated dirty files retained. Documentary checkpoint publication is separate from functional acceptance and does not authorize background work. See UAT_REPORT.md for exact owner prerequisite and resume sequence.

@@ -1,6 +1,12 @@
 # Current brief — Windows Meet + Salesforce MVP (2026-10-18)
 ## Verified checkpoint — TTS and current audio acceptance
 
+### STT/Brain bridge implementation — 5.6.0, acceptance pending
+
+PR #286 delivered the opt-in Meet receiver-audio → configured server STT → managed Brain voice reply → same-origin web `/tts/speak` bridge. Web/API autodeploy succeeded and production Brain visibly reports 5.6.0. A dedicated current-session/DB-role/team guard preserves normal-user/device assignment checks; no shared guard, CSP, provider or assignment changes. Exact child-window/origin/session and generation checks, aborts, ephemeral bounded audio/history, six-turn/two-minute limits and cleanup are implemented.
+
+This does not yet prove a real STT/Brain conversation. The dedicated Meet window still loaded adapter 0.2.1 during readiness; owner reload to 0.3.0 is required for its explicit link controls. Live conversation/interruption acceptance is pending that real host step; prior sample/transport acceptance below remains independently valid. [Implementation](docs/meet-brain-5.6.0/IMPLEMENTATION.md) and [UAT access](docs/meet-brain-5.6.0/UAT_ACCESS_REPORT.md). No local tests/builds/lint/typecheck run.
+
 Production Brain 5.5.2: the selected-team Spanish TTS sample is generated through the web `/tts/speak` route; scoped synthetic authorization/denial acceptance and fixture retirement are recorded separately. The 5.136-second sample was received completely and clearly at the remote Meet endpoint (owner confirmation). Its repaired HTML preview also completed and was confirmed audible in production; CSP remained exactly unchanged. See [preview acceptance](docs/tts-preview-5.5.2/UAT_REPORT.md) and implementation PR #283 / evidence PR #284.
 
 These results prove bounded TTS output and preview playback, not a complete bidirectional Brain conversation. The subsequent owner-coordinated real Meet trial accepted receiver-only transport (remote fictitious phrase, incoming RTP activity), complete Spanish playback, three remote-voice cancellations without delayed restart, and complete playback after release/re-arm without manual interruption rescue. Each interruption advanced the counter and cleared active sources/queue; the owner confirmed every cutoff and recovery. Latency was not measured; no STT transcript or general echo-immunity claim. See [current audio acceptance](docs/meet-audio-20261018/UAT_REPORT.md).
