@@ -1,4 +1,23 @@
-# Current brief — Windows Meet + Salesforce MVP (2026-10-19)
+# Current brief — Windows agent and authorized interface control (2026-10-19)
+
+## Owner correction — any authorized interface, not a Salesforce product
+
+The product must control **any authorized interface** through a general objective/
+observation/action/verification loop. Meet and Salesforce are initial reference
+surfaces; their presence or specific case fields must not define the core or block
+its development. Web DOM/accessibility and native Windows applications require
+different executor capabilities behind the same contract. Never infer universal
+support from an interface name or claim that a browser extension alone controls
+native applications.
+
+Version 5.7.0 supplies audio/layer diagnostics and a narrow Salesforce reader, not
+the complete interface-control MVP. The general interface panel and integrated
+executor are still missing. Their implementation, publication and acceptance must
+remain separately visible. The previous request for Salesforce cases concerns only
+that example's acceptance. [Corrected interface scope](docs/mvp/meet-salesforce/INTERFACE_CONTROL_SCOPE.md).
+
+The bounded 5.7.0 delivery record below is retained as historical implementation
+evidence; it does not narrow the product to those two platforms.
 
 ## Current implementation continuation — 5.7.0 acceptance candidate
 
