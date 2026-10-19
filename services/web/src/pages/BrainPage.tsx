@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { BrainTtsUatPanel } from './BrainTtsUatPanel';
+import { BrainMeetPanel } from './BrainMeetPanel';
 import { useBrainContextData } from "./useBrainContextData";
 import { useBrainProviderConfig } from "./useBrainProviderConfig";
 import { useBrainAudioDevices } from "./useBrainAudioDevices";
@@ -506,6 +507,7 @@ selectedCompany?.name ?? "No company selected",
 
   return (
     <div className="space-y-6">
+      {!user?.uatTestProfile && <BrainMeetPanel teamId={selectedTeamId} disabled={!configReady || conversationMode} />}
       {user?.role === 'superadmin' && !user.uatTestProfile && <BrainTtsUatPanel teamId={selectedTeamId} />}
       <BrainProviderPanel {...{
         contextSummary,

@@ -28,6 +28,7 @@ import { DeviceModule } from './devices/device.module';
 import { DeviceController } from './devices/device.controller';
 import { LLMModule } from './llm/llm.module';
 import { BrainController } from './controllers/brain.controller';
+import { BrainMeetController } from './controllers/brain-meet.controller';
 import { PlannerController } from './controllers/planner.controller';
 import { SpeachesController } from './controllers/speaches.controller';
 import { VoiceModule } from './voice/voice.module';
@@ -84,6 +85,7 @@ import { TtsSyntheticService } from './uat-fixtures/tts-synthetic.service';
     SubAgentController,
     DeviceController,
     BrainController,
+    BrainMeetController,
     PlannerController,
     SpeachesController,
     PlatformThemeController,

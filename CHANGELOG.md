@@ -1,3 +1,9 @@
+## v5.6.0 — 2026-10-18
+
+- Add explicitly linked Meet receiver audio to configured team STT, Brain and web /tts/speak, with bounded ephemeral audio/history and interruption/late-response rejection.
+- Route-specific DB-backed team authorization permits current unassigned superadmins while preserving assigned-user and paired-device checks; no shared guard/CSP/provider changes.
+- Opt-in opener-bound Meet link has no tokens/keys in Meet, two-minute/six-turn sessions and explicit cleanup. Production acceptance separate; no local tests/builds/lint.
+
 ## v5.5.2 — 2026-10-18
 
 - Replace the TTS preview media element with accessible Web Audio controls that decode sample bytes in memory, avoiding the CSP-blocked blob media URL without changing any CSP directive.
