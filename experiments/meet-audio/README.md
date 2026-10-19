@@ -1,6 +1,37 @@
 # Meet AudioPort experiment (Windows Chrome/Edge)
 
-## Current v0.3.0 candidate — explicit Brain link
+## Current v0.4.0 candidate — layer controls and read-only Salesforce
+
+Product candidate 5.7.0 adds manual session/team, WAV STT, scoped knowledge,
+Brain, web `/tts/speak`, local playback, Meet playback and CRM controls. None
+run on mount. Copyable verbose diagnostics project only bounded timing, HTTP,
+safe-code, byte/count and generation metadata (300 events); no transcripts,
+CRM fields, URLs, credentials or raw exceptions. This is implementation, not
+functional acceptance. The owner deferred all trials until their return.
+
+The extension now also matches HTTPS `*.lightning.force.com` and
+`*.my.salesforce.com` to expose an explicit read-only bridge. Reloading it may
+require Chrome's consent for these additional site patterns; no permissions
+or CSP are bypassed. Both visible adapter headings and copied version metadata
+now match 0.4.0. No native drivers, new dependencies or background jobs.
+
+CRM must be opened from Brain using an active CRM vendor's persisted team
+origin. Declare one or two genuinely fictitious exact case numbers. Connect
+the child explicitly; the two-minute link and each lookup revalidate authority.
+The resolver supports recognized Lightning Case list-search inputs and exact
+same-origin Case links/fields. It never clicks Save/New/Edit or accepts model
+selectors. Unknown/ambiguous layouts, missing matches, login redirects, lost
+opener or expired links require assistance; absence in a view is not proof a
+case does not exist. Observed status and optional subject stay ephemeral and
+produce a deterministic quoted reply, never model/executor instructions.
+Full navigation/COOP may break the opener; reopen through Brain if necessary.
+No claim of universal Salesforce layout support or verified CRM observations.
+
+Meet ingress is manual, as permitted by the MVP plan. There is no simulated
+ACD ring, automatic answer, or new Genesys adapter. The executor decision stays
+provisional until production layer and integrated acceptance are executed.
+
+## Brain link
 
 Open a dedicated meeting window from the production Brain Meet panel, click
 **Conectar con Brain** in that child, explicitly authorize the selected team in
@@ -9,7 +40,8 @@ opener/child and origins are bound to a per-link session. Only ephemeral remote
 PCM audio, generated TTS bytes and cancellation events cross windows. Credentials
 stay in Brain; its same-origin API revalidates team authority on each request.
 Stop releases owned resources; maximum two minutes/six turns. Reload the existing
-extension after source changes. Host patterns/permissions are unchanged. This
+extension after source changes. Meet/Brain host patterns are unchanged; the new
+Salesforce patterns are described above. This
 is a source candidate until actual production conversation acceptance is recorded
 in docs/meet-brain-5.6.0; historical transport acceptance does not prove STT/Brain.
 The adapter makes no provider HTTP calls itself. Receiver audio is processed

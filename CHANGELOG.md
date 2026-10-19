@@ -1,3 +1,10 @@
+## v5.7.0 — 2026-10-19
+
+- Add explicit per-layer session/team, remote/file STT, knowledge, Brain, web TTS and playback controls, plus a bounded copyable verbose metadata log.
+- Connect exact-case voice goals to an opt-in, team-authorized read-only Salesforce Lightning surface, quoted status/subject replies, cancellation and explicit close/standby. Unknown layouts/results require assistance; no CRM writes or arbitrary executor commands.
+- Extension 0.4.0 adds Salesforce site patterns, aligns visible versions and exposes sanitized transport observations; no CSP, shared guard, provider, account or assignment changes.
+- Owner postponed all new functional/security acceptance. Source review and version/JSON/diff checks only; no local tests/build/lint/typecheck or live product trials. Historical audio acceptance is retained separately.
+
 ## v5.6.3 — 2026-10-19
 
 - Preserve global5xx redaction while exposing only an allowlisted Meet voice-stage code in a route-specific response header, validated by the web.

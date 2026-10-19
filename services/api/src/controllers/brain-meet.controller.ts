@@ -10,6 +10,7 @@ import { BrainMeetGuard } from './brain-meet.guard';
 import { ProviderConfigResolver } from '../voice/providers/provider-config.resolver';
 import { transcribeConfiguredAudio } from '../voice/providers/configured-stt';
 import { runtimeAiBudget } from '../llm/runtime-ai-budget';
+import { getVendorAllowedOrigins } from '../vendor-url-policy';
 
 @Controller('api/brain/meet/:teamId')
 @Public()
@@ -18,6 +19,15 @@ export class BrainMeetController {
   private readonly logger = new Logger(BrainMeetController.name);
   constructor(private readonly prisma: PrismaService, private readonly llm: LLMService, private readonly knowledge: VectorStoreService) {}
 
+  private async charge(req: any) {
+    try { await runtimeAiBudget.run(`meet:${req.runtimeIdentity.userId}`, undefined, () => Promise.resolve()); }
+    catch (error) {
+      if (error instanceof Error && error.message === 'AI request budget exceeded') throw new HttpException('Conversation spending limit reached', 429);
+      if (error instanceof Error && error.message === 'AI integration disabled') throw new HttpException('Conversation disabled by spending controls', 503);
+      throw error;
+    }
+  }
+
   @Get('scope')
   @Header('Cache-Control', 'no-store')
   scope(@Req() req: any) {
@@ -25,10 +35,90 @@ export class BrainMeetController {
     return { teamId, teamName, brandId, companyId };
   }
 
+  @Get('crm')
+  @Header('Cache-Control', 'no-store')
+  async crm(@Req() req: any) {
+    // Never fetch credential columns or let a client invent tenant destinations.
+    const vendors = await this.prisma.vendor.findMany({ where: { teamId: req.runtimeIdentity.teamId, type: 'crm', isActive: true }, select: { id: true, baseUrl: true, config: true } });
+    const destinations = vendors.flatMap(v => getVendorAllowedOrigins(v.baseUrl, (v.config as any)?.allowedOrigins)
+      .filter(origin => /^https:\/\/[a-z0-9-]+\.(?:lightning\.force\.com|my\.salesforce\.com)$/.test(origin))
+      .map(origin => ({ vendorId: v.id, origin })));
+    return { teamId: req.runtimeIdentity.teamId, destinations };
+  }
+
+  @Post('crm-scope')
+  @Header('Cache-Control', 'no-store')
+  async crmScope(@Req() req: any, @Body() body: { vendorId?: string; origin?: string }) {
+    const choices = await this.crm(req);
+    const match = choices.destinations.find(d => d.vendorId === body?.vendorId && d.origin === body?.origin);
+    if (!match) throw new BadRequestException('Active Salesforce destination for selected team required');
+    await this.prisma.auditLog.create({ data: { userId: req.runtimeIdentity.userId, entity: 'BRAIN_MEET', entityId: req.runtimeIdentity.teamId, action: 'MEET_CRM_READ_SCOPE', changes: JSON.stringify({ vendorId: match.vendorId }) } });
+    return { teamId: req.runtimeIdentity.teamId, ...match };
+  }
+
+  @Post('case-answer')
+  @Header('Cache-Control', 'no-store')
+  async caseAnswer(@Req() req: any, @Body() body: { vendorId?: string; origin?: string; caseNumber?: string; status?: string; subject?: string; outcome?: string }) {
+    await this.crmScope(req, body);
+    if (typeof body.caseNumber !== 'string' || !/^\d{1,12}$/.test(body.caseNumber) || !['found', 'not_found', 'needs_assistance'].includes(body.outcome || ''))
+      throw new BadRequestException('Exact fictitious case observation required');
+    if (body.outcome === 'found' && (typeof body.status !== 'string' || !body.status.trim() || body.status.length > 120 || /[\r\n\x00-\x1f]/.test(body.status)))
+      throw new BadRequestException('Bounded case status required');
+    if (body.subject !== undefined && (typeof body.subject !== 'string' || body.subject.length > 200 || /[\r\n\x00-\x1f]/.test(body.subject)))
+      throw new BadRequestException('Bounded fictitious subject required');
+    // Page text is untrusted data, never instructions to a model or an action executor.
+    const reply = body.outcome === 'found' ? `El caso ${body.caseNumber} figura con estado «${body.status!.trim()}».${body.subject?.trim() ? ` Asunto: «${body.subject.trim()}».` : ''} ¿Necesitas algo más?`
+      : body.outcome === 'not_found' ? 'No encontré una coincidencia exacta. Confirma el número de caso.'
+      : 'No pude verificar el caso en la interfaz. Necesito ayuda para continuar.';
+    return { teamId: req.runtimeIdentity.teamId, reply, outcome: body.outcome };
+  }
+
+  @Post('stt')
+  @Header('Cache-Control', 'no-store')
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 384044, files: 1, fields: 0 } }))
+  async stt(@Req() req: any, @UploadedFile() file: any) {
+    return this.processAudio(req, file, {}, true);
+  }
+
+  @Post('brain')
+  @Header('Cache-Control', 'no-store')
+  async brain(@Req() req: any, @Body() body: { message?: string }) {
+    if (!body || typeof body.message !== 'string' || !body.message.trim() || body.message.length > 1000)
+      throw new BadRequestException('Expected a fictitious message of 1–1000 characters');
+    await this.charge(req);
+    await this.prisma.auditLog.create({ data: { userId: req.runtimeIdentity.userId, entity: 'BRAIN_MEET', entityId: req.runtimeIdentity.teamId, action: 'MEET_BRAIN_LAYER', changes: '{}' } });
+    try {
+      const answer = await new BrainController(this.llm, this.knowledge).chat({ message: body.message, language: 'es', voiceMode: true }, req);
+      return { teamId: req.runtimeIdentity.teamId, reply: answer.reply.slice(0, 4000) };
+    } catch (error) {
+      if (error instanceof HttpException && error.getStatus() !== 500) throw error;
+      req.res.setHeader('X-Keledon-Voice-Error', 'MEET_BRAIN_UNAVAILABLE');
+      throw new HttpException('Configured team Brain unavailable', 502);
+    }
+  }
+
+  @Post('knowledge')
+  @Header('Cache-Control', 'no-store')
+  async searchKnowledge(@Req() req: any, @Body() body: { message?: string }) {
+    if (!body || typeof body.message !== 'string' || !body.message.trim() || body.message.length > 1000)
+      throw new BadRequestException('Expected a fictitious query of 1–1000 characters');
+    await this.charge(req);
+    await this.prisma.auditLog.create({ data: { userId: req.runtimeIdentity.userId, entity: 'BRAIN_MEET', entityId: req.runtimeIdentity.teamId, action: 'MEET_KNOWLEDGE_LAYER', changes: '{}' } });
+    const result = await this.knowledge.search(body.message.trim(), {
+      limit: 5, scoreThreshold: 0.35, team_id: req.runtimeIdentity.teamId,
+      company_id: req.runtimeIdentity.companyId, brand_id: req.runtimeIdentity.brandId,
+    });
+    return { teamId: req.runtimeIdentity.teamId, count: result.results?.filter((r: any) => r.score >= 0.35).length || 0 };
+  }
+
   @Post('turn')
   @Header('Cache-Control', 'no-store')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 384044, files: 1, fields: 1, fieldSize: 50000 } }))
   async turn(@Req() req: any, @UploadedFile() file: any, @Body() body: { history?: string }) {
+    return this.processAudio(req, file, body);
+  }
+
+  private async processAudio(req: any, file: any, body: { history?: string }, sttOnly = false) {
     const audio: Buffer | undefined = file?.buffer;
     // Accept only bounded mono PCM WAV, not compressed/decompression-bomb input.
     if (!audio || audio.length < 3244 || audio.length > 384044 ||
@@ -50,10 +140,10 @@ export class BrainMeetController {
     const current = () => { if (disconnected) throw new HttpException('Conversation cancelled', 409); };
     let stage: 'PREPARE' | 'STT' | 'BRAIN' = 'PREPARE';
     try {
-      await runtimeAiBudget.run(`meet:${req.runtimeIdentity.userId}`, undefined, () => Promise.resolve());
+      await this.charge(req);
       await this.prisma.auditLog.create({ data: {
         userId: req.runtimeIdentity.userId, entity: 'BRAIN_MEET', entityId: req.runtimeIdentity.teamId,
-        action: 'MEET_VOICE_TURN', changes: JSON.stringify({ audioBytes: audio.length, language: 'es' }),
+        action: sttOnly ? 'MEET_STT_LAYER' : 'MEET_VOICE_TURN', changes: JSON.stringify({ audioBytes: audio.length, language: 'es' }),
       } });
       const config = await new ProviderConfigResolver(this.prisma).resolveTeamConfig(req.runtimeIdentity.teamId);
       if (!['speaches', 'deepgram'].includes(config.sttProvider))
@@ -61,18 +151,29 @@ export class BrainMeetController {
       if (config.sttProvider === 'speaches') config.sttModel = 'Systran/faster-whisper-large-v3';
       current();
       stage = 'STT';
+      const sttStart = Date.now();
       const stt = await transcribeConfiguredAudio(config, audio, 'es', { timeoutMs: 45000, signal: cancellation.signal });
+      const timings: { sttMs: number; brainMs?: number } = { sttMs: Date.now() - sttStart };
       current();
       const transcript = typeof stt.text === 'string' ? stt.text.trim() : '';
-      if (!transcript) return { teamId: req.runtimeIdentity.teamId, transcript: '', reply: '' };
+      if (sttOnly) return { teamId: req.runtimeIdentity.teamId, transcript: transcript.slice(0, 4000), timings };
+      if (!transcript) return { teamId: req.runtimeIdentity.teamId, transcript: '', reply: '', timings };
       if (transcript.length > 4000) throw new BadRequestException('Transcription too long');
+      const cases = [...transcript.matchAll(/\b(?:caso|case|ticket)\s*(?:es\s*)?(?:el\s*)?(?:(?:número|numero|n[º°.]|#)\s*)?(\d{1,12})\b/gi)];
+      const caseNumber = cases.length === 1 ? cases[0][1] : undefined;
+      if (cases.length > 1) return { teamId: req.runtimeIdentity.teamId, transcript, reply: 'Indica un único número de caso ficticio para poder verificarlo.', timings };
+      if (caseNumber) return { teamId: req.runtimeIdentity.teamId, transcript, reply: '', goal: { type: 'search_case', caseNumber }, timings };
+      if (/^(?:gracias[,\s]*)?(?:adiós|adios|terminar|finalizar|hasta luego)[.!\s]*$/i.test(transcript))
+        return { teamId: req.runtimeIdentity.teamId, transcript, reply: 'Gracias. La conversación ha terminado.', goal: { type: 'close' }, timings };
       stage = 'BRAIN';
+      const brainStart = Date.now();
       const answer = await new BrainController(this.llm, this.knowledge).chat({
-        message: `Conversación de voz: responde en español, en una o dos frases breves, sin acciones externas. El interlocutor dijo: ${transcript}`,
+        message: `Conversación de voz del MVP: responde en español, en una o dos frases breves. Para consultar Salesforce pide el número de caso ficticio escrito en cifras. Nunca inventes estados ni ejecutes acciones externas; la lectura la realiza un adaptador autorizado por equipo. El interlocutor dijo: ${transcript}`,
         history, language: 'es', voiceMode: true,
       }, req);
       current();
-      return { teamId: req.runtimeIdentity.teamId, transcript, reply: answer.reply.slice(0, 4000) };
+      timings.brainMs = Date.now() - brainStart;
+      return { teamId: req.runtimeIdentity.teamId, transcript, reply: answer.reply.slice(0, 4000), timings };
     } catch (error) {
       if (disconnected) throw new HttpException('Conversation cancelled', 409);
       const message = error instanceof Error ? error.message : '';

@@ -345,7 +345,7 @@
     // Only allowlisted diagnostic fields: never arbitrary Error.message/stack,
     // browser console, track labels, URLs, filenames, transcripts or audio.
     const payload = JSON.stringify({
-      kind: 'KELEDON_MEET_AUDIO_DIAGNOSTICS', version: '0.2.1',
+      kind: 'KELEDON_MEET_AUDIO_DIAGNOSTICS', version: '0.4.0',
       copiedAt: new Date().toISOString(), state: snapshot(), events: diagnostics,
     }, null, 2);
     await navigator.clipboard.writeText(payload);
@@ -364,7 +364,7 @@
     const panel = document.createElement('section');
     panel.setAttribute('aria-label', 'KELEDON audio experiment');
     const heading = document.createElement('strong');
-    heading.textContent = 'KELEDON · audio experimental v0.2.1';
+    heading.textContent = 'KELEDON · audio experimental v0.4.0';
     const description = document.createElement('p');
     description.textContent = 'Armar antes de entrar. Micrófono físico excluido. Sin grabación ni conexión al Brain.';
     panel.append(heading, description);
