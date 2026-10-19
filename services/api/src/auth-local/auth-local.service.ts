@@ -335,6 +335,14 @@ export class LocalAuthService {
     }
   }
 
+  /** Only /me calls this after the global guard validates the audited preview session. */
+  async getGuardedProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !isAccountActive(user)) return null;
+    return { id: user.id, email: user.email, name: user.name, role: user.role,
+      company_id: user.companyId, team_id: user.teamId, last_session: user.lastLogin?.toISOString() };
+  }
+
   // Keep for backward compatibility — used by controller to enrich user data
   async getCrudData() {
     try {

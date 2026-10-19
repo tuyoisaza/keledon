@@ -3,12 +3,14 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import * as crypto from 'crypto';
 import { IS_PUBLIC_KEY } from './public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { isAccountActive, isAccountSessionCurrent } from '../auth-local/account-lifecycle.policy';
+import { isManagedRolePreview } from '../auth-local/role-preview-fixtures.service';
 import {
   isPermittedUatTestProfile,
   parseUatTestProfileIds,
@@ -31,6 +33,8 @@ interface TokenPayload {
 interface AuthenticatedRequest {
   user?: TokenPayload;
   headers: { authorization?: string };
+  method?: string;
+  route?: { path?: string };
 }
 
 @Injectable()
@@ -88,6 +92,22 @@ export class AuthGuard implements CanActivate {
     }
 
     request.user = user;
+    if (user.uatTestProfile) {
+      // Fail closed for mutations, runtime/provider APIs and non-reviewed GETs.
+      const path = request.route?.path || '';
+      const safeRead = path === '/api/auth/me' ||
+        path === '/api/devices' || path === '/api/devices/:id/status' ||
+        /^\/api\/crud\/(companies|brands|teams|users|vendors|keledons|sessions|knowledge|interfaces|voice-profiles)(\/:[A-Za-z]+)?$/.test(path) ||
+        path === '/api/crud/teams/:id/interfaces' || path === '/api/crud/knowledge/:id/documents';
+      if (request.method !== 'GET' || !safeRead) {
+        await this.prisma?.auditLog.create({ data: {
+          userId: user.uatActorUserId, action: 'ROLE_PREVIEW_ACCESS_DENIED',
+          entity: UAT_TEST_PROFILE_AUDIT_ENTITY, entityId: user.uatTestSessionId,
+          changes: JSON.stringify({ profileUserId: user.userId, method: request.method, route: path }),
+        } });
+        throw new ForbiddenException('Role preview is read-only; return to superadmin to perform actions');
+      }
+    }
     return true;
   }
 
@@ -182,7 +202,6 @@ export class AuthGuard implements CanActivate {
   ): Promise<TokenPayload | null> {
     if (
       !this.prisma ||
-      !uatTestProfilesEnabled() ||
       !payload.uatTestSessionId ||
       !payload.uatActorUserId ||
       payload.expiresAt - Date.now() > UAT_TEST_PROFILE_TTL_MS
@@ -210,10 +229,6 @@ export class AuthGuard implements CanActivate {
         }),
         this.prisma.user.findUnique({
           where: { id: payload.userId },
-          select: {
-            id: true, name: true, email: true, role: true,
-            uatFixtureRunId: true, uatFixtureExpiresAt: true, uatFixtureRetiredAt: true,
-          },
         }),
         this.prisma.user.findUnique({
           where: { id: payload.uatActorUserId },
@@ -227,6 +242,7 @@ export class AuthGuard implements CanActivate {
       const allowedIds = parseUatTestProfileIds(
         process.env.KELEDON_UAT_TEST_PROFILE_IDS,
       );
+      const managed = profile && await isManagedRolePreview(this.prisma, profile, payload.uatActorUserId);
       if (
         !session ||
         ended ||
@@ -239,12 +255,14 @@ export class AuthGuard implements CanActivate {
         Date.now() >= details.expiresAt ||
         details.expiresAt - session.createdAt.getTime() >
           UAT_TEST_PROFILE_TTL_MS ||
-        !allowedIds.includes(payload.userId) ||
         !profile ||
-        profile.uatFixtureRunId ||
+        details.companyId !== profile.companyId ||
+        details.teamId !== profile.teamId ||
+        session.createdAt.getTime() < (profile.uatFixtureAuthAfter?.getTime() ?? 0) ||
+        (!managed && !(uatTestProfilesEnabled() && allowedIds.includes(payload.userId) &&
+          !profile.uatFixtureRunId && isPermittedUatTestProfile(profile))) ||
         !isAccountActive(profile) ||
         !isAccountActive(actor) ||
-        !isPermittedUatTestProfile(profile) ||
         actor?.role !== 'superadmin'
       ) {
         return null;

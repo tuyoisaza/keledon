@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { WEBSOCKET_URL } from '@/lib/config';
+import { useAuth } from './AuthContext';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -46,14 +47,24 @@ async function resolveWsUrl(): Promise<string> {
 }
 
 export function SocketProvider({ children }: SocketProviderProps) {
+  const { user, isLoading } = useAuth();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(true);
 
   useEffect(() => {
+    if (isLoading || !user || user.uatTestProfile) {
+      setSocket(null);
+      setConnected(false);
+      setConnecting(false);
+      return;
+    }
     let newSocket: Socket | null = null;
+    let active = true;
 
     resolveWsUrl().then((url) => {
+      if (!active) return;
+      setConnecting(true);
       newSocket = io(url, {
         transports: ['websocket', 'polling'],
         timeout: 20000,
@@ -89,11 +100,12 @@ export function SocketProvider({ children }: SocketProviderProps) {
     });
 
     return () => {
+      active = false;
       if (newSocket) {
         newSocket.close();
       }
     };
-  }, []);
+  }, [isLoading, user?.id, user?.uatTestProfile]);
 
   const value: SocketContextType = {
     socket,
