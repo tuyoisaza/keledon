@@ -22,9 +22,11 @@ ACD alarm detection and universal UI adaptability are not claimed.
 
 Speaches remains the same provider/image, with explicit 10 CPU/10 GB and
 `sleepApplication:false` reapplied after a stale deployment was observed sleeping.
-Railway redeployment 07ad0766-f6f1-4a1e-9297-b53615f6ea05 reported SUCCESS/Online,
-one running replica. This is infrastructure readback, not a successful STT test or
-proof of remaining permanently awake. [Operational evidence](docs/mvp/meet-salesforce/RAILWAY_REPAIR_20261019.md).
+The reused-build container slept again; direct authenticated Railway API readback
+independently confirmed the false setting. A fresh deployment from current service
+configuration, 0f48dadd-9238-4390-80c7-dbf8f1405779, then reported SUCCESS with
+`sleepApplication:false`. This is infrastructure readback, not a successful STT test
+or proof of remaining permanently awake. [Operational evidence](docs/mvp/meet-salesforce/RAILWAY_REPAIR_20261019.md).
 
 Implementation, publication and acceptance are separate. New conversation/CRM/
 diagnostic acceptance is PENDING until the owner returns; previous sample,

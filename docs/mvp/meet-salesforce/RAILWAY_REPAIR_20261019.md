@@ -16,10 +16,27 @@ CPU/diez GB y desactivar serverless. No se inspeccionaron valores de secretos.
   y el mismo build. Nuevo despliegue 07ad0766-f6f1-4a1e-9297-b53615f6ea05,
   creado 2026-10-19T20:39:18.303Z; SUCCESS a 20:39:25.025Z. Railway reportó
   Online, 1/1 réplicas, cero fallos recientes y sin trabajo pendiente.
+- A los diez minutos, 07ad0766 volvió a SLEEPING. La API pública consultada con la
+  sesión CLI ya existente confirmó de forma independiente `sleepApplication:false`.
+  La escritura era real, pero ese contenedor no demostraba aplicar el ajuste.
+- Se creó un despliegue nuevo con la operación documentada `serviceInstanceDeployV2`,
+  sin cambiar fuente/imagen/proveedor: 0f48dadd-9238-4390-80c7-dbf8f1405779,
+  creado 2026-10-19T20:50:38.470Z. La relectura directa confirmó SUCCESS y
+  `sleepApplication:false`. Los límites siguen 10 CPU/10000000000 bytes.
+  No se hizo login nuevo ni se leyeron/exportaron credenciales de la CLI.
 
 Se conserva `ghcr.io/speaches-ai/speaches:0.9.0-rc.3-cpu`, una réplica y volumen
-existente. La serialización de configuración omite el flag false; el conector
-confirmó la escritura. La ausencia del flag no se usa como prueba independiente
-de suspensión desactivada. Persistencia del estado despierto y funcionamiento STT
-siguen separados: no se envió audio ni se ejecutó una prueba durante esta reparación.
+existente. La serialización del conector omite false; la consulta directa de
+`serviceInstance.sleepApplication` ya verifica false, sin inferirlo de esa ausencia.
+Se usa un despliegue nuevo desde la configuración vigente. Persistencia del estado
+despierto y funcionamiento STT siguen separados: no se envió audio ni se ejecutó
+una prueba durante esta reparación.
 No cambios de claves, proveedor, modelo, roles, cuentas o asignaciones.
+
+La comparación staged de los mismos valores creó un borrador vacío
+86dec657-7c40-4f8d-8752-a07e912120fe (cero cambios). La herramienta rechazó su
+cierre por falta de aprobación y confirmó que no hizo cambios. Se deja intacto;
+no se usa otro transporte para eludir ese rechazo. No contiene ajustes pendientes.
+
+[Railway: aplicación del ajuste al crear el contenedor](https://docs.railway.com/deployments/serverless)
+y [operación oficial de despliegue](https://docs.railway.com/integrations/api/manage-services).

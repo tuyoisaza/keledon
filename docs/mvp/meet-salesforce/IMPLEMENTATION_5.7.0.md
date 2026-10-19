@@ -53,9 +53,14 @@ aportar casos realmente ficticios. Meet manual no prueba alarma/oferta ACD.
 
 ## Publicación
 
-Entrega prevista por rama `codex/mvp-layer-controls` → PR → main verificado;
-versión producto 5.7.0, extensión 0.4.0. La URL/SHA final se registra en el recibo
-de entrega después de la integración, sin fabricar autodeploy ni prueba de producto.
+Rama `codex/mvp-layer-controls`, [PR #292](https://github.com/tuyoisaza/keledon/pull/292)
+MERGED a main `49bb2229760914f42ed3758f87cefbe4c5d3138b`; árbol y versión remotos
+verificados. Producto 5.7.0, extensión 0.4.0. Hosting se registra separadamente en
+el recibo posterior, sin fabricar autodeploy ni prueba de producto.
+Railway reportó API y Web SUCCESS/Online para los autodeploys de este candidato;
+no se abrió la aplicación ni se ejercitaron los nuevos controles para verificarlo.
+[Cobertura](PHDK_COMMITMENT_COVERAGE.md) y [auditoría](PHDK_COMPLETION_AUDIT.md)
+del alcance actual, separadas de los archivos raíz ajenos preservados.
 
 ## Aceptación
 
