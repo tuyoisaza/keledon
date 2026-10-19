@@ -53,7 +53,8 @@ export function RolePreviewUatPanel() {
         check(`${profile.role}.start`, 201, started.status, !!token && !!activeSession);
         lastPreview.current = token;
         const me = await request('/api/auth/me', token);
-        check(`${profile.role}.identity`, 200, me.status, me.data?.user?.id === profile.id && me.data?.user?.role === profile.role && me.data?.user?.uatTestProfile === true);
+        check(`${profile.role}.identity`, 200, me.status, me.data?.user?.id === profile.id && me.data?.user?.role === profile.role && me.data?.user?.uatTestProfile === true &&
+          !!me.data.user.companyId && !!me.data.user.teamId && typeof me.data.user.companyName === 'string' && me.data.user.companyName.startsWith('Company Co'));
         check(`${profile.role}.read`, 200, (await request('/api/devices', token)).status);
         check(`${profile.role}.write-denial`, 403, (await request(`/api/crud/users/${profile.id}`, token, 'PUT', { name: profile.name })).status);
         check(`${profile.role}.cross-tenant-denial`, 403, (await request(`/api/crud/companies/${encodeURIComponent(companyB)}`, token)).status);

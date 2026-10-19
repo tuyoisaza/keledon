@@ -35,3 +35,9 @@ Source/security and full scoped diff review; TS/TSX syntax parse (14 files, zero
 | ROLE-BOOT-05 | Normal PR/merge, remote main and production readback | Publication pending |
 
 Final runtime evidence will be recorded under this directory and canonical UAT artifacts after execution, including actual failures and cleanup. Source merge alone does not complete these commitments.
+
+## Actual 5.5.0 UAT and 5.5.1 repair
+
+First production run phdk-uat-7d828120-432b-431f-a924-698a26c11986 created the scoped synthetic operator through the protected UI. All four actual sidebar switches/returns, User reload and keyboard activation passed. The finite DOM-reported API batch plus retirement verification passed 49/49, including foreign-tenant/write/TTS/global denial, genuine expiry and old-token revocation. Original actor was used only for creation/retirement; synthetic tab closed after old operator/profile /me returned 401. See production-5.5.0.json.
+
+Actual screenshot/AX exposed two UI defects: return footer below a short viewport and missing tenant names in Profile. 5.5.1 makes nav scroll independently, caps/scrolls the footer, fetches assigned synthetic profile context from persisted relations and supports the existing camelCase contract in Profile. No permission expansion. Production retest remains pending this repair's exact deployment; initial failures retained.

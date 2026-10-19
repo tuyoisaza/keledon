@@ -1,0 +1,318 @@
+{
+  "candidate": "5.5.0",
+  "source_sha": "b8a55ad4e434393645b137b6ae5b26f0f45835c9",
+  "deployed_sha": "c1a54eba3e03e7878aad0a8bdca81ace71c68ddd",
+  "fixture_run": "phdk-uat-7d828120-432b-431f-a924-698a26c11986",
+  "observed_at": "2026-10-19T04:22:08.670816+00:00",
+  "evidence_kind": "Summary transcribed from actual in-product DOM result array; all 49 statuses observed through CUA",
+  "api_results": [
+    {
+      "case": "operator.identity",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "operator.profiles",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "operator.global-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "operator.bootstrap-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "operator.unknown-target",
+      "expected": "404",
+      "actual": 404,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.start",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.identity",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.read",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.write-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.cross-tenant-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.switch-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.tts-denial",
+      "expected": "401/403",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.return",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.revoked",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "admin.return-idempotent",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.start",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.identity",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.read",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.write-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.cross-tenant-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.switch-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.tts-denial",
+      "expected": "401/403",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.return",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.revoked",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "agent.return-idempotent",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.start",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.identity",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.read",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.write-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.cross-tenant-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.switch-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.tts-denial",
+      "expected": "401/403",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.return",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.revoked",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "coordinator.return-idempotent",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "user.start",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "user.identity",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "user.read",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "user.write-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "user.cross-tenant-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "user.switch-denial",
+      "expected": "403",
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "user.tts-denial",
+      "expected": "401/403",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "user.return",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "user.revoked",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "user.return-idempotent",
+      "expected": "201",
+      "actual": 201,
+      "result": "PASS"
+    },
+    {
+      "case": "operator.expiry",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "operator.final-return-identity",
+      "expected": "200",
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "cleanup.operator-revoked",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "cleanup.preview-revoked",
+      "expected": "401",
+      "actual": 401,
+      "result": "PASS"
+    }
+  ],
+  "ui": {
+    "role_switch_and_return": {
+      "user": "PASS",
+      "agent": "PASS",
+      "admin": "PASS",
+      "coordinator": "PASS"
+    },
+    "reload_user": "PASS",
+    "keyboard_enter_user": "PASS",
+    "low_height_return_visibility": "FAIL: nav does not shrink/scroll; footer banner/button below 660px viewport",
+    "tenant_names": "FAIL: assigned role Profile shows Not assigned because snake/camel fields and legacy JSON enrichment omit DB context"
+  },
+  "cleanup": "Original operator used audited retirement; old operator and retained preview /me both 401; synthetic tab closed",
+  "no_real_account_or_provider_mutation": true
+}

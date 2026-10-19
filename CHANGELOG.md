@@ -1,5 +1,11 @@
 ## v5.4.3 — 2026-10-18
 
+## v5.5.1 — 2026-10-18
+
+- Repair two actual production role-selector UAT findings: keep navigation independently scrollable and the test/return footer reachable in short desktop viewports; show persisted Company Co tenant/brand/team names in scoped profiles.
+- Accept the API's camelCase profile context alongside legacy snake_case fields and require synthetic tenant context in production API checks.
+- Retain first-run evidence: all four UI role switches/returns and 49 API/expiry/revocation checks passed; two visual findings require deployed retest. No local application commands.
+
 ## v5.5.0 — 2026-10-18
 
 - Add an explicitly authorized, audited synthetic superadmin session limited to the role selector; preserve the real operator session in its original tab.
