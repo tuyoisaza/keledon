@@ -1,6 +1,6 @@
 # UAT report — Meet STT/Brain/TTS 5.6.0
 
-PARTIALLY DELIVERED / functional conversation BLOCKED on actual extension reload. Source merged PR #286 and web/API deployment verified. See UAT_ACCESS_REPORT.md for actual browser readiness, 401 denial evidence, exact CSP equality and the single owner host step. No new conversation, transcript, generated reply, barge-in or second-turn PASS is claimed. Old sample/transport tests do not prove the new bridge.
+LATEST2026-10-19: PARTIALLY DELIVERED / functional conversation BLOCKED at configured STT. Extension link/team authorization passed. The5.6.2 retest sent actual remote audio; upstream timeout45seconds and provider restarts prevent a transcript/Brain reply. See latest evidence and administrator prerequisite at the end. Historical extension-reload blockers below are resolved, not current prerequisites. No successful conversation or Brain-interruption PASS is claimed.
 
 ## Results
 
@@ -37,3 +37,19 @@ Repair: new Meet entrypoint opts into45-second STT wait; all other callers keep1
 PR #288 diagnostic patch and PR #289 scoped timeout/upstream-cancellation repair are merged; source main967841e907ae0d5096bef9451ce052a58e2107fd, both existing web/API autodeploy statuses success. Production Brain visibly5.6.2; exact CSP matches prior baseline. New child Meet link/selected-team authorization/capture start succeeded. The5.6.2 trial had0 received bytes/packets and0 turns: no provider call and no reply/barge-in acceptance. Explicit stop verified armedfalse, owned remote/output tracks0, activeSources0, contextabsent, queuedAhead0; generated mic turned off, camera off. Immediate remote-mic readiness question is pending before another coordinated turn. Do not count an absence of input as a new STT failure or a successful timeout repair.
 
 Current case state supersedes historical header: DEPLOY/LINK/selected-team scope/CSP/cleanup PASS; previous conversation attempt FAIL at STT deadline; successful full conversation/barge-in/follow-up PENDING actual remote phrase on5.6.2. Anonymous denials remain separately evidenced; expired/normal-user synthetic security cases still unexecuted. No local tests/builds/lint/typecheck or repeated provider probes; no recording or private meeting address in Git. The legacy0.2.1 heading was not an extension-version check; actual0.3.0 link controls are the observed readiness evidence.
+
+## Actual retest — 2026-10-19 09:31–09:33 America/Mexico_City
+
+Owner explicitly confirmed second-device mic active and immediate readiness. Current5.6.2 Brain team scope authorized,0.3.0 child link/capture running, two participants; physical agent mic excluded. Two real remote segments emitted. New remote voice cancelled first in-flight STT: provider HTTP499 after9479ms at15:31:38.290Z. Second segment waited its full45s: provider HTTP499 after44999ms at15:32:26.443Z. API logged allowlisted stageSTT/codeMEET_STT_TIMEOUT. No transcript, LLM reply or TTS output; delivered0. Network-phase cancellation is observed; audible Brain barge-in/follow-up remain NOT ACCEPTED.
+
+Read-only provider diagnostics: Speaches runtime startup events at15:31:30 and again15:32:32; no termination reason captured. One-hour resource summary121 samples: memory max2.999996416GB, configured memory limit2.999996416GB; current0.727678976GB. Reaching memory limit plus restarts supports a resource-exhaustion hypothesis, not a confirmed OOM. CUDA library warnings were observed but do not alone establish causality. Do not install dependencies or alter resource/provider settings from these observations.
+
+Why the safe code was absent in the web: the existing ApiCorrelationExceptionFilter intentionally strips all5xx body details, including custom code. Candidate5.6.3 leaves that global policy untouched and supplies only the bounded route-specific X-Keledon-Voice-Error header; frontend validates it against the existing allowlist. Source review/static whitespace/version/dependency checks only; no extra provider request solely to force this error and no runtime PASS inferred for the new display path.
+
+Cleanup observed after failure: activefalse, adapterRELEASED_RESELECT_MEET_MIC, armedfalse, own remote/output tracks0, activeSources0, contextabsent, queue0; mic/cameraoff. No raw recording/transcript/credentials/private meeting address stored. No local tests/build/lint/typecheck, new provider/admin write, automatic retry, resource increase or provider switch.
+
+## Current blocking prerequisite and exact resume
+
+Who: administrator responsible for the existing Speaches service in Railway (owner or their authorized operator).
+What/where: review the current Spanish transcription model's memory use and the service restarts against the3GB limit; restore stable /v1/audio/transcriptions for the configured provider/model. Any resource or provider-setting change is an administrator decision outside the assistant's current no-hosting/provider-writes scope; no new spend assumed.
+When: before asking the remote interlocutor to repeat more phrases. How to resume: owner confirms “STT estable; listo para Meet”. Assistant checks current source/deployment and real access, then coordinates one fresh fictitious remote utterance, audible Brain answer, real spoken interruption/no stale return, follow-up and cleanup. Do not keep increasing deadlines or count old transport/preview proof as successful conversation.
