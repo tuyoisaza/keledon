@@ -1,0 +1,17 @@
+[
+  {
+    "pass": true,
+    "status": 401,
+    "case": "anonymous-scope"
+  },
+  {
+    "pass": true,
+    "status": 401,
+    "case": "invalid-bearer-scope"
+  },
+  {
+    "pass": true,
+    "status": 401,
+    "case": "anonymous-turn"
+  }
+]
