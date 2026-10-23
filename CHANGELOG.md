@@ -1,3 +1,9 @@
+## 2026-10-23 — PHDK v2.65.1 standards maintenance (v5.7.1)
+
+- Vendor the complete canonical standards manifest from `d4ed10e96f5fd05ebeaa38a664442d7d10d6cf86` and align native entrypoints.
+- Preserve project-specific rules and architecture; changes to product files are release metadata only.
+- Scope and verification limits: [`docs/phdk/standards/2026-10-23-v2.65.1.md`](docs/phdk/standards/2026-10-23-v2.65.1.md). Required publication gates and the separate Stack Security Review retain their actual evidence status.
+
 ## v5.7.0 — 2026-10-19
 
 - Add explicit per-layer session/team, remote/file STT, knowledge, Brain, web TTS and playback controls, plus a bounded copyable verbose metadata log.

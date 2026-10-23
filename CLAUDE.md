@@ -8,7 +8,7 @@ Canonical V4 intent lives in docs/specs/v4_KELEDON_CANON.md and v4_KELEDON_BROWS
 
 ## Delivery and versions
 Use explicit actual repository workdir; this run uses C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON.
-Implementation delivery follows current PHDK branch/check/version-prefixed commit/PR/review/merge/readback semantics within the requested scope. Bare upgrade remains local sync only.
+Implementation delivery follows current PHDK branch/check/version-prefixed commit/PR/review/merge/readback semantics within the requested scope. Bare upgrade performs local standards synchronization plus the bounded read-only Stack Security Review, including no-op synchronization. Git publication and application remediation require applicable authorization in the current request.
 Read actual five package versions; never reset to obsolete 0.2.x. Reconcile browser/cloud/landing/services/api/services/web plus lock root metadata once for integrated release.
 The version-bump and release workflows were intentionally removed from main. Do not recreate bots, hosted CI, scheduled jobs or tag-triggered publication. Installer assets/production are unverified unless independently evidenced.
 Use normal existing authenticated git, never inject credentials into remote URLs or print secrets. Preserve hooks/protections; no force push.

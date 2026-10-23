@@ -1,3 +1,11 @@
+## v2.62.0 — Explicit-only UAT authorization (overrides legacy automatic-stage wording)
+
+**Binding rule:** `PHDK auto` and `PHDK auto force` MUST NOT invoke, enter, provision, seed, or run UAT Prep (45), UAT (50), or UAT Fix (60), even after milestones, deployment, Check, or a failed prior UAT. Neither FORCE nor a generic full-lifecycle instruction grants UAT authorization. These stages are **DEFERRED — OWNER OPT-IN**, not BLOCKED, FAILED, or a completion prerequisite. This rule takes precedence over any older automatic UAT transitions in this file.
+
+Auto/Force must implement **all authorized milestones first**, perform permitted static checks and integration review, version/commit/push/PR/merge each completed value milestone, finish applicable SEO/AEO and Check/remediation without invoking acceptance tests, deploy through the existing authorized production route, verify remote main and deployment with available non-UAT evidence, and report truthful **DEVELOPMENT COMPLETE / PARTIALLY DELIVERED / BLOCKED** separately from **UAT NOT RUN**. A deployment that cannot be verified must be reported as unverified, not complete. Preserve user stories, acceptance criteria and milestone-to-story mapping as *documentation only*; no synthetic accounts, fixtures, browser journeys, runtime acceptance, or UAT spending in Auto. Do not execute local behavioral tests, Docker, or unauthorized external services.
+
+At the end, offer `PHDK uat` as an optional **future explicit command**, without waiting for an answer as a delivery gate. Only a fresh, explicit owner invocation of `PHDK uat` authorizes UAT and its necessary Prep prerequisite, subject to normal access, safety and spending controls. Standalone `PHDK uat prep` prepares identities only when explicitly requested; it does not authorize running UAT. `PHDK uat fix` requires explicit invocation or authorization within an active explicitly initiated UAT. Prior UAT failures never reopen the completed development goal or prevent subsequent independent development.
+
 # PHDK Evolution Standard
 
 ## Authority and purpose
@@ -12,7 +20,7 @@ The current user's request and actual host/repository controls govern actions. W
 - Describe PHDK as an **operating system for AI-assisted software delivery**: a set of repository-owned standards, command contracts, agent instructions, checks and handoffs. It is not a deployed application, a hosting provider, or a background agent.
 - Spell documented commands as `PHDK capture`, `PHDK plan`, `PHDK PMO`, `PHDK auto`, `PHDK auto force`, `PHDK uat prep`, `PHDK uat`, `PHDK uat fix`, `PHDK check`, `PHDK check --fix`, `PHDK upgrade`, and `PHDK upgrade force`. Do not claim a quoted command activates its mode.
 - Use descriptive uppercase Markdown filenames for canonical standards, such as `PHDK_EVOLUTION_STANDARD.md`. Keep canonical standards, changelogs, PR descriptions and commit messages in English unless the current owner asks otherwise.
-- The lifecycle is intent-aware Capture → Plan → optional PMO → **real implementation and integration** → UAT Prep → UAT / Fix → conditional SEO and AEO/GEO → Check / remediation → verified Git delivery. A planned or scaffolded product is not a delivered product. Apply conditional standards only when supported by the product's intent.
+- The lifecycle is intent-aware Capture → Plan → optional PMO → **real implementation and integration** → conditional SEO and AEO/GEO → Check / remediation → verified Git delivery; optional UAT Prep → UAT / Fix only after explicit `PHDK uat`. A planned or scaffolded product is not a delivered product. Apply conditional standards only when supported by the product's intent.
 - `PHDK auto` executes the entire authorized goal; `PHDK auto force` waives PHDK-imposed human gates, **not** actual security controls, hooks, access restrictions, or owner exclusions. Neither is activated by working on PHDK standards.
 
 ## Required start of every canonical-PHDK maintenance session
@@ -30,7 +38,7 @@ For an audit-only request, stop after reporting the verified findings. Do not bu
 - **Canonical workspace:** `tuyoisaza/PHDK`, with `main` as the source of released standards. Keep each authorized change in a scoped branch (for example `phdk/vX.Y.Z/topic`, `feature/topic`, or `fix/topic`) and normally integrate through a reviewable PR.
 - **Installed-project workspace:** `phdk-standards/` contains manifest-vendored PHDK files and managed tool instructions. Product code, product intent, local owner decisions and non-managed text belong to the downstream project; a canonical release never silently overwrites them.
 - Do not edit a downstream project's product implementation as a side effect of changing canonical PHDK. Publishing PHDK also does not mean that every project or already-open AI session has adopted/reloaded the new version.
-- Do not create concurrent branches, worker agents, worktrees or multi-repository queues for ordinary changes. Only explicitly active PMO may coordinate bounded in-session workers with confirmed ownership and dependencies. Avoid source collisions, forced pushes and silent overwrites.
+- Do not create uncontrolled concurrent branches, worker agents, worktrees or multi-repository queues. Bounded in-session delegation is allowed in any mode under `PHDK_INTELLIGENT_EXECUTION.md` with ownership and dependencies; PMO alone governs portfolio workstreams. Avoid source collisions, forced pushes and silent overwrites.
 - Do not install schedulers, GitHub Actions, background watchers, recurring jobs or deployment integrations. Do not administer Railway/other providers or use a new spend pathway as a release workaround. Preserve valid existing provider-connected autodeploy without mistaking source merge for live deployment.
 - Direct-to-`main` writing is only the separately authorized and eligible `PHDK Developer Mode` exception. Agent-policy and permission changes use the normal branch/PR path even if the diff is short.
 
