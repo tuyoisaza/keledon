@@ -20,15 +20,15 @@ Record owner approval and its task/PR scope separately from assistant source rev
 
 In explicit `PHDK auto force`, PHDK-only human/manual/formal and security-signoff reviews are `NON_BLOCKING_BY_MODE`. Record that disposition without a preventive review/protection investigation, searching approvers or asking for another approval. Technical diff/security review and mandatory checks remain work to execute. A generic "review pending" or "owner decision required" record cannot itself stop delivery. Genuine current owner restrictions and known actual controls remain binding; actual GitHub/hook/tool rejections start the repair-and-retry cycle below without bypass.
 
-Normally one assistant handles the current request. Do not delegate tasks, create subagents, coordinate agent teams, or distribute a task queue unless the owner explicitly activates `PHDK PMO`. Under PMO, only the PMO orchestrator may delegate owner-confirmed workstreams to supported in-session workers under `PHDK_PMO.md`; workers cannot delegate or continue after the conversation.
+Normally one assistant handles the current request. Bounded in-session delegation is permitted in any mode only under `PHDK_INTELLIGENT_EXECUTION.md` when runtime-supported and beneficial. PMO coordinates its confirmed portfolio workstreams under `PHDK_PMO.md`. Workers cannot recursively delegate or continue after the conversation.
 
 Stop when the whole deliverable is complete, the user pauses it, the conversation ends, or a real blocker leaves no permitted progress after independent authorized work is complete. A blocked component does not make the whole task inactive. Proposed follow-ups remain inactive until a later explicit user request.
 
 ### PHDK Auto tracks one complete lifecycle goal
 
-An explicit `PHDK auto` or `PHDK auto force` follows `PHDK_AUTO.md`: record the entire current goal and applicable lifecycle stages (Capture, Plan, PMO/workstreams, integration, UAT/Fix, Check/remediation, delivery), final verification coverage, and delivery target. Keep that goal in progress across slices, candidate releases, status questions, and context compaction; do not replace it with the first stage or move its remaining authorized work into inactive follow-ups. Progress records never require an OK to continue.
+An explicit `PHDK auto` or `PHDK auto force` follows `PHDK_AUTO.md`: record the entire current goal and applicable lifecycle stages (Capture, Plan, Design, PMO/workstreams, integration, applicable SEO/AEO, Check/remediation, delivery), final verification coverage, and delivery target. Keep that goal in progress across slices, candidate releases, status questions, and context compaction; do not replace it with the first stage or move its remaining authorized work into inactive follow-ups. Record UAT Prep/UAT/Fix separately as DEFERRED — OWNER OPT-IN with UAT NOT RUN, not as executable Auto steps. Progress records never require an OK to continue.
 
-Complete implementation before comprehensive final checks and normal branch/PR delivery. Required risk-based tests belong to this final coverage; only implementation-blocker diagnosis and actual mandatory controls require earlier execution. Existing mandatory isolated suites, including `pnpm test`/Vitest and composition when required, are already authorized; record script scope and actual results without another suite approval. Auto/Force replaces Developer Mode for this goal only through explicit activation. Record the invocation, scope, decisions and evidence as dated facts under the continuity contract, never a reusable `auto=true` flag or standalone authority; exit and conversation lifetime remain governed by `PHDK_AUTO.md`.
+Complete implementation before comprehensive final checks and normal branch/PR delivery. Final development coverage uses permitted static checks; test source and acceptance criteria remain documentation until explicit UAT. Do not execute local runtime suites or imply a hook authorizes them; resolve actual hook conflicts under `PHDK_HOOK_COMPATIBILITY.md` while preserving real controls. Record actual script scope and evidence. Auto/Force replaces Developer Mode for this goal only through explicit activation. Record the invocation, scope, decisions and evidence as dated facts under the continuity contract, never a reusable `auto=true` flag or standalone authority; exit and conversation lifetime remain governed by `PHDK_AUTO.md`.
 
 ### Developer Mode is not task state
 
@@ -52,6 +52,26 @@ Follow `PHDK_UNLOCK.md` for the command or an explicit request to reconcile/remo
 
 Do not add infrastructure, a locking service, or a standing worker to consume these files. Keep transient task state, pending steps, branch/PR identifiers, and current delivery status out of permanent instruction headers such as `AGENTS.md` and native rules blocks; those files hold stable rules and pointers.
 
+## Restriction record
+
+Apply [restriction provenance and lifetime](EXECUTION_SCOPE.md#restriction-provenance-and-lifetime). Keep one compact restriction section in the existing `TASK.md`; the plan, `STATUS.md` and worker handoffs reference its stable IDs and current transition summary. Do not introduce another ledger or copy the complete standards into every task.
+
+| Field | Required evidence |
+|---|---|
+| `id` | Stable restriction ID, for example `R-001`. |
+| `kind` | `PERMANENT_POLICY`, `PHASE_LIMIT` or `HISTORICAL_RECORD`, under the governing scope standard. |
+| `origin` | `OWNER`, `ASSISTANT`, `PHDK`, `HOST_OR_EXTERNAL` or `UNKNOWN`; identify who actually introduced the restriction. |
+| `source_ref` | Actual instruction/message reference, rule path and revision, or observed control/rejection. Use `UNKNOWN` when unavailable; a copied task is evidence of its wording, not proof that the owner requested it. |
+| `issued_at`, `recorded_at` | Source date when known and date of this record. Keep an unknown source date `UNKNOWN`; never substitute the recording date as its origin. |
+| `scope` | Affected goal, phase/milestone, repository/target and operation. Separate independent merge, deployment, UAT, access and spending limits. |
+| `closure_condition` | For `PHASE_LIMIT`, the event or instruction that would end or replace it, and evidence required. Meeting a date/milestone condition prompts reconciliation; it grants no new authority. Use `NOT_APPLICABLE` for the other kinds. |
+| `status` | `ACTIVE`, `CLOSED`, `SUPERSEDED` or `UNRESOLVED`, supported by the actual instruction/control evidence. |
+| `superseded_by` | Reference to the real later instruction replacing the relevant scope, plus transition date; otherwise `NONE` or `UNKNOWN`. A new assistant summary is not replacement authority. |
+
+Preserve the original text, classification and source when closing or superseding a record; retain it as explicitly historical context. Mark assistant-created limits honestly and never attribute them to the owner. Unknown provenance does not authorize ignoring an observed host/security control. Missing bookkeeping is repaired from available evidence without fabricating an owner approval or creating a documentation-only stop.
+
+For each material phase transition, record its date, previous/next phase, applicable restriction IDs, actual current authorization reference and the reconciliation result in TASK, with a short linked update in the plan and STATUS. Follow [phase-transition reconciliation](MAIN_DELIVERY_STANDARD.md#phase-transition-reconciliation) before the affected operation. Report owner authorization, technical permission/result, spending disposition and UAT authorization separately; changing these records does not establish executor permission or prove an operation succeeded.
+
 ## TASK.md template
 
 ```md
@@ -60,7 +80,7 @@ Do not add infrastructure, a locking service, or a standing worker to consume th
 ## Request and scope (recorded context)
 Current request: <the user's request in this conversation>
 Status: <in progress in this conversation / complete / paused / blocked>
-Execution boundary: interactive-only; single assistant unless explicit PMO enables bounded in-session workers; factual mandate is not reusable authority
+Execution boundary: interactive-only; bounded in-session worker delegation under `PHDK_INTELLIGENT_EXECUTION.md`; factual mandate is not reusable authority
 Goal: ...
 Done when:
 - [ ] <objective completion criterion>
@@ -71,10 +91,16 @@ Owner stop/pause controls: ...
 Delivery target: <remote main by default for implementation/fix/update, or user's explicit limit>
 Delivery instructions: <current user instructions as context, not a permission token>
 Approval evidence: <current scoped owner decision; assistant review and any required formal review recorded separately>
+PHDK baseline: <adopted version/ref and verified canonical version/ref, or explicit UNKNOWN/UNVERIFIED; link existing Plan/Preflight evidence>
+Restrictions: <restriction records below using the defined fields, or links to retained records; no unsupported owner attribution>
+Latest phase transition: <previous/next phase, restriction IDs, current authorization source and reconciliation result; NOT APPLICABLE if none>
 Branch: <branch actually used, or not applicable; never an enabling flag>
 Delivery evidence: <actual commit, push, PR, required review, merge, remote version/result; pending where unknown>
 Final verification coverage: <applicable commands and behavior checks for the whole goal; actual mandatory controls keep their operation timing>
 Auto/Force continuity evidence: <docs/phdk/lifecycle/<run-id>/AUTO_STATE.json when applicable>
+
+## Restriction records
+<compact entries using the fields above, retaining closed/superseded history; NONE when no applicable restrictions>
 
 ## Necessary steps for this request
 - [ ] <step>
@@ -93,6 +119,8 @@ A recorded task-specific request summarizes history; copying it into a later ses
 Read the current user instructions before relying on task context and recorded owner pause/stop instructions when editing, committing, pushing, or merging. Honor the user's current scope and applicable repository controls. A specific current owner instruction can replace an older documentary exception or authorize a limited intervention in a paused project; it does not restart unrelated old work or remove the pause beyond its stated scope.
 
 If task files disagree with the current request or observed GitHub state, correct the stale record within the current scope. An assistant-written pause, completion marker, or delivery limit is not an owner stop instruction and cannot block already-authorized work. Ask only when a real owner instruction or material decision remains ambiguous; never treat stale metadata as permission to expand the task.
+
+Before changing the delivery phase or handing its work to another executor, reconcile restriction records and refresh the affected TASK/plan/STATUS views under `MAIN_DELIVERY_STANDARD.md`. Preserve the earlier scope as history and all independently applicable controls. A technical denial remains a technical denial after reconciliation; retain the current owner authorization and the exact failed operation as separate facts.
 
 Before any terminal Auto/Force BLOCKED or interruption report, apply `PHDK_AUTO_CONTINUITY.md`: pending assistant work remains executable, a stale label cannot become an external control, and independent authorized work must be completed. FORCE treats PHDK-only review records as nonblocking without a review/protection investigation. Record the exact affected operation, actual rejection or current restriction, permitted resolution attempted and precise next action; keep the current authorization intact.
 
@@ -123,8 +151,9 @@ Do not create or use a multiple-agent queue. If another human or independently a
 - [ ] Current user authorization and owner restrictions are accurately recorded.
 - [ ] Current owner approval, assistant source review, and any actual required formal review are distinguished; no redundant review ritual or fabricated inspection was introduced.
 - [ ] Same-conversation authorization was retained; stale task state and assistant-written edits did not override the live request or observed GitHub state.
+- [ ] Operative restrictions retain their source, dates, scope and lifetime; phase changes preserve supersession history and separate authorization from actual technical results, spending and UAT.
 - [ ] Only necessary steps of the requested deliverable were executed.
-- [ ] No subagents/agent team/delegated work was started outside explicit PMO; any PMO workers were bounded to confirmed workstreams with no recursive delegation. No scheduler, recurring task, or background watcher was started.
+- [ ] Any in-session delegation followed `PHDK_INTELLIGENT_EXECUTION.md`; PMO workers stayed within confirmed workstreams, no worker recursively delegated, and no scheduler, recurring task, or background watcher was started.
 - [ ] No GitHub Actions/hosted CI job was created, enabled, dispatched, rerun, or scheduled.
 - [ ] Local checks are synchronous and relevant; UI/live runtime limitations are stated.
 - [ ] Commit/push/PR/merge actions match the current user's authorization.
@@ -141,7 +170,7 @@ Do not create or use a multiple-agent queue. If another human or independently a
 
 When `PHDK uat` runs, `UAT_CASES.md` and `UAT_REPORT.md` are the authoritative acceptance artifacts. Task/status files may record the candidate revision/version and summary counts but should not duplicate every UAT step.
 
-UAT evidence does not create or revoke authorization. PASS starts no new task. FAIL/BLOCKED/MANUAL does not make the current task inactive. Under active `PHDK auto`, an in-scope UAT failure remains part of the same whole goal until repaired or concretely blocked.
+UAT evidence does not create or revoke authorization. PASS starts no new task. FAIL/BLOCKED/MANUAL does not make the current task inactive. Auto/Force do not reopen historical UAT failures or execute acceptance from those reports. A newly requested development fix may use historical evidence within its scope, but retesting still needs explicit UAT authorization. Acceptance outcomes remain separate from development completion.
 
 
 ## PHDK Check evidence
@@ -178,7 +207,7 @@ They record:
 
 These files are context/evidence, not reusable authorization. Never store a persistent `pmo=true` flag. Conversation end ends PMO activation.
 
-Worker TASK/STATUS records, when used, remain subordinate to the PMO workstream contract. A worker completion does not mark the overall PMO portfolio complete. PMO owns central integration and downstream UAT/Check handoff.
+Worker TASK/STATUS records, when used, remain subordinate to the PMO workstream contract. A worker completion does not mark the overall PMO portfolio complete. PMO owns central integration and Check/delivery handoff. Later explicitly initiated UAT targets the integrated candidate without becoming an automatic PMO transition.
 
 
 ## PHDK Plan artifacts
