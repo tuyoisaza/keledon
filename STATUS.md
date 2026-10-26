@@ -1,4 +1,4 @@
-# Current scoped status — 2026-10-26 / 5.9.0
+# Current scoped status — 2026-10-26 / 5.9.2
 Source remediation for eleven approved Check gaps; delivery receipt in docs/phdk/lifecycle/20261026-check-fix/. Product acceptance remains unverified: no local runtime tests and UAT NOT RUN. Meet remote-audio candidate plus configured UI confirmation is supported in source; universal Windows alarm/Genesys detection is not claimed. Existing production API/Web delivery is independent of Windows installer 5.0.52.
 012/013/014 remain explicitly excluded. Historical status below is preserved for provenance; it must not override this current task or imply current blockers.
 

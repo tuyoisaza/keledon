@@ -1,3 +1,7 @@
+# 5.9.2 — 2026-10-26
+- Repair the actual Railway TypeScript build error from5.9.1: narrow the optional settings member across legacy/current voice configuration before using locale selection.
+- Preserve the locale fix; no cast or dependency/provider change. Production build is the permitted semantic verification. No local tests/build/lint/typecheck; UAT NOT RUN.
+
 # 5.9.1 — 2026-10-26
 - Close the final voice-path review: Kokoro derives voice from explicit locale settings in both full and streamed routes; preserve legacy voice when no new settings exist.
 - Kokoro/Speaches require an explicit provider voice ID for languages outside the built-in Spanish/English mappings. No silent English/Spanish fallback for another configured locale.

@@ -1,4 +1,4 @@
-# Current task — 2026-10-26 / 5.9.0
+# Current task — 2026-10-26 / 5.9.2
 PHDK 2.68.0 AUTO FORCE. Owner authorized exactly CHK-20261026-001..011 through normal publication and production deployment, without local application tests/build/lint. Implementation is complete in source; publication/deployment are tracked in docs/phdk/lifecycle/20261026-check-fix/. UAT NOT RUN; Prep/UAT/Fix DEFERRED — OWNER OPT-IN.
 Excluded: 012 Windows installer, 013 production backups/restore, 014 tenant risk/isolation decision. Existing CMT-001..004 and real-platform MVP acceptance remain open where runtime evidence is missing. Next: static review → PR/main → existing Railway deployment metadata. Earlier task entries below are historical, not current instructions.
 
