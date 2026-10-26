@@ -3,6 +3,9 @@
 
 FROM node:24.22.1-slim AS builder
 
+# Prisma must detect the same OpenSSL ABI used in the runtime stage.
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
 ARG CACHEBUST
 RUN echo "Build $CACHEBUST"
 
@@ -16,7 +19,7 @@ RUN npm install --omit=dev
 
 FROM node:24.22.1-slim
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates unzip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates openssl unzip && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app/models && \
     curl -L https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip -o /tmp/vosk-en.zip && \
     unzip -q /tmp/vosk-en.zip -d /app/models && \
