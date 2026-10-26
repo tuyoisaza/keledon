@@ -1,3 +1,6 @@
+## Remote build repair — 5.9.2
+Railway API build of5.9.1 failed TS2339 because legacy/current configuration is a union and legacy has no settings member. Both Kokoro paths now use structural in-operator narrowing before reading optional settings. No local typecheck/build/test was run. Final provider build/startup outcome is recorded in the delivery receipt; failed5.9.1 did not replace the API5.9.0 instance.
+
 ## Final closure patch — 5.9.1
 Source review found Kokoro could ignore locale while honoring voice/speed. Both synthesis paths now derive known es/en voices from explicit locale; Kokoro/Speaches require an explicit voice ID for other locales. Legacy settings remain unchanged when no new configuration exists. This is part of gap008, not new scope. Runtime language/region/provider quality remains UNVERIFIED.
 

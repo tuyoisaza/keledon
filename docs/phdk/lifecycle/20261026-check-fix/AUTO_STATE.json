@@ -18,12 +18,18 @@
     ]
   },
   "report_sha256": "ca28b178200e534bd5b7401e66a9240096f5af84a3c51ac3e0f186ae53713812",
-  "status": "publishing_voice_closure",
-  "next_action": "Publish Kokoro locale closure through normal PR/main and verify final API/Web deployments",
-  "target_version": "5.9.1",
+  "status": "repairing_remote_compile",
+  "next_action": "Publish typed legacy/current settings narrowing and verify production API/Web",
+  "target_version": "5.9.2",
   "prior_delivery": {
     "version": "5.9.0",
     "pr": 298,
     "sha": "4d8138303dda58616b0a619f95be6113409b979c"
+  },
+  "actual_rejection": {
+    "deployment": "ebb1c56d-7592-478f-a3e7-ae0dc225c355",
+    "code": "TS2339",
+    "reason": "Legacy TTSConfigEntry has no settings member",
+    "repair": "in-operator type narrowing; preserve configured locale"
   }
 }
