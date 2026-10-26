@@ -8,6 +8,7 @@ export function voiceSettings(value: any, provider?: string): VoiceSettings {
  if(typeof value!=='object' || Array.isArray(value) || Object.keys(value).some(k=>!['voiceId','locale','speed','style'].includes(k))) throw new BadRequestException('Unsupported voice settings');
  const result:VoiceSettings={locale:value.locale??'es',speed:value.speed??(provider==='speaches'?1.15:1),style:value.style??'neutral',...(value.voiceId?{voiceId:value.voiceId}:{})};
  if(typeof result.locale!=='string' || !/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$/.test(result.locale) || typeof result.speed!=='number' || !Number.isFinite(result.speed) || result.speed<0.5 || result.speed>2 || !['neutral','expressive'].includes(result.style) || (value.voiceId!==undefined && (typeof value.voiceId!=='string' || !/^[A-Za-z0-9_+. -]{1,120}$/.test(value.voiceId)))) throw new BadRequestException('Invalid voice settings');
+ if(provider && ['kokoro','speaches'].includes(provider) && !['es','en'].includes(result.locale.split('-')[0]) && !result.voiceId)throw new BadRequestException('A provider voice ID is required for this language');
  if(provider){const c=voiceCapabilities(provider); if(!c.styles.includes(result.style) || result.speed<c.minSpeed || result.speed>c.maxSpeed || (!c.speed && result.speed!==1)) throw new BadRequestException('Selected provider does not support these voice options');}
  return result;
 }

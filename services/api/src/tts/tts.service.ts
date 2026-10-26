@@ -158,7 +158,7 @@ export class TTSService {
           (ttsConfig as any).apiUrl ||
           (!options.teamId ? process.env.KOKORO_API_URL : undefined);
         if (!baseUrl) return { error: 'Configured TTS endpoint required' };
-        const voice = ttsConfig.voiceId || 'ef_dora';
+        const voice = ttsConfig.settings ? configuredSpeachesVoice(ttsConfig,text,options.forceLanguageVoice) : ttsConfig.voiceId || 'ef_dora';
         return await this.trackProviderResult(
           provider,
           options.correlationId,
@@ -266,7 +266,7 @@ export class TTSService {
         (ttsConfig as any).apiUrl ||
         (!options.teamId ? process.env.KOKORO_API_URL : undefined);
       if (!baseUrl) return { error: 'Configured TTS endpoint required' };
-      const voice = ttsConfig.voiceId || 'ef_dora';
+      const voice = ttsConfig.settings ? configuredSpeachesVoice(ttsConfig,text,options.forceLanguageVoice) : ttsConfig.voiceId || 'ef_dora';
       const result = await this.trackProviderResult(
         provider,
         options.correlationId,

@@ -18,7 +18,12 @@
     ]
   },
   "report_sha256": "ca28b178200e534bd5b7401e66a9240096f5af84a3c51ac3e0f186ae53713812",
-  "status": "static_review",
-  "next_action": "Static evidence and assistant diff review, then normal PR/main/Railway source deployment",
-  "target_version": "5.9.0"
+  "status": "publishing_voice_closure",
+  "next_action": "Publish Kokoro locale closure through normal PR/main and verify final API/Web deployments",
+  "target_version": "5.9.1",
+  "prior_delivery": {
+    "version": "5.9.0",
+    "pr": 298,
+    "sha": "4d8138303dda58616b0a619f95be6113409b979c"
+  }
 }

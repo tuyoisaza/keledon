@@ -1,3 +1,8 @@
+# 5.9.1 — 2026-10-26
+- Close the final voice-path review: Kokoro derives voice from explicit locale settings in both full and streamed routes; preserve legacy voice when no new settings exist.
+- Kokoro/Speaches require an explicit provider voice ID for languages outside the built-in Spanish/English mappings. No silent English/Spanish fallback for another configured locale.
+- Static syntax-only review; actual production build/deployment tracked separately. No local tests/build/lint/typecheck; UAT NOT RUN.
+
 # 5.9.0 — 2026-10-26
 - Implement eleven approved PHDK Check source gaps: positive interface policy, audit-before-publication, bounded armed cycle, account lifecycle and deterministic ephemeral purge.
 - Connect typed team voice/profile options to synthesis; translate interface UI; restore compact diagnostics; govern external overlay tokens; split AI/CRUD modules and reconcile current registries.

@@ -1,3 +1,6 @@
+## Final closure patch — 5.9.1
+Source review found Kokoro could ignore locale while honoring voice/speed. Both synthesis paths now derive known es/en voices from explicit locale; Kokoro/Speaches require an explicit voice ID for other locales. Legacy settings remain unchanged when no new configuration exists. This is part of gap008, not new scope. Runtime language/region/provider quality remains UNVERIFIED.
+
 # Eleven-gap remediation — 5.9.0 / 2026-10-26
 PHDK2.68.0 AUTO FORCE. Exact owner mandate: implement CHK001..011 and publish/deploy without local tests; leave012..014 separate.
 
