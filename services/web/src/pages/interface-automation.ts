@@ -30,5 +30,5 @@ export async function runAutomaticCycle(ctx:AutomaticContext,signal:AbortSignal)
       if(!result?.observation || !['OBSERVED','OBSERVED_AFTER_ACTION'].includes(result.code)){ctx.setPhase('attention');return;}
     }
     ctx.setPhase('attention');
-  
+
 }
