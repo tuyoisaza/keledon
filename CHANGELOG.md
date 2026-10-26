@@ -1,3 +1,9 @@
+## 5.8.0 — 2026-10-26
+- Add team-scoped general interface observation, one-step Brain planning and explicit execution via opt-in browser extension or paired Windows host; Salesforce remains an optional adapter.
+- Restrict mutable input/invocation to positively identified search controls; fence stale observations, duplicate device claims and failed-result verification. Native packaging and all live behavior remain unaccepted.
+- Adopt PHDK 2.68.0; owner-approved Node 24.22.1 source/runtime migration and compatible security lock updates across seven packages. No local tests/build/lint or UAT run.
+- Retain configurable Spanish/provider voice and supported style requirement; missing OS Spanish voice is not the final product constraint.
+
 ## 2026-10-23 — PHDK v2.65.1 standards maintenance (v5.7.1)
 
 - Vendor the complete canonical standards manifest from `d4ed10e96f5fd05ebeaa38a664442d7d10d6cf86` and align native entrypoints.

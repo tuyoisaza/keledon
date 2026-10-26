@@ -1,3 +1,63 @@
+## v2.68.0 — 2026-10-25
+
+### One-command forced upgrade and Auto Force
+- Redefine exact `PHDK upgrade force` as a composite foreground command: complete forced PHDK synchronization, Stack Security Review, eligible central-status publication and verification, then transition immediately into `PHDK auto force` without asking the owner for a second command.
+- Continue an already identified authorized development goal when present. When none exists, use a bounded repository-maintenance goal: reconcile current code/configuration with current PHDK and recorded product intent, remediate compatible in-repository security/standards gaps, complete applicable Check/remediation and normal delivery, and do not invent new product features.
+- Reuse the upgrade phase's fresh stack-review evidence as the Auto baseline when inputs and advisory freshness are unchanged. Do not duplicate the same review immediately.
+- Preserve Auto Force boundaries: no automatic UAT, no major/material migration decision, no provider/new-infrastructure write, spending, secret/account operation or bypass of actual controls.
+
+### Verification and adoption
+- Reconcile Upgrade, Auto, native managed rules, AGENTS, SKILL and README so the chained transition is visible from active entrypoints.
+- Bare `PHDK upgrade` remains sync/review-only. Publishing this release does not start Auto in dormant repositories; the composite behavior activates only when the owner explicitly invokes `PHDK upgrade force`.
+
+## v2.67.0 — 2026-10-25
+
+### Auto owns compatible stack security maintenance
+- Make every new `PHDK auto` and `PHDK auto force` run perform one fresh Stack Security Review during Preflight, even when canonical PHDK is already current. Reuse the resulting evidence at unchanged later stages instead of requiring a separate Upgrade command.
+- Treat compatible repository-owned security maintenance discovered by Auto as part of the existing development mandate: supported same-major runtime security patches such as Node.js patch releases, compatible dependency security fixes, and aligned repo-owned runtime/build declarations, lockfiles and pins.
+- Revalidate affected static/security evidence and continue normal Auto versioning and delivery without asking the owner for a second security-remediation command.
+- Preserve boundaries for major runtime migrations, material breaking dependency migrations, provider administration/new infrastructure, spending, secrets/account operations, UAT and explicit owner exclusions. Standalone Upgrade remains read-only with respect to product remediation unless separately authorized.
+
+### Verification and adoption
+- Reconcile Auto, Preflight, Secure, native managed rules, AGENTS, SKILL and README so the same behavior is visible from all active entrypoints.
+- Publishing this release does not retroactively execute Auto in dormant repositories. Downstream repositories adopt the behavior when they next synchronize PHDK or run a clean Preflight that adopts this version.
+
+## v2.66.0 — 2026-10-25
+
+### Central downstream repository status registry
+- Add `PHDK_REPOSITORY_STATUS.md` as a vendored contract for eligible PHDK repositories under `tuyoisaza/*`. During foreground PHDK work, repositories that already have canonical-PHDK write access publish or refresh `docs/repos/<repo>/status.md`.
+- Record installed versus canonical PHDK version, observed repository SHA, evidence-backed tech-stack versions and an independent Stack Security Review status so maintainers can identify both standards drift and security/version drift without conflating them.
+- Route Upgrade/Force, Preflight adoption and native managed instructions through the registry. Missing canonical write access is non-blocking and never triggers a credential request.
+- Keep the registry explicitly foreground-only: no telemetry, repository crawler, scheduler, GitHub Action, webhook, background retry or autonomous cross-repository maintenance is introduced.
+
+### Verification and adoption
+- Add the registry standard to the vendoring manifest and document the canonical `docs/repos/<repository-name>/status.md` location.
+- Publishing this PHDK release does not populate every downstream status record. Each eligible repository reports itself when a foreground PHDK session runs with sufficient evidence and existing access.
+
+## v2.65.3 — 2026-10-23
+
+### Publish the optional Company Co document importer corpus
+- Publish the existing fictional 2025 quality-management dossier as 35 logical documents covering 17 processes, with individual PDF and Word files, consolidated alternatives, completed records and blank forms.
+- Include an obsolete revision, an image-only PDF for OCR, ten documented extraction cases, machine-readable expectations and integrity metadata. Preserve the canonical Company Co people, departments and commercial baseline.
+- Add an English corpus index and discoverable links from README and the Company Co reference. Keep the business documents in Spanish and the optional corpus outside the standards vendoring manifest.
+- Treat the ISO 9001:2015 / Amendment 1:2024 reference as historical simulation, with no actual certification claim or new execution policy, command, provisioning or automatic UAT behavior.
+
+### Verification limits
+- Review the corpus inventory, document hashes, internal references, rendered pages and publication diff. Run the existing static PHDK coherence check and verify release metadata and remote publication separately.
+- The importer itself and runtime UAT were not executed. This documentation publication does not upgrade downstream projects or deploy an application.
+
+## v2.65.2 — 2026-10-23
+
+### Resolve build and hook ambiguity before asking
+- Add an ordered decision procedure to the existing hook standard and route native managed instructions, agent/skill entrypoints, Auto, verification and delivery through it before execution, BLOCKED or a user question.
+- Distinguish permitted compiler/static tooling from import/require load checks of compiled application/API modules, including checks with networking/listeners disabled. Classify mixed command chains and provenance before choosing a correction.
+- Repair only authorized proven PHDK-managed local invocations, retain runtime source and disclose NOT RUN coverage. Preserve independent owner/external/unknown controls and their required ordering; prepare concrete unresolved decisions without local-runtime exception prompts or duplicate approvals.
+- Reconcile older local-suite instructions in enforcement and verification with production-first policy. No automatic UAT, new CI, provider change or infrastructure route is introduced.
+- Add bounded static guards for on-demand routing, the installed managed block, manifest dependencies and six decision scenarios. Keep VERSION, README and CHANGELOG synchronized. Integrate on v2.65.1 while preserving Stack Security Review and canonical/vendored static-check compatibility.
+
+### Verification limits
+- Static source checks and independent review are recorded in the release checkpoint. The scenarios document expected decisions; no local behavioral tests, downstream agent execution, UAT or project upgrade is claimed.
+
 ## v2.65.1 — 2026-10-23
 
 ### Preserve downstream static-hook compatibility

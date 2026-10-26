@@ -1,0 +1,27 @@
+{
+  "version": "1",
+  "mode": "AUTO_FORCE",
+  "user_mandate": {
+    "source": "current conversation 2026-10-26: phdk auto force; explicit Node24 migration approval",
+    "objective": "Continue KELEDON Windows/Meet/Brain/general-interface MVP, current PHDK and authorized security maintenance",
+    "target": "main"
+  },
+  "restrictions": [
+    "No local application tests/build/lint",
+    "No customer data, CRM mutations, new drivers, provider changes, secrets or new spending",
+    "UAT DEFERRED OWNER OPT-IN under current PHDK"
+  ],
+  "phdk_version": "2.68.0",
+  "stage": "integration",
+  "completed": [
+    "79 standards mappings synchronized",
+    "Node24 migration approved and source pins prepared",
+    "7 lockfile audit metadata queries: zero advisories after compatible updates"
+  ],
+  "pending": [
+    "static review and versioned publication",
+    "remote-main and deployment verification",
+    "future explicit UAT for audio and interface behavior"
+  ],
+  "next_action": "Complete static checks, deliver scoped candidate via PR and verify main/deployment"
+}

@@ -11,13 +11,14 @@ import { ProviderConfigResolver } from '../voice/providers/provider-config.resol
 import { transcribeConfiguredAudio } from '../voice/providers/configured-stt';
 import { runtimeAiBudget } from '../llm/runtime-ai-budget';
 import { getVendorAllowedOrigins } from '../vendor-url-policy';
+import { InterfaceControlService } from '../interface-control/interface-control.service';
 
 @Controller('api/brain/meet/:teamId')
 @Public()
 @UseGuards(BrainMeetGuard)
 export class BrainMeetController {
   private readonly logger = new Logger(BrainMeetController.name);
-  constructor(private readonly prisma: PrismaService, private readonly llm: LLMService, private readonly knowledge: VectorStoreService) {}
+  constructor(private readonly prisma: PrismaService, private readonly llm: LLMService, private readonly knowledge: VectorStoreService, private readonly interfaces: InterfaceControlService) {}
 
   private async charge(req: any) {
     try { await runtimeAiBudget.run(`meet:${req.runtimeIdentity.userId}`, undefined, () => Promise.resolve()); }
@@ -113,12 +114,12 @@ export class BrainMeetController {
 
   @Post('turn')
   @Header('Cache-Control', 'no-store')
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 384044, files: 1, fields: 1, fieldSize: 50000 } }))
-  async turn(@Req() req: any, @UploadedFile() file: any, @Body() body: { history?: string }) {
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 384044, files: 1, fields: 2, fieldSize: 50000 } }))
+  async turn(@Req() req: any, @UploadedFile() file: any, @Body() body: { history?: string; interfaceControlId?: string }) {
     return this.processAudio(req, file, body);
   }
 
-  private async processAudio(req: any, file: any, body: { history?: string }, sttOnly = false) {
+  private async processAudio(req: any, file: any, body: { history?: string; interfaceControlId?: string }, sttOnly = false) {
     const audio: Buffer | undefined = file?.buffer;
     // Accept only bounded mono PCM WAV, not compressed/decompression-bomb input.
     if (!audio || audio.length < 3244 || audio.length > 384044 ||
@@ -159,6 +160,11 @@ export class BrainMeetController {
       if (sttOnly) return { teamId: req.runtimeIdentity.teamId, transcript: transcript.slice(0, 4000), timings };
       if (!transcript) return { teamId: req.runtimeIdentity.teamId, transcript: '', reply: '', timings };
       if (transcript.length > 4000) throw new BadRequestException('Transcription too long');
+      if (body.interfaceControlId) {
+        if (typeof body.interfaceControlId !== 'string' || !/^[a-f0-9-]{36}$/.test(body.interfaceControlId)) throw new BadRequestException('Invalid interface control');
+        await this.interfaces.get(req, body.interfaceControlId);
+        return { teamId: req.runtimeIdentity.teamId, transcript, reply: 'He recibido el objetivo. Prepararé el siguiente paso en la interfaz autorizada para su revisión.', goal: { type: 'interface_objective', controlId: body.interfaceControlId }, timings };
+      }
       const cases = [...transcript.matchAll(/\b(?:caso|case|ticket)\s*(?:es\s*)?(?:el\s*)?(?:(?:número|numero|n[º°.]|#)\s*)?(\d{1,12})\b/gi)];
       const caseNumber = cases.length === 1 ? cases[0][1] : undefined;
       if (cases.length > 1) return { teamId: req.runtimeIdentity.teamId, transcript, reply: 'Indica un único número de caso ficticio para poder verificarlo.', timings };

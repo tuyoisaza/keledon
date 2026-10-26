@@ -28,6 +28,10 @@ At the end, offer `PHDK uat` as an optional **future explicit command**, without
 
 If the current request changes the canonical PHDK standards repository (as distinct from a product using PHDK), load `PHDK_EVOLUTION_STANDARD.md` before editing. Resolve live main/version/README/changelog/PR state; keep the defined spelling, workspace, SemVer, manifest, entrypoint and GitHub publication rules aligned with `VERSIONING.md`, `CHANGE_MANAGEMENT.md` and `MAIN_DELIVERY_STANDARD.md`. This is no new execution authorization or command; the current request and existing controls still govern.
 
+## Auto security maintenance
+
+For every explicit `PHDK auto` / `PHDK auto force`, Preflight performs one fresh Stack Security Review even when installed PHDK is already current. Findings that are compatible repository-owned maintenance are part of the Auto development mandate: apply supported same-major runtime security patches (for example Node.js patch releases), compatible dependency security updates, and aligned repo-owned runtime/build declarations or lockfiles using permitted project workflows; re-run affected static/security evidence and continue normal version/delivery. Do not ask for a second `PHDK upgrade force` or security-remediation command. Major migrations, material breaking dependency changes, provider writes/new infrastructure, spending, secrets/account operations and explicit owner exclusions remain outside this automatic maintenance scope.
+
 ## Universal preflight
 
 Before any PHDK command or lifecycle stage, follow `PHDK_PREFLIGHT.md` and the applicable entry/exit/handoff contract in `PHDK_LIFECYCLE.md`. A stage may start only after verifying its required upstream artifacts/handoff, and every completed/reused stage must leave durable canonical outputs plus the historical run snapshot. Verify PHDK installation/version/manifest/managed rules, then inspect `SKILLS_REGISTRY.md` for relevant capabilities and check what is actually installed/connected in the active tool. Use relevant available skills unless the user explicitly disabled skills/plugins/connectors or a named capability. Missing optional skills do not block PHDK. Within Auto, reuse Preflight and refresh only newly relevant capabilities rather than reloading every standard at every stage.
@@ -35,6 +39,10 @@ Before any PHDK command or lifecycle stage, follow `PHDK_PREFLIGHT.md` and the a
 This skill routes the current assistant to PHDK standards. It does not launch an agent, create a task, or authorize work just because a tool discovers or loads `SKILL.md`.
 
 Read the current user request and `EXECUTION_SCOPE.md`. Its interactive-only execution boundary overrides contrary language in an older standard or external skill. `PHDK_PRODUCTION_VERIFICATION.md` governs local/static versus deployed behavioral verification. Auto approval/continuity semantics use `PHDK_AUTO_CONTINUITY.md`; no stale PHDK review template may recreate its waived human gate. `PHDK_DESIGN.md` supplies the specific visual-choice distinction: normal Auto asks, Auto Force decides. Honor current owner controls within their scope; the owner can explicitly replace older documentary exceptions. A file cannot veto that current instruction or remove actual access/security controls.
+
+## Build and hook decision routing
+
+When a build, packaging check or Git hook has ambiguous effects or conflicts with local verification policy, load and apply the [decision procedure](PHDK_HOOK_COMPATIBILITY.md#decision-procedure) **before executing the command, declaring BLOCKED, or requesting user input**. Inspect the actual command chain and provenance; run permitted static steps and repair only proven PHDK-managed or legacy PHDK-generated steps within the authorized task. Preserve independent owner/external/unknown controls and prepare a concrete gate-change proposal if authorization is missing. Never request a prohibited local-runtime exception or initiate UAT to satisfy the gate.
 
 ## Start only from the current request
 
@@ -130,7 +138,7 @@ Auto replaces Developer Mode for that goal; it grants no direct-main bypass, bac
 
 ## PHDK auto force and continuity
 
-For explicit `PHDK auto force` (case-insensitive), apply `PHDK_AUTO_CONTINUITY.md`. PHDK-imposed human reviews/sign-offs are `NON_BLOCKING_BY_MODE` immediately: do not investigate whether they block, query review/protection requirements preventively, seek reviewers, or ask for approval. Complete Design decisions autonomously with actual agent-selection provenance, then continue scoped implementation, assistant diff review, permitted checks, branch push, PR, merge and remote-main readback. No repeated permission for permitted mandatory checks; a conflicting actual hook remains a blocker, never permission to run excluded tests or bypass enforcement.
+For explicit `PHDK auto force` (case-insensitive), apply `PHDK_AUTO_CONTINUITY.md`. PHDK-imposed human reviews/sign-offs are `NON_BLOCKING_BY_MODE` immediately: do not investigate whether they block, query review/protection requirements preventively, seek reviewers, or ask for approval. Complete Design decisions autonomously with actual agent-selection provenance, then continue scoped implementation, assistant diff review, permitted checks, branch push, PR, merge and remote-main readback. No repeated permission for permitted mandatory checks. Apply the [hook decision procedure](PHDK_HOOK_COMPATIBILITY.md#decision-procedure) before reporting an unresolved conflicting hook as a blocker; never run excluded tests or bypass enforcement.
 
 At start/resume, each FORCE progress update, after partial delivery and before a question/blocker, apply the short rule refresh and mandatory reminder in `PHDK_AUTO_CONTINUITY.md` and `PHDK_COMMUNICATION_STANDARD.md`. Reconcile inherited blockers, discard stale assistant interpretations and use the reminder. Missing routine definitions require a concrete proposal/defaults/configuration followed by authorized implementation; do not transfer routine design work to the owner or recommend omitting accepted gaps. Preserve real user exclusions/host controls and reserve questions for indispensable new sensitive/scope decisions, with a proposed solution already prepared.
 
@@ -160,6 +168,8 @@ Follow `EXECUTION_SCOPE.md` — `Bounded read-only provider diagnostics` for a c
 
 ## Universal commands — `PHDK upgrade` / `PHDK upgrade force`
 
+**Composite Force behavior:** exact `PHDK upgrade force` does not end after synchronization. After the forced upgrade, security review, eligible central-status update and verification, transition immediately into `PHDK auto force` in the same foreground session. Continue the already identified authorized goal when present; otherwise use the bounded repository-maintenance goal from `PHDK_UPGRADE.md`. Do not ask the owner to type Auto separately and do not invent new features.
+
 For exact `PHDK upgrade` or `PHDK upgrade force` (case-insensitive after trimming whitespace):
 
 - Bare `PHDK upgrade` preserves local edits/conflicts inside the PHDK-owned surface and stops conflicting writes while continuing independent permitted review.
@@ -170,7 +180,8 @@ For exact `PHDK upgrade` or `PHDK upgrade force` (case-insensitive after trimmin
 2. Follow `PHDK_UPGRADE.md` within the current request. Preserve dirty work and genuine owner overrides in a bare sync; apply any explicit current request to remove/reconcile local PHDK exceptions through `PHDK_UNLOCK.md`.
 3. Synchronize manifest-controlled standards and the current tool's managed rule block.
 4. Perform the bounded read-only [Stack Security Review](PHDK_SECURE.md#stack-security-review), including no-op/newer-local cases. Actual Preflight version adoption also requires it once; reuse current evidence at unchanged stages. Report STANDARDS_SYNC, STACK_REVIEW_COVERAGE and STACK_SECURITY_STATUS separately; pending helper output is not a completed audit.
-5. Verify source copy and review evidence, report, and stop. Do not continue into product work or schedule a later upgrade.
+5. For a verified `tuyoisaza/<repo>`, apply `PHDK_REPOSITORY_STATUS.md`. If this foreground session already has write access to canonical `tuyoisaza/PHDK`, refresh `docs/repos/<repo>/status.md` with evidence-backed PHDK, repository SHA, tech-stack and stack-review state. Missing access is `CENTRAL_STATUS: NOT_PUBLISHED`; never request credentials or schedule a retry.
+6. Verify source copy and review evidence, report, and stop. Do not continue into product work or schedule a later upgrade.
 
 The exact command authorizes standards synchronization and read-only review, not a push/merge, deployment, workflow run, or external administration. A current instruction explicitly requesting git delivery supplies that additional permission.
 
@@ -212,9 +223,9 @@ A request for a kit, standalone design package or standards update is not permis
 
 ## Production-first verification override (v2.58.0)
 
-**Mandatory:** Apply [PHDK_PRODUCTION_VERIFICATION.md](PHDK_PRODUCTION_VERIFICATION.md). Owner-authorized production-only UAT supersedes earlier local unit/in-process/runtime testing, staging-only identity, and blanket production-test prohibitions. Local operations are limited to static analysis, lint, typecheck and safe builds; Docker, local runtime tests and separate staging/databases are prohibited. UAT uses existing versioned production deployment and database, strictly scoped run-owned synthetic identities/records, audit, automated cleanup and verified revocation on success, failure and interruption. Never touch real data or bypass security hooks; a conflicting gate is BLOCKED. Design adds no preview-server or browser-test exception.
+**Mandatory:** Apply [PHDK_PRODUCTION_VERIFICATION.md](PHDK_PRODUCTION_VERIFICATION.md). Owner-authorized production-only UAT supersedes earlier local unit/in-process/runtime testing, staging-only identity, and blanket production-test prohibitions. Local operations are limited to static analysis, lint, typecheck and safe builds; Docker, local runtime tests and separate staging/databases are prohibited. UAT uses existing versioned production deployment and database, strictly scoped run-owned synthetic identities/records, audit, automated cleanup and verified revocation on success, failure and interruption. Never touch real data or bypass security hooks; apply the [hook decision procedure](PHDK_HOOK_COMPATIBILITY.md#decision-procedure) before reporting an unresolved verification gate BLOCKED. Design adds no preview-server or browser-test exception.
 
 
 ## Hook compatibility (v2.61.0)
 
-Apply [PHDK_HOOK_COMPATIBILITY.md](PHDK_HOOK_COMPATIBILITY.md). Inspect effective Git hooks and nested package scripts before push; a local behavioral test required by a legacy PHDK hook is an AUTO-FIXABLE policy violation, not a reason to request a local-testing exception. Within authorized Auto/Auto Force/Check Fix, replace **only proven PHDK-owned** prohibited test invocations with permitted static checks while preserving security/version/branch/commit gates. Owner-owned, external, or unknown hooks remain unchanged absent explicit authorization; report BLOCKED if they prevent push. Never execute prohibited tests or use --no-verify.
+Apply the [hook decision procedure](PHDK_HOOK_COMPATIBILITY.md#decision-procedure) before executing an ambiguous build/packaging/hook command, declaring its conflict BLOCKED, or asking the owner. Inspect the command chain and provenance, automatically repair only proven PHDK-owned incompatibilities within authorized remediation, and preserve independent security/version/branch/commit gates. Owner-owned, external and unknown controls retain their authorization boundary; prepare a concrete proposal for any unresolved gate. Never request a prohibited local-runtime exception, execute excluded tests, use --no-verify or start UAT to satisfy a hook.

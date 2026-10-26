@@ -3,6 +3,7 @@ import { getAuthToken } from '@/lib/api-fetch';
 import { BrainLayerControls } from './BrainLayerControls';
 import { diagnostic, type Diagnostic } from './meet-diagnostics';
 import { useSalesforceSurface } from './useSalesforceSurface';
+import { InterfaceControlPanel } from './InterfaceControlPanel';
 
 const MEET_ORIGIN = 'https://meet.google.com';
 const PROTOCOL = 'keledon-meet-v1';
@@ -23,6 +24,10 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
   const record = useCallback((row: Diagnostic) => setLogs(rows => [...rows.slice(-299), row]), []);
   const crm = useSalesforceSurface(teamId, disabled, record);
   const link = useRef<Link | null>(null);
+  const interfaceControl = useRef<string | null>(null);
+  const [voiceObjective, setVoiceObjective] = useState<{ text: string; generation: number } | null>(null);
+  const [interfaceCancel, setInterfaceCancel] = useState(0);
+  const controlChanged = useCallback((id: string | null) => { interfaceControl.current = id; }, []);
   const send = (s: Link, data: Record<string, unknown>) => {
     if (!s.window.closed) s.window.postMessage({ protocol: PROTOCOL, session: s.session, ...data }, MEET_ORIGIN);
   };
@@ -69,6 +74,7 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
         if (cancelled) setEvidence(v => ({ ...v, cancelled: v.cancelled + 1 }));
         s.generation = d.generation; s.abort?.abort();
         s.closing = false; crm.cancel();
+        setInterfaceCancel(v => v + 1);
         record(diagnostic('MEET', cancelled ? 'RESPONSE_INTERRUPTED' : 'INPUT_GENERATION', { generation: s.generation }));
         s.playing = false; setStatus(cancelled ? 'Voz remota detectada; respuesta anterior cancelada' : preparing ? 'Canal remoto preparado; esperando voz' : 'Voz remota detectada; escuchando el turno'); return;
       }
@@ -114,6 +120,7 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
           setEvidence(v => ({ ...v, turns: s.turns }));
           const form = new FormData(); form.append('file', new Blob([d.audio], { type: 'audio/wav' }), 'remote.wav');
           if (s.mode !== 'stt') form.append('history', JSON.stringify(s.history.slice(-6)));
+          if (s.mode !== 'stt' && interfaceControl.current) form.append('interfaceControlId', interfaceControl.current);
           const response = await request(`/api/brain/meet/${encodeURIComponent(s.teamId)}/${s.mode === 'stt' ? 'stt' : 'turn'}`, { method: 'POST', body: form });
           const result = await response.json();
           record(diagnostic('STT', 'TRANSCRIPTION_COMPLETED', { elapsedMs: result.timings?.sttMs, generation }));
@@ -124,6 +131,7 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
             setLastTurn({ transcript: result.transcript, reply: '' }); stop('Capa STT completada; audio liberado. Confirma el texto reconocido.'); return;
           }
           if (result.teamId !== s.teamId || typeof result.transcript !== 'string' || typeof result.reply !== 'string' || result.reply.length > 4000) throw new Error('Respuesta de equipo inválida');
+          if (result.goal?.type === 'interface_objective' && result.goal.controlId === interfaceControl.current) setVoiceObjective({ text: result.transcript, generation });
           if (result.goal?.type === 'search_case' && typeof result.goal.caseNumber === 'string' && /^\d{1,12}$/.test(result.goal.caseNumber)) {
             setStatus('Brain → Salesforce autorizado → lectura de caso exacto');
             try {
@@ -207,6 +215,23 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
     finally { clearTimeout(timer); }
   }
   const button = 'min-h-11 rounded border border-border px-4 py-2 disabled:opacity-50';
+  async function speakInterfaceReply(reply: string) {
+    const s = link.current;
+    if (!s?.active || s.pending || s.playing || s.teamId !== teamId || Date.now() >= s.expires) { setStatus('Resultado de interfaz listo; inicia o espera al canal Meet para emitirlo'); return; }
+    const generation = s.generation, abort = new AbortController(); s.abort = abort; s.pending = true;
+    const timer = setTimeout(() => abort.abort(), 20000);
+    try {
+      const token = getAuthToken(); if (!token) throw new Error('Sesión vigente requerida');
+      const response = await fetch('/tts/speak', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ teamId, text: reply }), redirect: 'error', signal: abort.signal });
+      record(diagnostic('TTS', 'INTERFACE_REPLY_HTTP', { status: response.status, generation }));
+      if (!response.ok || response.headers.get('X-Keledon-TTS-Team') !== teamId || !response.headers.get('Content-Type')?.startsWith('audio/')) throw new Error('TTS de interfaz rechazado');
+      const audio = await response.arrayBuffer();
+      if (abort.signal.aborted || link.current !== s || !s.active || s.generation !== generation || Date.now() >= s.expires) return;
+      if (!audio.byteLength || audio.byteLength > 8 * 1024 * 1024) throw new Error('Audio de interfaz inválido');
+      send(s, { type: 'speech', generation, audio }); setStatus('Observación devuelta a Brain; respuesta enviada al canal Meet');
+    } catch { if (!abort.signal.aborted) setStatus('No se pudo enviar la respuesta de interfaz al TTS del equipo'); }
+    finally { clearTimeout(timer); if (s.abort === abort) s.pending = false; }
+  }
   return <section aria-label="Conversación remota de Meet" className="space-y-3 rounded border border-border p-3">
     <h2 className="font-medium">Meet → STT → Brain → TTS</h2>
     <p>Solo audio remoto de la reunión, sin micrófono físico del agente. Se envía a los proveedores del equipo seleccionado. Máximo dos minutos y seis turnos; sin grabación persistente. Usa únicamente frases ficticias durante la aceptación.</p>
@@ -230,7 +255,8 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
       send(s, { type: 'speech', generation: s.generation, audio });
       record(diagnostic('TTS', 'MANUAL_SAMPLE_SENT', { bytes: audio.byteLength, generation: s.generation }));
     }} />
-    {crm.panel}
+    <InterfaceControlPanel teamId={teamId} disabled={disabled} record={record} onControlChange={controlChanged} voiceObjective={voiceObjective} cancelEpoch={interfaceCancel} onReply={reply => { void speakInterfaceReply(reply); }} />
+    <details><summary>Adaptador histórico Salesforce · prueba específica opcional</summary>{crm.panel}</details>
     <details><summary>Registro verbose seguro · {logs.length}/300 eventos</summary>
       <p>Solo metadatos de esta sesión. Sin audio, textos, URLs, identificadores personales ni secretos. Vaciar el log no borra la auditoría del servidor.</p>
       <button className={button} onClick={() => { void navigator.clipboard.writeText(JSON.stringify({ schema: 'meet-diagnostics-v1', events: logs }, null, 2)).then(() => setCopyStatus('Registro copiado'), () => setCopyStatus('No se pudo copiar; selecciona el registro visible')); }}>Copiar log completo</button>

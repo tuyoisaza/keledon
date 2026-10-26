@@ -1,0 +1,9 @@
+{
+  "root": "C:\\Users\\tboar\\OneDrive\\Documentos\\GitHub\\KELEDON",
+  "remote_state": "UNVERIFIED",
+  "remote_requirements": [
+    "GitHub workflow state/runs/checks/bots",
+    "Railway triggers/Wait for CI/cron/restarts/usage if connected"
+  ],
+  "findings": []
+}

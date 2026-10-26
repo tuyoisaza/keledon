@@ -18,6 +18,7 @@ import { CommandResultDto } from './dto/browser-commands.dto';
 import { AuthenticatedRequest } from '../types/auth.types';
 import { RuntimeDeviceGuard } from '../gateways/runtime-identity';
 import { Public } from '../guards/public.decorator';
+import { InterfaceControlService } from '../interface-control/interface-control.service';
 
 @ApiTags('Browser Commands')
 @Public()
@@ -26,6 +27,7 @@ import { Public } from '../guards/public.decorator';
 export class BrowserCommandsController {
   constructor(
     private readonly browserCommandsService: BrowserCommandsService,
+    private readonly interfaces: InterfaceControlService,
   ) {}
 
   @Get(':deviceId/next-command')
@@ -34,11 +36,11 @@ export class BrowserCommandsController {
   })
   @ApiParam({ name: 'deviceId' })
   @ApiOkResponse({ description: 'Next browser command fetched' })
-  getNextCommand(
+  async getNextCommand(
     @Param('deviceId') deviceId: string,
     @Req() request: AuthenticatedRequest,
   ) {
-    return this.browserCommandsService.getNextCommand(deviceId, request.user);
+    return await this.interfaces.next(deviceId, (request as any).runtimeIdentity) || this.browserCommandsService.getNextCommand(deviceId, request.user);
   }
 
   @Post(':deviceId/command-result')
@@ -51,10 +53,17 @@ export class BrowserCommandsController {
     @Body() dto: CommandResultDto,
     @Req() request: AuthenticatedRequest,
   ) {
+    if (typeof dto.commandId === 'string' && dto.commandId.startsWith('ui_'))
+      return this.interfaces.completeDevice(deviceId, (request as any).runtimeIdentity, dto.commandId, dto.extracted);
     return this.browserCommandsService.recordCommandResult(
       deviceId,
       dto,
       request.user,
     );
+  }
+
+  @Post(':deviceId/interface-authorize')
+  authorizeInterface(@Param('deviceId') deviceId: string, @Body() body: { commandId?: string }, @Req() request: any) {
+    return this.interfaces.authorizeDevice(deviceId, request.runtimeIdentity, body?.commandId);
   }
 }
