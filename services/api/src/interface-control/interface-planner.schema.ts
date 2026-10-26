@@ -8,7 +8,7 @@ export const interfacePlannerSchema = {
       properties: {
         type: { type: 'string', enum: ['read', 'focus', 'fill', 'activate', 'scroll'] },
         ref: { type: 'string', maxLength: 6 }, value: { type: 'string', maxLength: 500 },
-        effect: { type: 'string', enum: ['read', 'navigate', 'search'] },
+        effect: { type: 'string', enum: ['read', 'navigate', 'search', 'call'] },
         expected: { type: 'string', maxLength: 300 },
       },
     },

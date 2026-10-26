@@ -160,10 +160,11 @@ export class BrainMeetController {
       if (sttOnly) return { teamId: req.runtimeIdentity.teamId, transcript: transcript.slice(0, 4000), timings };
       if (!transcript) return { teamId: req.runtimeIdentity.teamId, transcript: '', reply: '', timings };
       if (transcript.length > 4000) throw new BadRequestException('Transcription too long');
+      if (/^(?:gracias[,\s]*)?(?:adiós|adios|terminar|finalizar|hasta luego)[.!\s]*$/i.test(transcript)) return {teamId:req.runtimeIdentity.teamId,transcript,reply:'Gracias. La conversación ha terminado.',goal:{type:'close'},timings};
       if (body.interfaceControlId) {
         if (typeof body.interfaceControlId !== 'string' || !/^[a-f0-9-]{36}$/.test(body.interfaceControlId)) throw new BadRequestException('Invalid interface control');
         await this.interfaces.get(req, body.interfaceControlId);
-        return { teamId: req.runtimeIdentity.teamId, transcript, reply: 'He recibido el objetivo. Prepararé el siguiente paso en la interfaz autorizada para su revisión.', goal: { type: 'interface_objective', controlId: body.interfaceControlId }, timings };
+        return { teamId: req.runtimeIdentity.teamId, transcript, reply: '', goal: { type: 'interface_objective', controlId: body.interfaceControlId }, timings };
       }
       const cases = [...transcript.matchAll(/\b(?:caso|case|ticket)\s*(?:es\s*)?(?:el\s*)?(?:(?:número|numero|n[º°.]|#)\s*)?(\d{1,12})\b/gi)];
       const caseNumber = cases.length === 1 ? cases[0][1] : undefined;

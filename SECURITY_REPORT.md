@@ -1,0 +1,4 @@
+# Secure — 2026-10-26 / 5.9.0
+Source review fixes approved policy, audit publication, session lifecycle and retention findings. No new dependency graph/runtime major/provider boundary changes. Existing Node24.22.1/OpenSSL baseline retained. Fresh metadata-only lock audits and static evidence are recorded in STATIC_EVIDENCE.json. Scope includes seven active lockfiles; native artifacts/OS security/provider account posture and tenant DB isolation remain unverified. RUNTIME SECURITY VALIDATION NOT RUN. No known confirmed unresolved Critical/High advisory in scoped lock metadata; original high source findings remediated, not runtime-certified. Delivery can proceed with explicit acceptance limitations.
+
+See docs\phdk\lifecycle\20261026-check-fix\REMEDIATION_REPORT.md for per-finding controls, exclusions and future runtime cases.

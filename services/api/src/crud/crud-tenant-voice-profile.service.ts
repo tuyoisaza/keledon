@@ -1,3 +1,4 @@
+import { voiceSettings } from '../tts/voice-settings';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -5,6 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class CrudTenantVoiceProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private publicProfile(row:any) { if(!row)return row; try{return {...row,config:JSON.stringify(voiceSettings(row.config))};}catch{return {...row,config:null};} }
   async getTenantVoiceProfiles(companyId: string) {
     return this.prisma.tenantVoiceProfile.findMany({
       where: { companyId },
@@ -15,9 +17,10 @@ export class CrudTenantVoiceProfileService {
         language: true,
         isEnabled: true,
         isDefault: true,
+        config:true,
       },
       orderBy: { name: 'asc' },
-    });
+    }).then(rows=>rows.map(row=>this.publicProfile(row)));
   }
 
   async getTenantVoiceProfile(id: string, companyId?: string) {
@@ -30,8 +33,9 @@ export class CrudTenantVoiceProfileService {
         language: true,
         isEnabled: true,
         isDefault: true,
+        config:true,
       },
-    });
+    }).then(row=>this.publicProfile(row));
   }
 
   async createTenantVoiceProfile(data: {
@@ -41,12 +45,9 @@ export class CrudTenantVoiceProfileService {
     language?: string;
     isEnabled?: boolean;
     isDefault?: boolean;
+    config?: string;
   }) {
-    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
-      throw new BadRequestException(
-        'Voice profile config is not supported through CRUD.',
-      );
-    }
+    if (data.config!==undefined) data.config=JSON.stringify(voiceSettings(data.config));
     return this.prisma.tenantVoiceProfile.create({
       data,
       select: {
@@ -56,6 +57,7 @@ export class CrudTenantVoiceProfileService {
         language: true,
         isEnabled: true,
         isDefault: true,
+        config:true,
       },
     });
   }
@@ -68,13 +70,10 @@ export class CrudTenantVoiceProfileService {
       language?: string;
       isEnabled?: boolean;
       isDefault?: boolean;
+    config?: string;
     },
   ) {
-    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
-      throw new BadRequestException(
-        'Voice profile config is not supported through CRUD.',
-      );
-    }
+    if (data.config!==undefined) data.config=JSON.stringify(voiceSettings(data.config));
     return this.prisma.tenantVoiceProfile.update({
       where: { id },
       data,
@@ -85,6 +84,7 @@ export class CrudTenantVoiceProfileService {
         language: true,
         isEnabled: true,
         isDefault: true,
+        config:true,
       },
     });
   }

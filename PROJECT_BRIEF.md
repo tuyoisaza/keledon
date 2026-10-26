@@ -1,3 +1,8 @@
+## Authoritative current delta — 5.9.0
+Eleven approved PHDK Check gaps are implemented with bounded interaction policy, audited publication, deterministic ephemeral expiry, normal account lifecycle, compact diagnostics, en/es/pt control UI, effective voice configuration, modular services and current governance. See REQUIREMENTS_TRACEABILITY.md and docs/phdk/lifecycle/20261026-check-fix/REMEDIATION_REPORT.md. Source delivery does not establish real-platform MVP acceptance; UAT NOT RUN. Installer, backups and tenant-isolation decisions remain outside this slice.
+
+---
+
 # Current brief — Windows agent and authorized interface control (2026-10-19)
 
 ## Owner correction — any authorized interface, not a Salesforce product

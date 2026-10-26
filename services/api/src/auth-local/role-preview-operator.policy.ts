@@ -30,7 +30,8 @@ export async function roleOperatorSession(prisma: Prisma.TransactionClient, acto
   const event = await prisma.auditLog.findFirst({ where: {
     entity: ROLE_OPERATOR_ENTITY, entityId: sessionId, action: 'ROLE_OPERATOR_STARTED', userId: ownerId,
   } });
-  if (!event || !actor || event.createdAt.getTime() < (actor.uatFixtureAuthAfter?.getTime() ?? Infinity)) return null;
+  const owner=await prisma.user.findUnique({where:{id:ownerId}});
+  if (!event || !actor || !isAccountActive(owner) || event.createdAt.getTime() <= (owner.authAfter?.getTime() ?? 0) || event.createdAt.getTime() <= (actor.authAfter?.getTime() ?? 0) || event.createdAt.getTime() < (actor.uatFixtureAuthAfter?.getTime() ?? Infinity)) return null;
   const details = JSON.parse(event.changes || 'null');
   if (details?.operatorId !== actorId || details.runId !== actor.uatFixtureRunId ||
       !Number.isFinite(details.expiresAt) || details.expiresAt <= Date.now() ||

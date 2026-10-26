@@ -1,3 +1,8 @@
+## Current remediation traceability — 5.9.0
+CMT-001..004 remain the original portfolio commitments; this milestone addresses their eleven source gaps without declaring end-to-end acceptance. See the per-ID source map and required future runtime cases in [remediation report](docs/phdk/lifecycle/20261026-check-fix/REMEDIATION_REPORT.md). CHK012 installer,013 backups,014 tenant-risk decision remain open and excluded. Current implementation/publication/deployment evidence is separate from UAT NOT RUN.
+
+---
+
 # Current traceability delta — MVP, 2026-10-18
 CMT-003 → [owner intent](docs/intents/windows-meet-salesforce-mvp-intent.md) → [MVP-R01..R09 / PIAs 001..005](docs/mvp/meet-salesforce/README.md#requisitos-y-trazabilidad) → [MS-MVP-000..003](docs/mvp/meet-salesforce/MILESTONE_PLAN.md) → [A01..A12](docs/mvp/meet-salesforce/TEST_RUNBOOK.md).
 Preparation only; every functional case remains NOT RUN. [Source baseline](docs/mvp/meet-salesforce/SOURCE_BASELINE.md). CMT-001/002/004 are retained, not cancelled or accepted by this MVP plan.

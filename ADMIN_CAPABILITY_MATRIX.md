@@ -1,3 +1,15 @@
+## Current capability delta — 5.9.0
+| Capability | superadmin | admin/coordinator | user/agent |
+|---|---|---|---|
+| Suspend/reactivate/revoke sessions | Other nonfixture accounts | Own-company ordinary users/agents | Denied |
+| Change own lifecycle / fixtures through normal route | Denied | Denied | Denied |
+| Team voice/profile options | Explicit selected team | Own selected team, company checked | Read selected runtime options only |
+| Elevate roles / assign companies | Existing superadmin path | Denied | Denied |
+| Arm bounded surface cycle | Existing authenticated selected-team runtime scope; explicit fictional surface and policy required | Same | Same runtime scope; no admin policy edits |
+No existing owner role is modified during deployment; these describe application capabilities, not acceptance results.
+
+---
+
 # KELEDON Administration Capability Matrix
 
 **Audit basis:** KELEDON 5.2.1 source candidate / PHDK 2.53.1. `SOURCE` means code paths exist; it does not mean production, persistence, UI accessibility or runtime acceptance passed. No application tests were run in this audit.

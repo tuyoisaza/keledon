@@ -1,3 +1,8 @@
+## Selected delta — 5.9.0 / AGENT_SELECTED_AUTO_FORCE
+Reuse existing product semantic tokens and layout. Diagnostic icon buttons are28×28px, icons14px, gap4px, version12px. New account/voice controls reuse existing forms and minimum44px action buttons. InterfaceControlPanel and new controls use en/es/pt dictionaries. External shadow overlay uses named --keledon-overlay-bg/fg/border with explicit high-contrast fallback exception in phdk-theme.config.json. Visual/runtime accessibility evidence UNVERIFIED; no local preview/UAT executed.
+
+---
+
 # UI design system — scoped extension
 Preserve semantic CSS/Tailwind tokens, React/Lucide/motion and current en/es/pt catalogs; no unrelated redesign/dependency addition.
 Shared version -> clipboard -> trash row below top-left brand. Semver-only 12px/no wrap; buttons 28px visible square, icons 14px, 4px gap. Native buttons/accessibility labels/focus; pending/disabled, independent awaited green check/revert; hidden live status, no toast/caption/version substitution.

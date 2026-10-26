@@ -1,19 +1,23 @@
-import { BadRequestException, ConflictException, ForbiddenException, GoneException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, GoneException, Injectable, NotFoundException, OnModuleDestroy } from '@nestjs/common';
 import { createHash, randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { getVendorAllowedOrigins } from '../vendor-url-policy';
+import { interfacePolicy, InterfacePolicy } from './interface-policy';
 import { isAccountActive } from '../auth-local/account-lifecycle.policy';
 
-export type SurfaceAction = { type: 'read' | 'focus' | 'fill' | 'activate' | 'scroll'; ref: string; value?: string; expected: string; effect: 'read' | 'navigate' | 'search' };
-export type SurfaceObservation = { revision: string; text: string; elements: { ref: string; role: string; name: string; value?: string; actions: string[] }[]; capabilities: string[] };
-export type Target = { id: string; name: string; kind: 'web' | 'native'; origin?: string; url?: string; executable?: string };
-export type Control = { id: string; ownerId: string; ownerRole: string; ownerCompany: string | null; ownerTeam: string | null; teamId: string; companyId: string; target: Target; deviceId?: string; deviceFingerprint?: string; expires: number; generation: number; actions: number; allowInteraction: boolean; observation?: SurfaceObservation; plan?: { id: string; revision: string; action: SurfaceAction }; command?: { id: string; operation: string; payload: any; claimed: boolean; expires: number; result?: any }; transport: 'extension' | 'device' };
+export type SurfaceAction = { type: 'read' | 'focus' | 'fill' | 'activate' | 'scroll'; ref: string; value?: string; expected: string; effect: 'read' | 'navigate' | 'search' | 'call' };
+export type SurfaceObservation = { revision: string; text: string; elements: { ref: string; role: string; name: string; value?: string; actions: string[]; policyRuleId?: string; destination?: string }[]; capabilities: string[] };
+export type Target = { id: string; name: string; kind: 'web' | 'native'; origin?: string; url?: string; executable?: string; policy?: InterfacePolicy };
+export type Control = { id: string; ownerId: string; ownerRole: string; ownerCompany: string | null; ownerTeam: string | null; ownerAuthAfter?: number; teamId: string; companyId: string; target: Target; deviceId?: string; deviceFingerprint?: string; expires: number; generation: number; actions: number; allowInteraction: boolean; automatic?: boolean; observation?: SurfaceObservation; plan?: { id: string; revision: string; action: SurfaceAction }; command?: { id: string; operation: string; payload: any; claimed: boolean; publishing?: boolean; expires: number; result?: any }; transport: 'extension' | 'device' };
 const ACTIONS = ['read', 'focus', 'fill', 'activate', 'scroll'];
 const ID = /^[a-zA-Z0-9_-]{1,128}$/;
 
 /** Ephemeral control/observations only. Audit stores metadata, never page text or action values. */
 @Injectable()
-export class InterfaceControlService {
+export class InterfaceControlService implements OnModuleDestroy {
+  private readonly expiries = new Map<string, ReturnType<typeof setTimeout>>();
+  onModuleDestroy() { for (const timer of this.expiries.values()) clearTimeout(timer); for (const s of this.controls.values()) this.erase(s); this.expiries.clear(); this.controls.clear(); }
+  private erase(s: Control) { s.generation++; s.observation = undefined; s.plan = undefined; s.command = undefined; clearTimeout(this.expiries.get(s.id)); this.expiries.delete(s.id); this.controls.delete(s.id); }
   private readonly controls = new Map<string, Control>();
   constructor(private readonly prisma: PrismaService) {}
   async targets(teamId: string, companyId: string): Promise<Target[]> {
@@ -24,7 +28,7 @@ export class InterfaceControlService {
     const result: Target[] = [];
     for (const vendor of vendors) for (const origin of getVendorAllowedOrigins(vendor.baseUrl, (vendor.config as any)?.allowedOrigins)) {
       if (!/^https?:\/\//.test(origin)) continue;
-      result.push({ id: `v_${vendor.id}_${createHash('sha256').update(origin).digest('hex').slice(0, 12)}`, name: vendor.name, kind: 'web', origin, url: vendor.baseUrl && new URL(vendor.baseUrl).origin === origin ? vendor.baseUrl : `${origin}/` });
+      result.push({ id: `v_${vendor.id}_${createHash('sha256').update(origin).digest('hex').slice(0, 12)}`, name: vendor.name, kind: 'web', policy: interfacePolicy((vendor.config as any)?.interactionPolicy), origin, url: vendor.baseUrl && new URL(vendor.baseUrl).origin === origin ? vendor.baseUrl : `${origin}/` });
     }
     for (const { managedInterface: entry } of assignments) {
       if (entry.companyId !== companyId) continue;
@@ -32,11 +36,11 @@ export class InterfaceControlService {
         let capabilities: any; try { capabilities = JSON.parse(entry.capabilities || '{}'); } catch { continue; }
         const executable = capabilities?.nativeExecutable;
         if (typeof executable === 'string' && /^[A-Za-z]:\\[^\r\n<>"|?*]+\.exe$/i.test(executable) && executable.length <= 260)
-          result.push({ id: `i_${entry.id}`, name: entry.name, kind: 'native', executable });
+          result.push({ id: `i_${entry.id}`, name: entry.name, kind: 'native', executable, policy: interfacePolicy(capabilities.interactionPolicy) });
       } else try {
         const url = new URL(entry.baseUrl);
         if (['https:', 'http:'].includes(url.protocol) && !url.username && !url.password && !url.search && !url.hash)
-          result.push({ id: `i_${entry.id}`, name: entry.name, kind: 'web', origin: url.origin, url: url.href });
+          result.push({ id: `i_${entry.id}`, name: entry.name, kind: 'web', policy: interfacePolicy(JSON.parse(entry.capabilities || '{}').interactionPolicy), origin: url.origin, url: url.href });
       } catch { /* Invalid persisted destinations never expand scope. */ }
     }
     return result.slice(0, 100);
@@ -46,7 +50,7 @@ export class InterfaceControlService {
     const agents = await this.prisma.keledon.findMany({ where: { teamId, isActive: true }, select: { id: true } });
     return devices.filter(d => agents.some(a => a.id === d.keledonId)).map(({ keledonId: _, ...d }) => d);
   }
-  private prune() { for (const [id, s] of this.controls) if (Date.now() >= s.expires) this.controls.delete(id); }
+  private prune() { for (const [id, s] of this.controls) if (Date.now() >= s.expires) this.erase(s); }
   async open(req: any, body: any) {
     this.prune();
     if (!body || body.syntheticOnly !== true || typeof body.targetId !== 'string' || !['extension', 'device'].includes(body.transport) || typeof body.allowInteraction !== 'boolean') throw new BadRequestException('Select authorized surface and fictitious-data scope');
@@ -54,9 +58,9 @@ export class InterfaceControlService {
     const target = (await this.targets(req.runtimeIdentity.teamId, req.runtimeIdentity.companyId)).find(t => t.id === body.targetId);
     if (!target) throw new ForbiddenException('Surface is not assigned to selected team');
     if (target.kind === 'native' && body.transport !== 'device') throw new BadRequestException('Native Windows interface requires a paired Windows executor');
-    const owner = await this.prisma.user.findUnique({ where: { id: req.runtimeIdentity.userId }, select: { id: true, role: true, companyId: true, teamId: true } });
-    if (!owner) throw new ForbiddenException('Current actor required');
-    const s: Control = { id: randomUUID(), ownerId: owner.id, ownerRole: owner.role, ownerCompany: owner.companyId, ownerTeam: owner.teamId, teamId: req.runtimeIdentity.teamId, companyId: req.runtimeIdentity.companyId, target, transport: body.transport, allowInteraction: body.allowInteraction, expires: Date.now() + 120000, generation: 1, actions: 0 };
+    const owner = await this.prisma.user.findUnique({ where: { id: req.runtimeIdentity.userId }, select: { id: true, role: true, companyId: true, teamId: true, isActive:true, authAfter:true } });
+    if (!isAccountActive(owner)) throw new ForbiddenException('Current actor required');
+    const s: Control = { id: randomUUID(), ownerId: owner.id, ownerRole: owner.role, ownerCompany: owner.companyId, ownerTeam: owner.teamId, ownerAuthAfter: owner.authAfter?.getTime() || 0, teamId: req.runtimeIdentity.teamId, companyId: req.runtimeIdentity.companyId, target, transport: body.transport, allowInteraction: body.allowInteraction, expires: Date.now() + 120000, generation: 1, actions: 0 };
     if (body.transport === 'device') {
       if (typeof body.deviceId !== 'string' || !ID.test(body.deviceId)) throw new BadRequestException('Paired device required');
       const device = await this.boundDevice(body.deviceId, s);
@@ -64,7 +68,10 @@ export class InterfaceControlService {
       s.deviceId = device.id; s.deviceFingerprint = createHash('sha256').update(device.authToken).digest('hex');
     }
     try { const claims = JSON.parse(Buffer.from((req.headers.authorization || '').split(' ')[1].split('.')[0], 'base64').toString('utf8')); if (Number.isFinite(claims.expiresAt)) s.expires = Math.min(s.expires, claims.expiresAt); } catch { /* paired device token has no local-session claims */ }
-    this.controls.set(s.id, s); await this.audit(s, 'OPEN'); return this.public(s);
+    await this.audit(s, 'OPEN');
+    if (Date.now() >= s.expires) throw new GoneException('Control session expired');
+    this.controls.set(s.id, s);
+    const timer = setTimeout(() => this.erase(s), Math.max(1, s.expires-Date.now())); timer.unref?.(); this.expiries.set(s.id,timer); return this.public(s);
   }
   private async boundDevice(id: string, s: Control) {
     const device = await this.prisma.device.findUnique({ where: { id }, include: { user: true } });
@@ -74,9 +81,9 @@ export class InterfaceControlService {
   }
   private async current(s: Control) {
     const generation = s.generation;
-    if (Date.now() >= s.expires) { this.controls.delete(s.id); throw new GoneException('Control session expired'); }
+    if (Date.now() >= s.expires) { this.erase(s); throw new GoneException('Control session expired'); }
     const owner = await this.prisma.user.findUnique({ where: { id: s.ownerId } });
-    if (!isAccountActive(owner) || owner.role !== s.ownerRole || owner.companyId !== s.ownerCompany || owner.teamId !== s.ownerTeam) throw new ForbiddenException('Control actor changed');
+    if (!isAccountActive(owner) || owner.role !== s.ownerRole || owner.companyId !== s.ownerCompany || owner.teamId !== s.ownerTeam || (owner.authAfter?.getTime() || 0)!==s.ownerAuthAfter) throw new ForbiddenException('Control actor changed');
     const target = (await this.targets(s.teamId, s.companyId)).find(t => t.id === s.target.id);
     if (!target || JSON.stringify(target) !== JSON.stringify(s.target)) throw new ForbiddenException('Surface authorization changed');
     if (s.deviceId) { const device = await this.boundDevice(s.deviceId, s); if (createHash('sha256').update(device.authToken).digest('hex') !== s.deviceFingerprint) throw new ForbiddenException('Device session changed'); }
@@ -87,37 +94,59 @@ export class InterfaceControlService {
     if (!s || s.ownerId !== req.runtimeIdentity.userId || s.teamId !== req.runtimeIdentity.teamId || s.companyId !== req.runtimeIdentity.companyId) throw new NotFoundException('Control session not found');
     await this.current(s); return s;
   }
-  public(s: Control) { return { id: s.id, teamId: s.teamId, target: s.target, transport: s.transport, deviceId: s.deviceId, expires: s.expires, generation: s.generation, actions: s.actions, allowInteraction: s.allowInteraction, observation: s.observation, plan: s.plan }; }
+  public(s: Control) { return { id: s.id, teamId: s.teamId, target: s.target, transport: s.transport, deviceId: s.deviceId, expires: s.expires, generation: s.generation, actions: s.actions, allowInteraction: s.allowInteraction, automatic: s.automatic===true, observation: s.observation, plan: s.plan }; }
   sanitizeObservation(value: any): SurfaceObservation {
     if (!value || typeof value.revision !== 'string' || !/^[a-f0-9-]{36}$/.test(value.revision) || typeof value.text !== 'string' || value.text.length > 4000 || !Array.isArray(value.elements) || value.elements.length > 120 || !Array.isArray(value.capabilities) || value.capabilities.length > 12) throw new BadRequestException('Bounded interface observation required');
     const seen = new Set<string>();
     const elements = value.elements.map((e: any) => {
       if (!e || typeof e.ref !== 'string' || !/^e\d{1,4}$/.test(e.ref) || seen.has(e.ref) || typeof e.role !== 'string' || e.role.length > 40 || typeof e.name !== 'string' || e.name.length > 160 || (e.value !== undefined && (typeof e.value !== 'string' || e.value.length > 500)) || !Array.isArray(e.actions) || e.actions.length > 5 || e.actions.some((a: any) => !ACTIONS.includes(a))) throw new BadRequestException('Invalid observed element');
-      seen.add(e.ref); return { ref: e.ref, role: e.role, name: e.name, ...(e.value !== undefined ? { value: e.value } : {}), actions: [...new Set<string>(e.actions)] };
+      seen.add(e.ref); return { ref: e.ref, role: e.role, name: e.name, ...(e.value !== undefined ? { value: e.value } : {}), actions: [...new Set<string>(e.actions)], ...(typeof e.policyRuleId === 'string' && /^[a-z0-9_-]{1,40}$/.test(e.policyRuleId) ? {policyRuleId:e.policyRuleId}:{}), ...(typeof e.destination==='string' && e.destination.length<=2048 ? {destination:e.destination}: {}) };
     });
     return { revision: value.revision, text: value.text, elements, capabilities: value.capabilities.filter((x: any) => typeof x === 'string' && /^[a-z-]{1,30}$/.test(x)) };
   }
   async observe(s: Control, value: any) { s.observation = this.sanitizeObservation(value); s.plan = undefined; await this.audit(s, 'OBSERVE'); return this.public(s); }
   validateAction(s: Control, value: any): SurfaceAction {
     const element = s.observation?.elements.find(e => e.ref === value?.ref);
-    if (!element || !ACTIONS.includes(value?.type) || !element.actions.includes(value.type) || !['read', 'navigate', 'search'].includes(value.effect) || typeof value.expected !== 'string' || value.expected.length > 300 || (value.value !== undefined && (typeof value.value !== 'string' || value.value.length > 500 || /[\x00-\x08\x0b-\x1f]/.test(value.value)))) throw new BadRequestException('Action must reference a current observed capability');
+    if (!element || !ACTIONS.includes(value?.type) || !element.actions.includes(value.type) || !['read', 'navigate', 'search', 'call'].includes(value.effect) || typeof value.expected !== 'string' || value.expected.length > 300 || (value.value !== undefined && (typeof value.value !== 'string' || value.value.length > 500 || /[\x00-\x08\x0b-\x1f]/.test(value.value)))) throw new BadRequestException('Action must reference a current observed capability');
     if (!s.allowInteraction && ['fill', 'activate'].includes(value.type)) throw new ForbiddenException('Interaction not authorized for this session');
+    if (['fill','activate'].includes(value.type)) {
+      const rule=s.target.policy?.rules.find(r=>r.id===element.policyRuleId);
+      const allowed=rule && rule.name===element.name && rule.role===element.role && (value.type==='fill' ? rule.kind==='search-field' && value.effect==='search' : rule.kind==='navigate' ? value.effect==='navigate' && element.destination===rule.path : ['accept-call','end-call'].includes(rule.kind) ? value.effect==='call' : rule.kind==='search-submit' && value.effect==='search');
+      if (!allowed) throw new ForbiddenException('No configured read-only operation permits this action');
+    }
     return { type: value.type, ref: value.ref, effect: value.effect, expected: value.expected, ...(value.value !== undefined ? { value: value.value } : {}) };
   }
   async propose(s: Control, action: any) { s.plan = { id: randomUUID(), revision: s.observation.revision, action: this.validateAction(s, action) }; await this.audit(s, 'PLAN'); return this.public(s); }
+  async automation(s:Control,enabled:unknown) {
+    if(typeof enabled!=='boolean' || (enabled && (!s.allowInteraction || !s.target.policy?.rules.length))) throw new ForbiddenException('Configured read-only rules required');
+    const generation=s.generation; await this.audit(s,enabled?'AUTO_ARM':'AUTO_DISARM');await this.current(s);
+    if(generation!==s.generation)throw new ConflictException('Control changed'); s.automatic=enabled;return this.public(s);
+  }
   async issue(s: Control, operation: 'open' | 'observe' | 'act', planId?: string) {
     await this.current(s);
     if (s.command && !s.command.result && Date.now() < s.command.expires) throw new ConflictException('An executor command is still pending');
     let payload: any = {};
     if (operation === 'act') {
       if (!s.plan || s.plan.id !== planId || s.plan.revision !== s.observation?.revision) throw new ConflictException('Observe and authorize the current plan');
-      if (++s.actions > 12) throw new GoneException('Twelve-action session limit reached');
-      payload = { revision: s.plan.revision, action: this.validateAction(s, s.plan.action) }; s.plan = undefined;
+      if (s.actions >= 12) throw new GoneException('Twelve-action session limit reached');
+      payload = { revision: s.plan.revision, action: this.validateAction(s, s.plan.action) };
     }
-    s.command = { id: `ui_${randomUUID()}`, operation, payload, claimed: false, expires: Math.min(s.expires, Date.now() + 25000) };
-    await this.audit(s, operation.toUpperCase()); return { commandId: s.command.id, generation: s.generation, operation, ...payload };
+    const generation=s.generation, plan=s.plan;
+    const command = { id: `ui_${randomUUID()}`, operation, payload, claimed: false, expires: Math.min(s.expires, Date.now() + 25000) };
+    // The pending slot prevents concurrent issuance, but is never claimable before audit commits.
+    s.command = {...command, claimed:true, publishing:true};
+    const reservation=s.command;
+    try {
+      await this.audit(s, operation.toUpperCase());
+      await this.current(s);
+      if (s.generation!==generation || s.command!==reservation || (operation==='act' && s.plan!==plan)) throw new ConflictException('Command changed before audited publication');
+      s.command=command;
+      if (operation==='act') { s.actions++; s.plan=undefined; }
+      return {commandId:command.id,generation,operation,...payload};
+    } catch (error) { if(s.command===reservation) s.command=undefined; throw error; }
   }
-  async cancel(s: Control, close = false) { s.generation++; s.plan = undefined; s.command = undefined; s.observation = undefined; if (close) this.controls.delete(s.id); await this.audit(s, close ? 'CLOSE' : 'CANCEL'); return this.public(s); }
+  async cancel(s: Control, close = false, keepAutomatic = false) { s.generation++; if(!keepAutomatic || close)s.automatic=false; s.plan = undefined; s.command = undefined; s.observation = undefined; if (close) this.erase(s); await this.audit(s, close ? 'CLOSE' : 'CANCEL'); return this.public(s); }
+
   async next(deviceId: string, identity: any) {
     this.prune();
     const s = [...this.controls.values()].find(s => s.deviceId === deviceId && s.teamId === identity.teamId && s.command && !s.command.claimed && !s.command.result && Date.now() < s.command.expires);
@@ -130,7 +159,7 @@ export class InterfaceControlService {
   }
   async authorizeDevice(deviceId: string, identity: any, commandId: string) {
     const s = [...this.controls.values()].find(s => s.deviceId === deviceId && s.teamId === identity.teamId && s.command?.id === commandId);
-    if (!s || !s.command.claimed || s.command.result || Date.now() >= s.command.expires) throw new GoneException('Executor command cancelled or expired');
+    if (!s || s.command.publishing || !s.command.claimed || s.command.result || Date.now() >= s.command.expires) throw new GoneException('Executor command cancelled or expired');
     await this.current(s); return { controlId: s.id, generation: s.generation, teamId: s.teamId, target: s.target, expires: s.command.expires, sessionExpires: s.expires, allowInteraction: s.allowInteraction, operation: s.command.operation, ...s.command.payload };
   }
   async completeDevice(deviceId: string, identity: any, commandId: string, result: any) {
@@ -139,7 +168,7 @@ export class InterfaceControlService {
   }
   async complete(s: Control, commandId: string, generation: number, result: any) {
     await this.current(s);
-    if (!s.command || s.command.id !== commandId || generation !== s.generation || Date.now() >= s.command.expires) throw new ConflictException('Stale executor result');
+    if (!s.command || s.command.publishing || s.command.id !== commandId || generation !== s.generation || Date.now() >= s.command.expires) throw new ConflictException('Stale executor result');
     if (s.command.result) return s.command.result;
     const observation = result?.observation ? this.sanitizeObservation(result.observation) : undefined;
     const code = typeof result?.code === 'string' && /^[A-Z_]{1,48}$/.test(result.code) ? result.code : 'EXECUTOR_UNAVAILABLE';

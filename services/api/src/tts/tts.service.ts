@@ -1,3 +1,4 @@
+import { voiceSettings, VoiceSettings, elevenVoiceSettings, profileMatches, configuredSpeachesVoice } from './voice-settings';
 import { runtimeAiBudget } from '../llm/runtime-ai-budget';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
@@ -49,6 +50,7 @@ export class TTSService {
     apiKey: string;
     voiceId: string;
     apiUrl?: string;
+    settings?: VoiceSettings;
   }> {
     // Try DB first if teamId provided
     if (teamId) {
@@ -57,6 +59,7 @@ export class TTSService {
           where: { id: teamId },
           select: {
             ttsProvider: true,
+            ttsVoiceProfileId: true, ttsVoiceSettings:true, brand:{select:{companyId:true}},
             ttsApiKey: true,
             elevenlabsApiKey: true,
             ttsVoiceId: true,
@@ -66,7 +69,9 @@ export class TTSService {
           },
         });
         if (team?.ttsProvider) {
-          return {
+          let settings=voiceSettings(team.ttsVoiceSettings,team.ttsProvider);
+          if(team.ttsVoiceProfileId){const profile=await this.prisma.tenantVoiceProfile.findUnique({where:{id:team.ttsVoiceProfileId},include:{providerCatalog:true}});if(!profile || !profile.isEnabled || profile.companyId!==team.brand.companyId || !profileMatches(profile,team.ttsProvider)) throw Error('Voice profile unavailable');settings=voiceSettings({...voiceSettings({locale:profile.language,...(profile.config?JSON.parse(profile.config):{})},team.ttsProvider),...(team.ttsVoiceSettings?JSON.parse(team.ttsVoiceSettings):{})},team.ttsProvider);}
+          return { settings:team.ttsVoiceSettings || team.ttsVoiceProfileId ? settings:undefined,
             providerId: team.ttsProvider,
             apiKey:
               team.ttsProvider === 'speaches'
@@ -76,7 +81,7 @@ export class TTSService {
                     ? team.elevenlabsApiKey
                     : '') ||
                   '',
-            voiceId: team.ttsVoiceId || '',
+            voiceId: settings.voiceId || team.ttsVoiceId || '',
             apiUrl:
               team.ttsProvider === 'speaches'
                 ? team.speachesApiUrl || team.ttsEndpointUrl || undefined
@@ -157,7 +162,7 @@ export class TTSService {
         return await this.trackProviderResult(
           provider,
           options.correlationId,
-          () => this.speakWithKokoro(text, baseUrl, voice),
+          () => this.speakWithKokoro(text, baseUrl, voice, (ttsConfig as any).settings),
         );
       } else if (provider === 'speaches') {
         const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
@@ -165,11 +170,7 @@ export class TTSService {
           speachesApiUrl ||
           (!options.teamId ? process.env.SPEACHES_API_URL : undefined);
         if (!baseUrl) return { error: 'Configured TTS endpoint required' };
-        const voice = getSpeachesVoice(
-          text,
-          ttsConfig.voiceId,
-          options.forceLanguageVoice,
-        );
+        const voice = configuredSpeachesVoice(ttsConfig,text,options.forceLanguageVoice);
         return await this.trackProviderResult(
           provider,
           options.correlationId,
@@ -180,7 +181,7 @@ export class TTSService {
               apiKeyFromStore ||
                 (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
                 '',
-              voice,
+              voice, (ttsConfig as any).settings,
             ),
         );
       } else if (provider === 'elevenlabs') {
@@ -269,7 +270,7 @@ export class TTSService {
       const result = await this.trackProviderResult(
         provider,
         options.correlationId,
-        () => this.speakWithKokoro(text, baseUrl, voice),
+        () => this.speakWithKokoro(text, baseUrl, voice, (ttsConfig as any).settings),
       );
       if (result.audioData && result.audioData.length > 0) {
         // Kokoro returns a complete WAV file. Do not split WAV bytes into arbitrary
@@ -283,11 +284,7 @@ export class TTSService {
         speachesApiUrl ||
         (!options.teamId ? process.env.SPEACHES_API_URL : undefined);
       if (!baseUrl) return { error: 'Configured TTS endpoint required' };
-      const voice = getSpeachesVoice(
-        text,
-        ttsConfig.voiceId,
-        options.forceLanguageVoice,
-      );
+      const voice = configuredSpeachesVoice(ttsConfig,text,options.forceLanguageVoice);
       const result = await this.trackProviderResult(
         provider,
         options.correlationId,
@@ -298,7 +295,7 @@ export class TTSService {
             apiKeyFromStore ||
               (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
               '',
-            voice,
+            voice, (ttsConfig as any).settings,
           ),
       );
       if (result.audioData && result.audioData.length > 0) {
@@ -366,11 +363,9 @@ export class TTSService {
         {
           text,
           model_id: 'eleven_turbo_v2_5',
+          ...((ttsConfig as any).settings?.locale?{language_code:(ttsConfig as any).settings.locale.split('-')[0]}:{}),
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.8,
-            style: 0.0,
-            use_speaker_boost: true,
+            ...elevenVoiceSettings(ttsConfig),
           },
         },
         {
@@ -433,11 +428,9 @@ export class TTSService {
         {
           text,
           model_id: 'eleven_turbo_v2_5',
+          ...((ttsConfig as any).settings?.locale?{language_code:(ttsConfig as any).settings.locale.split('-')[0]}:{}),
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.8,
-            style: 0.0,
-            use_speaker_boost: true,
+            ...elevenVoiceSettings(ttsConfig),
           },
         },
         {
@@ -491,7 +484,7 @@ export class TTSService {
       const { OpenAI } = await import('openai');
       const openai = new OpenAI({ apiKey, timeout: 30000, maxRetries: 0 });
 
-      const voice = (process.env.OPENAI_TTS_VOICE || 'nova') as
+      const voice = (ttsConfig.voiceId || process.env.OPENAI_TTS_VOICE || 'nova') as
         | 'alloy'
         | 'ash'
         | 'coral'
@@ -508,6 +501,7 @@ export class TTSService {
         model,
         voice,
         input: text,
+        speed: (ttsConfig as any).settings?.speed || 1,
         response_format: 'mp3',
       });
 
@@ -529,8 +523,9 @@ export class TTSService {
     text: string,
     baseUrl: string,
     voice: string,
+    settings?: VoiceSettings,
   ): Promise<TTSResult> {
-    return requestKokoroAudio(text, baseUrl, voice);
+    return requestKokoroAudio(text, baseUrl, voice, settings);
   }
 
   async speakWithSpeaches(
@@ -538,8 +533,9 @@ export class TTSService {
     baseUrl: string,
     apiKey: string,
     voice: string,
+    settings?: VoiceSettings,
   ): Promise<TTSResult> {
-    return requestSpeachesAudio(text, baseUrl, apiKey, voice);
+    return requestSpeachesAudio(text, baseUrl, apiKey, voice, settings);
   }
 
   async warmSpeachesForTeam(

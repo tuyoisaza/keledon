@@ -53,11 +53,11 @@ export async function executeInterfaceCommand(commandId: string, parent: Browser
       const view = local.tab?.view;
       if (!view || view.webContents.isDestroyed() || new URL(view.webContents.getURL()).origin !== permission.target.origin) throw new Error('SURFACE_SCOPE_DENIED');
       await view.webContents.executeJavaScriptInIsolatedWorld(1004, [{ code: readFileSync(asset('surface-dom.js'), 'utf8') }]);
-      if (permission.operation === 'observe') result = { code: 'OBSERVED', observation: await view.webContents.executeJavaScriptInIsolatedWorld(1004, [{ code: `globalThis.keledonSurfaceEngine.open(${JSON.stringify({ origin: permission.target.origin, expires: local.expires, allowInteraction: permission.allowInteraction })})` }]), verified: false };
+      if (permission.operation === 'observe') result = { code: 'OBSERVED', observation: await view.webContents.executeJavaScriptInIsolatedWorld(1004, [{ code: `globalThis.keledonSurfaceEngine.open(${JSON.stringify({ origin: permission.target.origin, expires: local.expires, policy: permission.target.policy, allowInteraction: permission.allowInteraction })})` }]), verified: false };
       else { await grant(commandId); result = await view.webContents.executeJavaScriptInIsolatedWorld(1004, [{ code: `globalThis.keledonSurfaceEngine.act(${JSON.stringify({ revision: permission.revision, action: permission.action })})` }]); }
     } else {
       if (permission.operation === 'act' && (permission.revision !== local.revision || !local.refs?.[permission.action?.ref])) throw new Error('STALE_OBSERVATION');
-      await grant(commandId); result = await native({ operation: permission.operation, executable: permission.target.executable, window: local.window, allowInteraction: permission.allowInteraction, action: permission.action, ref: permission.action ? local.refs?.[permission.action.ref] : undefined });
+      await grant(commandId); result = await native({ operation: permission.operation, executable: permission.target.executable, window: local.window, policy: permission.target.policy, allowInteraction: permission.allowInteraction, action: permission.action, ref: permission.action ? local.refs?.[permission.action.ref] : undefined });
       local.refs = result.privateRefs; delete result.privateRefs;
     }
     if (result.observation) local.revision = result.observation.revision;

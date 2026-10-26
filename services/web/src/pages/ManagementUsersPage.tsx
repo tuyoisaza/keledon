@@ -1,3 +1,4 @@
+import { AccountLifecycle } from '@/components/admin/AccountLifecycle';
 import ManagementModal from '@/components/common/ManagementModal';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
@@ -222,7 +223,7 @@ export default function ManagementUsersPage() {
                             {filteredUsers.map((user) => (
                                 <tr key={user.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-medium">{user.name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{user.email}{canManageUser(user) && user.id!==currentUser?.id && <AccountLifecycle id={user.id} active={(user as any).isActive!==false} onChanged={()=>void fetchData()} />}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{getCompanyName(user.companyId)}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{getBrandName(user.brandId)}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{getTeamName(user.teamId)}</td>

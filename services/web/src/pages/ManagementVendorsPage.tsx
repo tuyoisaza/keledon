@@ -32,6 +32,7 @@ export default function ManagementVendorsPage() {
         type: 'crm',
         baseUrl: '',
         allowedOrigins: '',
+        interfacePolicy: '{"version":1,"rules":[]}',
         username: '',
         password: '',
         apiKey: '',
@@ -79,7 +80,8 @@ export default function ManagementVendorsPage() {
     }, [fetchVendors, selectedTeamId]);
 
     const resetForm = () => {
-        setFormData({ name: '', type: 'crm', baseUrl: '', allowedOrigins: '', username: '', password: '', apiKey: '', startGoal: '' });
+        setFormData({ name: '', type: 'crm', baseUrl: '', allowedOrigins: '',
+        interfacePolicy: '{"version":1,"rules":[]}', username: '', password: '', apiKey: '', startGoal: '' });
     };
 
     const openCreateForm = () => {
@@ -94,6 +96,7 @@ export default function ManagementVendorsPage() {
             type: vendor.type || 'crm',
             baseUrl: vendor.baseUrl || '',
             allowedOrigins: (vendor.allowedOrigins || []).join('\n'),
+            interfacePolicy: JSON.stringify((vendor as any).interactionPolicy || {version:1,rules:[]},null,2),
             username: vendor.username || '',
             password: '',
             apiKey: '',
@@ -117,6 +120,7 @@ export default function ManagementVendorsPage() {
                 type: string;
                 baseUrl?: string;
                 allowedOrigins: string[];
+                config: Record<string, unknown>;
                 username?: string;
                 password?: string;
                 apiKey?: string;
@@ -126,6 +130,7 @@ export default function ManagementVendorsPage() {
                 name: formData.name,
                 type: formData.type,
                 baseUrl: formData.baseUrl || undefined,
+                config: {interactionPolicy: JSON.parse(formData.interfacePolicy)},
                 allowedOrigins: formData.allowedOrigins.split(/\r?\n/).map(origin => origin.trim()).filter(Boolean),
             };
             if (formData.username) submitData.username = formData.username;
@@ -457,6 +462,7 @@ export default function ManagementVendorsPage() {
                             </div>
                         </form>
                     </div>
+                    <label className="block">{t('interface.policyLabel')}<textarea className="w-full rounded border border-border bg-background p-2 font-mono" rows={6} value={formData.interfacePolicy} onChange={e=>setFormData({...formData,interfacePolicy:e.target.value})} /></label>
                 </ManagementModal>
             )}
         </div>

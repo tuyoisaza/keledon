@@ -16,21 +16,27 @@
   }
   function open(grant) {
     if (!grant || grant.origin !== location.origin || !Number.isFinite(grant.expires) || grant.expires <= Date.now() || grant.expires > Date.now() + 125000) throw new Error('SURFACE_SCOPE_DENIED');
-    scope = { origin: grant.origin, expires: grant.expires, allowInteraction: grant.allowInteraction === true };
+    scope = { origin: grant.origin, expires: grant.expires, allowInteraction: grant.allowInteraction === true, policy: grant.policy?.version===1 && Array.isArray(grant.policy.rules) ? grant.policy : {version:1,rules:[]} };
     revision = ''; refs.clear(); return observe();
   }
+  function ruleFor(e) {
+    return scope.policy.rules.find(r => {
+      if (r.name !== label(e) || r.role !== role(e)) return false;
+      if (r.kind === 'navigate') {
+        if (e.tagName!=='A' || e.hasAttribute('download')) return false;
+        try { const u=new URL(e.href); return u.origin===scope.origin && !u.username && !u.password && !u.hash && u.pathname+u.search===r.path; } catch { return false; }
+      }
+      return !!(r.elementId && e.id===r.elementId || r.inputName && e.name===r.inputName);
+    });
+  }
   function actions(e) {
-    const result = ['read'];
-    if (typeof e.focus === 'function' && !e.disabled) result.push('focus');
-    if (e.scrollHeight > e.clientHeight + 10) result.push('scroll');
-    if (!scope.allowInteraction || e.disabled || sensitive(e)) return result;
-    if (searchControl(e) && !e.readOnly && ((e.tagName === 'INPUT' && ['text','search'].includes(e.type)) || e.tagName === 'TEXTAREA')) result.push('fill');
-    if (!writes.test(label(e)) && !e.closest('[contenteditable=true]')) {
-      if (e.tagName === 'A' && !e.hasAttribute('download')) {
-        try { const url = new URL(e.href); if (url.origin === scope.origin && !url.username && !url.password && ['https:','http:'].includes(url.protocol)) result.push('activate'); } catch { /* no script URLs */ }
-      } else if (searchControl(e) && ((e.tagName === 'BUTTON' && e.type !== 'submit') || role(e) === 'button')) result.push('activate');
-    }
-    return result.slice(0, 5);
+    const result=['read'], r=ruleFor(e);
+    if (e.scrollHeight>e.clientHeight+10) result.push('scroll');
+    if (!scope.allowInteraction || e.disabled || sensitive(e) || !r) return result;
+    if (typeof e.focus==='function') result.push('focus');
+    if (r.kind==='search-field' && !e.readOnly && ((e.tagName==='INPUT' && ['text','search'].includes(e.type)) || e.tagName==='TEXTAREA')) result.push('fill');
+    if (r.kind==='navigate' || (['search-submit','accept-call','end-call'].includes(r.kind) && e.tagName==='BUTTON' && e.type!=='submit')) result.push('activate');
+    return result.slice(0,5);
   }
   function observe() {
     current(); refs = new Map(); revision = crypto.randomUUID(); observedUrl = location.href;
@@ -47,7 +53,8 @@
           if (name || ['INPUT','TEXTAREA','SELECT'].includes(e.tagName)) {
             const value = ['INPUT','TEXTAREA','SELECT'].includes(e.tagName) ? String(e.value || '').slice(0, 500) : undefined;
             refs.set(ref, { element: e, fingerprint: fingerprint(e) });
-            elements.push({ ref, role: role(e), name, ...(value !== undefined ? { value } : {}), actions: actions(e) });
+            const policyRule=ruleFor(e);
+            elements.push({ ref, role: role(e), name, ...(policyRule?{policyRuleId:policyRule.id,...(policyRule.path?{destination:policyRule.path}:{})}:{}), ...(value !== undefined ? { value } : {}), actions: actions(e) });
             if (name && texts.join('\n').length < 3500) texts.push(name);
           }
         }
@@ -62,8 +69,11 @@
     current();
     const entry = refs.get(input?.action?.ref), a = input?.action;
     if (input?.revision !== revision || observedUrl !== location.href || !entry?.element.isConnected || fingerprint(entry.element) !== entry.fingerprint || !actions(entry.element).includes(a?.type)) throw new Error('STALE_OBSERVATION');
-    const e = entry.element;
-    if (!['read','navigate','search'].includes(a.effect) || (['fill','activate'].includes(a.type) && !scope.allowInteraction)) throw new Error('ACTION_POLICY_DENIED');
+    const e = entry.element, rule=ruleFor(e);
+    if (['fill','activate','focus'].includes(a.type) && !rule) throw new Error('ACTION_POLICY_DENIED');
+    if (a.type==='fill' && (rule.kind!=='search-field' || a.effect!=='search')) throw new Error('ACTION_POLICY_DENIED');
+    if (a.type==='activate' && a.effect!==(rule.kind==='navigate'?'navigate':['accept-call','end-call'].includes(rule.kind)?'call':'search')) throw new Error('ACTION_POLICY_DENIED');
+    if (!['read','navigate','search','call'].includes(a.effect) || (['fill','activate'].includes(a.type) && !scope.allowInteraction)) throw new Error('ACTION_POLICY_DENIED');
     if (a.type === 'focus') e.focus({ preventScroll: true });
     else if (a.type === 'fill') {
       if (typeof a.value !== 'string' || a.value.length > 500 || sensitive(e)) throw new Error('ACTION_POLICY_DENIED');
