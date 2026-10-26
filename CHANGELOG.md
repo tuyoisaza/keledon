@@ -1,3 +1,8 @@
+## 5.8.1 — 2026-10-26
+- Preserve Spanish/non-ASCII native interface input and observations through explicit UTF-8 stdin/stdout on Windows PowerShell.
+- Install OpenSSL explicitly in both active API image stages so Prisma detects the runtime ABI instead of falling back during generation. This addresses the actual Node24 production-build warning; no ORM or provider migration.
+- Static syntax/diff checks only; native behavior and audio acceptance remain UAT NOT RUN.
+
 ## 5.8.0 — 2026-10-26
 - Add team-scoped general interface observation, one-step Brain planning and explicit execution via opt-in browser extension or paired Windows host; Salesforce remains an optional adapter.
 - Restrict mutable input/invocation to positively identified search controls; fence stale observations, duplicate device claims and failed-result verification. Native packaging and all live behavior remain unaccepted.
