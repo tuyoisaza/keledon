@@ -1,3 +1,5 @@
+import { VoiceSettingsController } from './tts/voice-settings.controller';
+import { AccountLifecycleController } from './auth-local/account-lifecycle.controller';
 import { AiAdminModule } from './ai-admin/ai-admin.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -87,6 +89,8 @@ import { TtsSyntheticService } from './uat-fixtures/tts-synthetic.service';
     DeviceController,
     BrainController,
     BrainMeetController,
+    AccountLifecycleController,
+    VoiceSettingsController,
     InterfaceControlController,
     PlannerController,
     SpeachesController,

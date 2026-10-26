@@ -1,3 +1,9 @@
+# 5.9.0 — 2026-10-26
+- Implement eleven approved PHDK Check source gaps: positive interface policy, audit-before-publication, bounded armed cycle, account lifecycle and deterministic ephemeral purge.
+- Connect typed team voice/profile options to synthesis; translate interface UI; restore compact diagnostics; govern external overlay tokens; split AI/CRUD modules and reconcile current registries.
+- Additive PostgreSQL migration for account state/session watermark and team voice selection. Missing policy is observation-only; no CRM writes or provider configuration changes.
+- No local tests/build/lint; UAT NOT RUN. Installer, backup/restore and tenant-isolation decision excluded. Existing customized published planner revisions are preserved.
+
 ## 5.8.1 — 2026-10-26
 - Preserve Spanish/non-ASCII native interface input and observations through explicit UTF-8 stdin/stdout on Windows PowerShell.
 - Install OpenSSL explicitly in both active API image stages so Prisma detects the runtime ABI instead of falling back during generation. This addresses the actual Node24 production-build warning; no ORM or provider migration.

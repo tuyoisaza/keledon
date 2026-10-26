@@ -1,3 +1,15 @@
+# Current task — 2026-10-26 / 5.9.0
+PHDK 2.68.0 AUTO FORCE. Owner authorized exactly CHK-20261026-001..011 through normal publication and production deployment, without local application tests/build/lint. Implementation is complete in source; publication/deployment are tracked in docs/phdk/lifecycle/20261026-check-fix/. UAT NOT RUN; Prep/UAT/Fix DEFERRED — OWNER OPT-IN.
+Excluded: 012 Windows installer, 013 production backups/restore, 014 tenant risk/isolation decision. Existing CMT-001..004 and real-platform MVP acceptance remain open where runtime evidence is missing. Next: static review → PR/main → existing Railway deployment metadata. Earlier task entries below are historical, not current instructions.
+
+---
+
+# Current owner scope — Windows MVP implementation, 2026-10-18
+Work exclusively in C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON. Current branch codex/meet-audio-main is based on origin/main PR #274 merge 9e3f11bfef384952b0ce33bff8607fa4a3de463e, product 5.2.21. Seven pre-existing modified evidence files remain byte-for-byte preserved and excluded from MVP publication; backup/hashes and evidence-only stash retained under .git.
+Implemented local Meet AudioPort candidate plus bounded RTP observations and a synthetic offline speech transport fixture. No local tests/build/lint or functional audio trial. Brain integration and real read-only Salesforce remain pending. Current production Brain readback redirects to login (v5.2.21); previous authenticated session is no longer open. Owner must load the unpacked extension from this project; browser URL policy blocks automated chrome://extensions access. Meet/Brain audio acceptance NOT_RUN. No push, PR or merge for this candidate. See docs/mvp/meet-salesforce/IMPLEMENTATION_STATUS.md for separate implementation/publication/acceptance.
+SIGUIENTE PASO: owner loads the extension and authenticates production directly; run real Meet transport/interrupt trial with remote confirmation, then connect STT/Brain/TTS and continue Salesforce. This is the same authorized request, not a new mission or background job.
+
+---
 # Current owner task — MVP preparation, 2026-10-18
 Request: update intent, create PIAs, advance independent work and identify test inputs. Target main through normal scoped PR. Product baseline 5.2.21, PHDK 2.56.0 current/coherent; branch plan/meet-salesforce-mvp.
 [Intent](docs/intents/windows-meet-salesforce-mvp-intent.md) · [five PIAs](docs/mvp/meet-salesforce/README.md). Scope: open executor experiment, read-only Windows inventory, experimental profile contract and real-platform runbook; no runtime application changes in this slice. Six pre-existing Browser changes excluded.

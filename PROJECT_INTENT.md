@@ -1,3 +1,9 @@
+## Current implementation boundary — 5.9.0 / 2026-10-26
+The Windows interaction-agent intent remains unchanged. This slice adds an explicitly armed, foreground automatic cycle with a two-minute non-renewing lease, at most twelve actions and four planner steps per objective. Incoming signal configuration requires interface confirmation; optional acoustic evidence currently comes from Meet remote audio, not universal Windows loopback. Configured read-only search/navigation and mapped accept/end-call controls are permitted; record writes are not. Missing policies default to observation only.
+Voice identity, language/region, speed and genuinely provider-supported style are configurable per team with company-owned profiles. Spanish OS voices are not the final voice dependency. No provider is changed by this delivery. Real remote hearing, interruption, second interaction and client CRM evidence remain a separate explicitly requested UAT.
+
+---
+
 # KELEDON project intent
 Status: brownfield baseline; current owner-directed Windows Meet + Salesforce MVP, 2026-10-18.
 

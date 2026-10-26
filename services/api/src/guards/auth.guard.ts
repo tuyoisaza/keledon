@@ -198,7 +198,7 @@ export class AuthGuard implements CanActivate {
       const actor = await this.prisma.user.findUnique({
         where: { id: payload.userId },
         select: {
-          id: true, email: true, role: true, uatFixtureRunId: true,
+          id: true, email: true, role: true, uatFixtureRunId: true, isActive: true, authAfter: true,
           uatFixtureExpiresAt: true, uatFixtureRetiredAt: true,
           uatFixtureAuthAfter: true,
         },
@@ -252,7 +252,7 @@ export class AuthGuard implements CanActivate {
         this.prisma.user.findUnique({
           where: { id: payload.uatActorUserId },
           select: {
-            id: true, role: true, uatFixtureRunId: true,
+            id: true, role: true, uatFixtureRunId: true, isActive: true, authAfter: true,
             uatFixtureExpiresAt: true, uatFixtureRetiredAt: true,
           },
         }),
@@ -285,6 +285,8 @@ export class AuthGuard implements CanActivate {
           !profile.uatFixtureRunId && isPermittedUatTestProfile(profile))) ||
         !isAccountActive(profile) ||
         !isAccountActive(actor) ||
+        session.createdAt.getTime() <= (actor.authAfter?.getTime() ?? 0) ||
+        session.createdAt.getTime() <= (profile.authAfter?.getTime() ?? 0) ||
         (actor?.uatFixtureRunId && (!operator || payload.expiresAt > operator.expiresAt)) ||
         actor?.role !== 'superadmin'
       ) {

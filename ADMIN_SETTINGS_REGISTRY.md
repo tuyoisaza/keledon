@@ -1,3 +1,16 @@
+## Current settings delta — 5.9.0
+| Setting | Storage / writer | Constraints |
+|---|---|---|
+| user active/session epoch | User.isActive/authAfter, account lifecycle controller | DB actor scope, serializable audit, no self/fixture |
+| selected voice profile | Team.ttsVoiceProfileId | Enabled company-owned profile matching current provider |
+| voice options | Team.ttsVoiceSettings; TenantVoiceProfile.config | Typed voiceId/locale/speed/style; no secrets or endpoints |
+| surface policy | Vendor.config.interactionPolicy / ManagedInterface.capabilities.interactionPolicy | version1 ≤40 positive rules; stable identity, exact effect/destination; default deny mutation |
+| incoming detector | interactionPolicy.incoming | UI text, optional acoustic candidate, mapped answer and connected text, end text |
+| automatic arm | Ephemeral control only | Explicit, ≤120s, ≤12 actions, no renewal/background schedule |
+Provider keys remain write-only under existing routes.
+
+---
+
 # KELEDON Settings and Secret Registry
 
 **Scope:** source-derived registry for the multi-tenant administration model. Values of secrets and customer data are intentionally omitted. PHDK version 2.53.1; product candidate 5.2.1. Storage/runtime facts below require separate acceptance where noted.

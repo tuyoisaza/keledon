@@ -203,7 +203,7 @@ export class LocalAuthService {
         role: true,
         companyId: true,
         teamId: true,
-        uatFixtureRunId: true,
+        uatFixtureRunId: true, isActive: true, authAfter: true,
         uatFixtureExpiresAt: true,
         uatFixtureRetiredAt: true,
       },
@@ -348,7 +348,7 @@ export class LocalAuthService {
             run.expiresAt <= Date.now() || retired || !member || member.role !== user.role ||
             member.companyId !== user.companyId || member.teamId !== user.teamId ||
             !user.email.endsWith('@example.invalid') || user.passwordHash ||
-            owner?.role !== 'superadmin' || owner.uatFixtureRunId || !isAccountActive(owner)) return null;
+            owner?.role !== 'superadmin' || owner.uatFixtureRunId || !isAccountActive(owner) || event.createdAt.getTime() <= (owner.authAfter?.getTime() ?? 0)) return null;
         syntheticTtsTeamId = run.selectedTeamId;
       } else if (payload.syntheticTtsRunId !== undefined) return null;
 

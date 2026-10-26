@@ -9,14 +9,14 @@
 .keledon-version-actions .keledon-version { font-size: 12px; line-height: 1.5; font-weight: 400; }
 .keledon-version-actions button {
   position: relative; display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px; min-width: 44px; flex-shrink: 0; padding: 0;
+  width: 28px; height: 28px; min-width: 28px; flex-shrink: 0; padding: 0;
   border: 0; border-radius: 0; background: transparent; color: inherit; cursor: pointer;
 }
 .keledon-version-actions button::before {
-  content: ''; position: absolute; inset: 8px; border-radius: 4px; background: transparent; pointer-events: none;
+  content: ''; position: absolute; inset: 0; border-radius: 4px; background: transparent; pointer-events: none;
 }
-.keledon-version-actions [data-action="copy"]::before { inset: 8px 0 8px 16px; }
-.keledon-version-actions [data-action="clear"]::before { inset: 8px 16px 8px 0; }
+.keledon-version-actions [data-action="copy"]::before { inset: 0; }
+.keledon-version-actions [data-action="clear"]::before { inset: 0; }
 .keledon-version-actions button:hover::before { background: var(--color-muted); }
 .keledon-version-actions button:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
 .keledon-version-actions button:disabled { cursor: default; }

@@ -28,6 +28,12 @@ try {
   $danger='(?i)\b(save|submit|send|delete|remove|purchase|pay|transfer|publish|approve|authorize|guardar|enviar|eliminar|borrar|comprar|pagar|publicar|aprobar|autorizar|salvar|excluir)\b'
   $secret='(?i)password|passwd|contrase|senha|token|secret|api.?key|credit.?card|tarjeta|cvv|otp'
   $search='(?i)\b(search|find|lookup|buscar|busqueda|búsqueda|pesquisar|procurar)\b'
+  function PolicyRule($node) {
+    if ($request.policy.version -ne 1) { return $null }
+    foreach ($rule in $request.policy.rules) {
+      if ($rule.automationId -and $rule.automationId -eq $node.Current.AutomationId -and $rule.name -eq (Short $node.Current.Name 160) -and $rule.role -eq (Short $node.Current.ControlType.ProgrammaticName 40) -and $rule.kind -in @('search-field','search-submit','accept-call','end-call')) { return $rule }
+    }; return $null
+  }
   function Nodes {
     $q=[Collections.Generic.Queue[object]]::new(); $q.Enqueue($root); $items=@(); $clock=[Diagnostics.Stopwatch]::StartNew(); $walker=[System.Windows.Automation.TreeWalker]::ControlViewWalker
     while ($q.Count -and $items.Count -lt 1000 -and $clock.ElapsedMilliseconds -lt 3500) {
@@ -37,16 +43,20 @@ try {
   }
   if ($request.operation -eq 'act') {
     $a=$request.action; $record=$request.ref; $target=$null
-    if (!$record -or $a.type -notin @('read','focus','fill','activate','scroll') -or $a.effect -notin @('read','navigate','search')) { throw 'ACTION_POLICY_DENIED' }
+    if (!$record -or $a.type -notin @('read','focus','fill','activate','scroll') -or $a.effect -notin @('read','navigate','search','call')) { throw 'ACTION_POLICY_DENIED' }
     foreach ($n in (Nodes)) { try { if (($n.GetRuntimeId() -join ',') -eq $record.runtime) { $target=$n; break } } catch { } }
     if (!$target -or $target.Current.IsPassword -or $target.Current.IsOffscreen -or !$target.Current.IsEnabled -or $target.Current.Name -ne $record.name -or $target.Current.AutomationId -ne $record.automationId -or $target.Current.ProcessId -ne $root.Current.ProcessId) { throw 'STALE_OBSERVATION' }
     if ($target.Current.Name -match $secret -or (Short $target.Current.ControlType.ProgrammaticName 40) -ne $record.role) { throw 'ACTION_POLICY_DENIED' }
+    $rule=PolicyRule $target
+    if ($a.type -in @('focus','fill','activate') -and !$rule) { throw 'ACTION_POLICY_DENIED' }
+    if ($a.type -eq 'fill' -and ($rule.kind -ne 'search-field' -or $a.effect -ne 'search')) { throw 'ACTION_POLICY_DENIED' }
+    if ($a.type -eq 'activate' -and (($rule.kind -eq 'search-submit' -and $a.effect -ne 'search') -or ($rule.kind -in @('accept-call','end-call') -and $a.effect -ne 'call') -or $rule.kind -eq 'search-field')) { throw 'ACTION_POLICY_DENIED' }
     if ($a.type -eq 'focus') { $target.SetFocus() }
     elseif ($a.type -eq 'fill') {
-      if (!$request.allowInteraction -or $target.Current.Name -notmatch $search -or $a.value -isnot [string] -or $a.value.Length -gt 500) { throw 'ACTION_POLICY_DENIED' }; $pattern=$null
+      if (!$request.allowInteraction -or $a.value -isnot [string] -or $a.value.Length -gt 500) { throw 'ACTION_POLICY_DENIED' }; $pattern=$null
       if (!$target.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern,[ref]$pattern) -or $pattern.Current.IsReadOnly -or $pattern.Current.Value -ne $record.value) { throw 'STALE_OBSERVATION' }; $pattern.SetValue([string]$a.value)
     } elseif ($a.type -eq 'activate') {
-      if (!$request.allowInteraction -or $target.Current.Name -notmatch $search -or $target.Current.Name -match $danger) { throw 'ACTION_POLICY_DENIED' }; $pattern=$null
+      if (!$request.allowInteraction -or $target.Current.Name -match $danger) { throw 'ACTION_POLICY_DENIED' }; $pattern=$null
       if (!$target.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$pattern)) { throw 'UNSUPPORTED_ACTION' }; $pattern.Invoke()
     } elseif ($a.type -eq 'scroll') {
       $pattern=$null; if (!$target.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern,[ref]$pattern)) { throw 'UNSUPPORTED_ACTION' }
@@ -57,12 +67,12 @@ try {
   foreach ($n in (Nodes)) {
     if ($elements.Count -ge 120) { break }; try {
       if ($n.Current.IsPassword -or $n.Current.IsOffscreen -or $n.Current.ProcessId -ne $root.Current.ProcessId -or $n.Current.Name -match $secret) { continue }
-      $name=Short $n.Current.Name 160; $role=Short $n.Current.ControlType.ProgrammaticName 40; $ref='e'+($elements.Count+1); $actions=@('read'); $value=$null; $pattern=$null
-      if ($n.Current.IsEnabled -and $n.Current.IsKeyboardFocusable) { $actions+='focus' }
+      $rule=PolicyRule $n; $name=Short $n.Current.Name 160; $role=Short $n.Current.ControlType.ProgrammaticName 40; $ref='e'+($elements.Count+1); $actions=@('read'); $value=$null; $pattern=$null
+      if ($rule -and $request.allowInteraction -and $n.Current.IsEnabled -and $n.Current.IsKeyboardFocusable) { $actions+='focus' }
       if ($n.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern,[ref]$pattern)) { $actions+='scroll' }; $pattern=$null
-      if ($n.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern,[ref]$pattern)) { $value=Short $pattern.Current.Value 500; if ($request.allowInteraction -and $name -match $search -and !$pattern.Current.IsReadOnly -and $n.Current.IsEnabled) { $actions+='fill' } }; $pattern=$null
-      if ($request.allowInteraction -and $name -match $search -and $n.Current.IsEnabled -and $name -notmatch $danger -and $n.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$pattern)) { $actions+='activate' }
-      $element=@{ref=$ref;role=$role;name=$name;actions=@($actions)}; if ($null -ne $value) { $element.value=$value }; $elements+=$element
+      if ($n.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern,[ref]$pattern)) { $value=Short $pattern.Current.Value 500; if ($request.allowInteraction -and $rule.kind -eq 'search-field' -and !$pattern.Current.IsReadOnly -and $n.Current.IsEnabled) { $actions+='fill' } }; $pattern=$null
+      if ($request.allowInteraction -and $rule.kind -in @('search-submit','accept-call','end-call') -and $n.Current.IsEnabled -and $name -notmatch $danger -and $n.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$pattern)) { $actions+='activate' }
+      $element=@{ref=$ref;role=$role;name=$name;actions=@($actions)}; if ($rule) { $element.policyRuleId=$rule.id }; if ($null -ne $value) { $element.value=$value }; $elements+=$element
       $refs[$ref]=@{runtime=($n.GetRuntimeId() -join ',');name=$n.Current.Name;automationId=$n.Current.AutomationId;role=$role;value=$value}; if ($name) { $texts+=$name }
     } catch { }
   }

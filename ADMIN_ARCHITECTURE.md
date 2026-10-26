@@ -1,3 +1,9 @@
+## Current administration boundary — 5.9.0
+Normal accounts now have isActive and authAfter. /api/admin/accounts/:id/lifecycle refetches the database actor in a serializable transaction, rejects self-management and synthetic fixtures, scopes tenant administrators/coordinators to their company ordinary users/agents and reserves privileged account scope for superadmin. Every state change/revocation advances authAfter, unpairs devices and writes metadata audit. Reactivation never resurrects old bearers. Role/tenant elevation rules remain unchanged.
+/api/brain/voice-config/:teamId uses BrainMeetGuard selected-team identity; modifications additionally require current DB superadmin/admin/coordinator and company scope. No credential/provider changes occur. Interface policies remain within existing assigned vendor/managed-interface administration.
+
+---
+
 # KELEDON Administration Architecture
 
 **Audit baseline:** PHDK 2.53.1; candidate KELEDON 5.2.1; branch `feature/tenant-interface-selector-5.2.0` (product basis `ef6fe6db`; the active continuation adds managed-interface secret-at-rest encryption in API and Cloud). This is a source architecture record; it is not runtime or persisted-data acceptance.

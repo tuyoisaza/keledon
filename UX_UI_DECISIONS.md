@@ -1,3 +1,8 @@
+## 2026-10-26 / 5.9.0 — AGENT_SELECTED_AUTO_FORCE
+Owner approved eleven-gap Auto Force scope. Agent selected reuse of existing forms/tokens, compact diagnostic contract, translated policy JSON editor and team voice settings details. Rationale: preserve tenant admin context and avoid new visual system. External customer-page overlay keeps isolated named CSS variables with documented high-contrast defaults. This selection is not owner visual approval or observed runtime evidence. Explicit arm, phase, attention and pause/close expose automatic-session limits. UAT NOT RUN.
+
+---
+
 # UX/UI decisions
 D-UI-001 keep Vite/React/brand/navigation (NFR-001).
 D-UI-002 replace duplicated diagnostic variants with common component/utilities across public/login/app/admin (FR-002).

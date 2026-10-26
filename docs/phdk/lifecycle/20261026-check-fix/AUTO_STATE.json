@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "mode": "auto_force",
+  "run_id": "20261026-check-fix",
+  "repository": "tuyoisaza/keledon",
+  "goal": "Remediate exactly CHK-20261026-001..011 and publish/deploy",
+  "authorization": {
+    "instruction": "Sí, ejecuta los 11 gaps corregibles con PHDK auto force. Avanza hasta publicar y desplegar, sin pruebas locales, y deja aparte los 3 que requieren decisiones externas.",
+    "source_ref": "current conversation 2026-10-26",
+    "scope": [
+      "CHK-20261026-001..011",
+      "source review, static checks, version/PR/main/deployment"
+    ],
+    "restrictions": [
+      "No local tests/build/lint or UAT",
+      "Exclude CHK012 installer, CHK013 backups, CHK014 risk/DB isolation decision",
+      "No provider administration, new spend/drivers or customer records"
+    ]
+  },
+  "report_sha256": "ca28b178200e534bd5b7401e66a9240096f5af84a3c51ac3e0f186ae53713812",
+  "status": "static_review",
+  "next_action": "Static evidence and assistant diff review, then normal PR/main/Railway source deployment",
+  "target_version": "5.9.0"
+}

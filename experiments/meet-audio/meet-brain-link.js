@@ -7,7 +7,7 @@
   let ctx, stream, source, processor, gain, timer, unsubscribe;
   let chunks = [], preRoll = [], utterance = false, hot = 0, quiet = 0, length = 0, turns = 0;
   let generation = 0, playbackGeneration = -1, playing = false;
-  let output, inspecting = false;
+  let output, inspecting = false, lastCandidate = 0;
   const show = text => { if (output) output.textContent = text; };
   const send = data => {
     if (window.opener && !window.opener.closed) window.opener.postMessage({ protocol: PROTOCOL, session, ...data }, ORIGIN);
@@ -74,6 +74,7 @@
         const pcm = event.inputBuffer.getChannelData(0), ms = pcm.length / ctx.sampleRate * 1000;
         let energy = 0; for (const sample of pcm) energy += sample * sample;
         const loud = Math.sqrt(energy / pcm.length) > 0.032;
+        if (loud && Date.now()-lastCandidate>1000) {lastCandidate=Date.now();send({type:'acoustic-candidate',generation});}
         hot = loud ? hot + ms : 0;
         if (!utterance) {
           preRoll.push(pcm.slice()); if (preRoll.length > Math.ceil(ctx.sampleRate * 0.25 / pcm.length)) preRoll.shift();

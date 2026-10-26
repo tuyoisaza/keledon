@@ -1,3 +1,9 @@
+## Current acceptance contract — 5.9.0
+CHK-20261026-001..011 are the approved implementation milestone. Source criteria: stable configured control identity plus effect policy; command not claimable before durable audit; bounded armed cycle and interruption/cancel generations; account state/session watermark; timer-based erasure without traffic; 28px diagnostic actions; en/es/pt interface keys; selected team voice settings reach provider requests; synchronized current registries; governed overlay tokens; active AI/CRUD files below 600 lines.
+Runtime criteria require separate PHDK uat: policy negative cases, concurrent audit/cancel failure, revoked token/paired device rejection, no-traffic TTL, remote Spanish voice and interruption, grounded interface objective, second interaction. UAT NOT RUN and no acceptance is inferred from compilation. Explicit exclusions: CHK012/013/014.
+
+---
+
 # Current requirements delta — MVP, 2026-10-18
 Owner-authorized MVP-R01..R09 are defined/traced in [the MVP plan](docs/mvp/meet-salesforce/README.md#requisitos-y-trazabilidad): Windows interchangeable execution, verified remote audio/TTS, acoustic candidate + UI confirmation, Brain tools, actual interruption, fictitious-case read-only lookup, cancellation/recovery, measured adaptation and tenant/privacy isolation.
 Real Meet/Salesforce only; no clone. Meet does not prove ACD detection. A01..A12 remain NOT RUN; source, docs and inventory are not functional acceptance.

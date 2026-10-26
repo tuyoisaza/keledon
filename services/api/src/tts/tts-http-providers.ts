@@ -1,3 +1,4 @@
+import type { VoiceSettings } from './voice-settings';
 import type { TTSResult } from './tts.types';
 import { detectLanguage } from './tts-language';
 import { estimateDuration } from './tts-utils';
@@ -6,6 +7,7 @@ export async function speakWithKokoro(
   text: string,
   baseUrl: string,
   voice: string,
+  settings?: VoiceSettings,
 ): Promise<TTSResult> {
   try {
     const response = await fetch(`${baseUrl}/v1/audio/speech`, {
@@ -17,6 +19,7 @@ export async function speakWithKokoro(
         input: text,
         voice,
         response_format: 'wav',
+        speed: settings?.speed || 1,
       }),
     });
     if (!response.ok) {
@@ -41,6 +44,7 @@ export async function speakWithSpeaches(
   baseUrl: string,
   apiKey: string,
   voice: string,
+  settings?: VoiceSettings,
 ): Promise<TTSResult> {
   try {
     const startedAt = Date.now();
@@ -63,7 +67,7 @@ export async function speakWithSpeaches(
           input: text,
           voice,
           response_format: 'mp3',
-          speed: 1.15,
+          speed: settings?.speed || 1.15,
         }),
       },
     );

@@ -1,0 +1,4 @@
+export type Element = { ref: string; role: string; name: string; value?: string; actions: string[]; policyRuleId?:string; destination?:string };
+export type Observation = { revision: string; text: string; elements: Element[]; capabilities: string[] };
+export type Target = { id: string; name: string; kind: 'web' | 'native'; origin?: string; url?: string; policy?: {version:number;rules:{id:string;kind:string}[];incoming?:{text:string;requiresAcoustic:boolean;answerRuleId?:string;connectedText?:string;endText?:string}} };
+export type State = { id: string; teamId: string; generation: number; target: Target; transport: string; expires: number; allowInteraction: boolean; automatic?: boolean; observation?: Observation; plan?: { id: string; revision: string; action: { type: string; ref: string; value?: string; expected: string; effect: string } }; command?: { id: string; expires: number; result?: any } };

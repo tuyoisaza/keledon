@@ -1,9 +1,15 @@
-## 2026-10-23 — PHDK v2.65.1 standards maintenance (v5.7.1)
+# Current scoped status — 2026-10-26 / 5.9.0
+Source remediation for eleven approved Check gaps; delivery receipt in docs/phdk/lifecycle/20261026-check-fix/. Product acceptance remains unverified: no local runtime tests and UAT NOT RUN. Meet remote-audio candidate plus configured UI confirmation is supported in source; universal Windows alarm/Genesys detection is not claimed. Existing production API/Web delivery is independent of Windows installer 5.0.52.
+012/013/014 remain explicitly excluded. Historical status below is preserved for provenance; it must not override this current task or imply current blockers.
 
-- Vendor the complete canonical standards manifest from `d4ed10e96f5fd05ebeaa38a664442d7d10d6cf86` and align native entrypoints.
-- Preserve project-specific rules and architecture; changes to product files are release metadata only.
-- Scope and verification limits: [`docs/phdk/standards/2026-10-23-v2.65.1.md`](docs/phdk/standards/2026-10-23-v2.65.1.md). Required publication gates and the separate Stack Security Review retain their actual evidence status.
+---
 
+# Current owner scope — Windows MVP implementation, 2026-10-18
+Work exclusively in C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON. Current branch codex/meet-audio-main is based on origin/main PR #274 merge 9e3f11bfef384952b0ce33bff8607fa4a3de463e, product 5.2.21. Seven pre-existing modified evidence files remain byte-for-byte preserved and excluded from MVP publication; backup/hashes and evidence-only stash retained under .git.
+Implemented local Meet AudioPort candidate plus bounded RTP observations and a synthetic offline speech transport fixture. No local tests/build/lint or functional audio trial. Brain integration and real read-only Salesforce remain pending. Current production Brain readback redirects to login (v5.2.21); previous authenticated session is no longer open. Owner must load the unpacked extension from this project; browser URL policy blocks automated chrome://extensions access. Meet/Brain audio acceptance NOT_RUN. No push, PR or merge for this candidate. See docs/mvp/meet-salesforce/IMPLEMENTATION_STATUS.md for separate implementation/publication/acceptance.
+SIGUIENTE PASO: owner loads the extension and authenticates production directly; run real Meet transport/interrupt trial with remote confirmation, then connect STT/Brain/TTS and continue Salesforce. This is the same authorized request, not a new mission or background job.
+
+---
 # Current scoped status — MVP preparation, 2026-10-18
 PHDK 2.56.0 CURRENT, static coherence 69/69. Baseline main 2decd79b6fd741d1f5838a091b2b1c4436740acf / product 5.2.21. [Intent and five PIAs](docs/mvp/meet-salesforce/README.md) prepared; executor choice OPEN. Profile contract and Windows read-only inventory are preparation, not integrated runtime.
 Meet link and second-device participant supplied; Salesforce URL/session/cases and Brain/provider readiness pending. Live MVP acceptance NOT RUN. No local application tests/build/lint, meeting join, recording, provider change or Salesforce access in this slice. Normal scoped PR/main publication tracked in the MVP preparation/delivery record; CMT-001/002/004 retained.

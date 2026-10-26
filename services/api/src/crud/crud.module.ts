@@ -1,3 +1,4 @@
+import { CrudManagedInterfaceService } from './crud-managed-interface.service';
 import { Module } from '@nestjs/common';
 import { CrudController } from './crud.controller';
 import { CrudService } from './crud.service';
@@ -14,6 +15,7 @@ import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.servi
   controllers: [CrudController, TenantController],
   providers: [
     CrudService,
+    CrudManagedInterfaceService,
     CrudKeledonService,
     CrudAuditService,
     CrudCompanyService,
@@ -24,6 +26,7 @@ import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.servi
   ],
   exports: [
     CrudService,
+    CrudManagedInterfaceService,
     CrudKeledonService,
     CrudAuditService,
     CrudCompanyService,

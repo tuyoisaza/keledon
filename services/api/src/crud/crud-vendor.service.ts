@@ -1,3 +1,4 @@
+import { interfacePolicy } from '../interface-control/interface-policy';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { encryptVendorSecretAtRest } from '../security/vendor-secret-crypto';
@@ -58,6 +59,7 @@ export class CrudVendorService {
         vendor.baseUrl,
         config.allowedOrigins,
       ),
+      interactionPolicy: interfacePolicy(config.interactionPolicy),
       username: vendor.username ? '***' : null,
       hasPassword:
         vendor.password === undefined ? undefined : !!vendor.password,

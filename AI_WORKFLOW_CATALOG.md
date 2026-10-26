@@ -1,3 +1,14 @@
+## Current workflow delta — 5.9.0
+| Workflow | Input / authority | Output / next hop | Evidence boundary |
+|---|---|---|---|
+| interface-planner | Bounded objective + current observed refs/rule metadata, team Brain config | Typed one-action / needs_assistance / goal_observed → server policy gate → authorized executor → fresh observation | Managed schema validation + usage metadata; observed is not business success |
+| voice-reply (interface) | Current bounded observation and objective | Grounded reply → existing TTS audio route | Generation/revision rechecked, no external action from reply |
+| brain greeting | Explicitly armed confirmed interaction, team script/RAG | Team Brain greeting → existing audio output | Generation/arm rechecked; no invented customer identity |
+| automatic foreground orchestrator | UI-confirmed incoming plus optional recent Meet acoustic candidate | At most4 planning steps/objective,12 actions/session; cancel/attention/end→standby | Not a model and not a scheduler; does not bypass planner admin/security |
+Persisted operator-authored prompt revisions are preserved. New default planner supports call effect, but existing customized published schemas may reject it safely until explicitly revised via normal AI administration. Mapped incoming accept-call is server-policy authorized independently. No silent prompt overwrite occurs. No LLM/TTS call was made for this source remediation.
+
+---
+
 # KELEDON AI Workflow Catalog — source inventory
 
 **Audit basis:** PHDK 2.53.1 and candidate source 5.2.1. KELEDON uses actual model-backed workflows, so the AI administration and workflow-catalog standards apply. This file maps existing definitions and callsites; no prompt was executed and no model/provider data was accessed.

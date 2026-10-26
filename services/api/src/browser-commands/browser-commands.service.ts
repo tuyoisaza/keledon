@@ -467,7 +467,7 @@ export class BrowserCommandsService {
         role: true,
         companyId: true,
         teamId: true,
-        uatFixtureRunId: true,
+        uatFixtureRunId: true, isActive: true, authAfter: true,
         uatFixtureExpiresAt: true,
         uatFixtureRetiredAt: true,
         team: {
@@ -506,7 +506,7 @@ export class BrowserCommandsService {
             id: true,
             teamId: true,
             companyId: true,
-            uatFixtureRunId: true,
+            uatFixtureRunId: true, isActive: true, authAfter: true,
             uatFixtureExpiresAt: true,
             uatFixtureRetiredAt: true,
           },

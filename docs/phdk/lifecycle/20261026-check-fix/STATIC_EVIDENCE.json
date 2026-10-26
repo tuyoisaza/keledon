@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-26",
+  "phdk": "2.68.0",
+  "version": "5.9.0",
+  "syntax": {
+    "typescript_files": 37,
+    "diagnostics": 0,
+    "javascript": [
+      "surface-dom.js",
+      "surface-link.js",
+      "meet-brain-link.js"
+    ],
+    "powershell": "native-uia.ps1 parse only"
+  },
+  "coherence": "PASS 79 manifest mappings",
+  "theme": {
+    "status": "STATIC_PASS",
+    "scope": "UI",
+    "findings": [],
+    "runtime_verified": false
+  },
+  "automation": {
+    "root": "C:\\Users\\tboar\\OneDrive\\Documentos\\GitHub\\KELEDON",
+    "remote_state": "UNVERIFIED",
+    "remote_requirements": [
+      "GitHub workflow state/runs/checks/bots",
+      "Railway triggers/Wait for CI/cron/restarts/usage if connected"
+    ],
+    "findings": []
+  },
+  "i18n": {
+    "interface": 81,
+    "voiceConfig": 14,
+    "account": 5,
+    "parity": "es=en=pt"
+  },
+  "active_module_lines": {
+    "ai-admin.service.ts": 587,
+    "crud.service.ts": 500,
+    "tts.service.ts": 591
+  },
+  "runtime_tests": "NOT RUN",
+  "local_build_lint_typecheck": "NOT RUN",
+  "UAT": "NOT RUN / DEFERRED OWNER OPT-IN"
+}

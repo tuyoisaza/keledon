@@ -224,7 +224,8 @@ export class CrudAccessGuard implements CanActivate {
           'language',
           'isEnabled',
           'isDefault',
-        ],
+        'config',
+          ],
         sessions:
           handler === 'createSession'
             ? ['teamId', 'userId', 'status', 'metadata']

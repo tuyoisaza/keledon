@@ -3,10 +3,10 @@
   'use strict';
   if (globalThis.keledonSurfaceLink) return; globalThis.keledonSurfaceLink = true;
   const origin = 'https://keledon.tuyoisaza.com', protocol = 'keledon-surface-v1';
-  let session = '', generation = 0, expires = 0, requested = false;
+  let session = '', generation = 0, expires = 0, requested = false, currentGrant;
   const host = document.createElement('aside'); host.dataset.keledonControl = 'true'; host.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:2147483647';
-  const box = document.createElement('section'); box.style.cssText = 'font:14px system-ui;background:#17202a;color:white;padding:12px;border:2px solid white;border-radius:8px;max-width:320px';
-  const title = document.createElement('strong'); title.textContent = 'KELEDON · control de interfaz · 0.5.0';
+  const box = document.createElement('section'); box.style.cssText = 'font:14px system-ui;background:var(--keledon-overlay-bg,#17202a);color:var(--keledon-overlay-fg,#ffffff);padding:12px;border:2px solid var(--keledon-overlay-border,#ffffff);border-radius:8px;max-width:320px';
+  const title = document.createElement('strong'); title.textContent = 'KELEDON · control de interfaz · 0.6.0';
   const output = document.createElement('p'); output.setAttribute('role', 'status'); output.textContent = 'Superficie sin autorizar. Abre esta ventana desde Brain.';
   const send = data => { if (window.opener && !window.opener.closed) window.opener.postMessage({ protocol, session, ...data }, origin); };
   const connect = document.createElement('button'); connect.textContent = 'Conectar esta interfaz con Brain'; connect.style.minHeight = '44px';
@@ -18,12 +18,12 @@
     const d = event.data;
     if (!requested || event.source !== window.opener || event.origin !== origin || d?.protocol !== protocol) return;
     if (d.type === 'offer' && typeof d.session === 'string' && /^[a-f0-9-]{36}$/.test(d.session) && d.origin === location.origin && Number.isSafeInteger(d.generation)) {
-      try { session = d.session; generation = d.generation; expires = d.expires; globalThis.keledonSurfaceEngine.open(d); output.textContent = 'Interfaz autorizada; controla desde Brain. Datos ficticios únicamente.'; send({ type: 'connected', generation }); } catch { output.textContent = 'Autorización inválida o caducada'; }
+      try { session = d.session; generation = d.generation; expires = d.expires; currentGrant=d; globalThis.keledonSurfaceEngine.open(d); output.textContent = 'Interfaz autorizada; controla desde Brain. Datos ficticios únicamente.'; send({ type: 'connected', generation }); } catch { output.textContent = 'Autorización inválida o caducada'; }
       return;
     }
     if (!session || d.session !== session) return;
     if (d.type === 'stop') { generation++; session = ''; globalThis.keledonSurfaceEngine.close(); output.textContent = 'Control liberado'; return; }
-    if (d.type === 'cancel' && Number.isSafeInteger(d.generation) && d.generation > generation) { generation = d.generation; globalThis.keledonSurfaceEngine.close(); output.textContent = 'Acciones canceladas; vuelve a conectar para observar'; return; }
+    if (d.type === 'cancel' && Number.isSafeInteger(d.generation) && d.generation > generation) { generation = d.generation; globalThis.keledonSurfaceEngine.close(); if(currentGrant && Date.now()<expires)globalThis.keledonSurfaceEngine.open(currentGrant); output.textContent = 'Acciones canceladas; referencias renovadas dentro de la misma autorización'; return; }
     if (d.type !== 'command' || d.generation !== generation || Date.now() >= expires || typeof d.commandId !== 'string' || !/^ui_[a-f0-9-]{36}$/.test(d.commandId)) return;
     const own = generation;
     void (async () => {

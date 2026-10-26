@@ -1,3 +1,16 @@
+## Current logical lifecycle delta — 5.9.0
+| Entity / projection | Create/read | Update | Delete/retention | Scope / evidence |
+|---|---|---|---|---|
+| Ordinary account lifecycle | Existing account CRUD + no-store lifecycle list | Suspend/reactivate/revoke sessions | No new destructive account delete | Database actor, own-company ordinary roles; AuditLog metadata |
+| Team voice selection | Runtime config GET | Privileged typed config PUT | Clear profile selection; existing team lifecycle | BrainMeetGuard and company-owned profile |
+| Tenant voice profile | Existing CRUD + typed safe config projection | Typed options; credential fields rejected | Existing profile deletion; selected missing profile fails closed | Existing tenant CRUD guard |
+| Interface policy | Existing vendor/managed-interface CRUD | Typed policy validation at consumption and vendor write | Existing assignment/config lifecycle | No implicit global/tenant expansion |
+| Control session (logical, not Prisma model) | Authenticated open/read, max3 per owner/max200 global | Observe/plan/armed bounded commands, metadata audits | Cancel/close; deterministic expiry timer wipes text/refs/commands | 120s maximum; never persisted page contents |
+| FlowRunEvidence | Dormant existing schema | No writer activated | No new retention or migration | Separate owner decision retained |
+Historical model inventory below remains historical; it is not proof every legacy schema model has active routes.
+
+---
+
 # CRUD matrix — current source and authorization coverage
 
 ## Current model coverage delta — product 5.2.16 / PHDK 2.56.0 (2026-10-18)

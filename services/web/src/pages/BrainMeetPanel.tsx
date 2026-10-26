@@ -1,3 +1,4 @@
+import { VoiceSettingsPanel } from './VoiceSettingsPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAuthToken } from '@/lib/api-fetch';
 import { BrainLayerControls } from './BrainLayerControls';
@@ -24,6 +25,8 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
   const record = useCallback((row: Diagnostic) => setLogs(rows => [...rows.slice(-299), row]), []);
   const crm = useSalesforceSurface(teamId, disabled, record);
   const link = useRef<Link | null>(null);
+  const automaticMode = useRef(false);
+  const [acousticAt,setAcousticAt]=useState(0),[interactionEnded,setInteractionEnded]=useState(0);
   const interfaceControl = useRef<string | null>(null);
   const [voiceObjective, setVoiceObjective] = useState<{ text: string; generation: number } | null>(null);
   const [interfaceCancel, setInterfaceCancel] = useState(0);
@@ -66,6 +69,7 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
         }
         return;
       }
+      if(d.type==='acoustic-candidate' && s.active && Number.isSafeInteger(d.generation) && d.generation>=s.generation){setAcousticAt(Date.now());return;}
       if (d.type === 'closed') { stop('Meet liberó el enlace'); setConnected(false); return; }
       if (!s.active || Date.now() >= s.expires) return;
       if (d.type === 'interrupt' && Number.isSafeInteger(d.generation) && d.generation > s.generation) {
@@ -83,7 +87,7 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
         s.playing = false;
         record(diagnostic('MEET', 'PLAYBACK_ENDED', { generation: s.generation }));
         setEvidence(v => ({ ...v, delivered: v.delivered + 1 }));
-        if (s.closing) stop('Conversación cerrada; audio liberado y en espera');
+        if (s.closing) {if(automaticMode.current){s.closing=false;s.history=[];s.turns=0;send(s,{type:'cancel'});setInteractionEnded(n=>n+1);setStatus('Interacción finalizada; esperando la siguiente señal autorizada');}else stop('Conversación cerrada; audio liberado y en espera');}
         else setStatus('Respuesta enviada a Meet; esperando voz remota');
         return;
       }
@@ -255,7 +259,8 @@ export function BrainMeetPanel({ teamId, disabled }: { teamId: string; disabled:
       send(s, { type: 'speech', generation: s.generation, audio });
       record(diagnostic('TTS', 'MANUAL_SAMPLE_SENT', { bytes: audio.byteLength, generation: s.generation }));
     }} />
-    <InterfaceControlPanel teamId={teamId} disabled={disabled} record={record} onControlChange={controlChanged} voiceObjective={voiceObjective} cancelEpoch={interfaceCancel} onReply={reply => { void speakInterfaceReply(reply); }} />
+    <VoiceSettingsPanel teamId={teamId} />
+    <InterfaceControlPanel teamId={teamId} disabled={disabled} record={record} onControlChange={controlChanged} voiceObjective={voiceObjective} cancelEpoch={interfaceCancel} acousticAt={acousticAt} sourceActive={active} interactionEnded={interactionEnded} onAutomaticChange={value=>{automaticMode.current=value;}} onInteractionEnd={()=>{const s=link.current;if(s?.active){s.history=[];s.turns=0;s.abort?.abort();send(s,{type:'cancel'});}}} onReply={reply => { void speakInterfaceReply(reply); }} />
     <details><summary>Adaptador histórico Salesforce · prueba específica opcional</summary>{crm.panel}</details>
     <details><summary>Registro verbose seguro · {logs.length}/300 eventos</summary>
       <p>Solo metadatos de esta sesión. Sin audio, textos, URLs, identificadores personales ni secretos. Vaciar el log no borra la auditoría del servidor.</p>

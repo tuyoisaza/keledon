@@ -1,3 +1,4 @@
+import { interfacePolicy } from '../interface-control/interface-policy';
 import { BadRequestException } from '@nestjs/common';
 
 /** Vendor.config currently supports only the non-secret tenant origin list. */
@@ -10,6 +11,7 @@ export function assertNonSecretVendorConfig(
   }
 
   for (const [key, child] of Object.entries(value)) {
+    if (key === 'interactionPolicy') { interfacePolicy(child); continue; }
     if (key !== 'allowedOrigins') {
       throw new BadRequestException(
         `Vendor config field "${key}" is not supported; credentials must use encrypted credential fields.`,
