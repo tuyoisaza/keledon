@@ -1,3 +1,9 @@
+## 2026-10-23 — PHDK v2.65.1 standards maintenance (v5.7.1)
+
+- Vendor the complete canonical standards manifest from `d4ed10e96f5fd05ebeaa38a664442d7d10d6cf86` and align native entrypoints.
+- Preserve project-specific rules and architecture; changes to product files are release metadata only.
+- Scope and verification limits: [`docs/phdk/standards/2026-10-23-v2.65.1.md`](docs/phdk/standards/2026-10-23-v2.65.1.md). Required publication gates and the separate Stack Security Review retain their actual evidence status.
+
 # Current scoped status — MVP preparation, 2026-10-18
 PHDK 2.56.0 CURRENT, static coherence 69/69. Baseline main 2decd79b6fd741d1f5838a091b2b1c4436740acf / product 5.2.21. [Intent and five PIAs](docs/mvp/meet-salesforce/README.md) prepared; executor choice OPEN. Profile contract and Windows read-only inventory are preparation, not integrated runtime.
 Meet link and second-device participant supplied; Salesforce URL/session/cases and Brain/provider readiness pending. Live MVP acceptance NOT RUN. No local application tests/build/lint, meeting join, recording, provider change or Salesforce access in this slice. Normal scoped PR/main publication tracked in the MVP preparation/delivery record; CMT-001/002/004 retained.
