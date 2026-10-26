@@ -11,7 +11,7 @@ import * as cmdlog from './cmdlog.js';
 
 export interface BrowserCommand {
   id: string;
-  command: 'rpa_execute' | 'goal_execute' | 'call_start' | 'call_transcript' | 'call_decide' | 'call_close' | 'call_escalate' | 'rpa_flow' | 'status_query';
+  command: 'interface_control' | 'rpa_execute' | 'goal_execute' | 'call_start' | 'call_transcript' | 'call_decide' | 'call_close' | 'call_escalate' | 'rpa_flow' | 'status_query';
   payload: Record<string, unknown>;
   created_at: string;
 }
@@ -147,7 +147,7 @@ async function pollForCommand(): Promise<void> {
       }
       const command = envelope as BrowserCommand;
       cmdlog.log('CMD', `← GET /next-command → ${status} ${statusText} | command: ${command.command} (${command.id}) | poll #${totalPolls} | ctx: ${ctx}`);
-      cmdlog.log('CMD', `→ Executing: ${command.command} (${command.id}) | payload: ${cmdlog.preview(command.payload)}`);
+      cmdlog.log('CMD', `→ Executing: ${command.command} (${command.id}) | payload: ${command.command === 'interface_control' ? '[ephemeral interface command]' : cmdlog.preview(command.payload)}`);
       log.info(`[CommandPoller] Received command: ${command.command} (${command.id})`);
 
       // Execute the command
@@ -191,11 +191,11 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
     return;
   }
 
-  const payloadPreview = cmdlog.preview(command.payload);
+  const payloadPreview = command.command === 'interface_control' ? '[ephemeral interface command]' : cmdlog.preview(command.payload);
   cmdlog.log('CMD', `→ Executing handler: ${command.command} (${command.id}) | payload: ${payloadPreview}`);
   try {
     const result = await handler(command);
-    cmdlog.log('CMD', `← Handler result: ${command.command} (${command.id}) → ${result.status}${result.error ? ` | error: ${result.error}` : ''}${result.output ? ` | output: ${cmdlog.preview(result.output)}` : ''}`);
+    cmdlog.log('CMD', `← Handler result: ${command.command} (${command.id}) → ${result.status}${result.error ? ` | error: ${result.error}` : ''}${result.output && command.command !== 'interface_control' ? ` | output: ${cmdlog.preview(result.output)}` : ''}`);
     await reportResult(result);
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
@@ -223,7 +223,7 @@ async function reportResult(result: CommandResult): Promise<void> {
   const ctx = buildContext();
 
   try {
-    cmdlog.log('CMD', `→ POST /command-result | command: ${result.command_id} (${result.status}) | body: ${cmdlog.preview(result)} | ctx: ${ctx}`);
+    cmdlog.log('CMD', `→ POST /command-result | command: ${result.command_id} (${result.status}) | body: ${(result.command_id.startsWith('ui_') ? '[ephemeral interface result]' : cmdlog.preview(result))} | ctx: ${ctx}`);
 
     const res = await fetch(url, {
       method: 'POST',
@@ -235,7 +235,7 @@ async function reportResult(result: CommandResult): Promise<void> {
       signal: AbortSignal.timeout(10000),
     });
 
-    const responseBody = await readResponseBody(res);
+    const responseBody = result.command_id.startsWith('ui_') ? '(interface metadata only)' : await readResponseBody(res);
 
     if (res.ok) {
       cmdlog.log('CMD', `← POST /command-result → ${res.status} | ${result.command_id} (${result.status}) reported | response: ${responseBody}`);

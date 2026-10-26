@@ -8,6 +8,7 @@ import { earlyLog, writeCrashLog, getLogsDir, getMainLogPath, getStartupLogPath 
 import { runtimeStatus, mainWindow, setMainWindow } from './runtime-state.js';
 import { TabManager } from './tab-manager.js';
 import { connectWebSockets, setupCommandPolling } from './cloud-connection.js';
+import { setInterfaceTabManager } from './interface-control';
 import { handleDeepLink, flushPendingDeepLinkLaunch } from './deep-link.js';
 import { registerIpcHandlers, bootstrapTeamVendors, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
@@ -165,6 +166,7 @@ function createWindow(): void {
 
   setMainWindow(win);
   tabManager.setMainWindow(win);
+  setInterfaceTabManager(tabManager);
   win.webContents.setVisualZoomLevelLimits(1, 4);
   win.webContents.setZoomLevel(0);
 

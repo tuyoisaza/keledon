@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-bookworm AS builder
+FROM node:24.22.1-bookworm AS builder
 
 ARG CACHEBUST
 RUN echo "Build $CACHEBUST"
@@ -23,7 +23,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:20-bookworm
+FROM node:24.22.1-bookworm
 
 WORKDIR /app/cloud
 

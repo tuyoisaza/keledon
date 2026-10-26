@@ -1,4 +1,4 @@
-runtime: nodejs20
+runtime: nodejs24
 
 # Simple configuration without problematic mappings
 manual_scaling:

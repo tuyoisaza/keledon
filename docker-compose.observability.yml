@@ -27,7 +27,7 @@ services:
       - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
 
   keledon-observability-proxy:
-    image: node:20-alpine
+    image: node:24.22.1-alpine
     depends_on:
       - keledon-grafana
       - keledon-jaeger

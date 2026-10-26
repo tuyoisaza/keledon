@@ -1,166 +1,170 @@
-## v2.56.0 — 2026-10-18
+## v2.68.0 — 2026-10-25
 
-### Milestone planning, PMO execution and incremental Auto delivery
-- Add `PHDK_PROJECT_MANAGEMENT_STANDARD.md`, adapting the owner-provided PMI/PMBOK 8 operating model into proportional PHDK governance across value, quality, accountability, seven PMO control domains, five operating focus areas, risk/change discipline and AI-specific controls.
-- Require `PHDK plan` to create `MILESTONE_PLAN.md`: coherent value increments mapped to commitments, requirements, workstreams, dependencies, risks, acceptance evidence, expected SemVer impact and UAT intent.
-- Change Auto/Auto Force delivery cadence from one terminal version to milestone publication: after a milestone is integrated and technically verified, reconcile SemVer, create version-prefixed commit(s), use the normal PR/merge route to verified remote `main`, then continue from the refreshed main. Lifecycle stages/tasks/slices still do not independently trigger releases.
-- Make PMO execute and monitor the milestone roadmap rather than treating workstreams as release boundaries; final cross-milestone Integration Review still precedes UAT.
-
-### Milestone-aware UAT and planning skills
-- Require final UAT to read `MILESTONE_PLAN.md`, create `UAT_MILESTONE_MATRIX.md`, and derive at least one intent-linked user-value story for every delivered milestone, with additional role/cross-milestone cases where acceptance needs them.
-- Recommend Addy Osmani's Planning and Task Breakdown and Incremental Implementation skills plus Superpowers Writing Plans; external skill file paths, commit cadence and approval conventions never override PHDK artifacts, milestone delivery or execution controls.
-- Update lifecycle, agent/native routing, QA, README, manifest, versioning and delivery standards coherently for the new model.
-
-### Source and limits
-- The project-management standard operationalizes the owner-supplied knowledge base, which itself states that it is an interpretation based on public PMI material rather than a transcription or PMI certification claim.
-- This PHDK release changes standards only; it does not activate Auto/PMO, execute downstream project milestones, run UAT, or deploy applications.
-
-## v2.55.1 — 2026-10-18
-
-### Canonical PHDK evolution and session contract
-- Add `PHDK_EVOLUTION_STANDARD.md` as the canonical maintainer-session brief for PHDK identity/spelling, fresh main/version context, workspace boundaries, SemVer decisions, standard reconciliation and verifiable GitHub publication.
-- Link the standard from README and route canonical maintenance sessions through AGENTS, SKILL and native managed rules. Distribute the new standard and previously referenced change-management guide through the vendoring manifest.
-- Extend the static coherence gate to require the new standard and maintainer entrypoint references. Existing `VERSIONING.md`, `CHANGE_MANAGEMENT.md`, `MAIN_DELIVERY_STANDARD.md` and execution/security controls retain authority.
-
-### Distributed checker compatibility
-- Treat `SKILL.md` as an optional canonical entrypoint for static coherence checks: it is present in this standards repository but is not a manifest-vendored file. Validate it when present, without failing an otherwise complete downstream `phdk-standards/` installation.
-- The `v2.55.0` commit was a development candidate on this branch, not a separately published main version; `v2.55.1` is the intended first merged version of this standard.
-
-### Scope and adoption
-- Standards/routing change only. No downstream repository was upgraded, no agent session was automatically reloaded, and no external deployment, hosted automation or live product verification is implied.
-- Run local static coherence and affected tests when supported; report any unexecuted checks and independently verify the GitHub merge/version before claiming publication.
-
-## v2.54.2 — 2026-10-18
-
-### Google OAuth: explicit Railway Variables handoff
-- Require a copyable `KEY=value` block for owner-supplied OAuth deployment values, with the consuming Railway service/environment, exact application variable names, full public callback/origin and known non-secret URLs.
-- Preserve each project's actual environment contract, identify all missing required values and optional keys, explain their source, and request secret entry directly in the provider.
-- Reinforce the handoff in the agent entrypoint and authentication QA checklist. Continue independent implementation while runtime configuration is pending; a setup block does not prove live login.
-
-## v2.54.1 — 2026-10-17
-
-### Auto Force: remember, propose and execute
-- Require a visible operative reminder at start/resume, in substantive progress, after partial delivery and before proposed questions/blockers: reload current relevant rules, reconcile inherited blockers, find solutions, propose what is missing and execute the next authorized action. The user does not need an additional continuation or proposal command.
-- For each ordinary definition missing from an authorized capability, propose the behavior, justified default, explicit assumptions, meaningful configuration and implementation/acceptance action. Resolve supported reversible choices and continue; do not ask the owner to design everything or recommend excluding confirmed gaps to close the run.
-- Align Check, Plan and commitment classification: ordinary missing detail is development work; a genuinely new indispensable decision includes a concrete recommendation and impact while independent work continues.
-- Specify supported routine browser recovery in an already-authorized phase, preferring isolation when shared session/cache state could be affected. A blocked test does not stop independent implementation or preparation.
-- Keep the change in the operating instructions and native entrypoints. No new executor, hook, state schema or advisor behavior is introduced; downstream session behavior remains subject to actual adoption and execution.
-
-## v2.54.0 — 2026-10-17
-
-### Auto Force and continuous delivery
-- Add `PHDK auto force`: PHDK-imposed human/manual/formal reviews are nonblocking immediately, without investigating approval queues or searching for reviewers. Perform substantive technical diff review, required checks, versioned branch push/PR/merge and remote-main verification.
-- An actual rejected operation starts report → investigate its cause → repair → revalidate → retry delivery. Preserve the current authorization through this cycle and continue independent work when one operation remains unavailable.
-- Both Auto variants record the factual user mandate and progress in run-local `AUTO_STATE.json`, recover it after context loss and continue without another grant. A missing or malformed record is repaired internally; it is neither a permission token nor a new delivery gate.
-- Explicitly preauthorize existing mandatory finite isolated suites, including `pnpm test`/Vitest and composition when required. Avoiding optional tests does not prohibit a required hook.
-- Align native entrypoints, lifecycle, task tracking, communication, enforcement and delivery rules. The continuation cue reports the current goal/next action and is followed by actual work in the same invocation.
+### One-command forced upgrade and Auto Force
+- Redefine exact `PHDK upgrade force` as a composite foreground command: complete forced PHDK synchronization, Stack Security Review, eligible central-status publication and verification, then transition immediately into `PHDK auto force` without asking the owner for a second command.
+- Continue an already identified authorized development goal when present. When none exists, use a bounded repository-maintenance goal: reconcile current code/configuration with current PHDK and recorded product intent, remediate compatible in-repository security/standards gaps, complete applicable Check/remediation and normal delivery, and do not invent new product features.
+- Reuse the upgrade phase's fresh stack-review evidence as the Auto baseline when inputs and advisory freshness are unchanged. Do not duplicate the same review immediately.
+- Preserve Auto Force boundaries: no automatic UAT, no major/material migration decision, no provider/new-infrastructure write, spending, secret/account operation or bypass of actual controls.
 
 ### Verification and adoption
-- Add an offline state advisor and behavioral regressions for nonblocking reviews, required checks, real rejection/repair/retry, context recovery, independent work, stop preservation and delivery targets. See `PHDK_COHERENCE_REPORT.md` for executed verification and its limits.
-- Distribute the continuity contract and advisor through the managed manifest. Downstream projects adopt v2.54.0 through the existing authorized upgrade/preflight; publishing this source does not imply every active session or installed project has reloaded.
-- FORCE changes PHDK's review policy; it does not weaken actual hooks/platform enforcement, erase genuine user restrictions, force-push, administer providers or create background execution.
+- Reconcile Upgrade, Auto, native managed rules, AGENTS, SKILL and README so the chained transition is visible from active entrypoints.
+- Bare `PHDK upgrade` remains sync/review-only. Publishing this release does not start Auto in dormant repositories; the composite behavior activates only when the owner explicitly invokes `PHDK upgrade force`.
 
-## v2.53.1 — 2026-10-17
+## v2.67.0 — 2026-10-25
 
-### Auto executes missing implementation after planning
-- Require every explicit Auto invocation to reread the complete current intent/requirements baseline and reconcile actual source, coverage and acceptance evidence before reusing artifacts. Preserve valid code and the current authorized scope.
-- Classify requirements-only/scaffold-only repositories as unimplemented products when the intent requires software; plan and immediately execute complete greenfield development in the same invocation. Complete partial implementations without reducing the goal to an MVP or interpreting missing code as NOT APPLICABLE. Unavailable source remains UNVERIFIED.
-- Make Plan-to-implementation continuation mandatory; reconcile Capture, PMO, Check and commitment wording that could stop Auto or demand redundant approval for already-confirmed requirements. Keep standalone planning/audit scopes and material external decisions intact.
-- Align AGENTS, SKILL, native rules, lifecycle/closure contracts and README. Preserve UAT Prep and the subsequent UAT, repair, Check and normal delivery gates.
+### Auto owns compatible stack security maintenance
+- Make every new `PHDK auto` and `PHDK auto force` run perform one fresh Stack Security Review during Preflight, even when canonical PHDK is already current. Reuse the resulting evidence at unchanged later stages instead of requiring a separate Upgrade command.
+- Treat compatible repository-owned security maintenance discovered by Auto as part of the existing development mandate: supported same-major runtime security patches such as Node.js patch releases, compatible dependency security fixes, and aligned repo-owned runtime/build declarations, lockfiles and pins.
+- Revalidate affected static/security evidence and continue normal Auto versioning and delivery without asking the owner for a second security-remediation command.
+- Preserve boundaries for major runtime migrations, material breaking dependency migrations, provider administration/new infrastructure, spending, secrets/account operations, UAT and explicit owner exclusions. Standalone Upgrade remains read-only with respect to product remediation unless separately authorized.
 
-### Verification scope
-- Review policy scenarios and run applicable existing local checks before publication. This standards change does not prove adoption or application-level execution in downstream projects.
-- Repair a pre-existing UAT policy test pinned to v2.51.6: retain the minimum supported version and verify current VERSION/README/newest-CHANGELOG agreement so subsequent compatible releases can pass.
+### Verification and adoption
+- Reconcile Auto, Preflight, Secure, native managed rules, AGENTS, SKILL and README so the same behavior is visible from all active entrypoints.
+- Publishing this release does not retroactively execute Auto in dormant repositories. Downstream repositories adopt the behavior when they next synchronize PHDK or run a clean Preflight that adopts this version.
 
-## v2.53.0 — 2026-10-17
+## v2.66.0 — 2026-10-25
 
-### PHDK uat prep: implement synthetic test identities before acceptance
-- Introduce standalone `PHDK uat prep` and mandatory Auto stage `45-uat-prep` after Integration Review, before browser UAT. Prep explicitly builds/reuses idempotent Company Co synthetic user seeders, supported isolated auth/session bootstrap and role/tenant test support; validates allowed non-browser cases and documents actual account provisioning and cleanup.
-- Add vendored `PHDK_UAT_PREP.md`, required `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md`, stage snapshots, fresh-candidate reconciliation and Prep-ready/blocked role gates.
-- Integrate lifecycle, Auto, standalone UAT, Check, agent/native routing, JWT, Company Co, testing, execution scope and manifest. Preserve UAT-only browser permission and independent connection/no-new-spend verification at stage 50.
-- Standards-only release: this repository does not create accounts in downstream applications, deploy staging resources, run browsers or alter authentication providers.
+### Central downstream repository status registry
+- Add `PHDK_REPOSITORY_STATUS.md` as a vendored contract for eligible PHDK repositories under `tuyoisaza/*`. During foreground PHDK work, repositories that already have canonical-PHDK write access publish or refresh `docs/repos/<repo>/status.md`.
+- Record installed versus canonical PHDK version, observed repository SHA, evidence-backed tech-stack versions and an independent Stack Security Review status so maintainers can identify both standards drift and security/version drift without conflating them.
+- Route Upgrade/Force, Preflight adoption and native managed instructions through the registry. Missing canonical write access is non-blocking and never triggers a credential request.
+- Keep the registry explicitly foreground-only: no telemetry, repository crawler, scheduler, GitHub Action, webhook, background retry or autonomous cross-repository maintenance is introduced.
 
-## v2.52.2 — 2026-10-17
+### Verification and adoption
+- Add the registry standard to the vendoring manifest and document the canonical `docs/repos/<repository-name>/status.md` location.
+- Publishing this PHDK release does not populate every downstream status record. Each eligible repository reports itself when a foreground PHDK session runs with sufficient evidence and existing access.
 
-### Reconcile JWT authenticated UAT with UAT browser readiness
-- Preserve v2.51.6 UAT browser permission/connection/cost gates while adding a separate real synthetic role-authentication gate, rather than treating browser access or fixture data as logged-in identities.
-- Reconcile manifest, UAT, Auto and AGENTS standards, test-evidence obligations, and version metadata without dropping concurrent changes.
+## v2.65.3 — 2026-10-23
 
-## v2.52.1 — 2026-10-17
-
-### Standards clarification
-- Clarify Company Co as the fixture authority, correct DEVSECOPS heading order and reconcile documentation version metadata after the synthetic JWT/UAT release.
-
-## v2.52.0 — 2026-10-17
-
-### Synthetic identities, authorized JWT UAT and role-complete testing
-- Introduce vendored `JWT_STANDARD.md`: test-only identity bootstrap via existing auth provider/session, controlled synthetic Company Co profiles, short-lived validated JWT **only where JWT is used**, and real Playwright/browser sessions per role without asking for human passwords or bearer secrets.
-- Separate JWT (JSON Web Token) from UAT (User Acceptance Testing); define authenticated super_admin (multi-tenant) versus admin (single-tenant), audited Test as, tenant-negative testing, production prohibitions, cleanup and concrete evidence gates.
-- Integrate bootstrap/negative tests with UAT, Auto, Check, DEVSECOPS, testing, admin console, Company Co, skill entry points and vendoring. Documentation/policy change only; no downstream deployment, new login endpoint, token issuance or live application UAT performed.
-
-## v2.51.6 — 2026-10-17
-
-### Browser readiness and no-unplanned-spend UAT gate
-- Vendor `UAT_BROWSER_READINESS_STANDARD.md` and require a real browser connection check at Auto, UAT/UAT Fix and Designer UAT transitions; distinguish phase permission from connected runtime capability.
-- Require timestamped access proof/blocked cases/safe-target and cost disposition in UAT access and acceptance reports.
-- Prevent improvised paid browser APIs, test-service subscriptions and arbitrary spending caps as substitutes for missing browser access; preserve host consent and data/production constraints.
-- Continue independently runnable acceptance cases; never infer browser PASS or stall the entire lifecycle for a hypothetical budget.
-
-### Verification scope
-- Standards and manifest consistency only; no actual downstream product browsers or paid services exercised.
-
-## v2.51.5 — 2026-10-16
-
-### Mandatory automation and cost hygiene in Check and Auto
-- Add `PHDK_AUTOMATION_HYGIENE.md` and a vendored read-only static scanner for residual GitHub Actions, recurring agents/bots, production watchers, Railway cron and restart-loop risks; add unit regressions.
-- Make Check and Auto verify **live** GitHub Actions state/runs/checks and Railway Wait for CI, deployment triggers, cron/restarts and usage when provider metadata is available. Unverified remote state blocks an unsupported ALIGNED claim.
-- Preserve justified security checks and GitHub-connected Railway autodeploy; automatic cleanup applies only to provably obsolete PHDK-owned source. No implicit provider setting changes.
-
-### Verification scope
-- PHDK policy/source/static checks only. This release does not inspect or modify downstream GitHub Actions or Railway accounts.
-
-## v2.51.4 — 2026-10-16
-
-### Universal tenancy-aware administration console
-- Introduce vendored `ADMIN_CONSOLE_STANDARD.md`: deliberate single/multi tenancy, appropriate elevated admin vs platform super_admin/tenant admins, tenant/role/user/invite administration, native language, safe system/integration/secret metadata, protected backups/security/audit/operations, semantic light/dark/corporate theme editing and scoped role testing.
-- Extend the conditional AI Admin Standard from prompt text editor to an auditable agent/workflow catalog: input-source mappings, typed JSON output schemas, next-hop graph, validation, publishing, costs and runtime/tenant scope.
-- Integrate administration requirements into Capture, Plan, Lifecycle, Auto, UAT, CRUD, Check, the vendored manifest and native/agent instructions; demand actual implementation and negative authorization evidence.
-- Add explicit `PHDK check --fix` / `PHDK check fix` as a single user-authorized audit-and-remediate invocation. Bare Check remains nonmutating; never auto-convert tenancy or perform unapproved live destructive/security/provider changes.
+### Publish the optional Company Co document importer corpus
+- Publish the existing fictional 2025 quality-management dossier as 35 logical documents covering 17 processes, with individual PDF and Word files, consolidated alternatives, completed records and blank forms.
+- Include an obsolete revision, an image-only PDF for OCR, ten documented extraction cases, machine-readable expectations and integrity metadata. Preserve the canonical Company Co people, departments and commercial baseline.
+- Add an English corpus index and discoverable links from README and the Company Co reference. Keep the business documents in Spanish and the optional corpus outside the standards vendoring manifest.
+- Treat the ISO 9001:2015 / Amendment 1:2024 reference as historical simulation, with no actual certification claim or new execution policy, command, provisioning or automatic UAT behavior.
 
 ### Verification limits
-- Standards-source and manifest integration verified through the GitHub connector; no downstream product code, application browser/UAT or production deployment is implied.
+- Review the corpus inventory, document hashes, internal references, rendered pages and publication diff. Run the existing static PHDK coherence check and verify release metadata and remote publication separately.
+- The importer itself and runtime UAT were not executed. This documentation publication does not upgrade downstream projects or deploy an application.
 
-## v2.51.3 — 2026-10-16
+## v2.65.2 — 2026-10-23
 
-### Three-theme governance and Superadmin template editing
-- Introduce PHDK_THEME_STANDARD.md: one authoritative CSS palette token source, identical light/dark/corporate token contracts, semantic component consumption and precisely documented exceptions.
-- Require a real Superadmin Configuración → Edición de templates editor with saved presets, preview/reset, role enforcement and a separate corporate show/hide setting with safe fallback.
-- Add vendorable static scanner scripts/phdk_theme_audit.py and local unit tests; Designer Mode must remediate hardcoded palettes and PHDK Check must audit source, behavior and test evidence.
-- Integrate the rule into Design System, Designer Mode, Check, UX/UI, agent/skill entrypoints, README and vendoring manifest.
+### Resolve build and hook ambiguity before asking
+- Add an ordered decision procedure to the existing hook standard and route native managed instructions, agent/skill entrypoints, Auto, verification and delivery through it before execution, BLOCKED or a user question.
+- Distinguish permitted compiler/static tooling from import/require load checks of compiled application/API modules, including checks with networking/listeners disabled. Classify mixed command chains and provenance before choosing a correction.
+- Repair only authorized proven PHDK-managed local invocations, retain runtime source and disclose NOT RUN coverage. Preserve independent owner/external/unknown controls and their required ordering; prepare concrete unresolved decisions without local-runtime exception prompts or duplicate approvals.
+- Reconcile older local-suite instructions in enforcement and verification with production-first policy. No automatic UAT, new CI, provider change or infrastructure route is introduced.
+- Add bounded static guards for on-demand routing, the installed managed block, manifest dependencies and six decision scenarios. Keep VERSION, README and CHANGELOG synchronized. Integrate on v2.65.1 while preserving Stack Security Review and canonical/vendored static-check compatibility.
 
-### Verification and limitations
-- Static scanner and repo consistency checks do not prove that any downstream app editor exists or works. Product permissions, persistence, theme propagation and UAT must be verified per candidate.
-- No downstream repository, live product, GitHub Actions, or hosting deployment is changed by this PHDK standards release.
+### Verification limits
+- Static source checks and independent review are recorded in the release checkpoint. The scenarios document expected decisions; no local behavioral tests, downstream agent execution, UAT or project upgrade is claimed.
 
-## v2.51.2 — 2026-10-15
+## v2.65.1 — 2026-10-23
 
-### Designer Mode: exhaustive internal-content review
-- Require `DESIGNER_COVERAGE.md` before implementation, with stable review units for screens, internal sections, hidden contents, roles, states and relevant viewports.
-- Execute the complete per-unit loop: expose, read, critique, correct, reinspect, verify and continue without ceremonial per-section approvals.
-- Separate source review, visual verification and repository delivery; incomplete children and stale shared-component evidence prevent premature completion.
-- Explicitly include Designer's bounded per-unit and final UAT/UAT Fix subphases in `EXECUTION_SCOPE.md`, preserving production, access, privacy and provider restrictions.
-- Reconcile VERSION and README after the unmerged v2.51.1 candidate. No version number is reused.
+### Preserve downstream static-hook compatibility
+- Format the six manifest-owned Python helpers with Ruff 0.7.0 and split the updater's grouped import into identical-order individual imports. This is a mechanical source correction: command contracts, review obligations, permissions and runtime behavior are unchanged.
+- Preserve the README hard line break using Markdown backslash syntax, remove one redundant EOF newline from each of the design guide and the oldest changelog archive, and retain the historical text.
+- Keep the 78 source/destination manifest mappings and exact-copy distribution contract unchanged. Existing downstream Ruff and source-hygiene checks remain enabled; no hook, configuration or vendored exception is introduced.
 
-### History and adoption
-- Preserve the previous changelog byte-for-byte in [CHANGELOG-through-v2.51.0.md](CHANGELOG-through-v2.51.0.md), retaining its relative links.
-- Vendor that archive and the existing [history through v2.31.0](ORIGINALS/CHANGELOG-through-v2.31.0.md) so installed changelogs retain their history.
-- Preserve the v2.51.0 centralized updater. No downstream product was redesigned, upgraded or deployed by this standards change.
+### Static verification and limits
+- Formatting preserves the exact AST for all six helpers. The subsequent updater import split is the only structural AST difference; import order and the rest of its AST are identical. Static compilation with normalized source positions produces equivalent code for all six helpers; no helper behavior or application tests are executed for this comparison.
+- Record pinned Ruff/source-hygiene, canonical and installed-layout coherence, manifest, version and outgoing-source checks in `PHDK_COHERENCE_REPORT.md`. Source publication and downstream adoption require separate verification.
 
-### Verification scope
-- Documentation, release metadata, manifest mappings, source/diff review and remote GitHub delivery evidence; no application browser/UAT or production claims.
+## v2.65.0 — 2026-10-23
 
-## Historical releases
+### Stack security review on upgrade
+- Require a bounded read-only Stack Security Review for every explicit Upgrade/Force, including no-op synchronization, and once when foreground Preflight actually adopts a new canonical version.
+- Reuse Secure as the canonical evidence contract for all workspace/service roles: distinguish declared, resolved, build and observed deployed versions; review current official advisories, support/EOL, dependency/native compatibility, images and data engines.
+- Report standards synchronization, review coverage and security findings independently. A successful vendor update cannot clear product vulnerabilities; findings do not prevent safer standards from being delivered.
+- Replace the stale Node 20 minimum with supported, security-patched LTS selection. Prefer compatible Active LTS for new projects, allow a documented supported Maintenance LTS fallback, and recommend patches within existing supported majors before migration.
+- Route Upgrade, Preflight, Plan, Check, execution/delivery and native agent entrypoints coherently. The foreground updater exposes pending review obligations without pretending to execute a security scan. Static coherence checks understand canonical and vendored manifest destinations.
+- Reconcile touched legacy local-test instructions with production-first verification. Preserve owner customizations, actual controls, explicit-only UAT and separately authorized remediation/delivery.
 
-[Complete previous changelog through v2.51.0](CHANGELOG-through-v2.51.0.md).
+### Verification and adoption
+- Source/diff, Python syntax, manifest/native-block and static coherence verification are required; no local behavioral tests, Docker, UAT, new scanners, hosted workflow dispatch or provider mutations are introduced.
+- This release does not claim every project is updated or its application dependencies patched. Downstream adoption and security evidence must be verified per repository.
+- v2.64.0 was already proposed by the independent encryption/KMS PR when this release was prepared; its unmerged changes are not included.
 
-Historical instructions are release records, not current execution authority.
+## v2.63.2 — 2026-10-23
+
+### Reconcile phase limits with current owner authorization
+- Require Plan to load and record the verified applicable PHDK baseline before deriving briefs, plans and tasks; distinguish adopted and verified canonical versions.
+- Classify restrictions by lifetime and provenance in the existing task record. Retain source, known date, scope, closure condition and superseding instruction; never attribute assistant-created restrictions to the owner or treat phase completion as a permission grant.
+- Reconcile TASK, plan, STATUS, Auto mandate and affected worker context before construction-to-publication transitions. Keep owner authorization, technical permission, costs and explicit-only UAT separate; do not duplicate an approval already granted or claim that a document edit clears an executor denial.
+- Align delivery, execution, planning, delegation and agent entrypoints; add bounded static coherence guards without changing executor permissions or introducing a new runtime authority mechanism.
+- Preserve the concurrently published v2.63.1 manifest repair and release history. Normalize escaped newlines at the touched agent/native entrypoint boundaries without changing policy.
+
+### Verification limits
+- Static/source verification is recorded in the delivery checkpoint; no local behavioral tests, Docker, UAT, provider operations or downstream project changes are part of this correction. Publishing PHDK does not resolve DEBATE's executor permission or prove its deployment.
+
+## v2.63.1 — 2026-10-23
+
+### Repair canonical manifest vendoring
+- Remove literal escaped newline delimiters from the PHDK_SECURE.md manifest mapping so all sources resolve inside the canonical repository and downstream upgrades can validate the distribution.
+- Normalize the escaped line breaks in the previous release note; align VERSION and the README release marker.
+- Static distribution repair only. No downstream product implementation, UAT, provider operations, or policy changes are authorized by this patch.
+
+## v2.63.0 — 2026-10-22
+
+### Hybrid PHDK Secure
+- Add standalone `PHDK secure` and milestone security deltas plus consolidated pre-Check security gate in Auto/Force.
+- Add `PHDK_SECURE.md` to the vendoring manifest; align Plan, lifecycle, Check, native agent entrypoints and README. Require patched Active LTS Node.js compatibility and npm supply-chain checks for Node.js projects. Preserve explicit-only UAT and production-first static verification.
+- This standards release does not assert downstream adoption, runtime security validation or application deployment.
+
+## v2.62.1 — 2026-10-22
+
+### Reconcile explicit-only UAT throughout active guidance
+- Replace obsolete automatic UAT transitions in acceptance, Auto/Force, lifecycle, PMO, milestone delivery, Check/remediation, SEO/AEO and completion guidance. Auto keeps stages 45/50/60 `DEFERRED — OWNER OPT-IN` and reports development/delivery separately from `UAT NOT RUN`; absent acceptance artifacts and historical UAT failures do not reopen completed development.
+- Preserve the existing command boundaries: fresh explicit `PHDK uat` includes necessary Prep; standalone `PHDK uat prep` prepares only; UAT Fix requires explicit invocation or repair authorization within an explicitly initiated UAT run. Designer and source remediation do not implicitly authorize acceptance.
+- Put the binding rule inside the distributed native `PHDK-MANAGED` block, restore SKILL YAML front matter to the start of the file, and align entrypoints, boards, examples, commitment criteria and optional acceptance evidence without weakening actual owner, host, security or required-check controls.
+- Align affected acceptance/security guidance with the existing production-only verification policy: legitimate application/provider sessions, uniquely run-owned synthetic records, server-side role/tenant enforcement, expiry/revocation and verified cleanup. No new test issuer, staging/database or authentication bypass is authorized.
+- Add bounded static coherence guards for deferred stages, explicit entrypoints, native managed rules, SKILL distribution/front matter and known obsolete affirmative transitions. Keep archived history outside the active-policy scan and reject unsafe scan paths. Update UAT Prep regression source to the current policy; behavioral tests and UAT were not run.
+- Record source/static verification and its limits in `PHDK_COHERENCE_REPORT.md` and the prepublication delivery checkpoint. Publishing canonical PHDK does not upgrade downstream projects or reload existing agent sessions.
+
+## v2.62.0 — 2026-10-21
+
+### Explicit-only UAT authorization
+- Auto and Auto Force finish all development, milestone publication, non-UAT checks and deployment before offering optional acceptance.
+- UAT Prep, UAT and UAT Fix are never automatic Auto stages; only an explicit `PHDK uat` invocation authorizes acceptance and its required preparation.
+- Retain milestone acceptance stories without synthetic provisioning; report development completion separately from UAT NOT RUN.
+- Preserve standalone `PHDK uat prep` as a separate explicit command.
+
+## v2.61.0 — 2026-10-21
+
+### Automatic PHDK-managed hook compatibility remediation
+- Add `PHDK_HOOK_COMPATIBILITY.md`: scan effective Git hooks and nested scripts against production-first verification before publication; identify provenance before editing.
+- Authorize Auto/Auto Force and Check Fix to repair only proven legacy/PHDK-owned runtime-test hook conflicts while preserving versioning, secret scans, security and independent checks.
+- Require bare Check to report findings and preserve owner/external/unknown hooks, never bypass or run prohibited local tests to make a push pass.
+- Update active execution, agent, testing and enforcement guidance and vendor the standard. Documentation-only checks; downstream adoption and runtime behavior unverified.
+
+## v2.60.1 — 2026-10-21
+
+### Publish the historical intelligent-development architecture audit
+- Publish the previously delivered v2.56.0 read-only architecture audit as an optional repository report, including measured inventory, evidence references, context estimates, delegation analysis, target architecture, alternatives, migration and benchmark proposal.
+- Add publication provenance and an explicit addendum: general bounded delegation and progressive context guidance already shipped in v2.57.x; historical findings must not be treated as current rules.
+- Link the report from README without adding it to mandatory instructions or the vendoring manifest. No execution-policy change, runtime benchmark, downstream upgrade or deployment is performed.
+
+## v2.60.0 — 2026-10-21
+
+### Pre-implementation visual Design
+- Add `PHDK_DESIGN.md`, the standalone `PHDK design` command and conditional lifecycle stage `25-design` after technical/content Plan and before dependent UI implementation.
+- Establish four guided decision groups: visual identity, composition, graphic system and experience in context. Recover references, show meaningful alternatives and representative previews, then retain the selected style guide and actual design assets in the repository.
+- Reuse `UI_DESIGN_SYSTEM.md`, `UX_UI_DECISIONS.md`, the single shared token/component source and `docs/design/`; preserve owner-approved brands, existing interfaces and immutable historical runs. Designer Mode remains separate implementation/redesign work.
+
+### Auto asks; Auto Force decides
+- Normal Auto and standalone Design ask one unresolved visual question at a time and wait for the owner's selection and selected-preview approval before dependent UI coding. Independent authorized work may continue.
+- Auto Force performs the same Design responsibilities, selects a direction, records `AGENT_SELECTED_AUTO_FORCE` with rationale and continues without a PHDK visual-approval wait. Actual owner restrictions, sensitive scope/security decisions and external spending/access controls remain binding; agent selection is never represented as owner approval.
+- Extend the continuity advisor with an additive `design_choice` blocker, `DESIGN_AWAITING_OWNER` reporting, explicit FORCE selection before dependent implementation, and rejection of completed steps retaining unresolved visual choices. Preserve actual owner stops and the existing advisory-only authority boundary.
+
+### Coherent lifecycle and verification
+- Reconcile Plan, UX/UI, lifecycle, Auto/continuity, native instructions, AGENTS, SKILL and README. Integration compares source to the selected baseline; UAT compares the permitted deployed interface; Check evaluates decision provenance, real retained artifacts, component/token usage and current evidence.
+- Extend the static coherence guard and add ten behavioral regression cases as source. AST syntax checks passed for the modified advisor, coherence checker and new test source. Behavioral tests were NOT RUN locally under the production-first policy; the complete repository coherence script was NOT RUN because a full local checkout was unavailable.
+- Preserve the concurrently published v2.59.0 tenant-risk standard and controls. Keep all previous changelog bytes in the linked `CHANGELOG-through-v2.59.0.md` archive, included in the manifest.
+- Design creates no local application server, Docker, staging/database, browser-test or paid-service exception. Static/generated concepts and specification-only choices are not runtime verification. Missing visual capability stays explicit; normal Auto needs an informed specification-only owner choice, while FORCE selects with visual evidence UNVERIFIED and continues permitted work.
+- This release changes standards and a local state advisor. It does not prove downstream adoption, actual visual-agent execution, runtime behavior, application deployment or acceptance.
+
+### Verification record
+See [docs/verification/v2.60.0-design.md](docs/verification/v2.60.0-design.md) for the source-review scope and execution limits. Publication evidence is established by the actual PR/merge and independent remote-main readback, not this release note.
+
+## Earlier release history
+
+The complete previous changelog, unchanged through v2.59.0, is retained in [CHANGELOG-through-v2.59.0.md](CHANGELOG-through-v2.59.0.md), including its links to older archives.

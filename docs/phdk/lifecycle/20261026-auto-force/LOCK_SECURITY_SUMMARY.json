@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-26",
+  "method": "npm audit fix --package-lock-only --ignore-scripts --no-fund; advisory lookup only, no dependency scripts/application execution",
+  "packages": [
+    {
+      "package": "services/api",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "93d05e68f466fa76dae6ea58a6ec8e541e0933a75b295622ec4b8e436def2ffe"
+    },
+    {
+      "package": "services/web",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "74ec3f169e128ea990aa20089c70470d094beb301f077bda40d5365a92e13f73"
+    },
+    {
+      "package": "cloud",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "be81cac623e3c2c891284f40e57f7c6812025dbb6cf15cd56a01206e94755d4a"
+    },
+    {
+      "package": "landing",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "004e9cd5ed1c522987bc0995db558471f20e0cc5b6e8df7826c797c030961ad5"
+    },
+    {
+      "package": "browser",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "8901dd99dc90e40f81d4b810f4fee5c0534e169bf9e34dd33ac126948b29d999"
+    },
+    {
+      "package": "agent",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "a4d2790a92adef40ade29181b9efedce305f36f033981f5b93520c64313a210d"
+    },
+    {
+      "package": "runtime",
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "lock_sha256": "1705661369338d7c5b941256fd4b88261b46d12d1076ed32c6ff983be07ab380"
+    }
+  ]
+}

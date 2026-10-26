@@ -5,7 +5,7 @@
 #
 # Build: frontend only (Vite/React), serve via nginx.
 
-FROM node:20-alpine AS builder
+FROM node:24.22.1-alpine AS builder
 WORKDIR /app
 COPY services/web/package*.json ./
 RUN npm ci

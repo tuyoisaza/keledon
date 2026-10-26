@@ -8,6 +8,7 @@ import { setMainWindow as setRpaMainWindow, executeRpaFlow } from './rpa-executo
 import { startPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
 import { planGoalActionsWithAI } from './goal-planner.js';
 import type { RpaStep } from './rpa-executor.js';
+import { executeInterfaceCommand } from './interface-control';
 
 /**
  * Set up Phase 6 command handlers and start polling.
@@ -21,6 +22,7 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
   cmdlog.log('SYS', `Setting up command handlers and starting polling | device: ${deviceId} | token: ${tokenPre} | cloud: ${cloudUrl} | session: ${sessionId}`);
   setCallMainWindow(mainWindow);
   setRpaMainWindow(mainWindow);
+  registerCommandHandler('interface_control', async command => ({ command_id: command.id, status: 'success', output: await executeInterfaceCommand(command.id, mainWindow), timestamp: new Date().toISOString() }));
 
   // Register command handlers
   registerCommandHandler('call_start', async (command: BrowserCommand): Promise<CommandResult> => {

@@ -45,3 +45,6 @@ Salesforce de prueba: URL, dos casos ficticios, resultado esperado y sesión ini
 
 ## Slices vinculados
 [Plan y PIAs](../mvp/meet-salesforce/README.md), [TASK](../../TASK.md).
+
+## Voz configurable — decisión del propietario, 2026-10-26
+La voz final no depende del catálogo instalado en Windows. Cada cliente/equipo debe poder configurar proveedor TTS, idioma y variante regional, voz, velocidad y estilos que el proveedor realmente soporte (por ejemplo formal, cordial o empático). El Brain determina el contenido; la configuración vocal determina su expresión. No se prometerán estilos inexistentes ni cambios silenciosos de proveedor. La primera aceptación del MVP exige una voz española de proveedor oída desde el interlocutor remoto, interrupción y segunda interacción; un WAV/voz local solo acredita su prueba de transporte cuando se observa, no la capacidad final. La ampliación de catálogo/estilos es requisito retenido, no implementación ya aceptada.

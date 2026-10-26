@@ -1,3 +1,9 @@
+## 5.8.0 — 2026-10-26
+- Add team-scoped general interface observation, one-step Brain planning and explicit execution via opt-in browser extension or paired Windows host; Salesforce remains an optional adapter.
+- Restrict mutable input/invocation to positively identified search controls; fence stale observations, duplicate device claims and failed-result verification. Native packaging and all live behavior remain unaccepted.
+- Adopt PHDK 2.68.0; owner-approved Node 24.22.1 source/runtime migration and compatible security lock updates across seven packages. No local tests/build/lint or UAT run.
+- Retain configurable Spanish/provider voice and supported style requirement; missing OS Spanish voice is not the final product constraint.
+
 ## v5.7.0 — 2026-10-19
 
 - Add explicit per-layer session/team, remote/file STT, knowledge, Brain, web TTS and playback controls, plus a bounded copyable verbose metadata log.
